@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Tests\Tests_UiPage_ExecuteJavaScript.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NUnit.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationName.QA.Global\ApplicationName.QA.Global.csproj" />
+    <ProjectReference Include="..\ApplicationName.QA.TestsBasis\ApplicationName.QA.TestsBasis.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Providers.Serilog\DevQAProdCom.NET.Logging.Providers.Serilog.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.TestRunners.NUnit\DevQAProdCom.NET.Logging.TestRunners.NUnit.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Playwright\DevQAProdCom.NET.UI.Playwright.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Selenium\DevQAProdCom.NET.UI.Selenium.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".addins">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configurations\LOCAL_SeleniumWebDriver.config_20250425_0902.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_ReturnNonPrimitiveValue_RelativeToPage.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_ReturnNonPrimitiveValue_RelativeToUiElement.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_ReturnPrimitiveValue_RelativeToPage.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_ReturnPrimitiveValue_RelativeToUiElement.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_Void_RelativeToPage.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\SyncJavaScript_Void_RelativeToUiElement.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ENVIRONMENT": "asdsad"
+      }
+    }
+  }
+}

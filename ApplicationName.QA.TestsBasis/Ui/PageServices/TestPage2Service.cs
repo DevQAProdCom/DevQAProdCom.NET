@@ -1,0 +1,14 @@
+﻿using ApplicationName.QA.TestsBasis.Ui.Pages;
+using DevQAProdCom.NET.UI.Shared.Constants;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
+
+namespace ApplicationName.QA.TestsBasis.Ui.PageServices
+{
+    public class TestPage2Service : SingleUiPageService<TestPage2>
+    {
+        public TestPage2Service(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab) : base(uiInteractor, tabName)
+        {
+        }
+    }
+}

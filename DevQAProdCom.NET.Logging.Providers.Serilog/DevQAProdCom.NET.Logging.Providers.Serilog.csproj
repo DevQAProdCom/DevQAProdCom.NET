@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Enrichers.Environment" />
+    <PackageReference Include="Serilog.Enrichers.Process" />
+    <PackageReference Include="Serilog.Enrichers.Thread" />
+    <PackageReference Include="Serilog.Formatting.Compact" />
+    <PackageReference Include="Serilog.Settings.AppSettings" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Debug" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Configurations\DevQAProdCom.NET.Configurations.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="DevQAProdCom.NET.Configurations" />
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Shared" />
+    <PackageReference Include="DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configurations\appsettings.Default.SerilogLoggingProvider.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

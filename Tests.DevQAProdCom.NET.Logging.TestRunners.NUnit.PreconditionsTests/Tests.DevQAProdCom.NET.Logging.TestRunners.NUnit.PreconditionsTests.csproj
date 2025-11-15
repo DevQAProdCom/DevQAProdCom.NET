@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NUnit.Analyzers" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NUnitLite" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Providers.Serilog\DevQAProdCom.NET.Logging.Providers.Serilog.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.TestRunners.NUnit\DevQAProdCom.NET.Logging.TestRunners.NUnit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update=".addins">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configurations\appsettings.NUnitTestLogger.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configurations\appsettings.SerilogLoggingProvider.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

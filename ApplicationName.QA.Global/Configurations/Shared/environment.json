@@ -1,0 +1,4 @@
+{
+  "environment": "QA",
+  "environment_allowed_values": [ "DEV", "QA" ]
+}

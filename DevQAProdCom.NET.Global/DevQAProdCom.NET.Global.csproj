@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
+    <PackageReference Include="System.Collections.Concurrent" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Shared" />
+    <PackageReference Include="DevQAProdCom.NET.Global.ModelsAndInterfaces" />
+    <PackageReference Include="DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations" />
+  </ItemGroup>
+  
+</Project>

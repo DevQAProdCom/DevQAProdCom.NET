@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit"/>
+    <PackageReference Include="NUnit.Engine"/>
+    <PackageReference Include="NUnit3TestAdapter"/>
+    <PackageReference Include="NUnit.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Configurations\DevQAProdCom.NET.Configurations.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.TestRunners.Shared\DevQAProdCom.NET.Logging.TestRunners.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.TestRunners.NUnit.Models\DevQAProdCom.NET.TestRunners.NUnit.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="DevQAProdCom.NET.Configurations"/>
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft"/>
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Shared"/>
+    <PackageReference Include="DevQAProdCom.NET.Logging.TestRunners.Shared"/>
+    <PackageReference Include="DevQAProdCom.NET.TestRunners.NUnit.Models"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configurations\appsettings.Default.NUnitTestLogger.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

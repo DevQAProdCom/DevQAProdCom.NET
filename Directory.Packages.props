@@ -1,0 +1,101 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.6.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="9.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Ini" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Xml" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Primitives" Version="9.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="AWSSDK.SecretsManager" Version="3.7.102.56" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.103.13" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="System.Collections.Concurrent" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="System.Drawing.Common" Version="9.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Playwright.NUnit" Version="1.49.0" />
+    <PackageVersion Include="Selenium.WebDriver" Version="4.34.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="MySql.Data" Version="8.0.30" />
+    <PackageVersion Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Refit" Version="8.0.0" />
+    <PackageVersion Include="Refit.HttpClientFactory" Version="8.0.0" />
+    <PackageVersion Include="Refit.Xml" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Serilog" Version="4.3.0" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Enrichers.Process" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageVersion Include="Serilog.Exceptions.Refit" Version="8.4.0" />
+    <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Settings.AppSettings" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="FluentAssertions" Version="6.7.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="NUnit" Version="4.1.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.2.0" />
+    <PackageVersion Include="NUnit.Engine" Version="3.17.0" />
+    <PackageVersion Include="NUnitLite" Version="4.1.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="ApplicationName.Dev.API" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.QA.Global" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.QA.TestsBasis" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.Shared.API" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.Shared.Databases.MySql.AppDatabase" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.Shared.ModelsAndFacilities" Version="0.0.0-local" />
+    <PackageVersion Include="ApplicationName.Shared.ParametersAndFacilities" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.API" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Configurations" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.DependencyInjection.Microsoft" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.DependencyInjection.Microsoft.Shared" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.DependencyInjection.Shared" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Global" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Global.ModelsAndInterfaces" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Logging.Providers.Serilog" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Logging.Shared" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Logging.TestRunners.Shared" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.Logging.TestRunners.NUnit" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.TestRunners.NUnit.Models" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.Playwright" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.Playwright.Browsers" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.Shared" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.Selenium" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.Selenium.WebDrivers" Version="0.0.0-local" />
+    <PackageVersion Include="DevQAProdCom.NET.UI.UiElements" Version="0.0.0-local" />
+  </ItemGroup>
+</Project>

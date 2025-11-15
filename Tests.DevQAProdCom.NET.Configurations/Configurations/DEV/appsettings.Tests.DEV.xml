@@ -1,0 +1,61 @@
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Level1>
+        <SubLevel1>
+            <StringValue>StringValue DEV</StringValue>
+            <StringValue_Empty></StringValue_Empty>
+            <StringValue_Whitespace xml:space="preserve"> </StringValue_Whitespace>
+            <StringValue_Default_Null xsi:nil="true"/>
+            <NumberValue>0.01</NumberValue>
+            <NumberValue_Default_Zero>0</NumberValue_Default_Zero>
+            <NumberValue_Default_Null xsi:nil="true"/>
+            <BooleanValue>true</BooleanValue>
+            <BooleanValue_Default_False>false</BooleanValue_Default_False>
+            <BooleanValue_Default_Null xsi:nil="true"/>
+        </SubLevel1>
+    </Level1>
+    <IEnumerable>
+        <IEnumerableModel>
+            <Key>IEnumerable Value 1 DEV</Key>
+            <ClassEntity_UserModel>
+                <Email>user_DEV1@email.com</Email>
+                <Password>password_DEV1</Password>
+            </ClassEntity_UserModel>
+        </IEnumerableModel>
+        <IEnumerableModel>
+            <Key>IEnumerable Value 2 DEV</Key>
+            <ClassEntity_UserModel>
+                <Email>user_DEV2@email.com</Email>
+                <Password>password_DEV2</Password>
+            </ClassEntity_UserModel>
+        </IEnumerableModel>
+    </IEnumerable>
+    <IEnumerable_Default_Null xsi:nil="true"/>
+    <IEnumerable_Default_Empty/>
+    <!--<IEnumerable_Default_Empty_With_Custom_Attributes type="XmlArray" xmlArrayIEnumerableModel="IEnumerableModel" />-->
+    <OtherData>
+        <ClassEntity_UserModelExtended>
+            <Email>user_DEV0@email.com</Email>
+            <Password>password_DEV0</Password>
+            <IEnumerable>
+                <IEnumerableModel>
+                    <Key>IEnumerable Value 3 DEV</Key>
+                    <ClassEntity_UserModel>
+                        <Email>user_DEV3@email.com</Email>
+                        <Password>password_DEV3</Password>
+                    </ClassEntity_UserModel>
+                </IEnumerableModel>
+                <IEnumerableModel>
+                    <Key>IEnumerable Value 4 DEV</Key>
+                    <ClassEntity_UserModel>
+                        <Email>user_DEV4@email.com</Email>
+                        <Password>password_DEV4</Password>
+                    </ClassEntity_UserModel>
+                </IEnumerableModel>
+            </IEnumerable>
+        </ClassEntity_UserModelExtended>
+        <ClassEntity_Default_Null xsi:nil="true"/>
+    </OtherData>
+    <ConnectionStrings>
+        <DefaultConnectionString>Server=DEV-server;Database=DEV-database;User Id=DEV-user;Password=DEV-password;</DefaultConnectionString>
+    </ConnectionStrings>
+</configuration>

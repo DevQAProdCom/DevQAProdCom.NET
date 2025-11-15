@@ -1,0 +1,3 @@
+{
+    return uiElementArgument.getBoundingClientRect().width;
+}

@@ -1,0 +1,8 @@
+﻿<Project>
+  <!--<Target Name="CopyDirectoryPackagesPropsDebug" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Debug'">
+    <Copy SourceFiles="Solution Items\Directory.Packages.Debug.props" DestinationFiles="Solution Items\Directory.Packages.props" />
+  </Target>
+  <Target Name="CopyDirectoryPackagesPropsRelease" BeforeTargets="BeforeBuild" Condition="'$(Configuration)' == 'Release'">
+    <Copy SourceFiles="Solution Items\Directory.Packages.Release.props" DestinationFiles="Solution Items\Directory.Packages.props" />
+  </Target>-->
+</Project>
