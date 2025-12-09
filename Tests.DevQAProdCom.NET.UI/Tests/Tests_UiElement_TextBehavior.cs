@@ -24,14 +24,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_InputTextBox_Handle_SetText_And_GetInputText_Behaviors()
         {
             //GIVEN
-            var actualTextBeforeFulfillment = _testPage2Service._page.InputTextBox.GetText();
+            var actualTextBeforeFulfillment = _testPage2Service._page.InputTextBox.GetInputText();
             var expectedTextAfterFulfillment = _fulfilledText;
 
             //WHEN
             _testPage2Service._page.InputTextBox.SetText(_fulfilledText);
 
             //THEN
-            var actualTextAfterFulfillment = _testPage2Service._page.InputTextBox.GetText();
+            var actualTextAfterFulfillment = _testPage2Service._page.InputTextBox.GetInputText();
 
             using (new AssertionScope())
             {
@@ -44,14 +44,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_InputTextBox_Handle_AppendText_And_GetInputText_Behaviors()
         {
             //GIVEN
-            var actualTextBeforeFulfillment = _testPage2Service._page.InputTextBox.GetText();
+            var actualTextBeforeFulfillment = _testPage2Service._page.InputTextBox.GetInputText();
             var expectedTextAfterFulfillment = _expectedTextAfterAppend;
 
             //WHEN
             _testPage2Service._page.InputTextBox.AppendText(_fulfilledText);
 
             //THEN
-            var actualTextAfterFulfillment = _testPage2Service._page.InputTextBox.GetText();
+            var actualTextAfterFulfillment = _testPage2Service._page.InputTextBox.GetInputText();
 
             using (new AssertionScope())
             {
@@ -64,14 +64,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_TextArea_Handle_SetText_And_GetInputText_Behaviors()
         {
             //GIVEN
-            var actualTextBeforeFulfillment = _testPage2Service._page.TextArea.GetText();
+            var actualTextBeforeFulfillment = _testPage2Service._page.TextArea.GetInputText();
             var expectedTextAfterFulfillment = _fulfilledText;
 
             //WHEN
             _testPage2Service._page.TextArea.SetText(_fulfilledText);
 
             //THEN
-            var actualTextAfterFulfillment = _testPage2Service._page.TextArea.GetText();
+            var actualTextAfterFulfillment = _testPage2Service._page.TextArea.GetInputText();
 
             using (new AssertionScope())
             {
@@ -84,14 +84,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_TextArea_Handle_AppendText_And_GetInputText_Behaviors()
         {
             //GIVEN
-            var actualTextBeforeFulfillment = _testPage2Service._page.TextArea.GetText();
+            var actualTextBeforeFulfillment = _testPage2Service._page.TextArea.GetInputText();
             var expectedTextAfterFulfillment = _expectedTextAfterAppend;
 
             //WHEN
             _testPage2Service._page.TextArea.AppendText(_fulfilledText);
 
             //THEN
-            var actualTextAfterFulfillment = _testPage2Service._page.TextArea.GetText();
+            var actualTextAfterFulfillment = _testPage2Service._page.TextArea.GetInputText();
 
             using (new AssertionScope())
             {

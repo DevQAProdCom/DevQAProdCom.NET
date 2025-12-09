@@ -7,6 +7,10 @@ using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Keyboard;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Others;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Scroll;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 
@@ -51,13 +55,33 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         public abstract string GetTagName();
         public abstract PointF GetLocation();
         public abstract SizeF GetSize();
-
+        public int? UiIndex => Info?.FindStage?.FindParametersWithSearchResult?.UiIndex;
 
         #endregion region General Properties
 
         #region Specific Properties
+        public string? GetNonBooleanAttribute(string attributeName)
+        {
+            return GetAttribute(attributeName, isBooleanAttributeType: false);
+        }
+
+        public bool GetBooleanAttribute(string attributeName)
+        {
+            var attribute = GetAttribute(attributeName, isBooleanAttributeType: true);
+            return attribute == "true";
+        }
 
         public abstract string? GetAttribute(string attributeName, bool isBooleanAttributeType);
+
+        public string? GetIdAttribute() => GetNonBooleanAttribute(SharedUiConstants.HtmlElementAttributes.Id);
+        public string? GetNameAttribute() => GetNonBooleanAttribute(SharedUiConstants.HtmlElementAttributes.Name);
+        public string? GetStyleAttribute() => GetNonBooleanAttribute(SharedUiConstants.HtmlElementAttributes.Style);
+        public void SetAttributeJs(string attributeName, string attributeValue) => AddBehavior<IUiElementBehaviorSetAttributeJs>().SetAttributeJs(attributeName, attributeValue);
+        public string? GetClassAttribute() => GetNonBooleanAttribute(SharedUiConstants.HtmlElementAttributes.Class);
+        public bool ClassAttributeContains(string value) => GetClassAttribute()?.Contains(value) == true;
+        public bool ClassAttributeEquals(string value) => GetClassAttribute() == value;
+        public void RemoveAttributeJs(string attributeName) => AddBehavior<IUiElementBehaviorRemoveAttributeJs>().RemoveAttributeJs(attributeName);
+        public void RemoveClassJs(string className) => AddBehavior<IUiElementBehaviorRemoveClassJs>().RemoveClassJs(className);
         public abstract string? GetCssValue(string propertyName);
         public abstract string GetTextContent();
 
@@ -84,14 +108,55 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
             return _uiElementBehaviorFactory.Create<T>(this, _javaScriptExecutor, auxiliaryParams);
         }
 
-        public void FocusJs()
-        {
-            var fileInfo = new FileInfo(SharedUiConstants.Files.FocusJavaScriptFilePath);
-            ExecuteJavaScript(fileInfo);
-        }
+        #region Keyboard Actions
 
-        public abstract void MouseClick();
-        public abstract void ScrollToElement();
+        public void KeysDown(params string[] keys) => AddBehavior<IUiElementBehaviorKeysDown>().KeysDown(keys);
+        public void KeysDown(params Key[] keys) => AddBehavior<IUiElementBehaviorKeysDown>().KeysDown(keys);
+
+        public void KeysUp(params string[] keys) => AddBehavior<IUiElementBehaviorKeysUp>().KeysUp(keys);
+        public void KeysUp(params Key[] keys) => AddBehavior<IUiElementBehaviorKeysUp>().KeysUp(keys);
+
+        public void PressKey(string key) => AddBehavior<IUiElementBehaviorPressKey>().PressKey(key);
+        public void PressKey(Key key) => AddBehavior<IUiElementBehaviorPressKey>().PressKey(key);
+
+        public void PressKeysSequentially(params string[] keys) => AddBehavior<IUiElementBehaviorPressKeysSequentially>().PressKeysSequentially(keys);
+        public void PressKeysSequentially(params Key[] keys) => AddBehavior<IUiElementBehaviorPressKeysSequentially>().PressKeysSequentially(keys);
+
+        public void PressKeysCombination(string keysCombination, string separator = SharedUiConstants.DefaultKeysCombinationSeparator) => AddBehavior<IUiElementBehaviorPressKeysSimultaneously>().PressKeysCombination(keysCombination, separator);
+        public void PressKeysSimultaneously(params string[] keys) => AddBehavior<IUiElementBehaviorPressKeysSimultaneously>().PressKeysSimultaneously(keys);
+        public void PressKeysSimultaneously(params Key[] keys) => AddBehavior<IUiElementBehaviorPressKeysSimultaneously>().PressKeysSimultaneously(keys);
+
+        public void SendText(string textKeys) => AddBehavior<IUiElementBehaviorSendText>().SendText(textKeys);
+
+        #endregion Keyboard Actions
+
+        #region Mouse Actions
+
+        public void Click() => AddBehavior<IUiElementBehaviorClick>().Click();
+        public void ClickJs() => AddBehavior<IUiElementBehaviorClickJs>().ClickJs();
+        public void ContextClick() => AddBehavior<IUiElementBehaviorContextClick>().ContextClick();
+        public void ContextClickJs() => AddBehavior<IUiElementBehaviorContextClickJs>().ContextClickJs();
+        public void DoubleClick() => AddBehavior<IUiElementBehaviorDoubleClick>().DoubleClick();
+        public void DragAndDrop(IUiElement uiElementToDrop) => AddBehavior<IUiElementBehaviorDragAndDrop>().DragAndDrop(uiElementToDrop);
+        public void DragAndDropByOffset(float offsetX, float offsetY) => AddBehavior<IUiElementBehaviorDragAndDropByOffset>().DragAndDropByOffset(offsetX, offsetY);
+        public void MouseDown() => AddBehavior<IUiElementBehaviorMouseDown>().MouseDown();
+        public void MouseDownJs() => AddBehavior<IUiElementBehaviorMouseDownJs>().MouseDownJs();
+        public void MouseHover() => AddBehavior<IUiElementBehaviorMouseHover>().MouseHover();
+        public void MouseUp() => AddBehavior<IUiElementBehaviorMouseUp>().MouseUp();
+        public void MouseUpJs() => AddBehavior<IUiElementBehaviorMouseUpJs>().MouseUpJs();
+        public void ScrollIntoView() => AddBehavior<IUiElementBehaviorScrollIntoView>().ScrollIntoView();
+        public void ScrollIntoViewInstantlyJs() => AddBehavior<IUiElementBehaviorScrollIntoViewInstantlyJs>().ScrollIntoViewInstantlyJs();
+        public void ScrollIntoViewSmoothlyJs() => AddBehavior<IUiElementBehaviorScrollIntoViewSmoothlyJs>().ScrollIntoViewSmoothlyJs();
+
+        #endregion Mouse Actions
+
+        #region Other Actions
+
+        public void FocusJs() => AddBehavior<IUiElementBehaviorFocusJs>().FocusJs();
+        public void RemoveJs() => AddBehavior<IUiElementBehaviorRemoveJs>().RemoveJs();
+        public void UnfocusJs() => AddBehavior<IUiElementBehaviorUnfocusJs>().UnfocusJs();
+
+        #endregion Other Actions
 
         #endregion Actions
 
@@ -126,37 +191,47 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 
         #region Find Child/Descendant UI Elements
 
-        public TUiElement FindUiElement<TUiElement>(string name, Use method, string criteria) where TUiElement : IUiElement
+        public TUiElement Find<TUiElement>(string method, string criteria, string? name = null) where TUiElement : IUiElement
         {
-            return UiElementsInstantiator.InstantiateUiElement<TUiElement>(name, method, criteria);
+            return UiElementsInstantiator.InstantiateUiElement<TUiElement>(method, criteria, parentUiElement: this, name: name);
         }
 
-        public TUiElement FindUiElement<TUiElement>(string name, List<IUiElementsFindInfo> findOptions) where TUiElement : IUiElement
+        public TUiElement Find<TUiElement>(Use method, string criteria, string? name = null) where TUiElement : IUiElement
         {
-            return UiElementsInstantiator.InstantiateUiElement<TUiElement>(name, findOptions);
+            return UiElementsInstantiator.InstantiateUiElement<TUiElement>(method, criteria, parentUiElement: this, name: name);
         }
 
-        public IUiElementsList<TUiElement> FindUiElements<TUiElement>(string name, Use method, string criteria) where TUiElement : IUiElement
+        public TUiElement Find<TUiElement>(List<IUiElementsFindInfo> findOptions, string? name = null) where TUiElement : IUiElement
         {
-            return UiElementsInstantiator.InstantiateUiElementsList<TUiElement>(name, method, criteria);
+            return UiElementsInstantiator.InstantiateUiElement<TUiElement>(findOptions, parentUiElement: this, name: name);
         }
 
-        public IUiElementsList<TUiElement> FindUiElements<TUiElement>(string name, List<IUiElementsFindInfo> findOptions) where TUiElement : IUiElement
+        public IUiElementsList<TUiElement> FindAll<TUiElement>(string method, string criteria, string? name = null) where TUiElement : IUiElement
         {
-            return UiElementsInstantiator.InstantiateUiElementsList<TUiElement>(name, findOptions);
+            return UiElementsInstantiator.InstantiateUiElementsList<TUiElement>(method, criteria, parentUiElement: this, name: name);
+        }
+
+        public IUiElementsList<TUiElement> FindAll<TUiElement>(Use method, string criteria, string? name = null) where TUiElement : IUiElement
+        {
+            return UiElementsInstantiator.InstantiateUiElementsList<TUiElement>(method, criteria, parentUiElement: this, name: name);
+        }
+
+        public IUiElementsList<TUiElement> FindAll<TUiElement>(List<IUiElementsFindInfo> findOptions, string? name = null) where TUiElement : IUiElement
+        {
+            return UiElementsInstantiator.InstantiateUiElementsList<TUiElement>(findOptions, parentUiElement: this, name: name);
         }
 
         #endregion Find Child/Descendant UI Elements
 
         #region Waiters
 
-        public IUiElement WaitToExist(TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
+        public IUiElement WaitToExist(TimeSpan? timeout, TimeSpan? pollingInterval = null)
         {
             CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
 
             Wait.WithTimeout(timeout.Value)
                 .PollingEvery(pollingInterval.Value)
-                .WithErrorMessage($"Element '{Info.InstantiationStage.FullName}' doesn't exist in the DOM.")
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' doesn't exist in the DOM.")
                 .Until(() => Exists());
 
             return this;
@@ -165,13 +240,13 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         public IUiElement WaitToExist(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
             => WaitToExist(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
 
-        public IUiElement WaitToNotExist(TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
+        public IUiElement WaitToNotExist(TimeSpan? timeout, TimeSpan? pollingInterval = null)
         {
             CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
 
             Wait.WithTimeout(timeout.Value)
                 .PollingEvery(pollingInterval.Value)
-                .WithErrorMessage($"Element '{Info.InstantiationStage.FullName}' still exists in the DOM.")
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' still exists in the DOM.")
                 .Until(() => !Exists());
 
             return this;
@@ -180,35 +255,65 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         public IUiElement WaitToNotExist(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
             => WaitToNotExist(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
 
-        public IUiElement WaitToBeVisible(TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
+        public IUiElement WaitToBeDisplayed(TimeSpan? timeout, TimeSpan? pollingInterval = null)
         {
             CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
 
             Wait.WithTimeout(timeout.Value)
                 .PollingEvery(pollingInterval.Value)
-                .WithErrorMessage($"Element '{Info.InstantiationStage.FullName}' has not become visible'.")
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' has not become displayed.")
                 .Until(() => IsDisplayed());
 
             return this;
         }
 
-        public IUiElement WaitToBeVisible(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
-            => WaitToBeVisible(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
+        public IUiElement WaitToBeDisplayed(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
+            => WaitToBeDisplayed(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
 
-        public IUiElement WaitToNotBeVisible(TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
+        public IUiElement WaitToBeHidden(TimeSpan? timeout, TimeSpan? pollingInterval = null)
         {
             CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
 
             Wait.WithTimeout(timeout.Value)
                 .PollingEvery(pollingInterval.Value)
-                .WithErrorMessage($"Element '{Info.InstantiationStage.FullName}' has not become visible'.")
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' has not become hidden, but is still visible.")
                 .Until(() => !IsDisplayed());
 
             return this;
         }
 
-        public IUiElement WaitToNotBeVisible(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
-            => WaitToNotBeVisible(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
+        public IUiElement WaitToBeHidden(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
+            => WaitToBeHidden(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
+
+        public IUiElement WaitToBeEnabled(TimeSpan? timeout, TimeSpan? pollingInterval = null)
+        {
+            CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
+
+            Wait.WithTimeout(timeout.Value)
+                .PollingEvery(pollingInterval.Value)
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' has not become enabled.")
+                .Until(() => IsEnabled());
+
+            return this;
+        }
+
+        public IUiElement WaitToBeEnabled(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
+            => WaitToBeEnabled(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
+
+        public IUiElement WaitToBeDisabled(TimeSpan? timeout, TimeSpan? pollingInterval = null)
+        {
+            CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
+
+            Wait.WithTimeout(timeout.Value)
+                .PollingEvery(pollingInterval.Value)
+                .WithErrorMessage($"UiElement '{Info.InstantiationStage.FullName}' has not become disabled, but is still enabled.")
+                .Until(() => !IsEnabled());
+
+            return this;
+        }
+
+        public IUiElement WaitToBeDisabled(double timeoutSec = SharedUiConstants.UiElementWaitTimeoutSec, double pollingIntervalSec = SharedUiConstants.UiElementWaitPollingIntervalSec)
+            => WaitToBeDisabled(TimeSpan.FromSeconds(timeoutSec), TimeSpan.FromSeconds(pollingIntervalSec));
 
         private void CheckTimeoutAndPollingInterval(ref TimeSpan? timeout, ref TimeSpan? pollingInterval)
         {

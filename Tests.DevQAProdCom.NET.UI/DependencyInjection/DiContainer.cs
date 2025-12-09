@@ -1,4 +1,5 @@
 ﻿using ApplicationName.QA.Global.DependencyInjection;
+using ApplicationName.QA.TestsBasis.DependencyInjection;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
 using DevQAProdCom.NET.UI.Playwright.DependencyInjection;
@@ -7,7 +8,6 @@ using DevQAProdCom.NET.UI.Shared.Enumerations;
 using Microsoft.Extensions.DependencyInjection;
 using Tests.DevQAProdCom.NET.UI.Configurations;
 using Tests.DevQAProdCom.NET.UI.TestClasses;
-using ApplicationName.QA.TestsBasis.DependencyInjection;
 
 namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
 {
@@ -38,7 +38,9 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
             //Form DI
             if (CurrentTechnology == UiInteractorTechnology.Playwright)
             {
-                _serviceCollection.ConfigurePlaywright(customBrowserFactoryFunc: (provider) => { return new PlaywrightBrowserFactory(provider.GetRequiredService<ILogger>()); })
+                _serviceCollection.ConfigurePlaywright(customBrowserFactoryFunc: (provider) => { return new PlaywrightBrowserFactory(provider.GetRequiredService<ILogger>()); },
+                     getCurrentTestIdentifierFunc: () => TestContext.CurrentContext.Test.ID,
+                     getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName)
                     .AddSingleton<TestClassForDiInjection>()
                     .AddSingleton<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
                     .AddPlaywrightFindOptionSearchMethod<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
@@ -46,7 +48,10 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
             }
             else if (CurrentTechnology == UiInteractorTechnology.Selenium)
             {
-                _serviceCollection.ConfigureSelenium(customWebDriverFactoryFunc: (provider) => { return new SeleniumWebDriverFactory(provider.GetRequiredService<ILogger>()); })
+                _serviceCollection.ConfigureSelenium(
+                    customWebDriverFactoryFunc: (provider) => { return new SeleniumWebDriverFactory(provider.GetRequiredService<ILogger>()); },
+                     getCurrentTestIdentifierFunc: () => TestContext.CurrentContext.Test.ID,
+                     getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName)
                     .AddSingleton<TestClassForDiInjection>()
                     .AddSingleton<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
                     .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()

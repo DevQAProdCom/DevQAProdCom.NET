@@ -115,7 +115,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_FrameComplexUiElementAsClass_78c2.FrameComplexUiElementAsClass_4160.UiElementsListOfFrameSimpleUiElementsAsInterface_4160.Select(x => x.GetAttribute(Const.id, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_FrameComplexUiElementAsClass_78c2.FrameComplexUiElementAsClass_4160.UiElementsListOfFrameSimpleUiElementsAsInterface_4160.Select(x => x.GetIdAttribute()).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -140,7 +140,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Search_Page_FrameComplexUiElementAsClass_FrameComplexUiElementAsClass_ShadowRootHostSimpleUiElementAsInterface()
         {
             //WHEN
-            var actualValue = _pageService._page.Page_FrameComplexUiElementAsClass_e8a7.FrameComplexUiElementAsClass_2075.ShadowRootHostSimpleUiElementAsInterface_2075.GetAttribute(Const.id, isBooleanAttributeType: false);
+            var actualValue = _pageService._page.Page_FrameComplexUiElementAsClass_e8a7.FrameComplexUiElementAsClass_2075.ShadowRootHostSimpleUiElementAsInterface_2075.GetIdAttribute();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -163,7 +163,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_FrameComplexUiElementAsClass_3279.FrameComplexUiElementAsClass_4ee2.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_4ee2.Select(x => x.GetAttribute(Const.id, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_FrameComplexUiElementAsClass_3279.FrameComplexUiElementAsClass_4ee2.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_4ee2.Select(x => x.GetIdAttribute()).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -179,7 +179,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Search_Page_FrameComplexUiElementAsClass_FrameComplexUiElementAsClass_ShadowRootHostComplexUiElementAsClass_ShadowRootHostSimpleUiElementAsInterface()
         {
             //WHEN
-            var actualValue = _pageService._page.Page_FrameComplexUiElementAsClass_29f4.FrameComplexUiElementAsClass_f2ab.ShadowRootHostComplexUiElementAsClass_f2ab.ShadowRootHostSimpleUiElementAsInterface_f2ab.GetAttribute(Const.id, isBooleanAttributeType: false);
+            var actualValue = _pageService._page.Page_FrameComplexUiElementAsClass_29f4.FrameComplexUiElementAsClass_f2ab.ShadowRootHostComplexUiElementAsClass_f2ab.ShadowRootHostSimpleUiElementAsInterface_f2ab.GetIdAttribute();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN

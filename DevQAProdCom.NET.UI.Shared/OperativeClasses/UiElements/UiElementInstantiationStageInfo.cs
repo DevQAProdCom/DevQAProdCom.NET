@@ -33,7 +33,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         }
 
         public IReadOnlyList<IUiElementsFindInfo> FindOptions { get; internal set; }
-        public IParentUiElement? ParentContainer { get; internal set; }
+        public IUiElement? ParentContainer { get; internal set; }
 
         private IReadOnlyList<INestingLevelFindParameters>? _nestingLevelsFindParameters;
         public IReadOnlyList<INestingLevelFindParameters> NestingLevelsFindParameters
@@ -85,7 +85,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 
         public UiElementInstantiationStageInfo(string name,
             List<IUiElementsFindInfo> findOptions,
-            IParentUiElement? parentContainer = null,
+            IUiElement? parentContainer = null,
             bool isList = false,
             int? uiIndex = null)
         {

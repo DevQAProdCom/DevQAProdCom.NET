@@ -2,7 +2,7 @@
 using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
-using DevQAProdCom.NET.UI.UiElements.OperativeClasses;
+using DevQAProdCom.NET.UI.UiElements.Interfaces;
 
 namespace ApplicationName.QA.TestsBasis.Ui.Pages
 {
@@ -82,10 +82,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
         public IUiElement ButtonForScroll;
 
         [Find(Use.IdEquals, "Text Area")]
-        public InputText TextArea;
+        public IInputText TextArea;
 
         [Find(Use.IdEquals, "InputTextBox")]
-        public InputText InputTextBox;
+        public IInputText InputTextBox;
 
         [Find(Use.IdEquals, "Form")]
         public Form Form;
@@ -189,10 +189,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
             get
             {
                 if (_dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = InstantiateUiElement<IUiElement>(
-                                "Dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator",
+                    _dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = Find<IUiElement>(
                                 Use.XPath,
-                                "//table[@id='Table2']//tr[2]//th[2]");
+                                "//table[@id='Table2']//tr[2]//th[2]",
+                                name: "Dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator;
             }
@@ -204,10 +204,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
             get
             {
                 if (_dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = InstantiateUiElement<Cell>(
-                                "Dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator",
+                    _dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = Find<Cell>(
                                 Use.XPath,
-                                "//table[@id='Table2']//tr[2]//th[2]");
+                                "//table[@id='Table2']//tr[2]//th[2]",
+                                name: "Dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator;
             }
@@ -219,10 +219,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
             get
             {
                 if (_dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = InstantiateUiElementsList<IUiElement>(
-                                "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator",
+                    _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = FindAll<IUiElement>(
                                 Use.XPath,
-                                "//table[@id='Table2']//tr[2]//th");
+                                "//table[@id='Table2']//tr[2]//th",
+                                name: "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator;
             }
@@ -234,14 +234,13 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
             get
             {
                 if (_dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = InstantiateUiElementsList<Cell>(
-                            "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator",
+                    _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator = FindAll<Cell>(
                             Use.XPath,
-                            "//table[@id='Table2']//tr[2]//th");
+                            "//table[@id='Table2']//tr[2]//th",
+                            name: "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator;
             }
         }
     }
-
 }

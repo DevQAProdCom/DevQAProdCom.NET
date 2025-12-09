@@ -21,5 +21,9 @@
     <PackageReference Include="DevQAProdCom.NET.UI.Selenium.WebDrivers" />
     <PackageReference Include="DevQAProdCom.NET.UI.UiElements" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.Support" />
+  </ItemGroup>
   
 </Project>

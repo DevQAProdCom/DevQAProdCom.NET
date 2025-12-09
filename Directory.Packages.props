@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageVersion Include="Selenium.Support" Version="4.38.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.6.2" />
   </ItemGroup>

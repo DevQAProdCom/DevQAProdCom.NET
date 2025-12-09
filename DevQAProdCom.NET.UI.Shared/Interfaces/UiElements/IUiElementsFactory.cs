@@ -3,6 +3,6 @@
     public interface IUiElementsFactory
     {
         public object CreateUiElement(Type @type, IUiElementInfo uiElementInfo, params KeyValuePair<string, object>[] nativeObjects);
-        public object CreateListOfUiElements(Type @type, IUiElementInfo uiElementInfo);
+        public object CreateUiElementsList(Type @type, IUiElementInfo uiElementInfo);
     }
 }

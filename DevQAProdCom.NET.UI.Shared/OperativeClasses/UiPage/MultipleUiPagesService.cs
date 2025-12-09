@@ -6,6 +6,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 {
     public class MultipleUiPagesService : UiPageService, IMultipleUiPagesService
     {
-        public MultipleUiPagesService(IUiInteractor interactor, string tabName = SharedUiConstants.DefaultTab) : base(interactor, tabName) { }
+        public MultipleUiPagesService(IUiInteractor interactor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(interactor, tabName) { }
     }
 }

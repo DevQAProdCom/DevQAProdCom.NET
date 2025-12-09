@@ -65,5 +65,13 @@
 
             return char.ToLowerInvariant(@string[0]) + @string.Substring(1);
         }
+
+        public static bool? ToBooleanOrNull(this string? @string)
+        {
+            if (string.IsNullOrEmpty(@string))
+                return null;
+
+            return Boolean.Parse(@string);
+        }
     }
 }

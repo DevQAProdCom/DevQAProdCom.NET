@@ -7,7 +7,7 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
     public class UiElementSearchRelativeToUiElementsListOfShadowRootHostComplexUiElementsAsClassTestPageService : SingleUiPageService<UiElementSearchRelativeToUiElementsListOfShadowRootHostComplexUiElementsAsClassTestPage>
     {
-        public UiElementSearchRelativeToUiElementsListOfShadowRootHostComplexUiElementsAsClassTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab) : base(uiInteractor, tabName)
+        public UiElementSearchRelativeToUiElementsListOfShadowRootHostComplexUiElementsAsClassTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
 
         }

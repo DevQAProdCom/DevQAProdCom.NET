@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using DevQAProdCom.NET.API.Interfaces;
 using DevQAProdCom.NET.API.Models;
+using DevQAProdCom.NET.Global.Builders;
 using DevQAProdCom.NET.Global.Extensions;
 
 namespace DevQAProdCom.NET.API.Builders

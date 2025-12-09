@@ -16,11 +16,11 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
             GoToPage();
             _page.UserName.SetText(username);
             _page.Password.SetText(password);
-            _page.LoginButton.MouseClick();
+            _page.LoginButton.Click();
 
             Wait.Create().Until(() =>
             {
-                var url = _uiTab.GetTabUrl();
+                var url = _uiTab.GetTabUriAsString();
                 return url.EndsWith("HomeTestPage");
             });
         }

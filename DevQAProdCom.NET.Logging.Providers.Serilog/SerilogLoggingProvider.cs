@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Logging.Providers.Serilog.Interfaces;
+﻿using DevQAProdCom.NET.Logging.Providers.Serilog.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.Enumerations;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -55,7 +54,7 @@ namespace DevQAProdCom.NET.Logging.Providers.Serilog
             string configurationPath = "Serilog:MinimumLevel:Default";
             var minimumLogLevel = configParameters.GetSection(configurationPath).Value;
 
-            if(string.IsNullOrEmpty(minimumLogLevel))
+            if (string.IsNullOrEmpty(minimumLogLevel))
                 throw new Exception($"Unable to find Serilog Minimum Log Level inside configuration using path: '{configurationPath}'.");
 
             return Enum.Parse<LogEventLevel>(minimumLogLevel, ignoreCase: true);

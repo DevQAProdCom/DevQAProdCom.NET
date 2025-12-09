@@ -50,6 +50,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
 
             //Result Data
             List<IFindResult<TNativeElement, TNativeFrameElement, TNativeShadowRootHostElement>> nativeElementsList = new(); // should return empty list if nothing is found
+
             (List<List<IFindParametersWithSearchResult>> FindChainCombinations, int StartSearchFromIndex) findData = GetFindData(uiElementInfo);
 
             Stopwatch searchTimeStopWatch = Stopwatch.StartNew();
@@ -146,13 +147,13 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
                 Exception? generalException = null;
 
                 //If Single UiElement is searched, but no found - throw exception.
-                if (nativeElementsList.Count == 0)
+                if (nativeElementsList.Count() == 0)
                 {
-                    baseExceptionMessage = $"No native elements were found while searching for UiElement '{uiElementInfo.InstantiationStage.FullName}' on page '{findResultsStatesLoggingModel.GetUriAfterSearchString()}'.";
+                    baseExceptionMessage = $"No native elements were found or errors appeared while searching for UiElement '{uiElementInfo.InstantiationStage.FullName}' on page '{findResultsStatesLoggingModel.GetUriAfterSearchString()}'.";
                     generalException = new Exception(baseExceptionMessage);
                 }
                 //If Single UiElement is searched, but several found - throw exception.
-                else if (nativeElementsList.Count > 1)
+                else if (nativeElementsList.Count() > 1)
                 {
                     baseExceptionMessage = $"Single native element was expected, but '{nativeElementsList.Count}' were found while searching for UiElement '{uiElementInfo.InstantiationStage.FullName}' on page '{findResultsStatesLoggingModel.GetUriAfterSearchString()}'.";
                     generalException = new Exception(baseExceptionMessage);
@@ -167,13 +168,13 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
                 {
                     var loggingModel = new UiElementsSearchLoggingModelWithSearchResultVerbose(findResultsStatesLoggingModel);
                     _log.Error($"{{@{SharedLoggingConstants.Data}}}", new UiElementsSearchLoggingModelWithSearchResultVerbose(findResultsStatesLoggingModel));
-                    throw new Exception($"{baseExceptionMessage}\n{loggingModel.ToJson(new JsonSerializerOptions { WriteIndented = true })}");
+                    throw new UiElementNotFoundException($"{baseExceptionMessage}\n{loggingModel.ToJson(new JsonSerializerOptions { WriteIndented = true })}");
                 }
                 else if (_log.MinimumLogLevel >= LogLevel.Debug)
                 {
                     var loggingModel = new UiElementsSearchLoggingModelWithSearchResultDebug(findResultsStatesLoggingModel);
                     _log.Error($"{{@{SharedLoggingConstants.Data}}}", loggingModel);
-                    throw new Exception($"{baseExceptionMessage}\n{loggingModel.ToJson(new JsonSerializerOptions { WriteIndented = true })}");
+                    throw new UiElementNotFoundException($"{baseExceptionMessage}\n{loggingModel.ToJson(new JsonSerializerOptions { WriteIndented = true })}");
                 }
             }
             else //if no exceptions

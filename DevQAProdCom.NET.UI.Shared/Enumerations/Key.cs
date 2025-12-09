@@ -1,70 +1,70 @@
 ﻿namespace DevQAProdCom.NET.UI.Shared.Enumerations
 {
-    public class Key
+    public enum Key
     {
-        public const string Null = "Null";
-        public const string Cancel = "Cancel";
-        public const string Help = "Help";
-        public const string Backspace = "Backspace";
-        public const string Tab = "Tab";
-        public const string Clear = "Clear";
-        public const string Return = "Return";
-        public const string Enter = "Enter";
-        public const string Shift = "Shift";
-        public const string LeftShift = "LeftShift";
-        public const string Control = "Control";
-        public const string LeftControl = "LeftControl";
-        public const string Alt = "Alt";
-        public const string LeftAlt = "LeftAlt";
-        public const string Pause = "Pause";
-        public const string Escape = "Escape";
-        public const string Space = "Space";
-        public const string PageUp = "PageUp";
-        public const string PageDown = "PageDown";
-        public const string End = "End";
-        public const string Home = "Home";
-        public const string Left = "Left";
-        public const string ArrowLeft = "ArrowLeft";
-        public const string Up = "Up";
-        public const string ArrowUp = "ArrowUp";
-        public const string Right = "Right";
-        public const string ArrowRight = "ArrowRight";
-        public const string Down = "Down";
-        public const string ArrowDown = "ArrowDown";
-        public const string Insert = "Insert";
-        public const string Delete = "Delete";
-        public const string Semicolon = "Semicolon";
-        public const string Equal = "Equal";
-        public const string NumberPad0 = "NumberPad0";
-        public const string NumberPad1 = "NumberPad1";
-        public const string NumberPad2 = "NumberPad2";
-        public const string NumberPad3 = "NumberPad3";
-        public const string NumberPad4 = "NumberPad4";
-        public const string NumberPad5 = "NumberPad5";
-        public const string NumberPad6 = "NumberPad6";
-        public const string NumberPad7 = "NumberPad7";
-        public const string NumberPad8 = "NumberPad8";
-        public const string NumberPad9 = "NumberPad9";
-        public const string Multiply = "Multiply";
-        public const string Add = "Add";
-        public const string Separator = "Separator";
-        public const string Subtract = "Subtract";
-        public const string Decimal = "Decimal";
-        public const string Divide = "Divide";
-        public const string F1 = "F1";
-        public const string F2 = "F2";
-        public const string F3 = "F3";
-        public const string F4 = "F4";
-        public const string F5 = "F5";
-        public const string F6 = "F6";
-        public const string F7 = "F7";
-        public const string F8 = "F8";
-        public const string F9 = "F9";
-        public const string F10 = "F10";
-        public const string F11 = "F11";
-        public const string F12 = "F12";
-        public const string Meta = "Meta";
-        public const string Command = "Command";
-        public const string ZenkakuHankaku = "ZenkakuHankaku";
+        Null,
+        Cancel,
+        Help,
+        Backspace,
+        Tab,
+        Clear,
+        Return,
+        Enter,
+        Shift,
+        LeftShift,
+        Control,
+        LeftControl,
+        Alt,
+        LeftAlt,
+        Pause,
+        Escape,
+        Space,
+        PageUp,
+        PageDown,
+        End,
+        Home,
+        Left,
+        ArrowLeft,
+        Up,
+        ArrowUp,
+        Right,
+        ArrowRight,
+        Down,
+        ArrowDown,
+        Insert,
+        Delete,
+        Semicolon,
+        Equal,
+        NumberPad0,
+        NumberPad1,
+        NumberPad2,
+        NumberPad3,
+        NumberPad4,
+        NumberPad5,
+        NumberPad6,
+        NumberPad7,
+        NumberPad8,
+        NumberPad9,
+        Multiply,
+        Add,
+        Separator,
+        Subtract,
+        Decimal,
+        Divide,
+        F1,
+        F2,
+        F3,
+        F4,
+        F5,
+        F6,
+        F7,
+        F8,
+        F9,
+        F10,
+        F11,
+        F12,
+        Meta,
+        Command,
+        ZenkakuHankaku
     }
 }

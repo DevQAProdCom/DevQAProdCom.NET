@@ -74,17 +74,17 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actualTab1ButtonText_OnPageLoad = _tab1Button.GetTextContent();
             var actualTab2ButtonText_OnPageLoad = _tab2Button.GetTextContent();
 
-            _tab1Button.MouseClick();
+            _tab1Button.Click();
             var actualTab1ButtonText_BeforeCookieSet = _tab1Button.GetTextContent();
-            _tab2Button.MouseClick();
+            _tab2Button.Click();
             var actualTab2ButtonText_BeforeCookieSet = _tab2Button.GetTextContent();
 
             //WHEN
             action.Invoke();
 
-            _tab1Button.MouseClick();
+            _tab1Button.Click();
             var actualTab1ButtonText_AfterCookieSet = _tab1Button.GetTextContent();
-            _tab2Button.MouseClick();
+            _tab2Button.Click();
             var actualTab2ButtonText_AfterCookieSet = _tab2Button.GetTextContent();
 
             //THEN
@@ -153,11 +153,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actualCookie = UiInteractor.GetCookie(Const.CookieBWithDomainPathConstructor.Name);
             var tab3Button = service3._page.Tab3ButtonCheckCookie;
 
-            tab3Button.MouseClick();
+            tab3Button.Click();
             var actualButtonTextAfterCookieSet = tab3Button.GetTextContent();
 
             UiInteractor.ClearCookies(Const.CookieBWithDomainPathConstructor.Name);
-            tab3Button.MouseClick();
+            tab3Button.Click();
             var actualButtonTextAfterCookieCleared = tab3Button.GetTextContent();
 
             //THEN

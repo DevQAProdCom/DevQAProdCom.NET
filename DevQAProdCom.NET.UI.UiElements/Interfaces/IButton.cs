@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.UI.UiElements.Interfaces
 {
-    public interface IButton : IParentUiElement
+    public interface IButton : IUiElement
     {
     }
 }

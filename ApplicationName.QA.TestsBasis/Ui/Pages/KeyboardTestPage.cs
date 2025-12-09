@@ -1,6 +1,7 @@
 ﻿using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
+using DevQAProdCom.NET.UI.UiElements.Interfaces;
 using DevQAProdCom.NET.UI.UiElements.OperativeClasses;
 
 namespace ApplicationName.QA.TestsBasis.Ui.Pages
@@ -13,51 +14,51 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
         public IUiElement KeyDownEventInterceptorSection;
 
         [Find(Use.IdEquals, "Key Down Code")]
-        public InputText KeyDownCodeInfo;
+        public IInputText KeyDownCodeInfo;
 
         [Find(Use.IdEquals, "Key Down Value")]
-        public InputText KeyDownValueInfo;
+        public IInputText KeyDownValueInfo;
 
         [Find(Use.IdEquals, "Key Up Event Interceptor")]
         public IUiElement KeyUpEventInterceptorSection;
 
         [Find(Use.IdEquals, "Key Up Code")]
-        public InputText KeyUpCodeInfoTextBox;
+        public IInputText KeyUpCodeInfoTextBox;
 
         [Find(Use.IdEquals, "Key Up Value")]
-        public InputText KeyUpValueInfoTextBox;
+        public IInputText KeyUpValueInfoTextBox;
 
         [Find(Use.IdEquals, "Key Press Event Interceptor")]
         public IUiElement KeyPressEventInterceptorSection;
 
         [Find(Use.IdEquals, "Key Press Event Interceptor Key Down Code")]
-        public InputText KeyPressEventInterceptorKeyDownCodeInfo;
+        public IInputText KeyPressEventInterceptorKeyDownCodeInfo;
 
         [Find(Use.IdEquals, "Key Press Event Interceptor Key Down Value")]
-        public InputText KeyPressEventInterceptorKeyDownValueInfo;
+        public IInputText KeyPressEventInterceptorKeyDownValueInfo;
 
         [Find(Use.IdEquals, "Key Press Event Interceptor Key Up Code")]
-        public InputText KeyPressEventInterceptorKeyUpCodeInfo;
+        public IInputText KeyPressEventInterceptorKeyUpCodeInfo;
 
         [Find(Use.IdEquals, "Key Press Event Interceptor Key Up Value")]
-        public InputText KeyPressEventInterceptorKeyUpValueInfo;
+        public IInputText KeyPressEventInterceptorKeyUpValueInfo;
 
         [Find(Use.IdEquals, "Copy TextBox")]
-        public InputText CopyTextBox;
+        public IInputText CopyTextBox;
 
         [Find(Use.IdEquals, "Paste TextBox")]
-        public InputText PasteTextBox;
+        public IInputText PasteTextBox;
 
         [Find(Use.IdEquals, "Input TextBox")]
-        public InputText InputTextBox;
+        public IInputText InputTextBox;
 
         [Find(Use.IdEquals, "Key DownUp Event Interceptor")]
         public IUiElement KeyDownUpEventInterceptorSection;
 
         [Find(Use.IdEquals, "Key DownUp Code")]
-        public InputText KeyDownUpCodeInfo;
+        public IInputText KeyDownUpCodeInfo;
 
         [Find(Use.IdEquals, "Key DownUp Value")]
-        public InputText KeyDownUpValueInfo;
+        public IInputText KeyDownUpValueInfo;
     }
 }

@@ -21,11 +21,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Components
             get
             {
                 if (_dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = InstantiateUiElement<IUiElement>(
-                                "Dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator",
+                    _dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = Find<IUiElement>(
                                 Use.XPath,
                                 ".//tr[2]//th[2]",
-                                parentUiElement: this);
+                                name: "Dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator;
             }
@@ -37,11 +36,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Components
             get
             {
                 if (_dynamic_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = InstantiateUiElement<Cell>(
-                                "Dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator",
+                    _dynamic_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = Find<Cell>(
                                 Use.XPath,
                                 ".//tr[2]//th[2]",
-                                parentUiElement: this);
+                                name: "Dynamic_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator;
             }
@@ -53,11 +51,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Components
             get
             {
                 if (_dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = InstantiateUiElementsList<IUiElement>(
-                            "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator",
+                    _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = FindAll<IUiElement>(
                             Use.XPath,
                             ".//tr[2]//th",
-                            parentUiElement: this);
+                            "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator;
             }
@@ -69,11 +66,10 @@ namespace ApplicationName.QA.TestsBasis.Ui.Components
             get
             {
                 if (_dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator == null)
-                    _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = InstantiateUiElementsList<Cell>(
-                            "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator",
+                    _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator = FindAll<Cell>(
                             Use.XPath,
                             ".//tr[2]//th",
-                            parentUiElement: this);
+                             "Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator");
 
                 return _dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator;
             }

@@ -2,6 +2,7 @@
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
 {
@@ -13,11 +14,15 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
         private readonly Dictionary<string, IUiInteractor> _instances = new();
 
         protected ILogger _log;
+        protected readonly IUiInteractorBehaviorFactory UiInteractorBehaviorFactory;
+        protected readonly IUiInteractorTabBehaviorFactory UiInteractorTabBehaviorFactory;
 
-        public BaseUiInteractorsManager(ILogger log, string? name = null)
+        public BaseUiInteractorsManager(ILogger log, IUiInteractorBehaviorFactory uiInteractorBehaviorFactory, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory, string? name = null)
         {
             _log = log;
             Name = name ?? Id.ToString();
+            UiInteractorBehaviorFactory = uiInteractorBehaviorFactory;
+            UiInteractorTabBehaviorFactory = uiInteractorTabBehaviorFactory;
         }
 
         public IUiInteractor GetUiInteractor(string name = SharedUiConstants.DefaultUiInteractorInstance)
@@ -32,20 +37,20 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
         {
             if (_instances.ContainsKey(identifier))
             {
-                _instances[identifier].DisposeInteractor();
+                _instances[identifier].Dispose();
                 _instances.Remove(identifier);
             }
             else
                 throw new KeyNotFoundException($"Interactor with identifier '{identifier}' was not found.");
         }
 
-        public void DisposeUiInteractors()
+        public void DisposeAllUiInteractors()
         {
             foreach (var instance in _instances.Values)
             {
                 try
                 {
-                    instance.DisposeInteractor();
+                    instance.Dispose();
                 }
                 catch (Exception ex)
                 {

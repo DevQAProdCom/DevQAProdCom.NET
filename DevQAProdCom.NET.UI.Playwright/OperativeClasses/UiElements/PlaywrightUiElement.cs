@@ -67,13 +67,13 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
 
         public IPage? GetPage()
         {
-            NativeObjects.TryGetValue(ProjectConst.IUiPage, out object? IUiPage);
+            NativeObjects.TryGetValue(ProjectConst.IPage, out object? IUiPage);
             return IUiPage as IPage;
         }
 
         public T? GetBrowser<T>() where T : IBrowser
         {
-            NativeObjects.TryGetValue(ProjectConst.IBrowser, out object? iBrowser);
+            NativeObjects.TryGetValue(SharedUiConstants.IBrowser, out object? iBrowser);
 
             if (iBrowser != null)
                 return (T)iBrowser;
@@ -205,29 +205,17 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
                 // If the element is found, return true
                 return true;
             }
-            catch (PlaywrightException)
+            catch (Exception)
             {
                 // If the element is not found, return false
                 return false;
             }
         }
-        public override bool IsDisabled() => GetLocator().IsDisabledAsync().Result;
-        public override bool IsDisplayed() => GetLocator().IsVisibleAsync().Result;
-        public override bool IsEnabled() => GetLocator().IsEnabledAsync().Result;
+        public override bool IsDisabled() => Exists() && GetLocator().IsDisabledAsync().Result;
+        public override bool IsDisplayed() => Exists() && GetLocator().IsVisibleAsync().Result;
+        public override bool IsEnabled() => Exists() && GetLocator().IsEnabledAsync().Result;
 
         #endregion States
-
-        #region Actions
-
-        public override void MouseClick() => GetLocator().ClickAsync().GetAwaiter().GetResult();
-
-        public override void ScrollToElement()
-        {
-            var locator = GetLocator();
-            locator.ScrollIntoViewIfNeededAsync().Wait();
-        }
-
-        #endregion Actions
 
         #region Execute JavaScript
 
@@ -235,7 +223,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
         {
             ILocator locator = GetLocator();
             IElementHandle elementHandle = locator.ElementHandleAsync().Result;
-            var uiElementArgument = new KeyValuePair<string, object>(SharedUiConstants.UiElementArgument, elementHandle);
+            var uiElementArgument = new KeyValuePair<string, object>(SharedUiConstants.JavaScriptArguments.UiElementArgument, elementHandle);
             return arguments.Insert(0, uiElementArgument);
         }
 

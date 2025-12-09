@@ -2,8 +2,7 @@
 {
     internal class ProjectConst
     {
-        public const string IUiPage = "IUiPage";
-        public const string IBrowser = "IBrowser";
         public const string IBrowserContext = "IBrowserContext";
+        public const string IPage = "IPage";
     }
 }

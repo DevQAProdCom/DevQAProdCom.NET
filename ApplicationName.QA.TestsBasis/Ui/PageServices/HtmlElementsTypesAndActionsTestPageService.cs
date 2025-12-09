@@ -7,7 +7,7 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
     public class HtmlElementsTypesAndActionsTestPageService : SingleUiPageService<HtmlElementsTypesAndActionsTestPage>
     {
-        public HtmlElementsTypesAndActionsTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab) : base(uiInteractor, tabName)
+        public HtmlElementsTypesAndActionsTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
 
         }

@@ -23,6 +23,15 @@
                     dict.Upsert(keyValuePair.Key, keyValuePair.Value);
         }
 
+        public static void Upsert<TKey, TValue>(this IDictionary<TKey, TValue>? targetDictionary,
+           IDictionary<TKey, TValue>? sourceDictonary)
+            where TKey : notnull
+            where TValue : notnull
+        {
+            if (sourceDictonary?.Count() > 0)
+                targetDictionary.Upsert(sourceDictonary.ToArray());
+        }
+
         public static TValue Get<TValue>(this IDictionary<string, object>? dict, string key)
         {
             if (dict?.Count > 0)

@@ -4,6 +4,7 @@ using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager;
 
@@ -13,7 +14,6 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractorsManager
     {
         private readonly ISeleniumWebDriverFactory _webDriverFactory;
         private readonly IUiPageFactoryProvider _pageFactoryProvider;
-        private readonly IUiElementsInstantiator _uiElementsInstantiator;
         private readonly IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> _findOptionSearchMethodsProvider;
         private readonly ISeleniumCookieMappers _cookieMappers;
 
@@ -22,7 +22,9 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractorsManager
             IUiPageFactoryProvider pageFactoryProvider,
             IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider,
             ISeleniumCookieMappers cookieMappers,
-            string? name = null) : base(log, name)
+            IUiInteractorBehaviorFactory uiInteractorBehaviorFactory,
+            IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory,
+            string? name = null) : base(log, uiInteractorBehaviorFactory, uiInteractorTabBehaviorFactory, name)
         {
             _webDriverFactory = webDriverFactory;
             _pageFactoryProvider = pageFactoryProvider;
@@ -32,7 +34,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractorsManager
 
         protected override IUiInteractor CreateTechnologySpecificInteractor()
         {
-            IUiInteractor instance = new SeleniumUiInteractor(_log, this, _webDriverFactory, _pageFactoryProvider, _findOptionSearchMethodsProvider, _cookieMappers);
+            IUiInteractor instance = new SeleniumUiInteractor(_log, this, _webDriverFactory, _pageFactoryProvider, _findOptionSearchMethodsProvider, _cookieMappers, UiInteractorBehaviorFactory, UiInteractorTabBehaviorFactory);
             return instance;
         }
     }

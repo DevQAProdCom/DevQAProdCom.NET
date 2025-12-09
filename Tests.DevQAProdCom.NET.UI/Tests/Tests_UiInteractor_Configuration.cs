@@ -1,7 +1,7 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Helpers;
-using DevQAProdCom.NET.UI.Shared.Interfaces.Behaviors;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Files;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
@@ -30,7 +30,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             _pageService._page.InputFieldForDownloadedFileName.SetText(expectedFileName);
-            _pageService._page.DownloadFileButton.AddBehavior<IUiElementDownloadBehavior>().DownloadFile();
+            _pageService._page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
+
             Thread.Sleep(500);
             var actualDirectoryFilesAfterDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
 

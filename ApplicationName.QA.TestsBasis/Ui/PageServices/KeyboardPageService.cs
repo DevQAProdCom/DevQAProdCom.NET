@@ -7,7 +7,7 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
     public class KeyboardPageService : SingleUiPageService<KeyboardTestPage>
     {
-        public KeyboardPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab) : base(uiInteractor, tabName)
+        public KeyboardPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
     }

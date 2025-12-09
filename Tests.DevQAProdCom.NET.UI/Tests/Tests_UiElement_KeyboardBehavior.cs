@@ -1,8 +1,6 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.Pages;
 using ApplicationName.QA.TestsBasis.Ui.PageServices;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
-using DevQAProdCom.NET.UI.Shared.Interfaces.Behaviors.Keyboard;
-using DevQAProdCom.NET.UI.Shared.Interfaces.Behaviors.Mouse;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
@@ -86,12 +84,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [TestCase(Key.Meta, "Meta", "91")]
         [TestCase(Key.Command, "Meta", "91")] //Unknown key: "Command"  Unknown key: "Meta"
         [TestCase(Key.ZenkakuHankaku, "ZenkakuHankaku", "244")]
-        public void Should_Process_KeyDown(string key, string expectedValue, string expectedCode)
+        public void Should_Process_KeyDown(Key key, string expectedValue, string expectedCode)
         {
             //WHEN
-            _keyboardTestPage.KeyDownEventInterceptorSection.AddBehavior<IKeyboardBehavior>().KeysDown(key);
-            var actualValue = _keyboardTestPage.KeyDownValueInfo.GetText();
-            var actualCode = _keyboardTestPage.KeyDownCodeInfo.GetText();
+            _keyboardTestPage.KeyDownEventInterceptorSection.KeysDown(key);
+            var actualValue = _keyboardTestPage.KeyDownValueInfo.GetInputText();
+            var actualCode = _keyboardTestPage.KeyDownCodeInfo.GetInputText();
 
             //THEN
             using (new AssertionScope())
@@ -105,13 +103,13 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Process_KeyDown_KeyUp_TestCaseSource(string key, string expectedValue, List<string> expectedCodes)
         {
             //WHEN
-            _keyboardTestPage.KeyDownUpEventInterceptorSection.AddBehavior<IKeyboardBehavior>().KeysDown(key);
-            var actualKeyDownValue = _keyboardTestPage.KeyDownUpValueInfo.GetText();
-            var actualKeyDownCode = _keyboardTestPage.KeyDownUpCodeInfo.GetText();
+            _keyboardTestPage.KeyDownUpEventInterceptorSection.KeysDown(key);
+            var actualKeyDownValue = _keyboardTestPage.KeyDownUpValueInfo.GetInputText();
+            var actualKeyDownCode = _keyboardTestPage.KeyDownUpCodeInfo.GetInputText();
 
-            _keyboardTestPage.KeyDownUpEventInterceptorSection.AddBehavior<IKeyboardBehavior>().KeysUp(key);
-            var actualKeyUpValue = _keyboardTestPage.KeyDownUpValueInfo.GetText();
-            var actualKeyUpCode = _keyboardTestPage.KeyDownUpCodeInfo.GetText();
+            _keyboardTestPage.KeyDownUpEventInterceptorSection.KeysUp(key);
+            var actualKeyUpValue = _keyboardTestPage.KeyDownUpValueInfo.GetInputText();
+            var actualKeyUpCode = _keyboardTestPage.KeyDownUpCodeInfo.GetInputText();
 
             //THEN
             using (new AssertionScope())
@@ -128,13 +126,13 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Process_PressKeysSequentially_TestCaseSource(string key, string expectedValue, List<string> expectedCodes)
         {
             //WHEN
-            _keyboardTestPage.KeyPressEventInterceptorSection.AddBehavior<IKeyboardBehavior>().PressKeysSequentially(key);
+            _keyboardTestPage.KeyPressEventInterceptorSection.PressKeysSequentially(key);
 
-            var actualKeyDownValue = _keyboardTestPage.KeyPressEventInterceptorKeyDownValueInfo.GetText();
-            var actualKeyDownCode = _keyboardTestPage.KeyPressEventInterceptorKeyDownCodeInfo.GetText();
+            var actualKeyDownValue = _keyboardTestPage.KeyPressEventInterceptorKeyDownValueInfo.GetInputText();
+            var actualKeyDownCode = _keyboardTestPage.KeyPressEventInterceptorKeyDownCodeInfo.GetInputText();
 
-            var actualKeyUpValue = _keyboardTestPage.KeyPressEventInterceptorKeyUpValueInfo.GetText();
-            var actualKeyUpCode = _keyboardTestPage.KeyPressEventInterceptorKeyUpCodeInfo.GetText();
+            var actualKeyUpValue = _keyboardTestPage.KeyPressEventInterceptorKeyUpValueInfo.GetInputText();
+            var actualKeyUpCode = _keyboardTestPage.KeyPressEventInterceptorKeyUpCodeInfo.GetInputText();
 
             //THEN
             using (new AssertionScope())
@@ -151,13 +149,13 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Process_PressKeysSimultaneously_KeysCombination()
         {
             //GIVEN
-            var actualTextBeforeCopyPaste = _keyboardTestPage.PasteTextBox.GetText();
+            var actualTextBeforeCopyPaste = _keyboardTestPage.PasteTextBox.GetInputText();
 
             //WHEN
-            _keyboardTestPage.CopyTextBox.AddBehavior<IUiElementMouseBehavior>().MouseDoubleClick();
-            _keyboardTestPage.CopyTextBox.AddBehavior<IKeyboardBehavior>().PressKeysSimultaneously($"{Key.Control}+c");
-            _keyboardTestPage.PasteTextBox.AddBehavior<IKeyboardBehavior>().PressKeysSimultaneously($"{Key.Control} + v");
-            var actualTextAfterCopyPaste = _keyboardTestPage.PasteTextBox.GetText();
+            _keyboardTestPage.CopyTextBox.DoubleClick();
+            _keyboardTestPage.CopyTextBox.PressKeysCombination($"{Key.Control}+c");
+            _keyboardTestPage.PasteTextBox.PressKeysCombination($"{Key.Control} + v");
+            var actualTextAfterCopyPaste = _keyboardTestPage.PasteTextBox.GetInputText();
 
             //THEN
             using (new AssertionScope())
@@ -171,13 +169,13 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Process_PressKeysSimultaneously_ParamsString()
         {
             //GIVEN
-            var actualTextBeforeCopyPaste = _keyboardTestPage.PasteTextBox.GetText();
+            var actualTextBeforeCopyPaste = _keyboardTestPage.PasteTextBox.GetInputText();
 
             //WHEN
-            _keyboardTestPage.CopyTextBox.AddBehavior<IUiElementMouseBehavior>().MouseDoubleClick();
-            _keyboardTestPage.CopyTextBox.AddBehavior<IKeyboardBehavior>().PressKeysSimultaneously(Key.Control, "c");
-            _keyboardTestPage.PasteTextBox.AddBehavior<IKeyboardBehavior>().PressKeysSimultaneously(Key.Control, "v");
-            var actualTextAfterCopyPaste = _keyboardTestPage.PasteTextBox.GetText();
+            _keyboardTestPage.CopyTextBox.DoubleClick();
+            _keyboardTestPage.CopyTextBox.PressKeysSimultaneously(Key.Control.ToString(), "c");
+            _keyboardTestPage.PasteTextBox.PressKeysSimultaneously(Key.Control.ToString(), "v");
+            var actualTextAfterCopyPaste = _keyboardTestPage.PasteTextBox.GetInputText();
 
             //THEN
             using (new AssertionScope())
@@ -191,11 +189,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Process_PressKeysSimultaneously_ParamsKeys()
         {
             //GIVEN
-            var actualTextBeforeInput = _keyboardTestPage.InputTextBox.GetText();
+            var actualTextBeforeInput = _keyboardTestPage.InputTextBox.GetInputText();
 
             //WHEN
-            _keyboardTestPage.InputTextBox.AddBehavior<IKeyboardBehavior>().PressKeysSimultaneously(Key.Shift, Key.Equal);
-            var actualTextAfterInput = _keyboardTestPage.InputTextBox.GetText();
+            _keyboardTestPage.InputTextBox.PressKeysSimultaneously(Key.Shift, Key.Equal);
+            var actualTextAfterInput = _keyboardTestPage.InputTextBox.GetInputText();
 
             //THEN
             using (new AssertionScope())

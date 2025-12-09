@@ -13,11 +13,11 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             _page = _uiTab.GetPage<T>();
         }
 
-        public SingleUiPageService(IUiInteractor uiInteractor) : this(uiInteractor, SharedUiConstants.DefaultTab)
+        public SingleUiPageService(IUiInteractor uiInteractor) : this(uiInteractor, SharedUiConstants.DefaultUiInteractorTab)
         {
         }
 
-        public SingleUiPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab, string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) : base(uiInteractor, tabName)
+        public SingleUiPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab, string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) : base(uiInteractor, tabName)
         {
             _page = _uiTab.GetPage<T>(applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri);
         }
@@ -29,12 +29,12 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
         public virtual void WaitForLoad()
         {
-            _page.WaitForLoad();
+            _page.WaitForLoaded();
         }
 
         public virtual Uri GetPageUrl(params KeyValuePair<string, string>[] placeholderValues)
         {
-            return _page.GetPageUrl(placeholderValues);
+            return _page.GetDefinedUri(placeholderValues);
         }
     }
 }

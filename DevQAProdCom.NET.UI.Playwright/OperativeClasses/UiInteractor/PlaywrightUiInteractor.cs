@@ -1,11 +1,13 @@
 ﻿using System.Data;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces;
+using DevQAProdCom.NET.UI.Playwright.Constants;
 using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
 using Microsoft.Playwright;
@@ -26,8 +28,8 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
 
         public PlaywrightUiInteractor(ILogger log, IUiInteractorsManager uiInteractorsManager, IPlaywrightBrowserFactory browserFactory,
             IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider,
-            IPlaywrightCookieMappers cookieMappers)
-            : base(log, uiInteractorsManager)
+            IPlaywrightCookieMappers cookieMappers, IUiInteractorBehaviorFactory uiInteractorBehaviorFactory, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory)
+            : base(log, uiInteractorsManager, uiInteractorBehaviorFactory, uiInteractorTabBehaviorFactory)
         {
             _browserFactory = browserFactory;
             _findOptionSearchMethodsProvider = findOptionSearchMethodsProvider;
@@ -35,16 +37,16 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             _uiPageFactoryProvider = uiPageFactoryProvider;
         }
 
-        protected override IUiInteractorTab CreateTab(string aliasId = SharedUiConstants.DefaultTab)
+        protected override IUiInteractorTab CreateTab(string aliasId = SharedUiConstants.DefaultUiInteractorTab)
         {
             if (_tabs.Any(x => x.Name == aliasId))
                 throw new DuplicateNameException($"Tab with identifier '{aliasId}' already exists. Unique name should be specified for the new tab.");
 
             if (Browser == null)
-                LaunchInteractor();
+                Launch();
 
             IPage page = BrowserContext.NewPageAsync().Result;
-            var tab = new PlaywrightUiInteractorTab(_log, this, aliasId, page, _uiPageFactoryProvider, _findOptionSearchMethodsProvider);
+            var tab = new PlaywrightUiInteractorTab(_log, this, aliasId, page, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
 
             return tab;
         }
@@ -55,7 +57,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             nativeTab.CloseAsync().Wait();
         }
 
-        public override void LaunchInteractor()
+        public override void Launch()
         {
             (IBrowser Browser, BrowserTypeLaunchOptions? LaunchOptions) data = _browserFactory.GetBrowser();
             Browser = data.Browser;
@@ -66,9 +68,12 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             DownloadsDefaultDirectory = data.LaunchOptions?.DownloadsPath;
             BrowserNewContextOptions contextOptions = _browserFactory.BrowserNewContextOptions;
             BrowserContext = Browser.NewContextAsync(contextOptions).Result;
+
+            NativeObjects.Add(SharedUiConstants.IBrowser, Browser);
+            NativeObjects.Add(ProjectConst.IBrowserContext, BrowserContext);
         }
 
-        public override bool IsInteractorInteractable()
+        public override bool IsInteractable()
         {
             if (Browser == null)
                 return false;
@@ -82,7 +87,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
                 return false;
             }
         }
-        public override void DisposeInteractor()
+        public override void Dispose()
         {
             if (BrowserContext != null)
                 BrowserContext.CloseAsync().Wait();

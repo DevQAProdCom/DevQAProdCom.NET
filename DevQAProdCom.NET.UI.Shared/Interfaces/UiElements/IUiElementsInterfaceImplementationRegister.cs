@@ -10,6 +10,6 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements
 
         public UiElementsInterfaceImplementationRegister RegisterUiElementImplementationType<TInterface, TImplementation>()
             where TImplementation : TInterface
-            where TInterface : IParentUiElement;
+            where TInterface : IUiElement;
     }
 }

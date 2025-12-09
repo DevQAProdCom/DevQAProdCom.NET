@@ -1,11 +1,14 @@
-﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Constants;
 using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
+using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorTab;
 using Microsoft.Playwright;
 
 namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
@@ -16,9 +19,34 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
         private readonly IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> _findOptionSearchMethodsProvider;
         private readonly IUiPageFactoryProvider _uiPageFactoryProvider;
 
+        private INativeElementsSearcher _nativeElementsSearcher;
+        protected override INativeElementsSearcher NativeElementsSearcher
+        {
+            get
+            {
+                if (_nativeElementsSearcher == null)
+                    _nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, _nativeTab, _findOptionSearchMethodsProvider);
+
+                return _nativeElementsSearcher;
+            }
+        }
+
+        private IExecuteJavaScript _javaScriptExecutor;
+        protected override IExecuteJavaScript JavaScriptExecutor
+        {
+            get
+            {
+                if (_javaScriptExecutor == null)
+                    _javaScriptExecutor = new PlaywrightJavaScriptExecutor(_nativeTab);
+
+                return _javaScriptExecutor;
+            }
+        }
+
         public PlaywrightUiInteractorTab(ILogger log, IPlaywrightUiInteractor uiInteractor, string aliasIdentifier, IPage nativeTab,
-            IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider)
-            : base(log, uiInteractor, aliasIdentifier, nativeTab)
+            IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider,
+            IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory, Dictionary<string, object> nativeObjects)
+            : base(log, uiInteractor, aliasIdentifier, nativeTab, uiInteractorTabBehaviorFactory, nativeObjects)
         {
             _uiInteractor = uiInteractor;
             _uiPageFactoryProvider = uiPageFactoryProvider;
@@ -36,7 +64,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             _ = _nativeTab.GotoAsync(url).Result;
         }
 
-        public override string GetTabUrl()
+        public override string GetTabUriAsString()
         {
             SwitchTo();
             return _nativeTab.Url;
@@ -60,7 +88,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             _ = _nativeTab.GoForwardAsync().Result;
         }
 
-        public override void RefreshTab()
+        public override void Refresh()
         {
             SwitchTo();
             _ = _nativeTab.ReloadAsync().Result;
@@ -68,35 +96,44 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
 
         protected override TUiPage CreatePage<TUiPage>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null)
         {
-            var iBrowserNativeObject = new KeyValuePair<string, object>(ProjectConst.IBrowser, _uiInteractor.Browser);
-            var iBrowserContextNativeObject = new KeyValuePair<string, object>(ProjectConst.IBrowserContext, _uiInteractor.BrowserContext);
-            var iUiPageNativeObject = new KeyValuePair<string, object>(ProjectConst.IUiPage, _nativeTab);
+            var nativeObjects = new Dictionary<string, object>();
+            nativeObjects.Upsert(NativeObjects);
+            nativeObjects.Add(ProjectConst.IPage, _nativeTab);
 
-            INativeElementsSearcher nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, _nativeTab, _findOptionSearchMethodsProvider);
-            IExecuteJavaScript javaScriptExecutor = new PlaywrightJavaScriptExecutor(_nativeTab);
-
-            IUiPage page = _uiPageFactoryProvider.ConstructNewPageFactory(uiInteractorTab: this, nativeElementsSearcher: nativeElementsSearcher, javaScriptExecutor: javaScriptExecutor,
+            IUiPage page = _uiPageFactoryProvider.ConstructNewPageFactory(uiInteractorTab: this, nativeElementsSearcher: NativeElementsSearcher, javaScriptExecutor: JavaScriptExecutor,
                 applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri,
-                nativeObjects: new Dictionary<string, object> { 
-                    { iBrowserNativeObject.Key, iBrowserNativeObject.Value },
-                    { iBrowserContextNativeObject.Key, iBrowserContextNativeObject.Value },
-                    { iUiPageNativeObject.Key, iUiPageNativeObject.Value } }).CreatePage<TUiPage>();
+                nativeObjects: nativeObjects).CreatePage<TUiPage>();
 
             return (TUiPage)page;
         }
 
         #region Screenshots
 
-        public override void MakeScreenshot(string? directoryPath = null, string? fileNamePrefix = null)
+        public override IUiInteractorTabScreenshotModel MakeScreenshot(string? directoryPath = null, string? fileNamePrefix = null)
         {
             SwitchTo();
-            var filePath = GetScreenshotFilePath(directoryPath, fileNamePrefix);
-            var options = new PageScreenshotOptions()
+            var screenshotModel = new UiInteractorTabScreenshotModel();
+            screenshotModel.TabName = Name;
+
+            try
             {
-                Path = filePath,
-                FullPage = true,
-            };
-            _nativeTab.ScreenshotAsync(options).Wait();
+                screenshotModel.FilePath = GetScreenshotFilePath(directoryPath, fileNamePrefix);
+                var options = new PageScreenshotOptions()
+                {
+                    Path = screenshotModel.FilePath,
+                    FullPage = true,
+                };
+                screenshotModel.ScreenshotByteArray = _nativeTab.ScreenshotAsync(options).Result;
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = $"Failed to take screenshot: {ex.Message}";
+                screenshotModel.FilePath = errorMessage;
+                Console.WriteLine(errorMessage);
+                //TODO Add Log.Warning
+            }
+
+            return screenshotModel;
         }
 
         #endregion Screenshots

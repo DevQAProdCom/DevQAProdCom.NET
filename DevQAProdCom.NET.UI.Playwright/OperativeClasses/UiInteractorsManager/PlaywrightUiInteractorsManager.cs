@@ -4,6 +4,7 @@ using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager;
 
@@ -21,7 +22,9 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractorsManager
             IUiPageFactoryProvider pageFactoryProvider,
             IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider,
             IPlaywrightCookieMappers cookieMappers,
-            string? name = null) : base(log, name)
+            IUiInteractorBehaviorFactory uiInteractorBehaviorFactory,
+            IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory,
+            string? name = null) : base(log, uiInteractorBehaviorFactory, uiInteractorTabBehaviorFactory, name)
         {
             _browserFactory = browserFactory;
             _pageFactoryProvider = pageFactoryProvider;
@@ -31,7 +34,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractorsManager
 
         protected override IUiInteractor CreateTechnologySpecificInteractor()
         {
-            IUiInteractor instance = new PlaywrightUiInteractor(_log, this, _browserFactory, _pageFactoryProvider, _findOptionSearchMethodsProvider, _cookieMappers);
+            IUiInteractor instance = new PlaywrightUiInteractor(_log, this, _browserFactory, _pageFactoryProvider, _findOptionSearchMethodsProvider, _cookieMappers, UiInteractorBehaviorFactory, UiInteractorTabBehaviorFactory);
             return instance;
         }
     }

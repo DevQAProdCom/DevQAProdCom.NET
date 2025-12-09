@@ -1,5 +1,4 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
-using DevQAProdCom.NET.UI.Shared.Interfaces.Behaviors.Mouse;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
@@ -24,7 +23,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualNameBeforeMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Service._page.MouseClickDoubleClickButton.AddBehavior<IUiElementMouseBehavior>().MouseClick();
+            _testPage2Service._page.MouseClickDoubleClickButton.Click();
             var actualNameAfterMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
@@ -45,7 +44,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualButtonNameBeforeMouseContextRightClick = _testPage2Service._page.MouseContextRightClickButton.GetTextContent();
-            _testPage2Service._page.MouseContextRightClickButton.AddBehavior<IUiElementMouseBehavior>().MouseContextClickJs();
+            _testPage2Service._page.MouseContextRightClickButton.ContextClickJs();
             var actualButtonNameAfterMouseContextRightClick = _testPage2Service._page.MouseContextRightClickButton.GetTextContent();
 
             //THEN
@@ -66,7 +65,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualButtonNameBeforeMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Service._page.MouseClickDoubleClickButton.AddBehavior<IUiElementMouseBehavior>().MouseDoubleClick();
+            _testPage2Service._page.MouseClickDoubleClickButton.DoubleClick();
             var actualButtonNameAfterMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
@@ -87,7 +86,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualButtonNameBeforeMouseHover = _testPage2Service._page.MouseHoverButton.GetTextContent();
-            _testPage2Service._page.MouseHoverButton.AddBehavior<IUiElementMouseBehavior>().MouseHover();
+            _testPage2Service._page.MouseHoverButton.MouseHover();
             var actualButtonNameAfterMouseHover = _testPage2Service._page.MouseHoverButton.GetTextContent();
 
             //THEN
@@ -108,7 +107,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualButtonNameBeforeMouseDown = _testPage2Service._page.MouseDownButton.GetTextContent();
-            _testPage2Service._page.MouseDownButton.AddBehavior<IUiElementMouseBehavior>().MouseDown();
+            _testPage2Service._page.MouseDownButton.MouseDown();
             var actualButtonNameAfterMouseDown = _testPage2Service._page.MouseDownButton.GetTextContent();
 
             //THEN
@@ -129,8 +128,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualButtonNameBeforeMouseUp = _testPage2Service._page.MouseUpButton.GetTextContent();
-            _testPage2Service._page.MouseUpButton.AddBehavior<IUiElementMouseBehavior>().MouseDown();
-            _testPage2Service._page.MouseUpButton.AddBehavior<IUiElementMouseBehavior>().MouseUp();
+            _testPage2Service._page.MouseUpButton.MouseDown();
+            _testPage2Service._page.MouseUpButton.MouseUp();
             var actualButtonNameAfterMouseUp = _testPage2Service._page.MouseUpButton.GetTextContent();
 
             //THEN
@@ -153,7 +152,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var elementToDrag = page.ToDoList.Single(x => x.GetTextContent() == Const.DragAndDrop.ElementToDrag);
             var elementToDropTo = page.DoneList.Single(x => x.GetTextContent() == Const.DragAndDrop.ElementToDropTo);
 
-            elementToDrag.AddBehavior<IUiElementMouseBehavior>().DragAndDrop(elementToDropTo);
+            elementToDrag.DragAndDrop(elementToDropTo);
             //TODO Add waiter
             Thread.Sleep(1000);
             var actualDoneListAfterDragAndDrop = page.DoneList.Select(x => x.GetTextContent()).ToList();
@@ -180,7 +179,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var offsetX = finish.X - start.X;
             var offsetY = finish.Y - start.Y;
 
-            elementToDrag.AddBehavior<IUiElementMouseBehavior>().DragAndDropByOffset(offsetX, offsetY);
+            elementToDrag.DragAndDropByOffset(offsetX, offsetY);
             //TODO Add waiter
             Thread.Sleep(1000);
             var actualDoneListAfterDragAndDrop = page.DoneList.Select(x => x.GetTextContent()).ToList();

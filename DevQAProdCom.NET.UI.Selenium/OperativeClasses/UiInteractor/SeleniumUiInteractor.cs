@@ -1,10 +1,12 @@
 ﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using DevQAProdCom.NET.UI.Selenium.Constants;
 using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
 using OpenQA.Selenium;
@@ -23,8 +25,9 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         public IWebDriver Driver { get; set; }
 
         public SeleniumUiInteractor(ILogger log, IUiInteractorsManager uiInteractorsManager, ISeleniumWebDriverFactory webDriverFactory,
-            IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider, ISeleniumCookieMappers cookieMappers)
-            : base(log, uiInteractorsManager) //UIInteractorContext (IUiInteractor)
+            IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider,
+            ISeleniumCookieMappers cookieMappers, IUiInteractorBehaviorFactory uiInteractorBehaviorFactory, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory)
+            : base(log, uiInteractorsManager, uiInteractorBehaviorFactory, uiInteractorTabBehaviorFactory) //UIInteractorContext (IUiInteractor)
         {
             _findOptionSearchMethodsProvider = findOptionSearchMethodsProvider;
             _cookieMappers = cookieMappers;
@@ -32,14 +35,15 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             _uiPageFactoryProvider = uiPageFactoryProvider;
         }
 
-        public override void LaunchInteractor()
+        public override void Launch()
         {
             (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) data = _webDriverFactory.CreateWebDriver();
             Driver = data.Driver;
             DownloadsDefaultDirectory = data.Configuration?.DownloadsDefaultDirectory;
+            NativeObjects.Add(ProjectConst.IWebDriver, Driver);
         }
 
-        public override bool IsInteractorInteractable()
+        public override bool IsInteractable()
         {
             if (Driver == null)
                 return false;
@@ -54,7 +58,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             }
         }
 
-        public override void DisposeInteractor()
+        public override void Dispose()
         {
             if (Driver != null)
                 Driver.Quit();
@@ -63,16 +67,16 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
                 Directory.Delete(DownloadsDefaultDirectory, true);
         }
 
-        protected override IUiInteractorTab CreateTab(string tabName = SharedUiConstants.DefaultTab)
+        protected override IUiInteractorTab CreateTab(string tabName = SharedUiConstants.DefaultUiInteractorTab)
         {
-            if (!IsInteractorInteractable())
-                LaunchInteractor();
+            if (!IsInteractable())
+                Launch();
             else
             {
                 Driver.SwitchTo().NewWindow(WindowType.Tab);
             }
 
-            var tab = new SeleniumUiInteractorTab(_log, this, tabName, Driver.CurrentWindowHandle, _uiPageFactoryProvider, _findOptionSearchMethodsProvider);
+            var tab = new SeleniumUiInteractorTab(_log, this, tabName, Driver.CurrentWindowHandle, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
             return tab;
         }
 
@@ -84,7 +88,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
             //this is required because simple driver close doesn't delete chromedriver.exe
             if (isLastTab)
-                DisposeInteractor();
+                Dispose();
         }
 
         #region Cookies

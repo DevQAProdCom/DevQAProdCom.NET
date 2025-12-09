@@ -128,7 +128,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_4596.Select(x => x.FrameSimpleUiElementAsInterface_4596.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_4596.Select(x => x.FrameSimpleUiElementAsInterface_4596.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -154,7 +154,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_9240
-                .SelectMany(x => x.UiElementsListOfFrameSimpleUiElementsAsInterface_07b9.Select(x => x.GetAttribute(Const.dataText, isBooleanAttributeType: false))).ToList();
+                .SelectMany(x => x.UiElementsListOfFrameSimpleUiElementsAsInterface_07b9.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -178,7 +178,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_68b1
-                .Select(x => x.FrameComplexUiElementAsClass_68b1.FrameSimpleUiElementAsInterface_68b1.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+                .Select(x => x.FrameComplexUiElementAsClass_68b1.FrameSimpleUiElementAsInterface_68b1.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -201,7 +201,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_52fa.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_52fa.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_52fa.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_52fa.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -227,7 +227,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_d413
-                .SelectMany(x => x.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_a018.Select(x => x.GetAttribute(Const.dataText, isBooleanAttributeType: false))).ToList();
+                .SelectMany(x => x.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_a018.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -251,7 +251,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfComplexUiElementsAsClass_49e5
-                .Select(x => x.ShadowRootHostComplexUiElementAsClass_49e5.ShadowRootHostSimpleUiElementAsInterface_49e5.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+                .Select(x => x.ShadowRootHostComplexUiElementAsClass_49e5.ShadowRootHostSimpleUiElementAsInterface_49e5.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN

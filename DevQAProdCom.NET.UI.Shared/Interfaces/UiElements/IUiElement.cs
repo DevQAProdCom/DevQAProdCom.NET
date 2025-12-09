@@ -1,10 +1,61 @@
 ﻿using System.Drawing;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+using DevQAProdCom.NET.UI.Shared.Interfaces.Shared.Traits.Keyboard;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Keyboard;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Mouse;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Others;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Scroll;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements
 {
-    public interface IUiElement : IHasUiElementInfo, IUiElementsSearcher, IExecuteJavaScript, IUiElementWaiters, IHasNativeObjects
+    public interface IUiElement :
+        IHasUiElementInfo,
+        IFindUiElements,
+        IExecuteJavaScript,
+        IUiElementWaiters,
+        IHaveNativeObjects,
+        IAddBehavior,
+
+        IUiInteractionTraitKeysDown,
+        IUiInteractionTraitKeysUp,
+        IUiInteractionTraitPressKey,
+        IUiInteractionTraitPressKeysSequentially,
+        IUiInteractionTraitPressKeysSimultaneously,
+        IUiElementTraitSendText,
+
+        IUiElementTraitClick,
+        IUiElementTraitClickJs,
+        IUiElementTraitContextClick,
+        IUiElementTraitContextClickJs,
+        IUiElementTraitDoubleClick,
+        IUiElementTraitDragAndDrop,
+        IUiElementTraitDragAndDropByOffset,
+        IUiElementTraitMouseDown,
+        IUiElementTraitMouseDownJs,
+        IUiElementTraitMouseHover,
+        IUiElementTraitMouseUp,
+        IUiElementTraitMouseUpJs,
+        IUiElementTraitScrollIntoView,
+        IUiElementTraitScrollIntoViewInstantlyJs,
+        IUiElementTraitScrollIntoViewSmoothlyJs,
+
+        IUiElementTraitFocusJs,
+        IUiElementTraitUnfocusJs,
+
+        IUiElementTraitRemoveJs,
+
+        IUiElementTraitGetAttribute,
+        IUiElementTraitGetIdAttribute,
+        IUiElementTraitGetNameAttribute,
+        IUiElementTraitGetStyleAttribute,
+        IUiElementTraitSetAttributeJs,
+        IUiElementTraitRemoveAttributeJs,
+
+        IUiElementTraitGetClassAttribute,
+        IUiElementTraitRemoveClassJs,
+        IUiElementTraitClassAttributeContains,
+        IUiElementTraitClassAttributeEquals
     {
         public IUiPage UiPage { get; }
 
@@ -13,12 +64,11 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements
         PointF GetLocation();
         SizeF GetSize();
         string GetTagName();
-
+        int? UiIndex { get; }
         #endregion General Properties
 
         #region Specific Properties
 
-        string? GetAttribute(string attributeName, bool isBooleanAttributeType); //explicit attributes / boolean attributes //TODO write comment why isPlaywright returns "empty"  if attrubite exists but not set to particular value
         string? GetCssValue(string propertyName);
         string GetTextContent();
 
@@ -33,14 +83,5 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements
         bool IsEnabled();
 
         #endregion States
-
-        #region Actions
-
-        T AddBehavior<T>(params KeyValuePair<string, object>[]? auxiliaryParams) where T : IBehavior;
-        void FocusJs();
-        void MouseClick();
-        void ScrollToElement();
-
-        #endregion Actions
     }
 }

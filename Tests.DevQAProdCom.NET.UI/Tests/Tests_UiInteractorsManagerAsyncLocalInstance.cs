@@ -14,8 +14,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Single_Instance_Of_UiInteractorsManagerAsyncLocalInstance_Be_Returned_By_Dependency_Injection_After_Each_Call_Of_Get_Required_Service()
         {
             //WHEN
-            var actualAgent1 = DiContainer.Instance.GetRequiredService<IUiInteractorsManagerAsyncLocalInstance>();
-            var actualAgent2 = DiContainer.Instance.GetRequiredService<IUiInteractorsManagerAsyncLocalInstance>();
+            var actualAgent1 = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>();
+            var actualAgent2 = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>();
 
             //THEN
             actualAgent1.Id.Should().Be(actualAgent2.Id);
@@ -25,7 +25,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_UiInteractorsManagerAsyncLocalInstance_Return_Different_IUiInteractorsManagers_For_Different_Threads()
         {
             //GIVEN
-            UiInteractorsManagerAsyncLocalInstance uiInteractorsManagerAsyncLocalInstance = DiContainer.Instance.GetRequiredService<IUiInteractorsManagerAsyncLocalInstance>() as UiInteractorsManagerAsyncLocalInstance;
+            UiInteractorsManagersProvider uiInteractorsManagerAsyncLocalInstance = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>() as UiInteractorsManagersProvider;
 
             //WHEN
             Guid? thread1UiInteractorsManagerId = null;
@@ -33,12 +33,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             var thread1 = new Thread(() =>
             {
-                thread1UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.UiInteractorsManager.Id;
+                thread1UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.GetUiInteractorsManager().Id;
             });
 
             var thread2 = new Thread(() =>
             {
-                thread2UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.UiInteractorsManager.Id;
+                thread2UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.GetUiInteractorsManager().Id;
             });
 
             thread1.Start();

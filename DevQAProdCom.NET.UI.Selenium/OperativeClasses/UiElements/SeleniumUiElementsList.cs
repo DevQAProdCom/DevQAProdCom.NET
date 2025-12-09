@@ -62,7 +62,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         private void LogUiElementSearchOperation()
         {
-            var currentPageUri = new Uri(UiPage.UiTab.GetTabUrl());
+            var currentPageUri = new Uri(UiPage.UiTab.GetTabUriAsString());
             _log.Verbose("Operation: {Operation}. Page Absolute Uri: {PageAbsoluteUri}. Page Host: {PageHost}. Page Absolute Path {PageAbsolutePath}. UiElement Name: {UiElementName}. UiElement FullName: {UiElementFullName}.",
                 "UiElementSearch",
                 currentPageUri.AbsoluteUri,

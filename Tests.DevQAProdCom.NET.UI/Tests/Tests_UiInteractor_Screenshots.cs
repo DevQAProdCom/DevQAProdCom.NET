@@ -27,7 +27,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
 
             //WHEN
-            UiInteractor.MakeScreenshot(directoryPath: ScreenshotDirectory, fileNamePrefix: "UiInteractor_Make_Screenshots_Test");
+            UiInteractor.MakeScreenshots(directoryPath: ScreenshotDirectory, fileNamePrefix: "UiInteractor_Make_Screenshots_Test");
 
             //THEN
             var actualFiles = Directory.EnumerateFiles(ScreenshotDirectory);

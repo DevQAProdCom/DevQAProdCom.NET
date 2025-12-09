@@ -7,7 +7,7 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
     public class DragAndDropTestPageService : SingleUiPageService<DragAndDropTestPage>
     {
-        public DragAndDropTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab) : base(uiInteractor, tabName)
+        public DragAndDropTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
     }

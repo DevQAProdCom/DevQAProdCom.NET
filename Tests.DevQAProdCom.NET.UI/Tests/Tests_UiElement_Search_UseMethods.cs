@@ -32,7 +32,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //WHEN
             var actualText = _testPage2Service._page.UseIdContains.GetTextContent();
-            var actualIdAttribute = _testPage2Service._page.UseIdContains.GetAttribute("id", false);
+            var actualIdAttribute = _testPage2Service._page.UseIdContains.GetIdAttribute();
 
             //THEN
             using (new AssertionScope())
@@ -57,7 +57,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //WHEN
             var actualText = _testPage2Service._page.UseNameContains.GetTextContent();
-            var actualNameAttribute = _testPage2Service._page.UseNameContains.GetAttribute("name", false);
+            var actualNameAttribute = _testPage2Service._page.UseNameContains.GetNameAttribute();
 
             //THEN
             using (new AssertionScope())
@@ -82,7 +82,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //WHEN
             var actualText = _testPage2Service._page.UseClassNameContains.GetTextContent();
-            var actualClassNameAttribute = _testPage2Service._page.UseClassNameContains.GetAttribute("class", false);
+            var actualClassNameAttribute = _testPage2Service._page.UseClassNameContains.GetNameAttribute();
 
             //THEN
             using (new AssertionScope())

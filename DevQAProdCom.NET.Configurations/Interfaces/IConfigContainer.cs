@@ -12,7 +12,7 @@ namespace DevQAProdCom.NET.Configurations.Interfaces
         IConfigContainer AddConfigurationSource(IConfigurationSource source);
         IConfigContainer RemoveConfigurationSource(IConfigurationSource source);
         IConfigContainer Config(Action<IConfigurationBuilder> action);
-        IConfigContainer AddConfigurationsFromDirectory(string directoryPath);
+        IConfigContainer AddConfigurationsFromDirectory(string directoryPath, bool optional = false);
         IConfigContainer AddConfigurationsFromDirectory(DirectoryInfo directory);
 
         #endregion Dynamic Configuration

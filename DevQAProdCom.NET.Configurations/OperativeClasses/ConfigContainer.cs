@@ -128,15 +128,15 @@ namespace DevQAProdCom.NET.Configurations.OperativeClasses
             //!!! Preserve order. Cause override happens. !!!
 
             //A) All files of default directory Base files on top level of "Configurations" folder are added to configuration first
-            AddConfigurationsFromDirectory(DefaultBaseConfigurationsFolder);
+            AddConfigurationsFromDirectory(DefaultBaseConfigurationsFolder, optional: true);
 
             //B) Files in "Configuration\Shared" across envs folder overwrite Base files
             //Only specific sub directories of default directory: a) "{ENVIRONMENT}" specific directory b) "Shared" directory with configurations shared across environments
-            AddConfigurationsFromDirectory(DefaultSharedAcrossEnvironmentsConfigurationsFolder);
+            AddConfigurationsFromDirectory(DefaultSharedAcrossEnvironmentsConfigurationsFolder, optional: true);
 
             //C) Files in Env specific folder ("Configurations\QA" or "Configurations\DEV") overwrite all previous
             if (!string.IsNullOrEmpty(Environment))
-                AddConfigurationsFromDirectory(DefaultEnvironmentSpecificConfigurationsFolder);
+                AddConfigurationsFromDirectory(DefaultEnvironmentSpecificConfigurationsFolder, optional: true);
         }
 
         #endregion Static Initial Configuration
@@ -558,13 +558,18 @@ namespace DevQAProdCom.NET.Configurations.OperativeClasses
             }
         }
 
-        public IConfigContainer AddConfigurationsFromDirectory(string directoryPath)
+        public IConfigContainer AddConfigurationsFromDirectory(string directoryPath, bool optional = false)
         {
-            if (!Directory.Exists(directoryPath))
+            if (Directory.Exists(directoryPath))
+            {
+                var directory = new DirectoryInfo(directoryPath);
+                return AddConfigurationsFromDirectory(directory);
+            }
+
+            if (!optional) //If directrory doesnt exist and is not optional, throw exception
                 throw new DirectoryNotFoundException($"No such directory with configurations exists: '{directoryPath}'.");
 
-            var directory = new DirectoryInfo(directoryPath);
-            return AddConfigurationsFromDirectory(directory);
+            return this;
         }
 
         public IConfigContainer AddConfigurationsFromDirectory(DirectoryInfo directory)

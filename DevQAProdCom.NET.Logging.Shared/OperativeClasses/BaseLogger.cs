@@ -4,7 +4,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.Logging.Shared.OperativeClasses
 {
-    public abstract class BaseLogger : ILogger
+    public class BaseLogger : ILogger
     {
         public Guid Id { get; private set; } = Guid.NewGuid();
         public string Name { get; set; }

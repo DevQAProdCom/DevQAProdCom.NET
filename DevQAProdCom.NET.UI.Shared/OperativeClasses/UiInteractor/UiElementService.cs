@@ -9,9 +9,9 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         protected readonly internal IUiInteractorTab _uiTab;
         protected readonly internal IUiInteractor _uiInteractor;
 
-        public UiElementService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultTab)
+        public UiElementService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab)
         {
-            tabName ??= SharedUiConstants.DefaultTab;
+            tabName ??= SharedUiConstants.DefaultUiInteractorTab;
             _uiInteractor = uiInteractor;
             _uiTab = _uiInteractor.GetTab(tabName);
         }

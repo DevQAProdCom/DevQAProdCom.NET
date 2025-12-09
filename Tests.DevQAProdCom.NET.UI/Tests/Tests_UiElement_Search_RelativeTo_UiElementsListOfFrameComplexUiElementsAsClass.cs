@@ -128,7 +128,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_5d5a.Select(x => x.FrameSimpleUiElementAsInterface_5d5a.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_5d5a.Select(x => x.FrameSimpleUiElementAsInterface_5d5a.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -154,7 +154,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_dd66
-                .SelectMany(x => x.UiElementsListOfFrameSimpleUiElementsAsInterface_ac68.Select(x => x.GetAttribute(Const.dataText, isBooleanAttributeType: false))).ToList();
+                .SelectMany(x => x.UiElementsListOfFrameSimpleUiElementsAsInterface_ac68.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -178,7 +178,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_558a
-                .Select(x => x.FrameComplexUiElementAsClass_a401.FrameSimpleUiElementAsInterface_a401.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+                .Select(x => x.FrameComplexUiElementAsClass_a401.FrameSimpleUiElementAsInterface_a401.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -201,7 +201,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_4ffa.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_4ffa.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+            var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_4ffa.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_4ffa.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -227,7 +227,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_93c7
-                .SelectMany(x => x.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_7580.Select(x => x.GetAttribute(Const.dataText, isBooleanAttributeType: false))).ToList();
+                .SelectMany(x => x.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_7580.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
@@ -251,7 +251,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             //WHEN
             var actualValues = _pageService._page.Page_UiElementsListOfFrameComplexUiElementsAsClass_76f1
-                .Select(x => x.ShadowRootHostComplexUiElementAsClass_76f1.ShadowRootHostSimpleUiElementAsInterface_76f1.GetAttribute(Const.dataText, isBooleanAttributeType: false)).ToList();
+                .Select(x => x.ShadowRootHostComplexUiElementAsClass_76f1.ShadowRootHostSimpleUiElementAsInterface_76f1.GetNonBooleanAttribute(Const.dataText)).ToList();
             var actualTopLevelUiElementTextContent = _pageService._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN

@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="MySql.Data" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />

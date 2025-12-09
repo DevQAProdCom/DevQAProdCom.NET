@@ -42,43 +42,46 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
         public override IUiPage CreatePage<TUiPage>()
         {
-            if (!typeof(TUiPage).IsSubclassOf(typeof(UiPage)))
-                throw new NotSupportedException();
-
-            object? pageInstance = null;
-
-            try
+            var LOCAL = typeof(TUiPage);
+            if (typeof(TUiPage).IsSubclassOf(typeof(UiPage)) || typeof(TUiPage) == typeof(UiPage))
             {
-                pageInstance = Activator.CreateInstance(typeof(TUiPage));
-            }
-            catch
-            {
-                throw;
-            }
+                object? pageInstance = null;
 
-            if (pageInstance != null)
-            {
-                var page = pageInstance as UiPage;
-                _uiPage = page;
-
-                if (page != null)
+                try
                 {
-                    page.UiTab = _uiInteractorTab;
-                    page.PageName = nameof(TUiPage);
-                    page.UiElementsInstantiator = this;
-                    page.NativeElementsSearcher = _nativeElementsSearcher;
-                    page.JavaScriptExecutor = _javaScriptExecutor;
-                    page.PageBehaviorFactory = _uiPageBehaviorFactory;
-                    page.NativeObjects = NativeObjects;
-
-                    InstantiateUiElements(pageInstance);
-
-                    return (IUiPage)pageInstance;
+                    pageInstance = Activator.CreateInstance(typeof(TUiPage));
+                }
+                catch
+                {
+                    throw;
                 }
 
-                throw new InvalidCastException();
+                if (pageInstance != null)
+                {
+                    var page = pageInstance as UiPage;
+                    _uiPage = page;
+
+                    if (page != null)
+                    {
+                        page.UiTab = _uiInteractorTab;
+                        page.PageName = nameof(TUiPage);
+                        page.UiElementsInstantiator = this;
+                        page.NativeElementsSearcher = _nativeElementsSearcher;
+                        page.JavaScriptExecutor = _javaScriptExecutor;
+                        page.PageBehaviorFactory = _uiPageBehaviorFactory;
+                        page.NativeObjects = NativeObjects.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                        InstantiateUiElements(pageInstance);
+
+                        return (IUiPage)pageInstance;
+                    }
+
+                    throw new InvalidCastException();
+                }
+                throw new Exception();
             }
-            throw new Exception();
+
+            throw new NotSupportedException();
         }
 
         public override object CreateUiElement(Type @type, IUiElementInfo uiElementInfo, params KeyValuePair<string, object>[] nativeObjects)
@@ -113,7 +116,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
                 throw new ArgumentException();
         }
 
-        public override object CreateListOfUiElements(Type @type, IUiElementInfo uiElementInfo)
+        public override object CreateUiElementsList(Type @type, IUiElementInfo uiElementInfo)
         {
             if (@type.IsUiElementsList())
             {

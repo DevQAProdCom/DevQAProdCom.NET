@@ -10,7 +10,6 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 {
@@ -192,7 +191,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
                 // If the element is found, return true
                 return true;
             }
-            catch (NoSuchElementException)
+            catch (Exception)
             {
                 // If the element is not found, return false
                 return false;
@@ -200,33 +199,17 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
         }
 
         public override bool IsDisabled() => !IsEnabled();
-        public override bool IsDisplayed() => GetWebElement().Displayed;
-        public override bool IsEnabled() => GetWebElement().Enabled;
+        public override bool IsDisplayed() => Exists() && GetWebElement().Displayed;
+        public override bool IsEnabled() => Exists() && GetWebElement().Enabled;
 
         #endregion States
-
-        #region Actions
-
-        public override void MouseClick() => GetWebElement().Click();
-
-        public override void ScrollToElement()
-        {
-            var driver = GetIWebDriver();
-            var webElement = GetWebElement();
-
-            new Actions(driver)
-                .ScrollToElement(webElement)
-                .Perform();
-        }
-
-        #endregion Actions
 
         #region Execute JavaScript
 
         protected override KeyValuePair<string, object>[] SupplementJavaScriptExecutorArguments(params KeyValuePair<string, object>[] arguments)
         {
             var webElement = GetWebElement();
-            var uiElementArgument = new KeyValuePair<string, object>(SharedUiConstants.UiElementArgument, webElement);
+            var uiElementArgument = new KeyValuePair<string, object>(SharedUiConstants.JavaScriptArguments.UiElementArgument, webElement);
             return arguments.Insert(0, uiElementArgument);
         }
 

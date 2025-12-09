@@ -26,7 +26,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 
         public UiElementsInterfaceImplementationRegister RegisterUiElementImplementationType<TInterface, TImplementation>()
             where TImplementation : TInterface
-            where TInterface : IParentUiElement
+            where TInterface : IUiElement
         {
             UiElementTypes.Upsert(typeof(TInterface), typeof(TImplementation));
             return this;

@@ -27,6 +27,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="JavaScripts\Unfocus.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\RemoveHtmlElement.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\SetAttribute.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\RemoveAttribute.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\RemoveClass.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\Click.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\GetLocalStorageData.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\ScrollIntoViewSmoothly.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\ScrollIntoViewInstantly.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="JavaScripts\GetElementFilesList.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -39,7 +66,7 @@
     <None Update="JavaScripts\IsElementInViewport.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="JavaScripts\MouseContextClick.js">
+    <None Update="JavaScripts\ContextClick.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="JavaScripts\MouseDown.js">

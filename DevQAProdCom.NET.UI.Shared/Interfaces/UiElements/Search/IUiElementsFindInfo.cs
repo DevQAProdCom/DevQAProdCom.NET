@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using DevQAProdCom.NET.UI.Shared.Enumerations;
+﻿using DevQAProdCom.NET.UI.Shared.Enumerations;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search
 {

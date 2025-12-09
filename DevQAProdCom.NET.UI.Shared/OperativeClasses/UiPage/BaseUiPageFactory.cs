@@ -27,7 +27,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
         public abstract IUiPage CreatePage<TUiPage>() where TUiPage : IUiPage;
         public abstract object CreateUiElement(Type @type, IUiElementInfo uiElementInfo, params KeyValuePair<string, object>[] nativeObjects);
-        public abstract object CreateListOfUiElements(Type @type, IUiElementInfo uiElementInfo);
+        public abstract object CreateUiElementsList(Type @type, IUiElementInfo uiElementInfo);
 
         #region IUiElementsInstantiator
 
@@ -36,7 +36,16 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             if (asset == null)
                 throw new ArgumentNullException(nameof(asset), "Page Object for initialization cannot be null.");
 
+            InstantiateFields(asset);
+            InstantiateProperties(asset);
+
+            //TODO Add check that if no fields with attributes inside class throw exception
+        }
+
+        private void InstantiateFields(object asset)
+        {
             var assetType = asset.GetType();
+
             var fields = assetType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
 
             if (fields.Length > 0)
@@ -46,7 +55,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
                     if (findOptions.Any())
                     {
-                        var parentContainer = asset as IParentUiElement;
+                        var parentContainer = asset as IUiElement;
 
                         IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(field.Name, findOptions, parentContainer: parentContainer, isList: field.FieldType.IsGenericType);
                         IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
@@ -65,33 +74,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
                         //TODO log field name is private/public and doesn't have find attribute to avoid "System.NullReferenceException : Object reference not set to an instance of an object." message without logs
                     }
                 }
-        }
-
-        private List<IUiElementsFindInfo> GetFindOptions(Type assetType, FieldInfo field)
-        {
-            List<IUiElementsFindInfo> findInfo = new();
-            List<FindAttribute> findAttributes = field.GetCustomAttributes<FindAttribute>().ToList();
-            List<FrameAttribute> frameAttributes = field.GetCustomAttributes<FrameAttribute>().ToList();
-            List<ShadowRootHostAttribute> shadowRootHostAttributes = field.GetCustomAttributes<ShadowRootHostAttribute>().ToList();
-
-            foreach (var findAttribute in findAttributes)
-                findInfo.Add(new UiElementsFindInfo(elementsFindMethod: findAttribute.ElementsFindMethod, elementsFindCriteria: findAttribute.ElementsFindCriteria,
-                    framesFindMethod: findAttribute.FramesFindMethod, framesFindCriteria: findAttribute.FramesFindCriteria,
-                    shadowRootHostsFindMethod: findAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: findAttribute.ShadowRootHostsFindCriteria,
-                    findOrderType: findAttribute.FindOrderType));
-
-            foreach (var frameAttribute in frameAttributes)
-                findInfo.Add(new UiElementsFindInfo(framesFindMethod: frameAttribute.FramesFindMethod, framesFindCriteria: frameAttribute.FramesFindCriteria,
-                   shadowRootHostsFindMethod: frameAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: frameAttribute.ShadowRootHostsFindCriteria,
-                   findOrderType: frameAttribute.FindOrderType));
-
-
-            foreach (var shadowRootHostAttribute in shadowRootHostAttributes)
-                findInfo.Add(new UiElementsFindInfo(shadowRootHostsFindMethod: shadowRootHostAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostAttribute.ShadowRootHostsFindCriteria,
-                    framesFindMethod: shadowRootHostAttribute.FramesFindMethod, framesFindCriteria: shadowRootHostAttribute.FramesFindCriteria,
-                    findOrderType: shadowRootHostAttribute.FindOrderType));
-
-            return findInfo;
         }
 
         protected void InstantiateFieldOfUiElementType(object asset, FieldInfo field, IUiElementInfo uiElementInfo)
@@ -114,11 +96,100 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
         {
             if (field.FieldType.IsUiElementsList())
             {
-                var subAsset = CreateListOfUiElements(field.FieldType, uiElementInfo);
+                var subAsset = CreateUiElementsList(field.FieldType, uiElementInfo);
                 field.SetValue(asset, subAsset);
             }
             else
                 throw new ArgumentException($"Unable to initialize field '{field.Name}' of field type '{field.FieldType.FullName}', which should either implement or be assignable to '{typeof(IUiElementsList<IUiElement>).Name}({typeof(IUiElementsList<IUiElement>).FullName})'.");
+        }
+
+        private void InstantiateProperties(object asset)
+        {
+            var assetType = asset.GetType();
+
+            var properties = assetType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+            //TODO Add check that property has setter
+
+            if (properties.Length > 0)
+                foreach (var property in properties)
+                {
+                    var findOptions = GetFindOptions(assetType, property);
+
+                    if (findOptions.Any())
+                    {
+                        var parentContainer = asset as IUiElement;
+
+                        IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(property.Name, findOptions, parentContainer: parentContainer, isList: property.PropertyType.IsGenericType);
+                        IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
+
+                        if ((property.PropertyType.IsInterface || (property.PropertyType.IsClass && !property.PropertyType.IsAbstract)) && !property.PropertyType.IsGenericType)
+                            InstantiatePropertyOfUiElementType(asset, property, uiElementInfo);
+
+                        else if (property.PropertyType.IsGenericType)
+                            InstantiatePropertyOfUiElementsListType(asset, property, uiElementInfo);
+
+                        else
+                            throw new Exception($"Field '{property.Name}' has '{nameof(FindAttribute)}', but field with type '{property.PropertyType.FullName}' is not supported.");
+                    }
+                    else
+                    {
+                        //TODO log field name is private/public and doesn't have find attribute to avoid "System.NullReferenceException : Object reference not set to an instance of an object." message without logs
+                    }
+                }
+        }
+
+        protected void InstantiatePropertyOfUiElementType(object asset, PropertyInfo property, IUiElementInfo uiElementInfo)
+        {
+            if (property.PropertyType.IsUiElement())
+            {
+                var uiElement = CreateUiElement(property.PropertyType, uiElementInfo, nativeObjects: NativeObjects.ToArray());
+
+                if (property.PropertyType.IsComplexUiElementAsClass())
+                    InstantiateUiElements(uiElement);
+
+                property.SetValue(asset, uiElement);
+            }
+            else
+                throw new ArgumentException(
+                    $"Unable to initialize field '{property.Name}' of field type '{property.PropertyType.FullName}, but field type is not subclass of, but should be inherited from type: '{typeof(IUiElement).Name}({typeof(IUiElement).FullName})'.");
+        }
+
+        private void InstantiatePropertyOfUiElementsListType(object asset, PropertyInfo property, IUiElementInfo uiElementInfo)
+        {
+            if (property.PropertyType.IsUiElementsList())
+            {
+                var subAsset = CreateUiElementsList(property.PropertyType, uiElementInfo);
+                property.SetValue(asset, subAsset);
+            }
+            else
+                throw new ArgumentException($"Unable to initialize field '{property.Name}' of field type '{property.PropertyType.FullName}', which should either implement or be assignable to '{typeof(IUiElementsList<IUiElement>).Name}({typeof(IUiElementsList<IUiElement>).FullName})'.");
+        }
+
+        private List<IUiElementsFindInfo> GetFindOptions(Type assetType, MemberInfo member)
+        {
+            List<IUiElementsFindInfo> findInfo = new();
+            List<FindAttribute> findAttributes = member.GetCustomAttributes<FindAttribute>().ToList();
+            List<FrameAttribute> frameAttributes = member.GetCustomAttributes<FrameAttribute>().ToList();
+            List<ShadowRootHostAttribute> shadowRootHostAttributes = member.GetCustomAttributes<ShadowRootHostAttribute>().ToList();
+
+            foreach (var findAttribute in findAttributes)
+                findInfo.Add(new UiElementsFindInfo(elementsFindMethod: findAttribute.ElementsFindMethod, elementsFindCriteria: findAttribute.ElementsFindCriteria,
+                    framesFindMethod: findAttribute.FramesFindMethod, framesFindCriteria: findAttribute.FramesFindCriteria,
+                    shadowRootHostsFindMethod: findAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: findAttribute.ShadowRootHostsFindCriteria,
+                    findOrderType: findAttribute.FindOrderType));
+
+            foreach (var frameAttribute in frameAttributes)
+                findInfo.Add(new UiElementsFindInfo(framesFindMethod: frameAttribute.FramesFindMethod, framesFindCriteria: frameAttribute.FramesFindCriteria,
+                   shadowRootHostsFindMethod: frameAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: frameAttribute.ShadowRootHostsFindCriteria,
+                   findOrderType: frameAttribute.FindOrderType));
+
+
+            foreach (var shadowRootHostAttribute in shadowRootHostAttributes)
+                findInfo.Add(new UiElementsFindInfo(shadowRootHostsFindMethod: shadowRootHostAttribute.ShadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostAttribute.ShadowRootHostsFindCriteria,
+                    framesFindMethod: shadowRootHostAttribute.FramesFindMethod, framesFindCriteria: shadowRootHostAttribute.FramesFindCriteria,
+                    findOrderType: shadowRootHostAttribute.FindOrderType));
+
+            return findInfo;
         }
 
         public List<TUiElement> InitializeUiElementsList<TUiElement, TNativeElement, TNativeFrameElement, TNativeShadowRootHostElement>
@@ -205,7 +276,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
             try
             {
-                var list = CreateListOfUiElements(type, uiElementInfo);
+                var list = CreateUiElementsList(type, uiElementInfo);
                 return (IUiElementsList<TUiElement>)list;
             }
             catch (Exception ex)
@@ -214,10 +285,10 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
                     $" Exception: {ex}");
             }
         }
-
-        public TUiElement InstantiateUiElement<TUiElement>(string name, Use method, string criteria, IParentUiElement? parentUiElement = null) where TUiElement : IUiElement
+        public TUiElement InstantiateUiElement<TUiElement>(string method, string criteria, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
         {
-            var findOptions = new List<IUiElementsFindInfo>() { new UiElementsFindInfo(method.ToString(), criteria) };
+            name ??= GetUiElementName<TUiElement>();
+            var findOptions = new List<IUiElementsFindInfo>() { new UiElementsFindInfo(method, criteria) };
             IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(name, findOptions, parentUiElement);
             IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
             var uiElement = InstantiateUiElement<TUiElement>(uiElementInfo, nativeObjects: NativeObjects?.ToArray());
@@ -225,8 +296,14 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             return uiElement;
         }
 
-        public TUiElement InstantiateUiElement<TUiElement>(string name, List<IUiElementsFindInfo> findOptions, IParentUiElement? parentUiElement = null) where TUiElement : IUiElement
+        public TUiElement InstantiateUiElement<TUiElement>(Use method, string criteria, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
         {
+            return InstantiateUiElement<TUiElement>(method.ToString(), criteria, parentUiElement: parentUiElement, name: name);
+        }
+
+        public TUiElement InstantiateUiElement<TUiElement>(List<IUiElementsFindInfo> findOptions, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
+        {
+            name ??= GetUiElementName<TUiElement>();
             IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(name, findOptions, parentUiElement);
             IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
             var uiElement = InstantiateUiElement<TUiElement>(uiElementInfo);
@@ -234,9 +311,10 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             return uiElement;
         }
 
-        public IUiElementsList<TUiElement> InstantiateUiElementsList<TUiElement>(string name, Use method, string criteria, IParentUiElement? parentUiElement = null) where TUiElement : IUiElement
+        public IUiElementsList<TUiElement> InstantiateUiElementsList<TUiElement>(string method, string criteria, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
         {
-            var findOptions = new List<IUiElementsFindInfo>() { new UiElementsFindInfo(method.ToString(), criteria) };
+            name ??= GetUiElementsListName<TUiElement>();
+            var findOptions = new List<IUiElementsFindInfo>() { new UiElementsFindInfo(method, criteria) };
             IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(name, findOptions, parentUiElement, isList: true);
             IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
             var uiElementsList = InstantiateUiElementsList<TUiElement>(uiElementInfo);
@@ -244,13 +322,29 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             return uiElementsList;
         }
 
-        public IUiElementsList<TUiElement> InstantiateUiElementsList<TUiElement>(string name, List<IUiElementsFindInfo> findOptions, IParentUiElement? parentUiElement = null) where TUiElement : IUiElement
+        public IUiElementsList<TUiElement> InstantiateUiElementsList<TUiElement>(Use method, string criteria, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
         {
+            return InstantiateUiElementsList<TUiElement>(method.ToString(), criteria, parentUiElement: parentUiElement, name: name);
+        }
+
+        public IUiElementsList<TUiElement> InstantiateUiElementsList<TUiElement>(List<IUiElementsFindInfo> findOptions, IUiElement? parentUiElement = null, string? name = null) where TUiElement : IUiElement
+        {
+            name ??= GetUiElementsListName<TUiElement>();
             IUiElementInstantiationStageInfo instantiationStageInfo = new UiElementInstantiationStageInfo(name, findOptions, parentUiElement, isList: true);
             IUiElementInfo uiElementInfo = new UiElementInfo(instantiationStageInfo);
             var uiElementsList = InstantiateUiElementsList<TUiElement>(uiElementInfo);
 
             return uiElementsList;
+        }
+
+        private string GetUiElementName<TUiElement>()
+        {
+            return typeof(TUiElement).Name;
+        }
+
+        private string GetUiElementsListName<TUiElement>()
+        {
+            return $"List of {typeof(TUiElement).Name}";
         }
 
         #endregion IUiElementsInstantiator

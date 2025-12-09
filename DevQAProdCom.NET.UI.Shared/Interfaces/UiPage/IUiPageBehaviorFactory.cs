@@ -2,6 +2,6 @@
 {
     public interface IUiPageBehaviorFactory
     {
-        public T Create<T>(IExecuteJavaScript javaScriptExecutor, params KeyValuePair<string, object>[]? auxiliaryParams);
+        public T Create<T>(IUiPage uiPage, IExecuteJavaScript javaScriptExecutor, params KeyValuePair<string, object>[]? auxiliaryParams);
     }
 }

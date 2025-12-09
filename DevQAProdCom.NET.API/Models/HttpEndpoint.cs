@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.API.Builders;
+﻿using DevQAProdCom.NET.Global.Builders;
 
 namespace DevQAProdCom.NET.API.Models
 {

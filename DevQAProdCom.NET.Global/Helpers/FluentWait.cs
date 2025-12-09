@@ -55,10 +55,18 @@
             Start();
         }
 
-        public FluentWait Ignore<TException>() where TException : Exception
+        public FluentWait IgnoreException<TException>() where TException : Exception
         {
             _ignoredExceptionTypes ??= new();
             _ignoredExceptionTypes.Add(typeof(TException));
+
+            return this;
+        }
+
+        public FluentWait IgnoreAllExceptions()
+        {
+            _ignoredExceptionTypes ??= new();
+            _ignoredExceptionTypes.Add(typeof(Exception));
 
             return this;
         }
@@ -83,8 +91,10 @@
 
                 Thread.Sleep(_pollingInterval);
             }
-
-            throw new TimeoutException($"Condition not met within the specified timeout '{_timeout}'. \nError message: \n\t1. {_externalErrorMessage} \n\t2. {lastCatchedErrorMessage}");
+            if (string.IsNullOrEmpty(lastCatchedErrorMessage))
+                throw new TimeoutException($"Condition not met within the specified timeout '{_timeout}'. \nError message: {_externalErrorMessage}");
+            else
+                throw new TimeoutException($"Condition not met within the specified timeout '{_timeout}'. \nError message: \n\t1. {_externalErrorMessage} \n\t2. {lastCatchedErrorMessage}");
         }
     }
 }
