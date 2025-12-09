@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.Helpers;
 using DevQAProdCom.NET.Logging.Shared.Constans;
 using DevQAProdCom.NET.Logging.Shared.Enumerations;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
@@ -46,52 +47,64 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
             _log.Verbose($"{{@{SharedLoggingConstants.Data}}}", new UiElementsSearchLoggingModel(uiElementInfo, SharedLoggingConstants.SearchStarted));
 
             //Log Data
-            UiElementsSearchResultLoggingModelVerbose findResultsStatesLoggingModel = new(uiElementInfo);
+            UiElementsSearchResultLoggingModelVerbose? findResultsStatesLoggingModel = null;
 
             //Result Data
-            List<IFindResult<TNativeElement, TNativeFrameElement, TNativeShadowRootHostElement>> nativeElementsList = new(); // should return empty list if nothing is found
-
+            List<IFindResult<TNativeElement, TNativeFrameElement, TNativeShadowRootHostElement>>? nativeElementsList = null;
             (List<List<IFindParametersWithSearchResult>> FindChainCombinations, int StartSearchFromIndex) findData = GetFindData(uiElementInfo);
 
             Stopwatch searchTimeStopWatch = Stopwatch.StartNew();
-            for (var i = 0; i < findData.FindChainCombinations.Count; i++)
-            {
-                var findChain = findData.FindChainCombinations[i];
 
-                try
+            Wait.Create()
+                .WithTimeout(TimeSpan.FromSeconds(15))
+                .DoNotThrowTimeoutException()
+                .Until(() =>
                 {
-                    var result = FindElementsFromIndexOfFindChain(findChain, findData.StartSearchFromIndex, uiElementInfo);
+                    findResultsStatesLoggingModel = new(uiElementInfo);
+                    nativeElementsList = new();  // should return empty list if nothing is found
 
-                    if (result.Count > 0)
+                    for (var i = 0; i < findData.FindChainCombinations.Count; i++)
                     {
-                        nativeElementsList.AddRange(result);
-                        findResultsStatesLoggingModel.AddFoundFindChain(i, findChain);
+                        var findChain = findData.FindChainCombinations[i];
+
+                        try
+                        {
+                            var result = FindElementsFromIndexOfFindChain(findChain, findData.StartSearchFromIndex, uiElementInfo);
+
+                            if (result.Count > 0)
+                            {
+                                nativeElementsList.AddRange(result);
+                                findResultsStatesLoggingModel.AddFoundFindChain(i, findChain);
+                            }
+                            else
+                                findResultsStatesLoggingModel.AddNotFoundFindChain(i, findChain);
+                        }
+
+                        catch
+                        {
+                            findResultsStatesLoggingModel.AddFailedFindChain(i, findChain);
+                            //continue with next find chain combination in case exception was thrown because some element has not been found using previous find chain or any other exception
+                        }
+
+                        if (_log.MinimumLogLevel <= LogLevel.Debug)
+                        {
+                            Uri? uriAfterSearch = GetCurrentUri();
+                            foreach (var findParameters in findChain)
+                                findParameters.UriAfterSearch = uriAfterSearch;
+                        }
                     }
-                    else
-                        findResultsStatesLoggingModel.AddNotFoundFindChain(i, findChain);
-                }
 
-                catch
-                {
-                    findResultsStatesLoggingModel.AddFailedFindChain(i, findChain);
-                    //continue with next find chain combination in case exception was thrown because some element has not been found using previous find chain or any other exception
-                }
-
-                if (_log.MinimumLogLevel <= LogLevel.Debug)
-                {
-                    Uri? uriAfterSearch = GetCurrentUri();
-                    foreach (var findParameters in findChain)
-                        findParameters.UriAfterSearch = uriAfterSearch;
-                }
-            }
+                    return nativeElementsList.Any();
+                });
+            
             searchTimeStopWatch.Stop();
             _log.Verbose($"{{@{SharedLoggingConstants.Data}}}", new UiElementsSearchLoggingModel(uiElementInfo, SharedLoggingConstants.SearchEnded));
 
-            CheckAndLogResults(uiElementInfo, nativeElementsList, shouldSingleElementBeFound, findResultsStatesLoggingModel, searchTimeStopWatch);
+            CheckAndLogResults(uiElementInfo, nativeElementsList!, shouldSingleElementBeFound, findResultsStatesLoggingModel!, searchTimeStopWatch);
 
-            return nativeElementsList;
+            return nativeElementsList!;
         }
-
+        
         private (List<List<IFindParametersWithSearchResult>> FindChainCombinations, int Index) GetFindData(IUiElementInfo uiElementsInfo)
         {
             List<List<IFindParametersWithSearchResult>>? findChainsCombinations = new();

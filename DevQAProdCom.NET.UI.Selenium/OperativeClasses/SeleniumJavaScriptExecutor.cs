@@ -64,7 +64,6 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses
 
             return result;
         }
-        
 
         /// <summary>
         /// Formats the script string by replacing parameter keys with argument placeholders.

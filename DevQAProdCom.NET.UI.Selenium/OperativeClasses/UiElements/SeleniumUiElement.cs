@@ -113,7 +113,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
                 SwitchToFrame();
                 var tagName = webElement.TagName;
             }
-            catch (NotFoundException)
+            catch (Exception)
             {
                 return true;
             }
