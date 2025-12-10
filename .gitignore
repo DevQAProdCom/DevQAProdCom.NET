@@ -377,8 +377,3 @@ MigrationBackup/
 
 LOCAL*
 local*
-
-!DevQAProdCom.Core.Logging.Log/
-!DevQAProdCom.Core.Logging.Log/**
-DevQAProdCom.Core.Logging.Log/bin
-DevQAProdCom.Core.Logging.Log/obj
