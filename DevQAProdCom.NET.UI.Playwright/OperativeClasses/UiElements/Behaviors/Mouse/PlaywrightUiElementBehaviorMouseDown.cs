@@ -1,6 +1,6 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
+using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements;
 
 namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.Mouse
 {
@@ -9,7 +9,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.M
         public void MouseDown()
         {
             UiElement.MouseHover();
-            Page.Mouse.DownAsync().Wait();
+            UiPage.MouseDown();
         }
     }
 }

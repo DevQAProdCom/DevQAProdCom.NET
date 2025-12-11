@@ -101,7 +101,7 @@
 
                 Thread.Sleep(_pollingInterval);
             }
-            
+
             if (_throwTimeoutException)
             {
                 string errorMessageStartsWith = $"Condition not met within the specified timeout '{_timeout}'. \nError message: ";

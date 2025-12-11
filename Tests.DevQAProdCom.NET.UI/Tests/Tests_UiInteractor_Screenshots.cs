@@ -23,8 +23,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_UiInteractor_Make_Screenshots()
         {
             //GIVEN
-            UiInteractor.Interact<TestPageTab1Service>(Const.Tab1);
-            UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
+            UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
+            UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
 
             //WHEN
             UiInteractor.MakeScreenshots(directoryPath: ScreenshotDirectory, fileNamePrefix: "UiInteractor_Make_Screenshots_Test");

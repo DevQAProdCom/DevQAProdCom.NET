@@ -27,6 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="JavaScripts\UiPageMouseDown.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JavaScripts\UiPageMouseUp.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="JavaScripts\Unfocus.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -69,13 +75,13 @@
     <None Update="JavaScripts\ContextClick.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="JavaScripts\MouseDown.js">
+    <None Update="JavaScripts\UiElementMouseDown.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="JavaScripts\MouseMove.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="JavaScripts\MouseUp.js">
+    <None Update="JavaScripts\UiElementMouseUp.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="JavaScripts\SetInnerHtml.js">
@@ -84,6 +90,10 @@
     <None Update="JavaScripts\SetTextContent.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\Shared\Behaviors\Mouse\" />
   </ItemGroup>
 
 </Project>

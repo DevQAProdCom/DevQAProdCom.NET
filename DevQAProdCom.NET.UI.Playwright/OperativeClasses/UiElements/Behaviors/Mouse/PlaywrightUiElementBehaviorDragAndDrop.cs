@@ -1,6 +1,4 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements;
-using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
 
@@ -20,11 +18,10 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.M
             var dropToPlaywrightUiElement = uiElementToDrop as PlaywrightUiElement;
             var dropToLocator = dropToPlaywrightUiElement.GetLocator();
 
-            UiElement.MouseHover();
             UiElement.MouseDown();
             dropToLocator.HoverAsync().Wait();
             dropToLocator.HoverAsync().Wait();
-            UiElement.MouseUp();
+            UiPage.MouseUp();
         }
     }
 }

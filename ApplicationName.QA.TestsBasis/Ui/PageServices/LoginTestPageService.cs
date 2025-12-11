@@ -1,7 +1,7 @@
-﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+﻿using ApplicationName.QA.TestsBasis.Ui.Pages;
 using DevQAProdCom.NET.Global.Helpers;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
-using ApplicationName.QA.TestsBasis.Ui.Pages;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {

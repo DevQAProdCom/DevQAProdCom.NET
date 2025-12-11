@@ -1,10 +1,8 @@
-﻿var uiElement = uiElementArgument;
-
-// Create a new mouseup event
+﻿// Create a new mousedown event
 var event = new MouseEvent('mousedown', {
     bubbles: true,
     cancelable: true,
     view: window
 });
 
-uiElement.dispatchEvent(event);
+document.dispatchEvent(event);

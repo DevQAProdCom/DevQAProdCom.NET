@@ -1,6 +1,4 @@
-﻿using Attribute = DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Auxiliary.Attribute;
-
-namespace DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Test
+﻿namespace DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Test
 {
     public class TestExecutionEndLoggingModel : TestExecutionLoggingModel
     {

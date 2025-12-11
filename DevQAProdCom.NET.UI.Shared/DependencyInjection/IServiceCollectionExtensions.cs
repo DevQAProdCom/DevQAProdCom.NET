@@ -45,7 +45,7 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
             return serviceCollection;
         }
 
-        public static IServiceCollection AddUiInteractorsManagerAsyncLocalInstance(this IServiceCollection serviceCollection, Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null)
+        public static IServiceCollection AddUiInteractorsManagersProvider(this IServiceCollection serviceCollection, Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null)
         {
             serviceCollection.AddSingleton<IUiInteractorsManagersProvider, UiInteractorsManagersProvider>(provider =>
                {
@@ -68,6 +68,9 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
                 .AddUiInteractionBehavior<IUiElementBehaviorMouseUpJs, UiElementBehaviorMouseUpJs>()
 
                 .AddUiInteractionBehavior<IUiPageBehaviorMouseMoveJs, UiPageBehaviorMouseMoveJs>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseDownJs, UiPageBehaviorMouseDownJs>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseUpJs, UiPageBehaviorMouseUpJs>()
+
                 .AddUiInteractionBehavior<IUiPageBehaviorMouseScrollHorizontally, UiPageBehaviorMouseScrollHorizontally>()
                 .AddUiInteractionBehavior<IUiPageBehaviorMouseScrollVertically, UiPageBehaviorMouseScrollVertically>()
 
@@ -108,7 +111,7 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
 
         public static IServiceCollection AddBaseUiInteractionServices(this IServiceCollection serviceCollection, Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null)
         {
-            serviceCollection.AddUiInteractorsManagerAsyncLocalInstance(getCurrentTestIdentifierFunc: getCurrentTestIdentifierFunc, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc)
+            serviceCollection.AddUiInteractorsManagersProvider(getCurrentTestIdentifierFunc: getCurrentTestIdentifierFunc, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc)
                 .AddSingleton<IUiPageFactoryProvider, UiPageFactoryProvider>()
                 .AddSingleton<IBehaviorProvider>(_ => new BehaviorProvider(serviceCollection))
                 .AddSingleton<IUiInteractorBehaviorFactory, UiInteractorBehaviorFactory>()

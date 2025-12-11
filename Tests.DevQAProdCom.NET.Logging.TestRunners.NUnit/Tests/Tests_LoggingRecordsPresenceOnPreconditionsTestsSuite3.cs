@@ -1,9 +1,7 @@
 ﻿using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using NUnit.Framework;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Hooks;
-using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Constants;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.TestData;
 

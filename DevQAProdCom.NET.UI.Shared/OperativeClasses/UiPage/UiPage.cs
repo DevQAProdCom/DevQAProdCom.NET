@@ -235,6 +235,26 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
             AddBehavior<IUiPageBehaviorMouseMoveJs>().MouseMoveJs(x, y);
         }
 
+        public void MouseDown()
+        {
+            AddBehavior<IUiPageBehaviorMouseDown>().MouseDown();
+        }
+
+        public void MouseDownJs()
+        {
+            AddBehavior<IUiPageBehaviorMouseDownJs>().MouseDownJs();
+        }
+
+        public void MouseUp()
+        {
+            AddBehavior<IUiPageBehaviorMouseUp>().MouseUp();
+        }
+
+        public void MouseUpJs()
+        {
+            AddBehavior<IUiPageBehaviorMouseUpJs>().MouseUpJs();
+        }
+
         public void MouseScroll(float deltaX, float deltaY)
         {
             AddBehavior<IUiPageBehaviorMouseScroll>().MouseScroll(deltaX, deltaY);
@@ -269,7 +289,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
 
         #endregion Actions
-
 
         public void GoTo(params KeyValuePair<string, string>[] placeholderValues)
         {

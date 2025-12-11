@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using DevQAProdCom.NET.Configurations.Interfaces;
+﻿using DevQAProdCom.NET.Configurations.Interfaces;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.Configurations.Constants;

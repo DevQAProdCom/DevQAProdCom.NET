@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces
 {
-    public interface ISeleniumWebDriverConfiguration: IUiInteractorConfiguration
+    public interface ISeleniumWebDriverConfiguration : IUiInteractorConfiguration
     {
 
     }

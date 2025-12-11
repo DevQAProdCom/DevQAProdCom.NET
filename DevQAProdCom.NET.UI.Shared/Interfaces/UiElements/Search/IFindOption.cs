@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search
+﻿namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search
 {
     public interface IFindOption
     {

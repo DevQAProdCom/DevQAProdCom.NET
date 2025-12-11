@@ -17,8 +17,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var tab1 = UiInteractor.GetTab(Const.Tab1);
             var tab2 = UiInteractor.GetTab(Const.Tab2);
 
-            var service1 = UiInteractor.Interact<TestPageTab1Service>(Const.Tab1);
-            var service2 = UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
+            var service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
+            var service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
 
             //WHEN
             var actualTab1Button1Text = service1._page.Tab1Button1.GetTextContent();
@@ -39,15 +39,15 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var tab1 = UiInteractor.GetTab(Const.Tab1);
             var tab2 = UiInteractor.GetTab(Const.Tab2);
 
-            var service1 = UiInteractor.Interact<TestPageTab1Service>(Const.Tab1);
-            var service2 = UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
+            var service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
+            var service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
 
             //WHEN
             UiInteractor.CloseTab(Const.Tab1);
             UiInteractor.CloseTab(Const.Tab2);
 
-            service1 = UiInteractor.Interact<TestPageTab1Service>(Const.Tab1);
-            service2 = UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
+            service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
+            service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
 
             var actualTab1Button1Text = service1._page.Tab1Button1.GetTextContent();
             var actualTab2Button1Text = service2._page.Tab2Button1.GetTextContent();

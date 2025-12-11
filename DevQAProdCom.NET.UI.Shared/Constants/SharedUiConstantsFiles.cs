@@ -15,9 +15,11 @@
 
             public static string ClickJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "Click.js");
             public static string ContextClickJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "ContextClick.js");
-            public static string MouseDownJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "MouseDown.js");
+            public static string UiElementMouseDownJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "UiElementMouseDown.js");
+            public static string UiElementMouseUpJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "UiElementMouseUp.js");
+            public static string UiPageMouseDownJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "UiPageMouseDown.js");
+            public static string UiPageMouseUpJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "UiPageMouseUp.js");
             public static string MouseMoveJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "MouseMove.js");
-            public static string MouseUpJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "MouseUp.js");
 
             public static string ScrollIntoViewInstantlyJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "ScrollIntoViewInstantly.js");
             public static string ScrollIntoViewSmoothlyJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "ScrollIntoViewSmoothly.js");

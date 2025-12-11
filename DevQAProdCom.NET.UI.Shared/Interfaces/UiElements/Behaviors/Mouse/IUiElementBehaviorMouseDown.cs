@@ -3,7 +3,7 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Mouse;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse
 {
-    public interface IUiElementBehaviorMouseDown : IBehavior, IUiElementTraitMouseDown
+    public interface IUiElementBehaviorMouseDown : IBehavior, IUiInteractionTraitMouseDown
     {
     }
 }

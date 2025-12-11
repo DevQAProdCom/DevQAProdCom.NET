@@ -3,7 +3,7 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
 
 namespace DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses
 {
-    public class SeleniumWebDriverConfiguration: BaseUiInteractorConfiguration, ISeleniumWebDriverConfiguration
+    public class SeleniumWebDriverConfiguration : BaseUiInteractorConfiguration, ISeleniumWebDriverConfiguration
     {
     }
 }

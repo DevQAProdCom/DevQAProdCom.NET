@@ -10,7 +10,7 @@ namespace DevQAProdCom.NET.UI.Shared.Attributes
            string? shadowRootHostsFindMethod = null, string? shadowRootHostsFindCriteria = null, FindOrderType findOrderType = FindOrderType.NotSet)
            : base(elementsFindMethod: elementsFindMethod, elementsFindCriteria: elementsFindCriteria,
                  framesFindMethod: framesFindMethod, framesFindCriteria: framesFindCriteria,
-                 shadowRootHostsFindMethod: shadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostsFindCriteria, 
+                 shadowRootHostsFindMethod: shadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostsFindCriteria,
                  findOrderType: findOrderType)
         {
         }

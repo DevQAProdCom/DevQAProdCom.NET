@@ -1,5 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Shared.Constants;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager

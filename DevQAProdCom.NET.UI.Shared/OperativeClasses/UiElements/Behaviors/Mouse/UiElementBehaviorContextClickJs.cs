@@ -2,7 +2,6 @@
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
-using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors.Mouse
 {

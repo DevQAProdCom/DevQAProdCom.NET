@@ -96,7 +96,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
 
                     return nativeElementsList.Any();
                 });
-            
+
             searchTimeStopWatch.Stop();
             _log.Verbose($"{{@{SharedLoggingConstants.Data}}}", new UiElementsSearchLoggingModel(uiElementInfo, SharedLoggingConstants.SearchEnded));
 
@@ -104,7 +104,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
 
             return nativeElementsList!;
         }
-        
+
         private (List<List<IFindParametersWithSearchResult>> FindChainCombinations, int Index) GetFindData(IUiElementInfo uiElementsInfo)
         {
             List<List<IFindParametersWithSearchResult>>? findChainsCombinations = new();

@@ -85,6 +85,8 @@ namespace DevQAProdCom.NET.UI.Playwright.DependencyInjection
                 .AddUiInteractionBehavior<IUiElementBehaviorMouseUp, PlaywrightUiElementBehaviorMouseUp>()
 
                 .AddUiInteractionBehavior<IUiPageBehaviorMouseMove, PlaywrightUiPageBehaviorMouseMove>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseDown, PlaywrightUiPageBehaviorMouseDown>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseUp, PlaywrightUiPageBehaviorMouseUp>()
                 .AddUiInteractionBehavior<IUiPageBehaviorMouseScroll, PlaywrightUiPageBehaviorMouseScroll>()
 
                 //Keyboard Behaviors

@@ -2,7 +2,6 @@
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
-using Tests.DevQAProdCom.NET.UI.Constants;
 using Tests.DevQAProdCom.NET.UI.TestData;
 
 namespace Tests.DevQAProdCom.NET.UI.Tests

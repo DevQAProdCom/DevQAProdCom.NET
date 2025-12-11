@@ -10,8 +10,8 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiPage.Behaviors.Mouse
         public void MouseMove(float x, float y)
         {
             new Actions(WebDriver)
-            .MoveByOffset(x.ToInt32(), y.ToInt32())
-            .Perform();
+                .MoveToLocation(x.ToInt32(), y.ToInt32())
+                .Perform();
         }
     }
 }

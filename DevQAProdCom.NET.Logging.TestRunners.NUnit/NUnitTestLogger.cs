@@ -1,4 +1,7 @@
 ﻿using System.Reflection;
+using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Interfaces;
@@ -7,11 +10,8 @@ using DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Suite;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Test;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.OperativeClasses;
 using DevQAProdCom.NET.TestRunners.NUnit.Models.Enumerations;
-using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.Logging.TestRunners.NUnit
 {

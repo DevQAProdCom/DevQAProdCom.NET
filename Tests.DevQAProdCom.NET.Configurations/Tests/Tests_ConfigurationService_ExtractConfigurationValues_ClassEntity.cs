@@ -358,7 +358,7 @@ namespace Tests.DevQAProdCom.NET.Configurations.Tests
         {
             //Arrange
             IConfigContainer configContainer = ArrangeIConfigContainer(env, out string tempDirectory, fileName).Object;
-            UserModelExtended expectedClassEntity = new() { Email = ExpectedValues.GetStringValue(env)};
+            UserModelExtended expectedClassEntity = new() { Email = ExpectedValues.GetStringValue(env) };
 
             //Act
             UserModelExtended actualClassEntity = new() { Email = ExpectedValues.GetStringValue(env) };

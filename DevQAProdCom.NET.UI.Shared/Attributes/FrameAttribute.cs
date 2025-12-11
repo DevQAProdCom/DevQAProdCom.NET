@@ -14,7 +14,7 @@ namespace DevQAProdCom.NET.UI.Shared.Attributes
         }
 
         public FrameAttribute(string framesFindMethod, string framesFindCriteria, string shadowRootHostsFindMethod, string shadowRootHostsFindCriteria)
-            : base(framesFindMethod: framesFindMethod, framesFindCriteria: framesFindCriteria, 
+            : base(framesFindMethod: framesFindMethod, framesFindCriteria: framesFindCriteria,
                   shadowRootHostsFindMethod: shadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostsFindCriteria,
                   findOrderType: FindOrderType.ShadowRootInsideFrame)
         {

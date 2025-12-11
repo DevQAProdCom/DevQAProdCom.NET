@@ -1,7 +1,7 @@
-﻿using DevQAProdCom.NET.UI.Selenium.Interfaces;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
-using DevQAProdCom.NET.Global.Extensions;
 using SeleniumCookie = OpenQA.Selenium.Cookie;
 
 namespace DevQAProdCom.NET.UI.Selenium.Mappers

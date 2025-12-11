@@ -1,6 +1,6 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using OpenQA.Selenium;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors;
+using OpenQA.Selenium;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors
 {

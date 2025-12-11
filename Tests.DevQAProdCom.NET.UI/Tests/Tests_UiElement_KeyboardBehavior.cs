@@ -26,7 +26,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [TestCase(Key.Backspace, "Backspace", "8")]
         [TestCase(Key.Tab, "Tab", "9")]
         [TestCase(Key.Clear, "Clear", "12")] // Playwright Unknown key: "Clear"
-        [TestCase(Key.Return, "", "")] // Playwright Unknown key: "Return"
+        [TestCase(Key.Return, "", "")] // Playwright Unknown key: "Return" , Selenium " KeyDown" with a length of 8, but "Enter KeyDown"
         [TestCase(Key.Enter, "Enter", "13")]
         [TestCase(Key.Shift, "Shift", "16")]
         [TestCase(Key.LeftShift, "Shift", "16")]
@@ -100,7 +100,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [TestCaseSource(nameof(KeysInfoTestCaseSource))]
-        public void Should_Process_KeyDown_KeyUp_TestCaseSource(string key, string expectedValue, List<string> expectedCodes)
+        public void Should_Process_KeyDown_KeyUp_TestCaseSource(Key key, string expectedValue, List<string> expectedCodes)
         {
             //WHEN
             _keyboardTestPage.KeyDownUpEventInterceptorSection.KeysDown(key);
@@ -123,7 +123,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [TestCaseSource(nameof(KeysInfoTestCaseSource))]
-        public void Should_Process_PressKeysSequentially_TestCaseSource(string key, string expectedValue, List<string> expectedCodes)
+        public void Should_Process_PressKeysSequentially_TestCaseSource(Key key, string expectedValue, List<string> expectedCodes)
         {
             //WHEN
             _keyboardTestPage.KeyPressEventInterceptorSection.PressKeysSequentially(key);

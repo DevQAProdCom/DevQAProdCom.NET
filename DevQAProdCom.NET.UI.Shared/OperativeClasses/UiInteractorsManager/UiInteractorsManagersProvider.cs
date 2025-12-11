@@ -49,7 +49,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
             if (getCurrentTestIdentifierFunc != null)
                 uiInteractorsManagerIdentifier = getCurrentTestIdentifierFunc();
 
-            if (getCurrentFeatureIdentifierFunc != null)
+            else if (getCurrentFeatureIdentifierFunc != null)
                 uiInteractorsManagerIdentifier = getCurrentFeatureIdentifierFunc();
 
             if (uiInteractorsManagerIdentifier == null)

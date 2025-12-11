@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
-using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 {

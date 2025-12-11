@@ -1,7 +1,7 @@
 ﻿namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Mouse
 {
-    public interface IUiElementTraitMouseDownJs
+    public interface IUiInteractionTraitMouseUpJs
     {
-        public void MouseDownJs();
+        public void MouseUpJs();
     }
 }

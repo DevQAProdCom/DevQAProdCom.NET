@@ -1,10 +1,8 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Hooks;
-using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Constants;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Models;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.TestData;

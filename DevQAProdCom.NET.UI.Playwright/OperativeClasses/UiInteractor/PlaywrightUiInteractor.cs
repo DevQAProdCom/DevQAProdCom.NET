@@ -95,6 +95,8 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             if (!string.IsNullOrEmpty(DownloadsDefaultDirectory))
                 Directory.Delete(DownloadsDefaultDirectory, true);
 
+            NativeObjects.Clear();
+
             //TODO Check if according to configuration only single element of Browser Instance is created per run - then disposal should happen at the end of run, otherwise each time interactor is disposed
             //if (Browser != null)
             //    Browser.CloseAsync().Wait();

@@ -6,13 +6,13 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
 {
     public class PerScenarioBaseTest : BaseTest
     {
-        protected IUiInteractorsManagersProvider UiInteractorsManagerAsyncLocalInstance;
-        protected IUiInteractor UiInteractor => UiInteractorsManagerAsyncLocalInstance.GetUiInteractor();
+        protected IUiInteractorsManagersProvider UiInteractorsManagersProvider;
+        protected IUiInteractor UiInteractor => UiInteractorsManagersProvider.GetUiInteractor();
 
         [SetUp]
         public void Setup()
         {
-            UiInteractorsManagerAsyncLocalInstance = _di.GetRequiredService<IUiInteractorsManagersProvider>();
+            UiInteractorsManagersProvider = _di.GetRequiredService<IUiInteractorsManagersProvider>();
         }
 
         [TearDown]
@@ -20,7 +20,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         {
             UiInteractor.MakeScreenshots(directoryPath: Const.Screenshot_Directory);
             //UiInteractorsManager.DisposeUiInteractorsManager();
-            UiInteractorsManagerAsyncLocalInstance.DisposeUiInteractor(UiInteractor.Name);
+            UiInteractorsManagersProvider.DisposeUiInteractor(uiInteractorIdentifier: UiInteractor.Name);
         }
     }
 }

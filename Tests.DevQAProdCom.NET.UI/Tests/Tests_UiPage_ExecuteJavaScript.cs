@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
@@ -22,7 +21,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             _testPage2Service = UiInteractor.Interact<TestPage2Service>();
             _visibleButtonArgument = new KeyValuePair<string, object>("uiElementArgument", _testPage2Service._page.VisibleButton);
         }
-  
+
         #region Execute JavaScript Relative to Page
 
         [Test]

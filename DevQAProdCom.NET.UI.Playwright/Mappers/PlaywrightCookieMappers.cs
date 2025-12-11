@@ -1,8 +1,8 @@
-﻿using DevQAProdCom.NET.UI.Playwright.Interfaces;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
-using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using Microsoft.Playwright;
 using PlaywrightCookie = Microsoft.Playwright.Cookie;
 

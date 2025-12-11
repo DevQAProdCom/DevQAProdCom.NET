@@ -2,7 +2,6 @@
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.UiElements.Interfaces;
-using DevQAProdCom.NET.UI.UiElements.OperativeClasses;
 
 namespace ApplicationName.QA.TestsBasis.Ui.Pages
 {

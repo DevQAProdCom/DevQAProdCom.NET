@@ -1,5 +1,4 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
 
 namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.Mouse
@@ -15,12 +14,12 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.M
         {
             var draggableElementLocation = UiElement.GetLocation();
             UiPage.MouseMove(draggableElementLocation.X, draggableElementLocation.Y);
-            UiElement.MouseDown();
+            UiPage.MouseDown();
             var droppablePositionX = draggableElementLocation.X + offsetX;
             var droppablePositionY = draggableElementLocation.Y + offsetY;
             UiPage.MouseMove(droppablePositionX, droppablePositionY);
             UiPage.MouseMove(droppablePositionX, droppablePositionY);
-            UiElement.MouseUp();
+            UiPage.MouseUp();
         }
     }
 }

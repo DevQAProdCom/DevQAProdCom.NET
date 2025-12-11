@@ -1,7 +1,6 @@
-﻿using DevQAProdCom.NET.UI.Shared.Constants;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Files;
-using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors.Files
 {

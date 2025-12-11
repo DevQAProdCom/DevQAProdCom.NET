@@ -12,6 +12,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage.Behaviors
         protected IUiPage UiPage => _uiPage ??= Parameters.Get<IUiPage>(SharedUiConstants.IUiPage);
 
         private IExecuteJavaScript? _javaScriptExecutor;
-        protected IExecuteJavaScript JavaScriptExecutor => _javaScriptExecutor ??= Parameters.Get<IUiPage>(SharedUiConstants.IExecuteJavaScript);
+        protected IExecuteJavaScript JavaScriptExecutor => _javaScriptExecutor ??= Parameters.Get<IExecuteJavaScript>(SharedUiConstants.IExecuteJavaScript);
     }
 }

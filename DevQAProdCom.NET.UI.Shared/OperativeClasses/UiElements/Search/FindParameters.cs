@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Extensions.StringExtensions;
-using DevQAProdCom.NET.UI.Shared.Constants;
+﻿using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;

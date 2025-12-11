@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
-using FluentAssertions.Execution;
+﻿using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using FluentAssertions;
-using NUnit.Framework;
+using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Hooks;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Constants;
-using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.TestData;
 
 namespace Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Tests

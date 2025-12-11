@@ -28,9 +28,9 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements;
+using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiPage.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.UiElements.Extensions;
 using DevQAProdCom.NET.UI.UiElements.Interfaces;
-using DevQAProdCom.NET.UI.UiElements.OperativeClasses;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
@@ -99,6 +99,8 @@ namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
                 .AddUiInteractionBehavior<IUiPageBehaviorKeysDown, SeleniumUiPageBehaviorKeysDown>()
                 .AddUiInteractionBehavior<IUiPageBehaviorKeysUp, SeleniumUiPageBehaviorKeysUp>()
                 .AddUiInteractionBehavior<IUiPageBehaviorPressKeysSequentially, SeleniumUiPageBehaviorPressKeysSequentially>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseDown, SeleniumUiPageBehaviorMouseDown>()
+                .AddUiInteractionBehavior<IUiPageBehaviorMouseUp, SeleniumUiPageBehaviorMouseUp>()
 
                 .AddUiInteractionBehavior<IUiInteractorBehaviorGetRemoteSessionId, SeleniumUiInteractorBehaviorGetRemoteSessionId>();
 

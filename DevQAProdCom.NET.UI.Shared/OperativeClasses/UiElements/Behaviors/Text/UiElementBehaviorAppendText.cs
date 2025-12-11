@@ -1,7 +1,6 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Text;
-using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors.Text
 {

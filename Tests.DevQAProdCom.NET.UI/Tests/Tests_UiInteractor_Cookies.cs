@@ -3,7 +3,6 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using NUnit.Framework;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
 using Tests.DevQAProdCom.NET.UI.Constants;
 
@@ -28,8 +27,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _service1 = UiInteractor.Interact<TestPageTab1Service>(Const.Tab1);
-            _service2 = UiInteractor.Interact<TestPageTab2Service>(Const.Tab2);
+            _service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
+            _service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
 
             _tab1 = UiInteractor.GetTab(Const.Tab1);
             _tab2 = UiInteractor.GetTab(Const.Tab2);
@@ -148,7 +147,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             UiInteractor.SetCookies(Const.CookieBWithDomainPathConstructor);
 
             var tab3 = UiInteractor.GetTab(Const.Tab3);
-            var service3 = UiInteractor.Interact<TestPageTab3Service>(Const.Tab3);
+            var service3 = UiInteractor.Interact<TestPageTab3Service>(tabName: Const.Tab3);
 
             var actualCookie = UiInteractor.GetCookie(Const.CookieBWithDomainPathConstructor.Name);
             var tab3Button = service3._page.Tab3ButtonCheckCookie;

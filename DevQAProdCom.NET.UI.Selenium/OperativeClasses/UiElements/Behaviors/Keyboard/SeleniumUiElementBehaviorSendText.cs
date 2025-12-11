@@ -1,5 +1,4 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Keyboard;
 using OpenQA.Selenium.Interactions;
 

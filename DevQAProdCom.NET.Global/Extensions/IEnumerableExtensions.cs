@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DevQAProdCom.NET.Global.Extensions
+﻿namespace DevQAProdCom.NET.Global.Extensions
 {
     public static class IEnumerableExtensions
     {

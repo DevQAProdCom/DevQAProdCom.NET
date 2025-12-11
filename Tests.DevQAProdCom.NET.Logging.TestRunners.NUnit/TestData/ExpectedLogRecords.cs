@@ -1,8 +1,8 @@
 ﻿using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using NUnit.Framework.Interfaces;
+using Serilog.Events;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Constants;
-using Serilog.Events;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Models;
 
 namespace Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.TestData

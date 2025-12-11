@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
+﻿using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.Mappers;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Enumerations;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Interfaces;
@@ -7,7 +8,6 @@ using DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Suite;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Models.Test;
 using DevQAProdCom.NET.TestRunners.NUnit.Models.Enumerations;
 using DevQAProdCom.NET.TestRunners.NUnit.Models.TestEventListenerModels.Root;
-using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using NUnit.Engine;
 using NUnit.Engine.Extensibility;
 using NUnit.Framework;

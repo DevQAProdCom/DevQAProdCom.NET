@@ -1,7 +1,6 @@
-﻿using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using Microsoft.Playwright;
+﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors;
+using Microsoft.Playwright;
 
 namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors
 {

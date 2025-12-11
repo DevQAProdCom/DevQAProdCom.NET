@@ -1,5 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
-using DevQAProdCom.NET.Global.Extensions;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 
 namespace DevQAProdCom.NET.UI.Shared.Extensions
 {

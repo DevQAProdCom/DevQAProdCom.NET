@@ -211,7 +211,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 
         public abstract void Launch();
         public abstract bool IsInteractable();
-        public abstract void Dispose(); //TerminateInteractor
+        public abstract void Dispose();  //TerminateInteractor
 
         #region Screenshots
 

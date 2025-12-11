@@ -65,6 +65,8 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
             if (!string.IsNullOrEmpty(DownloadsDefaultDirectory))
                 Directory.Delete(DownloadsDefaultDirectory, true);
+
+            NativeObjects.Clear();
         }
 
         protected override IUiInteractorTab CreateTab(string tabName = SharedUiConstants.DefaultUiInteractorTab)

@@ -1,5 +1,4 @@
 ﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
-using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search;
 
 namespace DevQAProdCom.NET.UI.Shared.Logging.Models
 {
@@ -10,7 +9,7 @@ namespace DevQAProdCom.NET.UI.Shared.Logging.Models
 
         public FindOptionLoggingModel(IFindOption findOption)
         {
-            Method  = findOption.Method;
+            Method = findOption.Method;
             Criteria = findOption.Criteria;
         }
     }

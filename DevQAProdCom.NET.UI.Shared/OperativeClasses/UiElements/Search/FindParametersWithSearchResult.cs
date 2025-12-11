@@ -25,18 +25,18 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
         }
 
         public FindParametersWithSearchResult(IFindParameters findParameters, List<IFindParametersWithSearchResult>? findChain = null, int? totalAmountOfElementsFound = null, Exception? exception = null, Uri? uriBeforeSearch = null)
-            :this(findParameters.Name, findParameters.FindInfo, findParameters.NestingLevel, findParameters.Parent, findParameters.IsList, findParameters.UiIndex, findParameters.NativeElement, findParameters.NativeFrameElement, findParameters.NativeShadowRootHostElement,
+            : this(findParameters.Name, findParameters.FindInfo, findParameters.NestingLevel, findParameters.Parent, findParameters.IsList, findParameters.UiIndex, findParameters.NativeElement, findParameters.NativeFrameElement, findParameters.NativeShadowRootHostElement,
                  findChain: findChain, totalAmountOfElementsFound: totalAmountOfElementsFound, exception: exception, uriBeforeSearch: uriBeforeSearch)
         {
-            
+
         }
 
-        public FindParametersWithSearchResult(IFindParametersWithSearchResult findParametersWithSearchResult) 
+        public FindParametersWithSearchResult(IFindParametersWithSearchResult findParametersWithSearchResult)
             : this(findParametersWithSearchResult.Name, findParametersWithSearchResult.FindInfo, findParametersWithSearchResult.NestingLevel, findParametersWithSearchResult.Parent, findParametersWithSearchResult.IsList,
                   findParametersWithSearchResult.UiIndex, findParametersWithSearchResult.NativeElement, findParametersWithSearchResult.NativeFrameElement, findParametersWithSearchResult.NativeShadowRootHostElement,
                   findChain: findParametersWithSearchResult.FindChain, totalAmountOfElementsFound: findParametersWithSearchResult.TotalAmountOfElementsFound, exception: findParametersWithSearchResult.Exception, uriBeforeSearch: findParametersWithSearchResult.UriBeforeSearch)
         {
-            
+
         }
 
         private FindState GetFindState()

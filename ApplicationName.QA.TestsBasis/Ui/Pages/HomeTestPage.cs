@@ -29,7 +29,7 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
                 if (_dynamiclyInstantiatedUiElement == null)
                     _dynamiclyInstantiatedUiElement = Find<IUiElement>(
                                 Use.XPath,
-                                "//table[@id='Table2']//tr[2]//th[2]", 
+                                "//table[@id='Table2']//tr[2]//th[2]",
                                 name: "Dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator");
 
                 return _dynamiclyInstantiatedUiElement;

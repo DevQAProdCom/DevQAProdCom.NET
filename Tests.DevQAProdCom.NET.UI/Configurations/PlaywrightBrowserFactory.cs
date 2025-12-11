@@ -1,8 +1,8 @@
-﻿using DevQAProdCom.NET.UI.Playwright.Browsers.OperativeClasses;
-using DevQAProdCom.NET.UI.Shared.Enumerations;
-using DevQAProdCom.NET.Global.Constants;
-using Microsoft.Playwright;
+﻿using DevQAProdCom.NET.Global.Constants;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using DevQAProdCom.NET.UI.Playwright.Browsers.OperativeClasses;
+using DevQAProdCom.NET.UI.Shared.Enumerations;
+using Microsoft.Playwright;
 
 namespace Tests.DevQAProdCom.NET.UI.Configurations
 {
@@ -37,7 +37,7 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
         {
             var options = new BrowserTypeLaunchOptions()
             {
-                Headless = IsRemoteRun ? true : false,
+                Headless = IsRemoteRun ? true : true,
                 DownloadsPath = GetDownloadsDefaultDirectory(),
                 Args = new[] { "--disable-gpu" }
             };

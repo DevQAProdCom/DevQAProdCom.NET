@@ -82,7 +82,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //WHEN
             var actualText = _testPage2Service._page.UseClassNameContains.GetTextContent();
-            var actualClassNameAttribute = _testPage2Service._page.UseClassNameContains.GetNameAttribute();
+            var actualClassNameAttribute = _testPage2Service._page.UseClassNameContains.GetClassAttribute();
 
             //THEN
             using (new AssertionScope())

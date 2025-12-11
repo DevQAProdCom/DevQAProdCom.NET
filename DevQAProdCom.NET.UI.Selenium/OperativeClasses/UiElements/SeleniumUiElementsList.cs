@@ -42,7 +42,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
             return false;
         }
-     
+
         public override List<TUiElement> GetUiElementItems(bool reFindItems = true)
         {
             UiPage.UiTab.SwitchTo();

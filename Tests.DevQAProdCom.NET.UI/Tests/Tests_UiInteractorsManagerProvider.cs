@@ -8,10 +8,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 {
     [Parallelizable(ParallelScope.All)]
 
-    internal class Tests_UiInteractorsManagerAsyncLocalInstance
+    internal class Tests_UiInteractorsManagersProvider
     {
         [Test]
-        public void Should_Single_Instance_Of_UiInteractorsManagerAsyncLocalInstance_Be_Returned_By_Dependency_Injection_After_Each_Call_Of_Get_Required_Service()
+        public void Should_Single_Instance_Of_UiInteractorsManagersProvider_Be_Returned_By_Dependency_Injection_After_Each_Call_Of_Get_Required_Service()
         {
             //WHEN
             var actualAgent1 = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>();
@@ -22,10 +22,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [Test]
-        public void Should_UiInteractorsManagerAsyncLocalInstance_Return_Different_IUiInteractorsManagers_For_Different_Threads()
+        public void Should_UiInteractorsManagersProvider_Return_Different_IUiInteractorsManagers_For_Different_Threads()
         {
             //GIVEN
-            UiInteractorsManagersProvider uiInteractorsManagerAsyncLocalInstance = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>() as UiInteractorsManagersProvider;
+            UiInteractorsManagersProvider UiInteractorsManagersProvider = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>() as UiInteractorsManagersProvider;
 
             //WHEN
             Guid? thread1UiInteractorsManagerId = null;
@@ -33,12 +33,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             var thread1 = new Thread(() =>
             {
-                thread1UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.GetUiInteractorsManager().Id;
+                thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager().Id;
             });
 
             var thread2 = new Thread(() =>
             {
-                thread2UiInteractorsManagerId = uiInteractorsManagerAsyncLocalInstance.GetUiInteractorsManager().Id;
+                thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager().Id;
             });
 
             thread1.Start();
@@ -49,6 +49,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             //THEN
             using (new AssertionScope())
             {
+                thread1.ManagedThreadId.Should().NotBe(thread2.ManagedThreadId);
+
                 thread1UiInteractorsManagerId.Should().NotBeNull();
                 thread2UiInteractorsManagerId.Should().NotBeNull();
 

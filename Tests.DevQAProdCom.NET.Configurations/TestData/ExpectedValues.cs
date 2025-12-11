@@ -58,7 +58,7 @@ namespace Tests.DevQAProdCom.NET.Configurations.TestData
         public static string GetEnvironmentVariableNotFoundExceptionMessage(string name, StringComparison stringComparison)
         {
             return $"Environment variable '{name}' was not found. Comparison option used: 'StringComparison.{stringComparison}'.";
-            
+
         }
 
         public static string GetUnableToConvertEnvironmentVariableExceptionMessage(string name, string envVariableValue, Type type)

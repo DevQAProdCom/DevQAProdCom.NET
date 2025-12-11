@@ -1,8 +1,8 @@
-﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+﻿using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Others;
-using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors.Others
 {
