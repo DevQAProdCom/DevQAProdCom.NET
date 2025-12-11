@@ -37,7 +37,7 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
         {
             var options = new BrowserTypeLaunchOptions()
             {
-                Headless = IsRemoteRun ? true : true,
+                Headless = IsRemoteRun ? true : false,
                 DownloadsPath = GetDownloadsDefaultDirectory(),
                 Args = new[] { "--disable-gpu" }
             };
