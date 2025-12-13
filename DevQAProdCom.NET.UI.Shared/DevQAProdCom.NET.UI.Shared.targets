@@ -1,0 +1,10 @@
+﻿<Project>
+  <Target Name="CopyConfiguration" AfterTargets="Build">
+    <ItemGroup>
+      <JavaScriptFiles Include="$(MsBuildThisFileDirectory)JavaScripts\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(JavaScriptFiles)"
+          DestinationFolder="$(OutDir)\JavaScripts\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

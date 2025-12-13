@@ -13,6 +13,7 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Mouse;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Scroll;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Behaviors.Mouse;
@@ -26,6 +27,7 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage.Behaviors;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage.Behaviors.Mouse;
+using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage.Behaviors.Scroll;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -94,6 +96,7 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
                 //Scroll Behaviors
                 .AddUiInteractionBehavior<IUiElementBehaviorScrollIntoViewInstantlyJs, UiElementBehaviorScrollIntoViewInstantlyJs>()
                 .AddUiInteractionBehavior<IUiElementBehaviorScrollIntoViewSmoothlyJs, UiElementBehaviorScrollIntoViewSmoothlyJs>()
+                .AddUiInteractionBehavior<IUiPageBehaviorScrollToTopSmoothlyJs, UiPageBehaviorScrollToTopSmoothlyJs>()
 
                 //Text Behaviors
                 .AddUiInteractionBehavior<IUiElementBehaviorAppendText, UiElementBehaviorAppendText>()

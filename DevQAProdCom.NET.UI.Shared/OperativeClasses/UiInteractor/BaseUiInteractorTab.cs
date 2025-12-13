@@ -162,7 +162,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 
         #region Actions
 
-        #region KeyboardActions
+        #region Keyboard Actions
 
         public void KeysDown(params string[] keys)
         {
@@ -230,9 +230,9 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             page.PressKeysSimultaneously(keys);
         }
 
-        #endregion KeyboardActions
+        #endregion Keyboard Actions
 
-        #region MouseActions
+        #region Mouse Actions
 
         public void MouseMove(float x, float y)
         {
@@ -282,7 +282,17 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             page.MouseScrollHorizontally(deltaX, untilCondition, timeoutSec, pollingIntervalSec);
         }
 
-        #endregion MouseActions
+        #endregion Mouse Actions
+
+        #region Scroll Actions
+
+        public void ScrollToTopSmoothlyJs()
+        {
+            IUiPage page = GetPage<UiPage.UiPage>();
+            page.ScrollToTopSmoothlyJs();
+        }
+
+        #endregion Scroll Actions
 
         #endregion Actions
 

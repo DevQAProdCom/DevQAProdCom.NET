@@ -1,6 +1,7 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.Shared.Traits.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.Shared.Traits.Other;
+using DevQAProdCom.NET.UI.Shared.Interfaces.Shared.Traits.Scroll;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Traits.Mouse;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
@@ -31,6 +32,8 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiPage
         IUiInteractionTraitMouseUpJs,
         IUiInteractionTraitMouseDown,
         IUiInteractionTraitMouseDownJs,
+
+        IUiInteractionTraitScrollToTopSmoothlyJs,
 
         IUiInteractionTraitRefresh
     {

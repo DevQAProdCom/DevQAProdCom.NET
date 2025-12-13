@@ -42,4 +42,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Configurations\appsettings.Default.SerilogLoggingProvider.json" Pack="true" PackagePath="buildTransitive\Configurations">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="DevQAProdCom.NET.Logging.Providers.Serilog.targets" Pack="true" PackagePath="buildTransitive\">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

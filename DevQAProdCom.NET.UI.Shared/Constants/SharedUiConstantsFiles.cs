@@ -26,7 +26,7 @@
             public static string SetInnerHtmlJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "SetInnerHtml.js");
             public static string SetTextContentJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "SetTextContent.js");
             public static string GetLocalStorageDataJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "GetLocalStorageDataJavaScriptFilePath.js");
-
+            public static string UiPageScrollToTopSmoothlyJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "UiPageScrollToTopSmoothly.js");
             public static string RemoveClassJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "RemoveClass.js");
             public static string RemoveAttributeJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "RemoveAttribute.js");
             public static string SetAttributeJavaScriptFilePath = Path.Combine(Directories.JavaScriptFiles, "SetAttribute.js");

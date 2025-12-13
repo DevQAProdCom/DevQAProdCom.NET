@@ -71,7 +71,9 @@
     <PackageVersion Include="NUnitLite" Version="4.1.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
   </ItemGroup>
-  <ItemGroup>
+
+  <!--Placeholder for NuGet Packages checks-->
+  <!--<ItemGroup>
     <PackageVersion Include="ApplicationName.Dev.API" Version="0.0.0-local" />
     <PackageVersion Include="ApplicationName.QA.Global" Version="0.0.0-local" />
     <PackageVersion Include="ApplicationName.QA.TestsBasis" Version="0.0.0-local" />
@@ -98,5 +100,5 @@
     <PackageVersion Include="DevQAProdCom.NET.UI.Selenium" Version="0.0.0-local" />
     <PackageVersion Include="DevQAProdCom.NET.UI.Selenium.WebDrivers" Version="0.0.0-local" />
     <PackageVersion Include="DevQAProdCom.NET.UI.UiElements" Version="0.0.0-local" />
-  </ItemGroup>
+  </ItemGroup>-->
 </Project>

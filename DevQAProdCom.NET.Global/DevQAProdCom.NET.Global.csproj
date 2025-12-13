@@ -29,5 +29,5 @@
     <PackageReference Include="DevQAProdCom.NET.Global.ModelsAndInterfaces" />
     <PackageReference Include="DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations" />
   </ItemGroup>
-  
+
 </Project>

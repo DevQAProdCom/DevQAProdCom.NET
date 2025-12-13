@@ -1,0 +1,7 @@
+﻿<Project>
+  <Target Name="CopyAppsettingsDefaultSerilogLoggingProviderJson" AfterTargets="Build">
+    <Copy SourceFiles="$(MsBuildThisFileDirectory)Configurations\appsettings.Default.SerilogLoggingProvider.json"
+          DestinationFolder="$(OutDir)\Configurations"
+          SkipUnchangedFiles="true"/>
+  </Target>
+</Project>

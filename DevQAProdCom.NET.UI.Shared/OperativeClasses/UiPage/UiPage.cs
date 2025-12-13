@@ -10,6 +10,7 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Mouse;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Scroll;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 {
@@ -287,6 +288,14 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
         #endregion
 
+        #region Scroll Actions
+
+        public void ScrollToTopSmoothlyJs()
+        {
+            AddBehavior<IUiPageBehaviorScrollToTopSmoothlyJs>().ScrollToTopSmoothlyJs();
+        }
+
+        #endregion Scroll Actions
 
         #endregion Actions
 
