@@ -146,6 +146,9 @@ namespace DevQAProdCom.NET.UI.Shared.Logging.Models
             FoundFindChains.Add((chainExecutionOrder, findChain));
         }
 
+        public List<(int ChainExecutionOrder, List<IFindParametersWithSearchResult> Chain)> GetFoundFindChains() => FoundFindChains;
+
+
         //public void SetFoundFindChains(List<(int ChainExecutionOrder, List<IFindParametersWithSearchResult> Chain)> chains)
         //{
         //    _foundFindChains = chains;
@@ -165,6 +168,8 @@ namespace DevQAProdCom.NET.UI.Shared.Logging.Models
         {
             FailedFindChains.Add((chainExecutionOrder, findChain));
         }
+
+        public List<(int ChainExecutionOrder, List<IFindParametersWithSearchResult> Chain)> GetFailedFindChains() => FailedFindChains;
 
         //public void SetFailedFindChains(List<(int ChainExecutionOrder, List<IFindParametersWithSearchResult> Chain)> chains)
         //{

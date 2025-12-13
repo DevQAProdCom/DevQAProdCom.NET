@@ -174,6 +174,14 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
 
                 findResultsStatesLoggingModel.GeneralException = generalException;
             }
+            else
+            {
+                if (findResultsStatesLoggingModel.GetFoundFindChains().Count() == 0 && findResultsStatesLoggingModel.GetFailedFindChains().Count() > 0)
+                {
+                    baseExceptionMessage = $"Issue appeared during search for UiElements '{uiElementInfo.InstantiationStage.FullName}' on page '{findResultsStatesLoggingModel.GetUriAfterSearchString()}'.";
+                    findResultsStatesLoggingModel.GeneralException = new Exception(baseExceptionMessage);
+                }
+            }
 
             if (findResultsStatesLoggingModel.GeneralException != null)
             {
