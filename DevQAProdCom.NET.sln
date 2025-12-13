@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		Directory.Packages.props = Directory.Packages.props
 		LICENSE.txt = LICENSE.txt
-		NuGet.config = NuGet.config
+		nuget.config = nuget.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InfrastructureForTests", "InfrastructureForTests", "{07A2C5D7-4850-48CB-905F-4A9CC91242DC}"
