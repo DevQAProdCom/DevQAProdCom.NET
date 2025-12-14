@@ -116,6 +116,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
                 if (ex.Message.Contains("ElementHandle is either not visible or not an HTMLElement"))
                 {
                     _log.Info("Element is stale.");
+                    return true;
                 }
                 else
                 {
@@ -228,5 +229,27 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
         }
 
         #endregion Execute JavaScript
+
+        protected override bool TryReturnResultOrStale<T>(Func<T> func, out T result)
+        {
+            result = default;
+
+            try
+            {
+                result = func();
+                return true;
+            }
+            catch (PlaywrightException ex)
+            {
+                // Check if the exception indicates a stale element
+                if (ex.Message.Contains(ProjectConst.PlaywrightStaleElementExceptionMessageContains))
+                {
+                    _log.Info("Element is stale.");
+                    return false;
+                }
+
+                throw;
+            }
+        }
     }
 }

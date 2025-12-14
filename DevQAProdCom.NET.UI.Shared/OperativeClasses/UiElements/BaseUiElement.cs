@@ -322,5 +322,24 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         }
 
         #endregion
+
+        protected T ExecuteAgainIfStaleElementReference<T>(Func<T> func)
+        {
+            if (!TryReturnResultOrStale(func, out T result))
+            {
+                ThrowUiElementStaleReferenceExceptionIfIsElementOfList();
+                TryReturnResultOrStale(func, out result);
+            }
+            _log.Info($"{result}");
+            return result;
+        }
+
+        protected abstract bool TryReturnResultOrStale<T>(Func<T> func, out T result);
+
+        protected void ThrowUiElementStaleReferenceExceptionIfIsElementOfList()
+        {
+            if (Info.InstantiationStage.IsElementOfList)
+                throw new UiElementStaleReferenceException($"UiElement '{Info.InstantiationStage.FullName}' is stale and is part of UiElements list. Refind of all list is required.");
+        }
     }
 }

@@ -60,6 +60,34 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
             return UiElementItems;
         }
 
+        public override IEnumerable<TResult> Select<TResult>(Func<TUiElement, TResult> selector, bool reFindItems = true)
+        {
+            try
+            {
+                var items = GetUiElementItems(reFindItems);
+                return items.Select(selector).ToList(); //should be ToList() - to be able to catch exception, otherwise Select(selector) will executed outside of this code due to IEnumerable lazy loading
+            }
+            catch (Exception ex) when (ex is StaleElementReferenceException || ex is UiElementStaleReferenceException)
+            {
+                var items = GetUiElementItems(reFindItems: true);
+                return items.Select(selector).ToList();
+            }
+        }
+
+        public override IEnumerable<TResult> SelectMany<TResult>(Func<TUiElement, IEnumerable<TResult>> selector, bool reFindItems = true)
+        {
+            try
+            {
+                var items = GetUiElementItems(reFindItems);
+                return items.SelectMany(selector).ToList(); //should be ToList() - to be able to catch exception, otherwise Select(selector) will executed outside of this code due to IEnumerable lazy loading
+            }
+            catch (Exception ex) when (ex is StaleElementReferenceException || ex is UiElementStaleReferenceException)
+            {
+                var items = GetUiElementItems(reFindItems);
+                return items.SelectMany(selector).ToList();
+            }
+        }
+
         private void LogUiElementSearchOperation()
         {
             var currentPageUri = new Uri(UiPage.UiTab.GetTabUriAsString());

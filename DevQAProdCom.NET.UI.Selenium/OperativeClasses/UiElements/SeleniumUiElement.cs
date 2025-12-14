@@ -50,20 +50,6 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
             return webElement!;
         }
 
-        public IWebElement GetWebElement(bool find)
-        {
-            var webElement = GetNativeElementInternal();
-
-            if (find)
-            {
-                var findResult = NativeElementsSearcher.FindElement<IWebElement, IWebElement, IWebElement>(Info);
-                webElement = findResult.NativeElement;
-                NativeObjects.Upsert(SharedUiConstants.NativeElement, webElement);
-            }
-
-            return webElement!;
-        }
-
         private IWebElement? GetNativeElementInternal()
         {
             NativeObjects.TryGetValue(SharedUiConstants.NativeElement, out var nativeElement);
@@ -90,16 +76,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
             if (webElement == null)
                 return null;
 
-            try
-            {
-                var tagName = webElement.TagName;
-            }
-            catch (StaleElementReferenceException)
-            {
-                return true;
-            }
-
-            return false;
+            return !TryReturnResultOrStale(() => webElement.TagName, out string result);
         }
 
         private bool? IsElementNotFoundWithinCurrentFrame(IWebElement? webElement)
@@ -112,6 +89,10 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
             {
                 SwitchToFrame();
                 var tagName = webElement.TagName;
+            }
+            catch (StaleElementReferenceException ex)
+            {
+                ThrowUiElementStaleReferenceExceptionIfIsElementOfList();
             }
             catch (Exception)
             {
@@ -175,7 +156,10 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
             return cssValue;
         }
 
-        public override string GetTextContent() => GetWebElement().Text.ToStringEmptyIfNull();
+        public override string GetTextContent()
+        {
+            return ExecuteAgainIfStaleElementReference(() => GetWebElement().Text.ToStringEmptyIfNull());
+        }
 
         #endregion Specific Properties
 
@@ -214,5 +198,20 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
         }
 
         #endregion Execute JavaScript
+
+        protected override bool TryReturnResultOrStale<T>(Func<T> func, out T result)
+        {
+            result = default;
+
+            try
+            {
+                result = func();
+                return true;
+            }
+            catch (StaleElementReferenceException ex)
+            {
+                return false;
+            }
+        }
     }
 }

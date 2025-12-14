@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using DevQAProdCom.NET.UI.Playwright.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
@@ -54,6 +55,34 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
             return false;
         }
 
+        public override IEnumerable<TResult> Select<TResult>(Func<TUiElement, TResult> selector, bool reFindItems = true)
+        {
+            try
+            {
+                var items = GetUiElementItems(reFindItems);
+                return items.Select(selector);
+            }
+            catch (Exception ex) when ((ex is PlaywrightException && IsStaleElementException(ex as PlaywrightException)) || ex is UiElementStaleReferenceException)
+            {
+                var items = GetUiElementItems(reFindItems: true);
+                return items.Select(selector);
+            }
+        }
+
+        public override IEnumerable<TResult> SelectMany<TResult>(Func<TUiElement, IEnumerable<TResult>> selector, bool reFindItems = true)
+        {
+            try
+            {
+                var items = GetUiElementItems(reFindItems);
+                return items.SelectMany(selector);
+            }
+            catch (Exception ex) when ((ex is PlaywrightException && IsStaleElementException(ex as PlaywrightException)) || ex is UiElementStaleReferenceException)
+            {
+                var items = GetUiElementItems(reFindItems: true);
+                return items.SelectMany(selector);
+            }
+        }
+
         public override List<TUiElement> GetUiElementItems(bool reFindItems = true)
         {
             UiPage.UiTab.SwitchTo();
@@ -67,6 +96,17 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
                 throw new ArgumentNullException();
 
             return UiElementItems;
+        }
+
+        private bool IsStaleElementException(PlaywrightException ex)
+        {
+            // Check if the exception indicates a stale element
+            if (ex.Message.Contains(ProjectConst.PlaywrightStaleElementExceptionMessageContains))
+            {
+                _log.Info("Element is stale.");
+                return true;
+            }
+            return false;
         }
     }
 }

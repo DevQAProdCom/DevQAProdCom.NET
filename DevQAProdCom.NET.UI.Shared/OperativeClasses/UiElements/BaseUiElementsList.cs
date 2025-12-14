@@ -6,6 +6,7 @@ using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
+using MySqlX.XDevAPI.Common;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 {
@@ -166,17 +167,8 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
                 UiElementItems.RemoveRange(index, count);
         }
 
-        public IEnumerable<TResult> Select<TResult>(Func<TUiElement, TResult> selector, bool reFindItems = true)
-        {
-            var items = GetUiElementItems(reFindItems);
-            return items.Select(selector);
-        }
-
-        public IEnumerable<TResult> SelectMany<TResult>(Func<TUiElement, IEnumerable<TResult>> selector, bool reFindItems = true)
-        {
-            var items = GetUiElementItems(reFindItems);
-            return items.SelectMany(selector);
-        }
+        public abstract IEnumerable<TResult> Select<TResult>(Func<TUiElement, TResult> selector, bool reFindItems = true);
+        public abstract IEnumerable<TResult> SelectMany<TResult>(Func<TUiElement, IEnumerable<TResult>> selector, bool reFindItems = true);
 
         public void Reverse(bool reFindItems = true) => GetUiElementItems(reFindItems).Reverse();
         public void Reverse(int index, int count, bool reFindItems = true) => GetUiElementItems(reFindItems).Reverse(index, count);
