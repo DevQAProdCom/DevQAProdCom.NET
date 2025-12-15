@@ -42,6 +42,30 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             }
         }
 
+        private System.Timers.Timer? _keepAliveTimer;
+
+        // Is added to keep remotes session alive. Cause they may have max expiration time and idle timeout. This one will call IsInteractable every 30 seconds to reset idle timeout. 
+        private void StartKeepAliveTimer()
+        {
+            if (_keepAliveTimer != null)
+                return;
+
+            _keepAliveTimer = new System.Timers.Timer(30000); // 30 seconds
+            _keepAliveTimer.Elapsed += (s, e) =>
+            {
+                try
+                {
+                    IsInteractable();
+                }
+                catch
+                {
+                    // Optionally log or handle exceptions
+                }
+            };
+            _keepAliveTimer.AutoReset = true;
+            _keepAliveTimer.Start();
+        }
+
         public BaseUiInteractor(ILogger log, IUiInteractorsManager uiInteractorsManager, IUiInteractorBehaviorFactory uiInteractorBehaviorFactory, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory)
         {
             _log = log;
@@ -49,6 +73,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             _tabs = new();
             UiInteractorBehaviorFactory = uiInteractorBehaviorFactory;
             UiInteractorTabBehaviorFactory = uiInteractorTabBehaviorFactory;
+            StartKeepAliveTimer();//TODO Add Config with parameter IsRemote
         }
 
         #region Tabs
