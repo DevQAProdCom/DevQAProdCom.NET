@@ -187,5 +187,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
             => InternalUiElement.WaitToBeDisabled(timeoutSec, pollingIntervalSec);
 
         #endregion
+
+        public IUiElement Refind() => InternalUiElement.Refind();
     }
 }

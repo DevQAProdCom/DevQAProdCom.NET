@@ -128,9 +128,9 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         #region General Properties
 
-        public override PointF GetLocation() => GetWebElement().Location;
-        public override SizeF GetSize() => GetWebElement().Size;
-        public override string GetTagName() => GetWebElement().TagName;
+        public override PointF GetLocation() => RetryIfStaleElementReference(() => GetWebElement().Location);
+        public override SizeF GetSize() => RetryIfStaleElementReference(() => GetWebElement().Size);
+        public override string GetTagName() => RetryIfStaleElementReference(() => GetWebElement().TagName);
 
         #endregion General Properties
 
@@ -138,7 +138,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         public override string? GetAttribute(string attributeName, bool isBooleanAttributeType)
         {
-            var attribute = GetWebElement().GetAttribute(attributeName);
+            var attribute = RetryIfStaleElementReference(() => GetWebElement().GetAttribute(attributeName));
 
             if (string.IsNullOrEmpty(attribute))
                 return null;
@@ -148,7 +148,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         public override string? GetCssValue(string propertyName)
         {
-            var cssValue = GetWebElement().GetCssValue(propertyName);
+            var cssValue = RetryIfStaleElementReference(() => GetWebElement().GetCssValue(propertyName));
 
             if (string.IsNullOrEmpty(cssValue))
                 return null;
@@ -158,7 +158,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         public override string GetTextContent()
         {
-            return ExecuteAgainIfStaleElementReference(() => GetWebElement().Text.ToStringEmptyIfNull());
+            return RetryIfStaleElementReference(() => GetWebElement().Text.ToStringEmptyIfNull());
         }
 
         #endregion Specific Properties
@@ -183,8 +183,8 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
         }
 
         public override bool IsDisabled() => !IsEnabled();
-        public override bool IsDisplayed() => Exists() && GetWebElement().Displayed;
-        public override bool IsEnabled() => Exists() && GetWebElement().Enabled;
+        public override bool IsDisplayed() => RetryIfStaleElementReference(() => Exists() && GetWebElement().Displayed);
+        public override bool IsEnabled() => RetryIfStaleElementReference(() => Exists() && GetWebElement().Enabled);
 
         #endregion States
 
@@ -208,10 +208,21 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
                 result = func();
                 return true;
             }
-            catch (StaleElementReferenceException ex)
+            catch (StaleElementReferenceException)
             {
                 return false;
             }
+            //UiElementStaleReferenceException can be returned from behavior in use case when one accesses not NativeElement, but UiElement
+            catch (UiElementStaleReferenceException)
+            {
+                return false;
+            }
+        }
+
+        public override IUiElement Refind()
+        {
+            GetWebElement();
+            return this;
         }
     }
 }

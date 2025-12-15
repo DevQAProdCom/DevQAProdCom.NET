@@ -88,6 +88,12 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
 
                 //Others
                 .AddUiInteractionBehavior<IUiElementBehaviorFocusJs, UiElementBehaviorFocusJs>()
+                .AddUiInteractionBehavior<IUiElementBehaviorUnfocusJs, UiElementBehaviorUnfocusJs>()
+                .AddUiInteractionBehavior<IUiElementBehaviorRemoveJs, UiElementBehaviorRemoveJs>()
+                .AddUiInteractionBehavior<IUiElementBehaviorSetAttributeJs, UiElementBehaviorSetAttributeJs>()
+                .AddUiInteractionBehavior<IUiElementBehaviorRemoveAttributeJs, UiElementBehaviorRemoveAttributeJs>()
+                .AddUiInteractionBehavior<IUiElementBehaviorRemoveClassJs, UiElementBehaviorRemoveClassJs>()
+
                 .AddUiInteractionBehavior<IUiElementBehaviorGetCheckedAttribute, UiElementBehaviorGetCheckedAttribute>()
                 .AddUiInteractionBehavior<IUiElementBehaviorGetHrefAttribute, UiElementBehaviorGetHrefAttribute>()
                 .AddUiInteractionBehavior<IUiElementBehaviorGetSrcAttribute, UiElementBehaviorGetSrcAttribute>()

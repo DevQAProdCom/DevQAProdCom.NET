@@ -250,6 +250,17 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements
 
                 throw;
             }
+            //UiElementStaleReferenceException can be returned from behavior in use case when one accesses not NativeElement, but UiElement
+            catch (UiElementStaleReferenceException)
+            {
+                return false;
+            }
+        }
+
+        public override IUiElement Refind()
+        {
+            GetLocator();
+            return this;
         }
     }
 }

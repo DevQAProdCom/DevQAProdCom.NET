@@ -81,6 +81,7 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements
         bool IsDisplayed();
         bool IsElementInViewportJs();
         bool IsEnabled();
+        IUiElement Refind();
 
         #endregion States
     }

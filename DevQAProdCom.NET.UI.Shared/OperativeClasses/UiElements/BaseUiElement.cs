@@ -105,7 +105,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 
         public T AddBehavior<T>(params KeyValuePair<string, object>[]? auxiliaryParams) where T : IBehavior
         {
-            return _uiElementBehaviorFactory.Create<T>(this, _javaScriptExecutor, auxiliaryParams);
+            return RetryIfStaleElementReference(() => _uiElementBehaviorFactory.Create<T>(this, _javaScriptExecutor, auxiliaryParams));
         }
 
         #region Keyboard Actions
@@ -161,6 +161,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         #endregion Actions
 
         #region Execute JavaScript
+
         public void ExecuteJavaScript(string script, params KeyValuePair<string, object>[] arguments)
         {
             var supplementedArguments = SupplementJavaScriptExecutorArguments(arguments);
@@ -224,7 +225,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
         #endregion Find Child/Descendant UI Elements
 
         #region Waiters
-
+        //TODO Add WaitNotStale
         public IUiElement WaitToExist(TimeSpan? timeout, TimeSpan? pollingInterval = null)
         {
             CheckTimeoutAndPollingInterval(ref timeout, ref pollingInterval);
@@ -323,12 +324,14 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
 
         #endregion
 
-        protected T ExecuteAgainIfStaleElementReference<T>(Func<T> func)
+        protected T RetryIfStaleElementReference<T>(Func<T> func)
         {
             if (!TryReturnResultOrStale(func, out T result))
             {
                 ThrowUiElementStaleReferenceExceptionIfIsElementOfList();
-                TryReturnResultOrStale(func, out result);
+                Refind();
+                if (!TryReturnResultOrStale(func, out result))
+                    throw new UiElementStaleReferenceException($"UiElement '{Info.InstantiationStage.FullName}' is stale even after retry.");
             }
             _log.Info($"{result}");
             return result;
@@ -341,5 +344,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements
             if (Info.InstantiationStage.IsElementOfList)
                 throw new UiElementStaleReferenceException($"UiElement '{Info.InstantiationStage.FullName}' is stale and is part of UiElements list. Refind of all list is required.");
         }
+
+        public abstract IUiElement Refind();
     }
 }
