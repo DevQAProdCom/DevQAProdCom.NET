@@ -8,16 +8,10 @@ using OpenQA.Selenium;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 {
-    internal class SeleniumNativeElementsSearcher : BaseNativeElementsSearcher<IWebElement, IWebElement, IWebElement>
+    internal class SeleniumNativeElementsSearcher(ILogger log, Func<IWebDriver> getWebDriver, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider)
+        : BaseNativeElementsSearcher<IWebElement, IWebElement, IWebElement>(log)
     {
-        private readonly IWebDriver _webDriver;
-        private readonly IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> _findOptionSearchMethodsProvider;
-
-        public SeleniumNativeElementsSearcher(ILogger log, IWebDriver webDriver, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider) : base(log)
-        {
-            _webDriver = webDriver;
-            _findOptionSearchMethodsProvider = findOptionSearchMethodsProvider;
-        }
+        private IWebDriver _webDriver => getWebDriver();
 
         #region Find Result: List of Native Elements
 
@@ -364,25 +358,25 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeElementsFromBeginningOfDom(IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
             return elementSearchMethod.FindElementsFromBeginningOfDom(driver, findParameters.FindInfo.ElementsFindOption);
         }
 
         private List<IWebElement> FindNativeElementsRelativeToPreviousElementInFindChain(IWebElement previousElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
             return elementSearchMethod.FindElementsRelativeToPreviousElementInFindChain(previousElement, findParameters.FindInfo.ElementsFindOption, driver);
         }
 
         private List<IWebElement> FindNativeElementsRelativeToPreviousFrameElementInFindChain(IWebElement previousFrameElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
             return elementSearchMethod.FindElementsRelativeToPreviousFrameElementInFindChain(previousFrameElement, findParameters.FindInfo.ElementsFindOption, driver);
         }
 
         private List<IWebElement> FindNativeElementsRelativeToPreviousShadowRootHostElementInFindChain(IWebElement previousShadowRootHostElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ElementsFindOption);
             return elementSearchMethod.FindElementsRelativeToPreviousShadowRootHostElementInFindChain(previousShadowRootHostElement, findParameters.FindInfo.ElementsFindOption, driver);
         }
 
@@ -392,7 +386,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeFrameElementsFromBeginningOfDom(IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
             return elementSearchMethod.FindFrameElementsFromBeginningOfDom(driver, findParameters.FindInfo.FramesFindOption);
         }
 
@@ -404,7 +398,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeFrameElementsRelativeToPreviousElementInFindChain(IWebElement previousElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod frameSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
+            ISeleniumFindOptionSearchMethod frameSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
             return frameSearchMethod.FindFrameElementsRelativeToPreviousElementInFindChain(previousElement, findParameters.FindInfo.FramesFindOption, driver);
         }
 
@@ -416,7 +410,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeFrameElementsRelativeToPreviousFrameElementInFindChain(IWebElement previousFrameElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod frameSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
+            ISeleniumFindOptionSearchMethod frameSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
             return frameSearchMethod.FindFrameElementsRelativeToPreviousFrameElementInFindChain(previousFrameElement, findParameters.FindInfo.FramesFindOption, driver);
         }
 
@@ -428,7 +422,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeFrameElementsRelativeToPreviousShadowRootHostElementInFindChain(IWebElement previousShadowRootHostElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.FramesFindOption);
             return elementSearchMethod.FindFrameElementsRelativeToPreviousShadowRootHostElementInFindChain(previousShadowRootHostElement, findParameters.FindInfo.FramesFindOption, driver);
         }
 
@@ -445,7 +439,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeShadowRootHostElementsFromBeginningOfDom(IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
             return elementSearchMethod.FindShadowRootHostElementsFromBeginningOfDom(driver, findParameters.FindInfo.ShadowRootHostsFindOption);
         }
 
@@ -457,7 +451,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeShadowRootHostElementsRelativeToPreviousElementInFindChain(IWebElement previousElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod shadowRootHostSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
+            ISeleniumFindOptionSearchMethod shadowRootHostSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
             return shadowRootHostSearchMethod.FindShadowRootHostElementsRelativeToPreviousElementInFindChain(previousElement, findParameters.FindInfo.ShadowRootHostsFindOption, driver);
         }
 
@@ -469,7 +463,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeShadowRootHostElementsRelativeToPreviousFrameElementInFindChain(IWebElement previousFrameElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod elementSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
+            ISeleniumFindOptionSearchMethod elementSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
             return elementSearchMethod.FindShadowRootHostElementsRelativeToPreviousFrameElementInFindChain(previousFrameElement, findParameters.FindInfo.ShadowRootHostsFindOption, driver);
         }
 
@@ -482,7 +476,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         private List<IWebElement> FindNativeShadowRootHostElementsRelativeToPreviousShadowRootHostElementInFindChain(IWebElement previousShadowRootHostElement, IFindParametersWithSearchResult findParameters, IWebDriver driver)
         {
-            ISeleniumFindOptionSearchMethod shadowRootHostSearchMethod = _findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
+            ISeleniumFindOptionSearchMethod shadowRootHostSearchMethod = findOptionSearchMethodsProvider.GetFindOptionSearchMethod(findParameters.FindInfo.ShadowRootHostsFindOption);
             return shadowRootHostSearchMethod.FindShadowRootHostElementsRelativeToPreviousShadowRootHostElementInFindChain(previousShadowRootHostElement, findParameters.FindInfo.ShadowRootHostsFindOption, driver);
         }
 

@@ -25,7 +25,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             get
             {
                 if (_nativeElementsSearcher == null)
-                    _nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, _nativeTab, _findOptionSearchMethodsProvider);
+                    _nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, NativeTab, _findOptionSearchMethodsProvider);
 
                 return _nativeElementsSearcher;
             }
@@ -37,7 +37,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             get
             {
                 if (_javaScriptExecutor == null)
-                    _javaScriptExecutor = new PlaywrightJavaScriptExecutor(_nativeTab);
+                    _javaScriptExecutor = new PlaywrightJavaScriptExecutor(NativeTab);
 
                 return _javaScriptExecutor;
             }
@@ -55,50 +55,50 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
 
         public override void SwitchTo()
         {
-            _nativeTab.BringToFrontAsync().Wait();
+            NativeTab.BringToFrontAsync().Wait();
         }
 
         public override void GoTo(string url)
         {
             SwitchTo();
-            _ = _nativeTab.GotoAsync(url).Result;
+            _ = NativeTab.GotoAsync(url).Result;
         }
 
         public override string GetTabUriAsString()
         {
             SwitchTo();
-            return _nativeTab.Url;
+            return NativeTab.Url;
         }
 
         public override string GetTabTitle()
         {
             SwitchTo();
-            return _nativeTab.TitleAsync().Result;
+            return NativeTab.TitleAsync().Result;
         }
 
         public override void NavigateBack()
         {
             SwitchTo();
-            _ = _nativeTab.GoBackAsync().Result;
+            _ = NativeTab.GoBackAsync().Result;
         }
 
         public override void NavigateForward()
         {
             SwitchTo();
-            _ = _nativeTab.GoForwardAsync().Result;
+            _ = NativeTab.GoForwardAsync().Result;
         }
 
         public override void Refresh()
         {
             SwitchTo();
-            _ = _nativeTab.ReloadAsync().Result;
+            _ = NativeTab.ReloadAsync().Result;
         }
 
         protected override TUiPage CreatePage<TUiPage>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null)
         {
             var nativeObjects = new Dictionary<string, object>();
             nativeObjects.Upsert(NativeObjects);
-            nativeObjects.Add(ProjectConst.IPage, _nativeTab);
+            nativeObjects.Add(ProjectConst.IPage, NativeTab);
 
             IUiPage page = _uiPageFactoryProvider.ConstructNewPageFactory(uiInteractorTab: this, nativeElementsSearcher: NativeElementsSearcher, javaScriptExecutor: JavaScriptExecutor,
                 applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri,
@@ -123,7 +123,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
                     Path = screenshotModel.FilePath,
                     FullPage = true,
                 };
-                screenshotModel.ScreenshotByteArray = _nativeTab.ScreenshotAsync(options).Result;
+                screenshotModel.ScreenshotByteArray = NativeTab.ScreenshotAsync(options).Result;
             }
             catch (Exception ex)
             {

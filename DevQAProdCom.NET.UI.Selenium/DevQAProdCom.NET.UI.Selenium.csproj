@@ -25,5 +25,9 @@
   <ItemGroup>
     <PackageReference Include="Selenium.Support" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Constants\" />
+  </ItemGroup>
   
 </Project>

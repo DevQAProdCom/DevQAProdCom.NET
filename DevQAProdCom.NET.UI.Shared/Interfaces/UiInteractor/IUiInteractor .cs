@@ -8,13 +8,15 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor
 {
-    public interface IUiInteractor : IHaveIdentifiers, IOperateWithCookies, IUiInteractorMakeScreenshots, IAddBehavior, IHaveNativeObjects
+    public interface IUiInteractor : IHaveIdentifiers, IOperateWithCookies, IUiInteractorMakeScreenshots, IAddBehavior, IHaveNativeObjects, IUiInteractorConfiguration
     {
         public IUiInteractorsManager UiInteractorsManager { get; }
 
         public void Launch();
         public bool IsInteractable();
         public void Dispose();
+        public void RecreateOrCurrent();
+        public void Recreate();
 
         #region Tabs
 
@@ -77,7 +79,6 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor
 
         #endregion Actions
 
-        public string? DownloadsDefaultDirectory { get; set; }
         public Dictionary<string, string> GetLocalStorageData(string tabName = SharedUiConstants.DefaultUiInteractorTab);
     }
 }

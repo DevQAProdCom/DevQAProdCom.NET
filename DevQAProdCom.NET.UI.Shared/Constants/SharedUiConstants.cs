@@ -8,7 +8,7 @@
         public const string UiInteractorTab = "UiInteractorTab";
         public const string DefaultUiInteractorTab = "DefaultUiInteractorTab";
         public const string NativeElement = "Native Element";
-        public const string IWebDriver = "IWebDriver";
+        public const string GetIWebDriverFunc = "GetIWebDriverFunc";
         public const string IBrowser = "IBrowser";
         public const string IUiInteractor = "IUiInteractor";
         public const string IUiInteractorTab = "IUiInteractorTab";

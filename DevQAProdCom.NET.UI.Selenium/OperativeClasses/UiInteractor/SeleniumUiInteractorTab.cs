@@ -23,7 +23,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             get
             {
                 if (_nativeElementsSearcher == null)
-                    _nativeElementsSearcher = new SeleniumNativeElementsSearcher(_log, _uiInteractor.Driver, _findOptionSearchMethodsProvider);
+                    _nativeElementsSearcher = new SeleniumNativeElementsSearcher(_log, _uiInteractor.GetWebDriver, _findOptionSearchMethodsProvider);
 
                 return _nativeElementsSearcher;
             }
@@ -35,7 +35,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             get
             {
                 if (_javaScriptExecutor == null)
-                    _javaScriptExecutor = new SeleniumJavaScriptExecutor(_uiInteractor.Driver);
+                    _javaScriptExecutor = new SeleniumJavaScriptExecutor(_uiInteractor.GetWebDriver);
 
                 return _javaScriptExecutor;
             }
@@ -53,43 +53,43 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
         public override void SwitchTo()
         {
-            _uiInteractor.Driver.SwitchTo().Window(_nativeTab);
+            _uiInteractor.GetWebDriver().SwitchTo().Window(NativeTab);
         }
 
         public override void GoTo(string url)
         {
             SwitchTo();
-            _uiInteractor.Driver.Navigate().GoToUrl(url);
+            _uiInteractor.GetWebDriver().Navigate().GoToUrl(url);
         }
 
         public override string GetTabUriAsString()
         {
             SwitchTo();
-            return _uiInteractor.Driver.Url;
+            return _uiInteractor.GetWebDriver().Url;
         }
 
         public override string GetTabTitle()
         {
             SwitchTo();
-            return _uiInteractor.Driver.Title;
+            return _uiInteractor.GetWebDriver().Title;
         }
 
         public override void NavigateBack()
         {
             SwitchTo();
-            _uiInteractor.Driver.Navigate().Back();
+            _uiInteractor.GetWebDriver().Navigate().Back();
         }
 
         public override void NavigateForward()
         {
             SwitchTo();
-            _uiInteractor.Driver.Navigate().Forward();
+            _uiInteractor.GetWebDriver().Navigate().Forward();
         }
 
         public override void Refresh()
         {
             SwitchTo();
-            _uiInteractor.Driver.Navigate().Refresh();
+            _uiInteractor.GetWebDriver().Navigate().Refresh();
         }
 
         protected override TUiPage CreatePage<TUiPage>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null)
@@ -112,7 +112,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             try
             {
                 screenshotModel.FilePath = GetScreenshotFilePath(directoryPath, fileNamePrefix);
-                var screenshotDriver = (ITakesScreenshot)_uiInteractor.Driver;
+                var screenshotDriver = (ITakesScreenshot)_uiInteractor.GetWebDriver();
                 var screenshot = screenshotDriver.GetScreenshot();
                 screenshot.SaveAsFile(screenshotModel.FilePath);
                 screenshotModel.ScreenshotByteArray = screenshot.AsByteArray;

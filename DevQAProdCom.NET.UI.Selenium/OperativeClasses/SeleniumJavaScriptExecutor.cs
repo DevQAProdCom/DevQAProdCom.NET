@@ -6,16 +6,10 @@ using OpenQA.Selenium;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses
 {
-    public class SeleniumJavaScriptExecutor : BaseJavaScriptExecutor
+    public class SeleniumJavaScriptExecutor(Func<IWebDriver> getWebDriver) : BaseJavaScriptExecutor
     {
-        private readonly IWebDriver _driver;
-        private IJavaScriptExecutor _javaScriptExecutor;
-
-        public SeleniumJavaScriptExecutor(IWebDriver driver)
-        {
-            _driver = driver;
-            _javaScriptExecutor = (IJavaScriptExecutor)_driver;
-        }
+        private IWebDriver _driver => getWebDriver();
+        private IJavaScriptExecutor _javaScriptExecutor => (IJavaScriptExecutor)_driver;
 
         /// <summary>
         /// Executes the given JavaScript code.

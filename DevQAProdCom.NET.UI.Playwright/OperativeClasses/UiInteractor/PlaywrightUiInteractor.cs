@@ -42,11 +42,8 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             if (_tabs.Any(x => x.Name == aliasId))
                 throw new DuplicateNameException($"Tab with identifier '{aliasId}' already exists. Unique name should be specified for the new tab.");
 
-            if (Browser == null)
-                Launch();
-
-            IPage page = BrowserContext.NewPageAsync().Result;
-            var tab = new PlaywrightUiInteractorTab(_log, this, aliasId, page, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
+            var nativeTab = CreateNativeTab();
+            var tab = new PlaywrightUiInteractorTab(_log, this, aliasId, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
 
             return tab;
         }
@@ -89,8 +86,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
         }
         public override void Dispose()
         {
-            if (BrowserContext != null)
-                BrowserContext.CloseAsync().Wait();
+            DisposeForRecreation();
 
             if (!string.IsNullOrEmpty(DownloadsDefaultDirectory))
                 Directory.Delete(DownloadsDefaultDirectory, true);
@@ -100,6 +96,40 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             //TODO Check if according to configuration only single element of Browser Instance is created per run - then disposal should happen at the end of run, otherwise each time interactor is disposed
             //if (Browser != null)
             //    Browser.CloseAsync().Wait();
+        }
+
+        public override void Recreate()
+        {
+            DisposeForRecreation();
+
+            foreach (var tab in _tabs)
+            {
+                var nativeTab = CreateNativeTab();
+                (tab as PlaywrightUiInteractorTab).NativeTab = nativeTab;
+            }
+        }
+
+        private IPage CreateNativeTab()
+        {
+            if (!IsInteractable())
+                Launch();
+
+            IPage page = BrowserContext.NewPageAsync().Result;
+
+            return page;
+        }
+
+        private void DisposeForRecreation()
+        {
+            try
+            {
+                if (BrowserContext != null)
+                    BrowserContext.CloseAsync().Wait();
+            }
+            catch
+            {
+                //Add Warning Log
+            }
         }
 
         public T GetNativeInteractor<T>()

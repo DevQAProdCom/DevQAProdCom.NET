@@ -5,6 +5,6 @@ namespace DevQAProdCom.NET.UI.Selenium.Interfaces
 {
     public interface ISeleniumUiInteractor : IUiInteractor
     {
-        public IWebDriver Driver { get; }
+        public IWebDriver GetWebDriver();
     }
 }

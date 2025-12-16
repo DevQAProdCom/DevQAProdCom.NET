@@ -8,6 +8,6 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiPage.Behaviors
     public class SeleniumUiPageBehavior(IBehaviorParameters parameters) : UiPageBehavior(parameters)
     {
         private IWebDriver? _webDriver;
-        protected IWebDriver? WebDriver => _webDriver ??= Parameters.GetOrDefault<IWebDriver>(SharedUiConstants.IWebDriver);
+        protected IWebDriver? WebDriver => _webDriver ??= Parameters.GetOrDefault<Func<IWebDriver>>(SharedUiConstants.GetIWebDriverFunc).Invoke();
     }
 }

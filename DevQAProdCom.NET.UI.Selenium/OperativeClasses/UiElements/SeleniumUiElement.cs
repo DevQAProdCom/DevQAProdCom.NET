@@ -2,7 +2,6 @@
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using DevQAProdCom.NET.UI.Selenium.Constants;
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
@@ -58,12 +57,12 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements
 
         public T GetWebDriver<T>() where T : IWebDriver
         {
-            NativeObjects.TryGetValue(ProjectConst.IWebDriver, out var iWebDriver);
+            NativeObjects.TryGetValue(SharedUiConstants.GetIWebDriverFunc, out var getIWebDriverFunc);
 
-            if (iWebDriver != null)
-                return (T)iWebDriver;
+            if (getIWebDriverFunc != null)
+                return (T)(getIWebDriverFunc as Func<IWebDriver>).Invoke();
 
-            throw new Exception($"Unable to find native web driver in Native Objects dictionary using key '{ProjectConst.IWebDriver}'.");
+            throw new Exception($"Unable to find native web driver in Native Objects dictionary using key '{SharedUiConstants.GetIWebDriverFunc}'.");
         }
 
         public IWebDriver GetIWebDriver()

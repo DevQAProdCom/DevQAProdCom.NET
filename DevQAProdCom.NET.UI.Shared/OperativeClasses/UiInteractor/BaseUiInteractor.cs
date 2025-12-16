@@ -19,6 +19,12 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         protected readonly IUiInteractorBehaviorFactory UiInteractorBehaviorFactory;
         protected readonly IUiInteractorTabBehaviorFactory UiInteractorTabBehaviorFactory;
 
+        //TODO Take from configuration when created
+        public DateTime? Created { get; set; }
+        public DateTime? ExpirationTime => Created.HasValue && TimeToLive.HasValue ? Created.Value.Add(TimeToLive.Value) : null;
+        public TimeSpan? TimeToLive { get; set; } = TimeSpan.FromMinutes(10);
+        public Dictionary<string, object>? Data { get; set; }
+
         protected List<IUiInteractorTab> _tabs;
         protected ILogger _log;
 
@@ -237,6 +243,13 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         public abstract void Launch();
         public abstract bool IsInteractable();
         public abstract void Dispose();  //TerminateInteractor
+        public void RecreateOrCurrent()
+        {
+            if (DateTime.UtcNow >= ExpirationTime)
+                Recreate();
+        }
+
+        public abstract void Recreate();
 
         #region Screenshots
 

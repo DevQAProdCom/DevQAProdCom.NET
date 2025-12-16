@@ -1,5 +1,5 @@
-﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using DevQAProdCom.NET.UI.Selenium.Constants;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
@@ -22,7 +22,9 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         private readonly IUiPageFactoryProvider _uiPageFactoryProvider;
 
         //Can be set/substituted in tests in case each test needs browser/driver with different configuration
-        public IWebDriver Driver { get; set; }
+        public IWebDriver _driver { get; set; }
+
+        public IWebDriver GetWebDriver() => _driver;
 
         public SeleniumUiInteractor(ILogger log, IUiInteractorsManager uiInteractorsManager, ISeleniumWebDriverFactory webDriverFactory,
             IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider,
@@ -37,20 +39,32 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
         public override void Launch()
         {
+            Created = DateTime.UtcNow;
             (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) data = _webDriverFactory.CreateWebDriver();
-            Driver = data.Driver;
+
+            _driver = data.Driver;
             DownloadsDefaultDirectory = data.Configuration?.DownloadsDefaultDirectory;
-            NativeObjects.Add(ProjectConst.IWebDriver, Driver);
+
+            if (data.Configuration?.TimeToLive != null)
+                TimeToLive = data.Configuration.TimeToLive.Value;
+
+            if (data.Configuration?.Created != null)
+                Created = data.Configuration.Created.Value;
+
+            if (data.Configuration?.Data != null)
+                Data = data.Configuration.Data;
+
+            NativeObjects.Upsert(SharedUiConstants.GetIWebDriverFunc, this.GetWebDriver);
         }
 
         public override bool IsInteractable()
         {
-            if (Driver == null)
+            if (GetWebDriver() == null)
                 return false;
 
             try
             {
-                return !string.IsNullOrEmpty(Driver.CurrentWindowHandle);
+                return !string.IsNullOrEmpty(GetWebDriver().CurrentWindowHandle);
             }
             catch
             {
@@ -60,35 +74,66 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
         public override void Dispose()
         {
-            if (Driver != null)
-                Driver.Quit();
+            DisposeForRecreation();
 
+            //Additional actions for full disposal
             if (!string.IsNullOrEmpty(DownloadsDefaultDirectory))
                 Directory.Delete(DownloadsDefaultDirectory, true);
 
+            _tabs.Clear();
             NativeObjects.Clear();
         }
 
+        private void DisposeForRecreation()
+        {
+            try
+            {
+                if (GetWebDriver() != null && IsInteractable())
+                    GetWebDriver().Quit();
+            }
+            catch
+            {
+                //Add Warning Log
+            }
+        }
+
         protected override IUiInteractorTab CreateTab(string tabName = SharedUiConstants.DefaultUiInteractorTab)
+        {
+            var nativeTab = CreateNativeTab();
+            var tab = new SeleniumUiInteractorTab(_log, this, tabName, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
+            return tab;
+        }
+
+        public override void Recreate()
+        {
+            DisposeForRecreation();
+
+            foreach (var tab in _tabs)
+            {
+                var nativeTab = CreateNativeTab();
+                (tab as SeleniumUiInteractorTab).NativeTab = nativeTab;
+            }
+        }
+
+        private string CreateNativeTab()
         {
             if (!IsInteractable())
                 Launch();
             else
             {
-                Driver.SwitchTo().NewWindow(WindowType.Tab);
+                GetWebDriver().SwitchTo().NewWindow(WindowType.Tab);
             }
 
-            var tab = new SeleniumUiInteractorTab(_log, this, tabName, Driver.CurrentWindowHandle, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
-            return tab;
+            return GetWebDriver().CurrentWindowHandle;
         }
 
         protected override void CloseTab(IUiInteractorTab tab)
         {
             tab.SwitchTo();
-            var isLastTab = Driver.WindowHandles.Count() == 1;
-            Driver.Close();
+            var isLastTab = GetWebDriver().WindowHandles.Count() == 1;
+            GetWebDriver().Close();
 
-            //this is required because simple driver close doesn't delete chromedriver.exe
+            //this is required because simple driver close doesn't delete chromeGetWebDriver().exe
             if (isLastTab)
                 Dispose();
         }
@@ -98,13 +143,13 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         public override void SetCookie(string name, string value, string domain, string? path = SharedUiConstants.DefaultCookiePathValue)
         {
             SeleniumCookie seleniumCookie = new(name, value, domain, path, null);
-            Driver.Manage().Cookies.AddCookie(seleniumCookie);
+            GetWebDriver().Manage().Cookies.AddCookie(seleniumCookie);
         }
 
         public override void SetCookie(IUiInteractorCookie cookie)
         {
             SeleniumCookie seleniumCookie = _cookieMappers.ToSeleniumCookie(cookie);
-            Driver.Manage().Cookies.AddCookie(seleniumCookie);
+            GetWebDriver().Manage().Cookies.AddCookie(seleniumCookie);
         }
 
         public override IUiInteractorCookie? GetCookie(string name)
@@ -121,61 +166,61 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         public override List<IUiInteractorCookie> GetAllCookies()
         {
             List<SeleniumCookie> seleniumCookies = new();
-            var currentWindowHandle = Driver.CurrentWindowHandle;
+            var currentWindowHandle = GetWebDriver().CurrentWindowHandle;
 
-            List<SeleniumCookie> currentWindowHandleCookies = Driver.Manage().Cookies.AllCookies.ToList();
+            List<SeleniumCookie> currentWindowHandleCookies = GetWebDriver().Manage().Cookies.AllCookies.ToList();
             seleniumCookies.AddRange(currentWindowHandleCookies);
 
-            foreach (var windowHandle in Driver.WindowHandles)
+            foreach (var windowHandle in GetWebDriver().WindowHandles)
             {
                 if (windowHandle == currentWindowHandle)
                     continue;
 
-                Driver.SwitchTo().Window(windowHandle);
-                List<SeleniumCookie> windowHandleCookies = Driver.Manage().Cookies.AllCookies.ToList();
+                GetWebDriver().SwitchTo().Window(windowHandle);
+                List<SeleniumCookie> windowHandleCookies = GetWebDriver().Manage().Cookies.AllCookies.ToList();
                 seleniumCookies.AddRange(windowHandleCookies);
             }
 
-            Driver.SwitchTo().Window(currentWindowHandle);
+            GetWebDriver().SwitchTo().Window(currentWindowHandle);
             return seleniumCookies.Select(x => _cookieMappers.ToUiInteractorCookie(x)).Distinct().ToList();
         }
 
         public override void ClearCookies(params string[] names)
         {
             //Such behavior is required because seleniul clears and sets and gets cookies only for current tab and current domain
-            var currentWindowHandle = Driver.CurrentWindowHandle;
+            var currentWindowHandle = GetWebDriver().CurrentWindowHandle;
             foreach (var name in names)
-                Driver.Manage().Cookies.DeleteCookieNamed(name);
+                GetWebDriver().Manage().Cookies.DeleteCookieNamed(name);
 
-            foreach (var windowHandle in Driver.WindowHandles)
+            foreach (var windowHandle in GetWebDriver().WindowHandles)
             {
                 if (windowHandle == currentWindowHandle)
                     continue;
 
-                Driver.SwitchTo().Window(windowHandle);
+                GetWebDriver().SwitchTo().Window(windowHandle);
                 foreach (var name in names)
-                    Driver.Manage().Cookies.DeleteCookieNamed(name);
+                    GetWebDriver().Manage().Cookies.DeleteCookieNamed(name);
             }
 
-            Driver.SwitchTo().Window(currentWindowHandle);
+            GetWebDriver().SwitchTo().Window(currentWindowHandle);
         }
 
         public override void ClearAllCookies()
         {
             //Such behavior is required because seleniul clears and sets and gets cookies only for current tab and current domain
-            var currentWindowHandle = Driver.CurrentWindowHandle;
-            Driver.Manage().Cookies.DeleteAllCookies();
+            var currentWindowHandle = GetWebDriver().CurrentWindowHandle;
+            GetWebDriver().Manage().Cookies.DeleteAllCookies();
 
-            foreach (var windowHandle in Driver.WindowHandles)
+            foreach (var windowHandle in GetWebDriver().WindowHandles)
             {
                 if (windowHandle == currentWindowHandle)
                     continue;
 
-                Driver.SwitchTo().Window(windowHandle);
-                Driver.Manage().Cookies.DeleteAllCookies();
+                GetWebDriver().SwitchTo().Window(windowHandle);
+                GetWebDriver().Manage().Cookies.DeleteAllCookies();
             }
 
-            Driver.SwitchTo().Window(currentWindowHandle);
+            GetWebDriver().SwitchTo().Window(currentWindowHandle);
         }
 
         #endregion Cookies

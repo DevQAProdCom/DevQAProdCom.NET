@@ -18,12 +18,12 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         public IUiInteractor UiInteractor { get; }
         public Guid Id { get; } = Guid.NewGuid();
         public string Name { get; set; }
-        protected TNativeTab _nativeTab { get; set; }
 
         protected ILogger _log;
         private IUiInteractorTabBehaviorFactory _uiInteractorTabBehaviorFactory { get; set; }
         protected abstract INativeElementsSearcher NativeElementsSearcher { get; }
         protected abstract IExecuteJavaScript JavaScriptExecutor { get; }
+        internal TNativeTab NativeTab { get; set; }
 
         public BaseUiInteractorTab(ILogger log, IUiInteractor uiInteractor, string aliasIdentifier, TNativeTab nativeTab,
             IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory, Dictionary<string, object> nativeObjects)
@@ -31,8 +31,8 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             _log = log;
             UiInteractor = uiInteractor;
             Name = aliasIdentifier;
-            _nativeTab = nativeTab;
             _uiInteractorTabBehaviorFactory = uiInteractorTabBehaviorFactory;
+            NativeTab = nativeTab;
             NativeObjects.Upsert(nativeObjects);
         }
 
@@ -55,7 +55,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 
         public TNativeTab GetNativeTab<TNativeTab>() where TNativeTab : class
         {
-            TNativeTab nativeTab = _nativeTab as TNativeTab;
+            TNativeTab nativeTab = NativeTab as TNativeTab;
             return nativeTab;
         }
 
