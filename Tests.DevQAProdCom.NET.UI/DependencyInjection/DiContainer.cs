@@ -16,7 +16,7 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
         private static readonly Lazy<DiContainer> _instance = new Lazy<DiContainer>(() => new DiContainer());
         public static DiContainer Instance => _instance.Value;
 
-        public static UiInteractorTechnology CurrentTechnology = UiInteractorTechnology.Playwright;
+        public static UiInteractorTechnology CurrentTechnology = UiInteractorTechnology.Selenium;
 
         protected override string AssemblyName => this.GetType().Assembly.GetName().Name ?? "UnknownAssembly";
 
