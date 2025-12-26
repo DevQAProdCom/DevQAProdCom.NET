@@ -3,6 +3,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search;
 using Microsoft.Playwright;
 
@@ -13,7 +14,9 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Search
         private readonly IPage _page;
         private readonly IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> _findOptionSearchMethodsProvider;
 
-        public PlaywrightNativeElementsSearcher(ILogger log, IPage page, IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider) : base(log)
+        public PlaywrightNativeElementsSearcher(ILogger log, IPage page, 
+            IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider, 
+            IUiElementSearchConfiguration uiElementSearchConfiguration) : base(log, uiElementSearchConfiguration)
         {
             _page = page;
             _findOptionSearchMethodsProvider = findOptionSearchMethodsProvider;

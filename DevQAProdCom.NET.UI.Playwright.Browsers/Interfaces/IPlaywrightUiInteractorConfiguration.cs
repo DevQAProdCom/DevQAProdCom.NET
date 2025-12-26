@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces
 {
-    public interface IPlaywrightBrowserConfiguration : IUiInteractorConfiguration
+    public interface IPlaywrightUiInteractorConfiguration : IUiInteractorConfiguration
     {
     }
 }

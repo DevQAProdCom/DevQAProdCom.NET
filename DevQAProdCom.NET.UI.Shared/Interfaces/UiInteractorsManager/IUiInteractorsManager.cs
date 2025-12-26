@@ -6,8 +6,8 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager
 {
     public interface IUiInteractorsManager : IHaveIdentifiers//: IDisposable
     {
-        public IUiInteractor GetUiInteractor(string uiInteractorIdentifier = SharedUiConstants.DefaultUiInteractorInstance);
-        public void DisposeUiInteractor(string uiInteractorIdentifier = SharedUiConstants.DefaultUiInteractorInstance);
+        public IUiInteractor GetUiInteractor(string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance);
+        public void DisposeUiInteractor(string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance);
         public void DisposeAllUiInteractors();
     }
 }

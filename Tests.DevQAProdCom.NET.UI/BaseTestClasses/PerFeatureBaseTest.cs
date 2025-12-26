@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+﻿using DevQAProdCom.NET.UI.Shared.Enumerations;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 
 namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
@@ -12,13 +13,13 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         public void OneTimeSetup()
         {
             UiInteractorsManagersProvider = _di.GetRequiredService<IUiInteractorsManagersProvider>();
-            UiInteractor = UiInteractorsManagersProvider.GetUiInteractor();
+            UiInteractor = UiInteractorsManagersProvider.GetUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            UiInteractorsManagersProvider.DisposeUiInteractor(uiInteractorIdentifier: UiInteractor.Name);
+            UiInteractorsManagersProvider.DisposeUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
         }
     }
 }

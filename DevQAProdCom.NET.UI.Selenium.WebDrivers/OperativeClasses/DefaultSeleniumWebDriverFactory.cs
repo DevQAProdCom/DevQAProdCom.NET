@@ -14,9 +14,9 @@ namespace DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses
     public class DefaultSeleniumWebDriverFactory : BaseUiInteractorFactory, ISeleniumWebDriverFactory
     {
         private ILogger? _log;
-        public virtual Func<ISeleniumWebDriverConfiguration?, (IWebDriver, ISeleniumWebDriverConfiguration?)>? CreateWebDriverFunction { get; set; }
+        public virtual Func<ISeleniumUiInteractorConfiguration?, (IWebDriver, ISeleniumUiInteractorConfiguration?)>? CreateWebDriverFunction { get; set; }
 
-        protected override string GetBaseDownloadsDefaultDirectory() => Path.Combine(Environment.CurrentDirectory, base.GetBaseDownloadsDefaultDirectory());
+        protected virtual ISeleniumUiInteractorConfiguration GetDefaultSeleniumWebDriverConfiguration() => new SeleniumUiInteractorConfiguration();
 
         public DefaultSeleniumWebDriverFactory()
         {
@@ -27,31 +27,31 @@ namespace DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses
             _log = log;
         }
 
-        public DefaultSeleniumWebDriverFactory(ILogger log, Func<ISeleniumWebDriverConfiguration?, (IWebDriver, ISeleniumWebDriverConfiguration?)> createWebDriverFunction) : this(log)
+        public DefaultSeleniumWebDriverFactory(ILogger log, Func<ISeleniumUiInteractorConfiguration?, (IWebDriver, ISeleniumUiInteractorConfiguration?)> createWebDriverFunction) : this(log)
         {
             CreateWebDriverFunction = createWebDriverFunction;
         }
 
-        public (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateWebDriver(ISeleniumWebDriverConfiguration? configuration = null)
+        public (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateWebDriver(ISeleniumUiInteractorConfiguration? configuration = null)
         {
-            configuration ??= new SeleniumWebDriverConfiguration();
+            configuration ??= GetDefaultSeleniumWebDriverConfiguration();
             CreateWebDriverFunction = CreateDefaultWebDriverWithDefaultConfiguration;
             return CreateWebDriverFunction(configuration);
         }
 
-        public virtual (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateChromeDriver(ISeleniumWebDriverConfiguration configuration)
+        public virtual (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateChromeDriver(ISeleniumUiInteractorConfiguration configuration)
         {
             IWebDriver driver = new ChromeDriver();
             return (driver, configuration);
         }
 
-        public virtual (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateFirefoxDriver(ISeleniumWebDriverConfiguration configuration)
+        public virtual (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateFirefoxDriver(ISeleniumUiInteractorConfiguration configuration)
         {
             IWebDriver driver = new FirefoxDriver();
             return (driver, configuration);
         }
 
-        public virtual (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateEdgeDriver(ISeleniumWebDriverConfiguration configuration)
+        public virtual (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateEdgeDriver(ISeleniumUiInteractorConfiguration configuration)
         {
             //This is temporary fix because of issue https://github.com/SeleniumHQ/selenium/issues/16058#issuecomment-3078368659
             Environment.SetEnvironmentVariable("SE_DRIVER_MIRROR_URL", "https://msedgedriver.microsoft.com");
@@ -59,13 +59,13 @@ namespace DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses
             return (driver, configuration);
         }
 
-        public virtual (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateSafariDriver(ISeleniumWebDriverConfiguration configuration)
+        public virtual (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateSafariDriver(ISeleniumUiInteractorConfiguration configuration)
         {
             IWebDriver driver = new SafariDriver();
             return (driver, configuration);
         }
 
-        public virtual (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateDefaultWebDriverWithDefaultConfiguration(ISeleniumWebDriverConfiguration configuration)
+        public virtual (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateDefaultWebDriverWithDefaultConfiguration(ISeleniumUiInteractorConfiguration configuration)
         {
             if (Browser == BrowserName.Chrome.ToString().ToLower()) return CreateChromeDriver(configuration: configuration);
             if (Browser == BrowserName.Firefox.ToString().ToLower()) return CreateFirefoxDriver(configuration: configuration);

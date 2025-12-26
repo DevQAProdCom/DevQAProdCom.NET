@@ -25,7 +25,9 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         protected abstract IExecuteJavaScript JavaScriptExecutor { get; }
         internal TNativeTab NativeTab { get; set; }
 
-        public BaseUiInteractorTab(ILogger log, IUiInteractor uiInteractor, string aliasIdentifier, TNativeTab nativeTab,
+        protected IUiElementSearchConfiguration _uiElementSearchConfiguration;
+
+        public BaseUiInteractorTab(ILogger log, IUiInteractor uiInteractor, IUiElementSearchConfiguration uiElementSearchConfiguration, string aliasIdentifier, TNativeTab nativeTab,
             IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory, Dictionary<string, object> nativeObjects)
         {
             _log = log;
@@ -34,6 +36,8 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             _uiInteractorTabBehaviorFactory = uiInteractorTabBehaviorFactory;
             NativeTab = nativeTab;
             NativeObjects.Upsert(nativeObjects);
+            _uiElementSearchConfiguration = uiElementSearchConfiguration;
+
         }
 
         public abstract void SwitchTo();

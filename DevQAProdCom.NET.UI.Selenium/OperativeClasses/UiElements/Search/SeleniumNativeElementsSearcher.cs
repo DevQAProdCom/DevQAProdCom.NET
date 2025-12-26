@@ -3,13 +3,16 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search;
 using OpenQA.Selenium;
 
 namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 {
-    internal class SeleniumNativeElementsSearcher(ILogger log, Func<IWebDriver> getWebDriver, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider)
-        : BaseNativeElementsSearcher<IWebElement, IWebElement, IWebElement>(log)
+    internal class SeleniumNativeElementsSearcher(ILogger log, Func<IWebDriver> getWebDriver,
+        IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider,
+        IUiElementSearchConfiguration uiElementSearchConfiguration)
+        : BaseNativeElementsSearcher<IWebElement, IWebElement, IWebElement>(log, uiElementSearchConfiguration)
     {
         private IWebDriver _webDriver => getWebDriver();
 

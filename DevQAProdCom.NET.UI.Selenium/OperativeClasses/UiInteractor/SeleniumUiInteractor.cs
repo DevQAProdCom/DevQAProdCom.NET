@@ -2,6 +2,7 @@
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces;
+using DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses;
 using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
@@ -20,6 +21,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         private readonly ISeleniumCookieMappers _cookieMappers;
         private readonly ISeleniumWebDriverFactory _webDriverFactory;
         private readonly IUiPageFactoryProvider _uiPageFactoryProvider;
+        private ISeleniumUiInteractorConfiguration? _uiInteractorConfiguration;
 
         //Can be set/substituted in tests in case each test needs browser/driver with different configuration
         public IWebDriver _driver { get; set; }
@@ -40,20 +42,12 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         public override void Launch()
         {
             Created = DateTime.UtcNow;
-            (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) data = _webDriverFactory.CreateWebDriver();
+            (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) data = _webDriverFactory.CreateWebDriver();
 
             _driver = data.Driver;
-            DownloadsDefaultDirectory = data.Configuration?.DownloadsDefaultDirectory;
+            _uiInteractorConfiguration = data.Configuration;
 
-            if (data.Configuration?.TimeToLive != null)
-                TimeToLive = data.Configuration.TimeToLive.Value;
-
-            if (data.Configuration?.Created != null)
-                Created = data.Configuration.Created.Value;
-
-            if (data.Configuration?.Data != null)
-                Data = data.Configuration.Data;
-
+            FillConfiguration(data.Configuration);
             NativeObjects.Upsert(SharedUiConstants.GetIWebDriverFunc, this.GetWebDriver);
         }
 
@@ -100,7 +94,15 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
         protected override IUiInteractorTab CreateTab(string tabName = SharedUiConstants.DefaultUiInteractorTab)
         {
             var nativeTab = CreateNativeTab();
-            var tab = new SeleniumUiInteractorTab(_log, this, tabName, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
+
+            IUiElementSearchConfiguration uiElementSearchConfiguration;
+
+            if (_uiInteractorConfiguration != null)
+                uiElementSearchConfiguration = _uiInteractorConfiguration;
+            else
+                uiElementSearchConfiguration = new SeleniumUiInteractorConfiguration(); //if not passed from outside, set default values
+
+            var tab = new SeleniumUiInteractorTab(_log, this, uiElementSearchConfiguration, tabName, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
             return tab;
         }
 

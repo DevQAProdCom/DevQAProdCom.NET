@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor
 {
-    public interface IUiInteractorConfiguration : IHaveHeterogeneousKeyValueData
+    public interface IUiInteractorConfiguration : IHaveHeterogeneousKeyValueData, IUiElementSearchConfiguration
     {
         public DateTime? Created { get; set; }
         public TimeSpan? TimeToLive { get; set; }

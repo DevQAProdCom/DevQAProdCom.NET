@@ -19,14 +19,29 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         protected readonly IUiInteractorBehaviorFactory UiInteractorBehaviorFactory;
         protected readonly IUiInteractorTabBehaviorFactory UiInteractorTabBehaviorFactory;
 
-        //TODO Take from configuration when created
-        public DateTime? Created { get; set; }
-        public DateTime? ExpirationTime => Created.HasValue && TimeToLive.HasValue ? Created.Value.Add(TimeToLive.Value) : null;
-        public TimeSpan? TimeToLive { get; set; } = TimeSpan.FromMinutes(10);
-        public Dictionary<string, object>? Data { get; set; }
+        #region IUiInteractorConfiguration  - Default Values. Otherwise are taken from configuration when launch happens.
 
-        protected List<IUiInteractorTab> _tabs;
-        protected ILogger _log;
+        public DateTime? Created { get; set; }
+
+        public DateTime? _expirationTime;
+        public DateTime? ExpirationTime
+        {
+            get
+            {
+                if (!_expirationTime.HasValue)
+                {
+                    var created = Created ??= DateTime.UtcNow;
+                    _expirationTime = Created.Value.Add(TimeToLive.Value);
+                }
+                return _expirationTime;
+
+            }
+            set { _expirationTime = value; }
+        }
+
+        public TimeSpan? TimeToLive { get; set; } = SharedUiConstants.Configurations.DefaultUiInteractorTimeToLive;
+        public int UiElementsSearchImplicitWaitSeconds { get; set; } = SharedUiConstants.Configurations.DefaultUiElementsSearchImplicitWaitSeconds;
+        public Dictionary<string, object>? Data { get; set; }
 
         public string? _downloadsDefaultDirectory;
         public string? DownloadsDefaultDirectory
@@ -34,19 +49,44 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             get
             {
                 if (string.IsNullOrEmpty(_downloadsDefaultDirectory))
-                    throw new Exception("Downloads Default Directory of UiInteractor is not set.");
+                    _downloadsDefaultDirectory = SharedUiConstants.Configurations.DefaultDownloadsDirectory;
 
                 if (!string.IsNullOrEmpty(_downloadsDefaultDirectory) && !Directory.Exists(_downloadsDefaultDirectory))
                     Directory.CreateDirectory(_downloadsDefaultDirectory);
 
                 return _downloadsDefaultDirectory;
             }
-
             set
             {
                 _downloadsDefaultDirectory = value;
             }
         }
+
+        protected void FillConfiguration(IUiInteractorConfiguration? uiInteractorConfiguration)
+        {
+            if (uiInteractorConfiguration?.Created != null)
+                Created = uiInteractorConfiguration.Created.Value;
+
+            if (uiInteractorConfiguration?.TimeToLive != null)
+                TimeToLive = uiInteractorConfiguration.TimeToLive.Value;
+
+            if (uiInteractorConfiguration?.ExpirationTime != null)
+                ExpirationTime = uiInteractorConfiguration.ExpirationTime;
+
+            if (uiInteractorConfiguration?.DownloadsDefaultDirectory != null)
+                DownloadsDefaultDirectory = uiInteractorConfiguration.DownloadsDefaultDirectory;
+
+            if (uiInteractorConfiguration?.Data != null)
+                Data = uiInteractorConfiguration.Data;
+
+            if (uiInteractorConfiguration?.UiElementsSearchImplicitWaitSeconds != null)
+                UiElementsSearchImplicitWaitSeconds = uiInteractorConfiguration.UiElementsSearchImplicitWaitSeconds;
+        }
+
+        #endregion IUiInteractorConfiguration
+
+        protected List<IUiInteractorTab> _tabs;
+        protected ILogger _log;
 
         private System.Timers.Timer? _keepAliveTimer;
 

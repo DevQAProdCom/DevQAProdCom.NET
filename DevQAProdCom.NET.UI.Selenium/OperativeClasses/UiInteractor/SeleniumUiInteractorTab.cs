@@ -3,6 +3,7 @@ using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
@@ -23,7 +24,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             get
             {
                 if (_nativeElementsSearcher == null)
-                    _nativeElementsSearcher = new SeleniumNativeElementsSearcher(_log, _uiInteractor.GetWebDriver, _findOptionSearchMethodsProvider);
+                    _nativeElementsSearcher = new SeleniumNativeElementsSearcher(_log, _uiInteractor.GetWebDriver, _findOptionSearchMethodsProvider, _uiElementSearchConfiguration);
 
                 return _nativeElementsSearcher;
             }
@@ -41,10 +42,10 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
             }
         }
 
-        public SeleniumUiInteractorTab(ILogger log, ISeleniumUiInteractor uiInteractor, string aliasIdentifier, string nativeTab,
+        public SeleniumUiInteractorTab(ILogger log, ISeleniumUiInteractor uiInteractor, IUiElementSearchConfiguration uiElementSearchConfiguration, string aliasIdentifier, string nativeTab,
             IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> findOptionSearchMethodsProvider, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory,
             Dictionary<string, object> nativeObjects)
-            : base(log, uiInteractor, aliasIdentifier, nativeTab, uiInteractorTabBehaviorFactory, nativeObjects)
+            : base(log, uiInteractor, uiElementSearchConfiguration, aliasIdentifier, nativeTab, uiInteractorTabBehaviorFactory, nativeObjects)
         {
             _uiInteractor = uiInteractor;
             _uiPageFactoryProvider = uiPageFactoryProvider;

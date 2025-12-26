@@ -34,7 +34,6 @@
         public const string ShadowRootHostsSemicolon = "ShadowRootHosts:";
         public const string BROWSER = "BROWSER";
         public const string BROWSER_VERSION = "BROWSER_VERSION";
-        public const string DownloadsDefaultDirectory = "DownloadsDefaultDirectory";
         public const string Page = "Page";
         public const string HtmlXPath = "//html";
         public const string DefaultKeysCombinationSeparator = "+";

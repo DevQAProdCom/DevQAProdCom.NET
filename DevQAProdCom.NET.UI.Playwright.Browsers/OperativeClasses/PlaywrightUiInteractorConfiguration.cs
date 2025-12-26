@@ -3,7 +3,7 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
 
 namespace DevQAProdCom.NET.UI.Playwright.Browsers.OperativeClasses
 {
-    public class PlaywrightBrowserConfiguration : BaseUiInteractorConfiguration, IPlaywrightBrowserConfiguration
+    public class PlaywrightUiInteractorConfiguration : BaseUiInteractorConfiguration, IPlaywrightUiInteractorConfiguration
     {
     }
 }

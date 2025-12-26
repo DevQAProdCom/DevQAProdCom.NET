@@ -8,6 +8,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Logging.Models;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
@@ -18,10 +19,12 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
            where TNativeShadowRootHostElement : class
     {
         protected readonly ILogger _log;
+        protected readonly IUiElementSearchConfiguration _uiElementSearchConfiguration;
 
-        protected BaseNativeElementsSearcher(ILogger log)
+        protected BaseNativeElementsSearcher(ILogger log, IUiElementSearchConfiguration uiElementSearchConfiguration)
         {
             _log = log;
+            _uiElementSearchConfiguration = uiElementSearchConfiguration;
         }
 
         #region Explicit implementation of interface
@@ -56,7 +59,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
             Stopwatch searchTimeStopWatch = Stopwatch.StartNew();
 
             Wait.Create()
-                .WithTimeout(TimeSpan.FromSeconds(15))
+                .WithTimeout(TimeSpan.FromSeconds(_uiElementSearchConfiguration.UiElementsSearchImplicitWaitSeconds))
                 .DoNotThrowTimeoutException()
                 .Until(() =>
                 {

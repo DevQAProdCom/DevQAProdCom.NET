@@ -1,5 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
-using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager;
+﻿using DevQAProdCom.NET.UI.Shared.Enumerations;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.DependencyInjection;
@@ -25,7 +25,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_UiInteractorsManagersProvider_Return_Different_IUiInteractorsManagers_For_Different_Threads()
         {
             //GIVEN
-            UiInteractorsManagersProvider UiInteractorsManagersProvider = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>() as UiInteractorsManagersProvider;
+            IUiInteractorsManagersProvider UiInteractorsManagersProvider = DiContainer.Instance.GetRequiredService<IUiInteractorsManagersProvider>();
 
             //WHEN
             Guid? thread1UiInteractorsManagerId = null;
@@ -33,12 +33,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
             var thread1 = new Thread(() =>
             {
-                thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager().Id;
+                thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(UiInteractorsManagerScope.Test).Id;
             });
 
             var thread2 = new Thread(() =>
             {
-                thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager().Id;
+                thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(UiInteractorsManagerScope.Test).Id;
             });
 
             thread1.Start();

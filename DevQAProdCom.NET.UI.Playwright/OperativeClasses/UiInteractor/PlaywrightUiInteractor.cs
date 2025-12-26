@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces;
+using DevQAProdCom.NET.UI.Playwright.Browsers.OperativeClasses;
 using DevQAProdCom.NET.UI.Playwright.Constants;
 using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
@@ -21,6 +22,8 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
         private readonly IPlaywrightCookieMappers _cookieMappers;
         private readonly IPlaywrightBrowserFactory _browserFactory;
         private readonly IUiPageFactoryProvider _uiPageFactoryProvider;
+        private IPlaywrightUiInteractorConfiguration? _uiInteractorConfiguration;
+
 
         //Can be set/substituted in tests in case each test needs browser with different configuration
         public IBrowser? Browser { get; set; }
@@ -43,7 +46,15 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
                 throw new DuplicateNameException($"Tab with identifier '{aliasId}' already exists. Unique name should be specified for the new tab.");
 
             var nativeTab = CreateNativeTab();
-            var tab = new PlaywrightUiInteractorTab(_log, this, aliasId, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
+
+            IUiElementSearchConfiguration uiElementSearchConfiguration;
+
+            if (_uiInteractorConfiguration != null)
+                uiElementSearchConfiguration = _uiInteractorConfiguration;
+            else
+                uiElementSearchConfiguration = new PlaywrightUiInteractorConfiguration(); //if not passed from outside, set default values
+
+            var tab = new PlaywrightUiInteractorTab(_log, this, uiElementSearchConfiguration, aliasId, nativeTab, _uiPageFactoryProvider, _findOptionSearchMethodsProvider, UiInteractorTabBehaviorFactory, NativeObjects);
 
             return tab;
         }
@@ -56,13 +67,12 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
 
         public override void Launch()
         {
-            (IBrowser Browser, BrowserTypeLaunchOptions? LaunchOptions) data = _browserFactory.GetBrowser();
+            Created = DateTime.UtcNow;
+            (IBrowser Browser, BrowserTypeLaunchOptions? LaunchOptions, IPlaywrightUiInteractorConfiguration? Configuration) data = _browserFactory.GetBrowser();
             Browser = data.Browser;
+            _uiInteractorConfiguration = data.Configuration;
+            FillConfiguration(data.Configuration);
 
-            if (string.IsNullOrEmpty(data.LaunchOptions?.DownloadsPath))
-                throw new Exception("data.LaunchOptions?.DownloadsPath is not set");
-
-            DownloadsDefaultDirectory = data.LaunchOptions?.DownloadsPath;
             BrowserNewContextOptions contextOptions = _browserFactory.BrowserNewContextOptions;
             BrowserContext = Browser.NewContextAsync(contextOptions).Result;
 
@@ -84,6 +94,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
                 return false;
             }
         }
+
         public override void Dispose()
         {
             DisposeForRecreation();

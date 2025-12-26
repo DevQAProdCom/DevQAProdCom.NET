@@ -5,6 +5,7 @@ using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Search;
 using DevQAProdCom.NET.UI.Shared.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorTab;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
@@ -25,7 +26,7 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             get
             {
                 if (_nativeElementsSearcher == null)
-                    _nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, NativeTab, _findOptionSearchMethodsProvider);
+                    _nativeElementsSearcher = new PlaywrightNativeElementsSearcher(_log, NativeTab, _findOptionSearchMethodsProvider, _uiElementSearchConfiguration);
 
                 return _nativeElementsSearcher;
             }
@@ -43,10 +44,10 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor
             }
         }
 
-        public PlaywrightUiInteractorTab(ILogger log, IPlaywrightUiInteractor uiInteractor, string aliasIdentifier, IPage nativeTab,
+        public PlaywrightUiInteractorTab(ILogger log, IPlaywrightUiInteractor uiInteractor, IUiElementSearchConfiguration uiElementSearchConfiguration, string aliasIdentifier, IPage nativeTab,
             IUiPageFactoryProvider uiPageFactoryProvider, IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> findOptionSearchMethodsProvider,
             IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory, Dictionary<string, object> nativeObjects)
-            : base(log, uiInteractor, aliasIdentifier, nativeTab, uiInteractorTabBehaviorFactory, nativeObjects)
+            : base(log, uiInteractor, uiElementSearchConfiguration, aliasIdentifier, nativeTab, uiInteractorTabBehaviorFactory, nativeObjects)
         {
             _uiInteractor = uiInteractor;
             _uiPageFactoryProvider = uiPageFactoryProvider;

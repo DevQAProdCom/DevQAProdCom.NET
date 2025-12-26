@@ -2,7 +2,6 @@
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.WebDrivers.OperativeClasses;
-using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -31,14 +30,14 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
 
         public SeleniumWebDriverFactory(ILogger log) : base(log) { }
 
-        public override (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateChromeDriver(ISeleniumWebDriverConfiguration configuration)
+        public override (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateChromeDriver(ISeleniumUiInteractorConfiguration configuration)
         {
+            configuration ??= GetDefaultSeleniumWebDriverConfiguration();
+
             ChromeOptions options = new ChromeOptions();
             options.AddArguments("--disable-gpu");
             options.PageLoadStrategy = PageLoadStrategy.Normal;
 
-            if (string.IsNullOrEmpty(configuration.DownloadsDefaultDirectory))
-                configuration.DownloadsDefaultDirectory = GetDownloadsDefaultDirectory();
             options.AddUserProfilePreference("download.default_directory", configuration.DownloadsDefaultDirectory);
 
             //TODO this part is required to be able to identify files on remote Linux instances (AWS Device Farm)
@@ -53,16 +52,15 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
             return (driver, configuration);
         }
 
-        public override (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateFirefoxDriver(ISeleniumWebDriverConfiguration configuration)
+        public override (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateFirefoxDriver(ISeleniumUiInteractorConfiguration configuration)
         {
+            configuration ??= GetDefaultSeleniumWebDriverConfiguration();
+
             FirefoxOptions options = new FirefoxOptions();
             options.AddArgument("--disable-gpu");
             options.PageLoadStrategy = PageLoadStrategy.Normal;
 
-            if (string.IsNullOrEmpty(configuration.DownloadsDefaultDirectory))
-                configuration.DownloadsDefaultDirectory = GetDownloadsDefaultDirectory();
             options.SetPreference("browser.download.dir", configuration.DownloadsDefaultDirectory);
-
             options.SetPreference("browser.download.folderList", 2);
             options.SetPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf, application/octet-stream");
 
@@ -73,18 +71,17 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
             return (driver, configuration);
         }
 
-        public override (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateEdgeDriver(ISeleniumWebDriverConfiguration configuration)
+        public override (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateEdgeDriver(ISeleniumUiInteractorConfiguration configuration)
         {
+            configuration ??= GetDefaultSeleniumWebDriverConfiguration();
+
             //Temporary fix due to issue: https://github.com/SeleniumHQ/selenium/issues/16058#issuecomment-3078368659
             Environment.SetEnvironmentVariable("SE_DRIVER_MIRROR_URL", "https://msedgedriver.microsoft.com");
 
             EdgeOptions options = new EdgeOptions();
             options.AddArgument("--disable-gpu");
             options.PageLoadStrategy = PageLoadStrategy.Normal;
-
-            if (string.IsNullOrEmpty(configuration.DownloadsDefaultDirectory))
-                configuration.DownloadsDefaultDirectory = GetDownloadsDefaultDirectory();
-            options.AddUserProfilePreference("download.default_directory", Path.Combine(Environment.CurrentDirectory, SharedUiConstants.DownloadsDefaultDirectory));
+            options.AddUserProfilePreference("download.default_directory", Path.Combine(Environment.CurrentDirectory, configuration.DownloadsDefaultDirectory));
 
             if (IsRemoteRun)
                 options.AddArgument("--headless");
@@ -93,8 +90,10 @@ namespace Tests.DevQAProdCom.NET.UI.Configurations
             return (driver, configuration);
         }
 
-        public override (IWebDriver Driver, ISeleniumWebDriverConfiguration? Configuration) CreateSafariDriver(ISeleniumWebDriverConfiguration configuration)
+        public override (IWebDriver Driver, ISeleniumUiInteractorConfiguration? Configuration) CreateSafariDriver(ISeleniumUiInteractorConfiguration configuration)
         {
+            configuration ??= GetDefaultSeleniumWebDriverConfiguration();
+
             SafariOptions options = new SafariOptions();
             options.PageLoadStrategy = PageLoadStrategy.Normal;
 
