@@ -45,7 +45,6 @@ namespace DevQAProdCom.NET.UI.Playwright.DependencyInjection
                 serviceCollection.AddSingleton<IPlaywrightBrowserFactory, DefaultPlaywrightBrowserFactory>();
 
             serviceCollection
-                .AddTransient<IUiInteractor, PlaywrightUiInteractor>()
                 .AddTransient<IUiInteractorsManager, PlaywrightUiInteractorsManager>()
                 .AddSingleton<IUiElementsInterfaceImplementationRegister>(provider =>
                 {

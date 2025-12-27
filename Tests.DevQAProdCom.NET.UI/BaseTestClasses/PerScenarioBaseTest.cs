@@ -10,8 +10,8 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         protected IUiInteractorsManagersProvider UiInteractorsManagersProvider;
         protected IUiInteractor UiInteractor => UiInteractorsManagersProvider.GetUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Test);
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void OneTimeSetup()
         {
             UiInteractorsManagersProvider = _di.GetRequiredService<IUiInteractorsManagersProvider>();
         }
@@ -20,8 +20,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         public void TearDown()
         {
             UiInteractor.MakeScreenshots(directoryPath: Const.Screenshot_Directory);
-            //UiInteractorsManager.DisposeUiInteractorsManager();
-            UiInteractorsManagersProvider.DisposeUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Test);
+            UiInteractorsManagersProvider.DisposeUiInteractorsManager(uiInteractorsManagerScope: UiInteractorsManagerScope.Test);
         }
     }
 }

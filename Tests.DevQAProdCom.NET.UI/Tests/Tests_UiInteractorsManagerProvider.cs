@@ -31,14 +31,36 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             Guid? thread1UiInteractorsManagerId = null;
             Guid? thread2UiInteractorsManagerId = null;
 
+            /* May abort the whole test run instead of just failing the test, if no try/catch is used inside the threads.
+            The issue is that if an unhandled exception occurs inside either thread1 or thread2, that exception is thrown on the thread pool thread, not on the main test thread. 
+            By default, in .NET, an unhandled exception on a background thread will terminate the process (or at least abort the test run), not just fail the test. This is why your test run is aborted rather than just reporting a failed test.
+            Why does this happen?
+            •	Unhandled exceptions in threads: If a thread throws an exception and it is not caught, the exception is unhandled. 
+            In .NET, unhandled exceptions on threads (other than the main thread) can terminate the process, especially in .NET Core and later (.NET 5/6/7/8).
+            •	Test frameworks: Most test frameworks (like NUnit, xUnit, MSTest) expect exceptions to be thrown on the main test thread. If an exception is thrown on a background thread, the framework may not catch it, leading to process termination.
+            */
             var thread1 = new Thread(() =>
             {
-                thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(UiInteractorsManagerScope.Test).Id;
+                try
+                {
+                    thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerScope: UiInteractorsManagerScope.Test, threadId: Thread.CurrentThread.ManagedThreadId).Id;
+                }
+                catch (Exception ex)
+                {
+
+                }
             });
 
             var thread2 = new Thread(() =>
             {
-                thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(UiInteractorsManagerScope.Test).Id;
+                try
+                {
+                    thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerScope: UiInteractorsManagerScope.Test, threadId: Thread.CurrentThread.ManagedThreadId).Id;
+                }
+                catch (Exception ex)
+                {
+
+                }
             });
 
             thread1.Start();

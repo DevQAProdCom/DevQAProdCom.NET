@@ -19,7 +19,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            UiInteractorsManagersProvider.DisposeUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
+            UiInteractorsManagersProvider.DisposeUiInteractorsManagers(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
         }
     }
 }

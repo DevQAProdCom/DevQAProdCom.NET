@@ -11,8 +11,6 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.All)]
     internal class Tests_UiInteractor_Cookies : PerScenarioBaseTest
     {
-        [ThreadStatic] private static IUiInteractorTab _tab1;
-        [ThreadStatic] private static IUiInteractorTab _tab2;
         [ThreadStatic] private static TestPageTab1Service _service1;
         [ThreadStatic] private static TestPageTab2Service _service2;
         [ThreadStatic] private static IUiElement _tab1Button;
@@ -29,9 +27,6 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             _service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
             _service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
-
-            _tab1 = UiInteractor.GetTab(Const.Tab1);
-            _tab2 = UiInteractor.GetTab(Const.Tab2);
 
             _tab1Button = _service1._page.Tab1ButtonCheckCookie;
             _tab2Button = _service2._page.Tab2ButtonCheckCookie;

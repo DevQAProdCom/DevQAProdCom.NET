@@ -28,7 +28,6 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements;
-using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiPage.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.UiElements.Extensions;
 using DevQAProdCom.NET.UI.UiElements.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,7 +47,6 @@ namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
                 serviceCollection.AddSingleton<ISeleniumWebDriverFactory, DefaultSeleniumWebDriverFactory>();
 
             serviceCollection
-                .AddTransient<IUiInteractor, SeleniumUiInteractor>()
                 .AddTransient<IUiInteractorsManager, SeleniumUiInteractorsManager>()
                 .AddSingleton<IUiElementsInterfaceImplementationRegister>(provider =>
                  {
