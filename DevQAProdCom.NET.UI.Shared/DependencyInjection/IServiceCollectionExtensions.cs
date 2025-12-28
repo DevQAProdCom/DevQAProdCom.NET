@@ -47,14 +47,13 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
             return serviceCollection;
         }
 
-        public static IServiceCollection AddUiInteractorsManagersProvider(this IServiceCollection serviceCollection, Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null)
+        public static IServiceCollection AddUiInteractorsManagersProvider(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IUiInteractorsManagersProvider, UiInteractorsManagersProvider>(provider =>
                {
                    ILogger log = provider.GetRequiredService<ILogger>();
                    Func<IUiInteractorsManager> getUiInteractorManagerFunc = () => provider.GetRequiredService<IUiInteractorsManager>();
-                   return new UiInteractorsManagersProvider(getUiInteractorManagerFunc: getUiInteractorManagerFunc, log: log,
-                       getCurrentTestIdentifierFunc: getCurrentTestIdentifierFunc, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc);
+                   return new UiInteractorsManagersProvider(getUiInteractorManagerFunc: getUiInteractorManagerFunc, log: log);
                });
 
             return serviceCollection;
@@ -118,9 +117,9 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
             return serviceCollection;
         }
 
-        public static IServiceCollection AddBaseUiInteractionServices(this IServiceCollection serviceCollection, Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null)
+        public static IServiceCollection AddBaseUiInteractionServices(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddUiInteractorsManagersProvider(getCurrentTestIdentifierFunc: getCurrentTestIdentifierFunc, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc)
+            serviceCollection.AddUiInteractorsManagersProvider()
                 .AddSingleton<IUiPageFactoryProvider, UiPageFactoryProvider>()
                 .AddSingleton<IBehaviorProvider>(_ => new BehaviorProvider(serviceCollection))
                 .AddSingleton<IUiInteractorBehaviorFactory, UiInteractorBehaviorFactory>()

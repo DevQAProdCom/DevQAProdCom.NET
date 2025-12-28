@@ -1,6 +1,5 @@
 ﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.UI.Shared.Constants;
-using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager
@@ -12,33 +11,32 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager
 
         #region UiInteractorsManagers
 
-        public IUiInteractorsManager GetUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, int? threadId = null);
+        public IUiInteractorsManager GetUiInteractorsManager(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, int? threadId = null);
         public IUiInteractorsManager GetUiInteractorsManagerOfCurrentThread();
 
         /// <summary>
         /// Can be used in 'TearDown' for disposing UiInteractorManager with 'UiInteractorsManagerScope.Test' when ThreadId is the same with what was in 'SetUp' hook during creation.
         /// </summary>
-        /// <param name="uiInteractorsManagerScope"></param>
         /// <param name="threadId"></param>
         /// <param name="uiInteractorsManagerName"></param>
-        public void DisposeUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, int? threadId = null);
+        public void DisposeUiInteractorsManager(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, int? threadId = null);
 
         /// <summary>
         /// Can be used in 'OmeTimeTearDown' for disposing UiInteractorManager with 'UiInteractorsManagerScope.Feature' when ThreadId may differ from what was in 'OneTimeSetUp' hook during creation.
         /// </summary>
-        /// <param name="uiInteractorsManagerScope"></param>
         /// <param name="uiInteractorsManagerName"></param>
-        public void DisposeUiInteractorsManagers(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null);
+        public void DisposeUiInteractorsManagers(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance);
+        public void DisposeUiInteractorsManagerOfCurrentThread();
         public void DisposeAllUiInteractorsManagers();
 
         #endregion UiInteractorsManagers
 
         #region UiInteractors
 
-        public IUiInteractor GetUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance, int? threadId = null);
+        public IUiInteractor GetUiInteractor(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance, int? threadId = null);
         public IUiInteractor GetUiInteractorOfCurrentThread(string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance);
-        public void DisposeUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance, int? threadId = null);
-        public void DisposeAllUiInteractors(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null);
+        public void DisposeUiInteractor(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance, int? threadId = null);
+        public void DisposeAllUiInteractors(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance);
 
         #endregion UiInteractors
     }

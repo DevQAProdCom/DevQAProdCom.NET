@@ -52,6 +52,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 
         public UiPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab)
         {
+            _uiInteractor = uiInteractor;
             _tabName = tabName;
         }
     }

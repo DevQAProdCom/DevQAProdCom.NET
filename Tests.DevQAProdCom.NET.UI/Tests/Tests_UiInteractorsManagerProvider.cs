@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.UI.Shared.Enumerations;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
+﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.DependencyInjection;
@@ -43,7 +42,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             {
                 try
                 {
-                    thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerScope: UiInteractorsManagerScope.Test, threadId: Thread.CurrentThread.ManagedThreadId).Id;
+                    thread1UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerName: TestContext.CurrentContext.Test.ID, threadId: Thread.CurrentThread.ManagedThreadId).Id;
                 }
                 catch (Exception ex)
                 {
@@ -55,7 +54,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             {
                 try
                 {
-                    thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerScope: UiInteractorsManagerScope.Test, threadId: Thread.CurrentThread.ManagedThreadId).Id;
+                    thread2UiInteractorsManagerId = UiInteractorsManagersProvider.GetUiInteractorsManager(uiInteractorsManagerName: TestContext.CurrentContext.Test.ID, threadId: Thread.CurrentThread.ManagedThreadId).Id;
                 }
                 catch (Exception ex)
                 {

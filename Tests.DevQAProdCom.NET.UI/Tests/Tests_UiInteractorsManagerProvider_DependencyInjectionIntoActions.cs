@@ -8,12 +8,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.All)]
     public class Tests_UiInteractorsManagerProvider_DependencyInjectionIntoActions
     {
-        private TestPage2Actions _testPage2Actions;
+        [ThreadStatic]
+        private static TestPage2Actions _testPage2Actions;
 
         [SetUp]
         public void SetUp()
         {
             _testPage2Actions = DiContainer.Instance.GetRequiredService<TestPage2Actions>();
+            _testPage2Actions.GoToPage();
         }
 
         [Test]
@@ -39,6 +41,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
                 actualText.Should().Be("Use.IdContains");
                 actualIdAttribute.Should().Be("use-id-contains-value");
             }
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            DiContainer.Instance.UiInteractorsManagersProvider.DisposeUiInteractorsManagerOfCurrentThread();
         }
     }
 }

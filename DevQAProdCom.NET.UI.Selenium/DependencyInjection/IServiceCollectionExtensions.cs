@@ -36,10 +36,9 @@ namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigureSelenium(this IServiceCollection serviceCollection, Func<IServiceProvider, ISeleniumWebDriverFactory>? customWebDriverFactoryFunc = null,
-            Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null) //Core Di
+        public static IServiceCollection ConfigureSelenium(this IServiceCollection serviceCollection, Func<IServiceProvider, ISeleniumWebDriverFactory>? customWebDriverFactoryFunc = null)
         {
-            serviceCollection.AddBaseUiInteractionServices(getCurrentTestIdentifierFunc: getCurrentTestIdentifierFunc, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc);
+            serviceCollection.AddBaseUiInteractionServices();
 
             if (customWebDriverFactoryFunc != null)
                 serviceCollection.AddSingleton<ISeleniumWebDriverFactory>(customWebDriverFactoryFunc);

@@ -6,6 +6,7 @@ using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
 using DevQAProdCom.NET.UI.Playwright.DependencyInjection;
 using DevQAProdCom.NET.UI.Selenium.DependencyInjection;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using Microsoft.Extensions.DependencyInjection;
 using Tests.DevQAProdCom.NET.UI.Configurations;
 using Tests.DevQAProdCom.NET.UI.TestClasses;
@@ -17,7 +18,10 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
         private static readonly Lazy<DiContainer> _instance = new Lazy<DiContainer>(() => new DiContainer());
         public static DiContainer Instance => _instance.Value;
 
-        public static UiInteractorTechnology CurrentTechnology = UiInteractorTechnology.Playwright;
+        public static UiInteractorTechnology CurrentTechnology = UiInteractorTechnology.Selenium;
+
+        private IUiInteractorsManagersProvider? _uiInteractorsManagerProvider;
+        public IUiInteractorsManagersProvider UiInteractorsManagersProvider => _uiInteractorsManagerProvider ??= GetRequiredService<IUiInteractorsManagersProvider>();
 
         protected override string AssemblyName => this.GetType().Assembly.GetName().Name ?? "UnknownAssembly";
 
@@ -40,9 +44,7 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
             //Form DI
             if (CurrentTechnology == UiInteractorTechnology.Playwright)
             {
-                _serviceCollection.ConfigurePlaywright(customBrowserFactoryFunc: (provider) => { return new PlaywrightBrowserFactory(provider.GetRequiredService<ILogger>()); },
-                     getCurrentTestIdentifierFunc: () => TestContext.CurrentContext.Test.ID,
-                     getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName)
+                _serviceCollection.ConfigurePlaywright(customBrowserFactoryFunc: (provider) => { return new PlaywrightBrowserFactory(provider.GetRequiredService<ILogger>()); })
                     .AddSingleton<TestClassForDiInjection>()
                     .AddSingleton<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
                     .AddPlaywrightFindOptionSearchMethod<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
@@ -51,9 +53,7 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
             else if (CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 _serviceCollection.ConfigureSelenium(
-                    customWebDriverFactoryFunc: (provider) => { return new SeleniumWebDriverFactory(provider.GetRequiredService<ILogger>()); },
-                     getCurrentTestIdentifierFunc: () => TestContext.CurrentContext.Test.ID,
-                     getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName)
+                    customWebDriverFactoryFunc: (provider) => { return new SeleniumWebDriverFactory(provider.GetRequiredService<ILogger>()); })
                     .AddSingleton<TestClassForDiInjection>()
                     .AddSingleton<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
                     .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()

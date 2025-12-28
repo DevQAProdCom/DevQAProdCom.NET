@@ -13,13 +13,13 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         public void OneTimeSetup()
         {
             UiInteractorsManagersProvider = _di.GetRequiredService<IUiInteractorsManagersProvider>();
-            UiInteractor = UiInteractorsManagersProvider.GetUiInteractor(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
+            UiInteractor = UiInteractorsManagersProvider.GetUiInteractor(uiInteractorsManagerName: TestContext.CurrentContext.Test.ClassName);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            UiInteractorsManagersProvider.DisposeUiInteractorsManagers(uiInteractorsManagerScope: UiInteractorsManagerScope.Feature);
+            UiInteractorsManagersProvider.DisposeUiInteractorsManagers(uiInteractorsManagerName: TestContext.CurrentContext.Test.ClassName);
         }
     }
 }
