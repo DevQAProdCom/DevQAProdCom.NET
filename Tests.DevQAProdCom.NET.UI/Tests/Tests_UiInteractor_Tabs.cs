@@ -21,8 +21,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actions2 = UiInteractor.Interact<TestPageTab2Actions>(tabName: Const.Tab2);
 
             //WHEN
-            var actualTab1Button1Text = actions1._page.Tab1Button1.GetTextContent();
-            var actualTab2Button1Text = actions2._page.Tab2Button1.GetTextContent();
+            var actualTab1Button1Text = actions1.Page.Tab1Button1.GetTextContent();
+            var actualTab2Button1Text = actions2.Page.Tab2Button1.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -49,8 +49,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             actions1 = UiInteractor.Interact<TestPageTab1Actions>(tabName: Const.Tab1);
             actions2 = UiInteractor.Interact<TestPageTab2Actions>(tabName: Const.Tab2);
 
-            var actualTab1Button1Text = actions1._page.Tab1Button1.GetTextContent();
-            var actualTab2Button1Text = actions2._page.Tab2Button1.GetTextContent();
+            var actualTab1Button1Text = actions1.Page.Tab1Button1.GetTextContent();
+            var actualTab2Button1Text = actions2.Page.Tab2Button1.GetTextContent();
 
             //THEN
             using (new AssertionScope())

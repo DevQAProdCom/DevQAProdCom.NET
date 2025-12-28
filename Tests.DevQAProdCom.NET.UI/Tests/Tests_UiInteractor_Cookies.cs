@@ -28,8 +28,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             _testPageTab1Actions = UiInteractor.Interact<TestPageTab1Actions>(tabName: Const.Tab1);
             _testPageTab2Actions = UiInteractor.Interact<TestPageTab2Actions>(tabName: Const.Tab2);
 
-            _tab1Button = _testPageTab1Actions._page.Tab1ButtonCheckCookie;
-            _tab2Button = _testPageTab2Actions._page.Tab2ButtonCheckCookie;
+            _tab1Button = _testPageTab1Actions.Page.Tab1ButtonCheckCookie;
+            _tab2Button = _testPageTab2Actions.Page.Tab2ButtonCheckCookie;
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actions3 = UiInteractor.Interact<TestPageTab3Actions>(tabName: Const.Tab3);
 
             var actualCookie = UiInteractor.GetCookie(Const.CookieBWithDomainPathConstructor.Name);
-            var tab3Button = actions3._page.Tab3ButtonCheckCookie;
+            var tab3Button = actions3.Page.Tab3ButtonCheckCookie;
 
             tab3Button.Click();
             var actualButtonTextAfterCookieSet = tab3Button.GetTextContent();

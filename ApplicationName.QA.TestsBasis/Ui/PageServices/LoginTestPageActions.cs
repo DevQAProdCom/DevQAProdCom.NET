@@ -14,13 +14,13 @@ namespace ApplicationName.QA.TestsBasis.Ui.PageServices
         public void Login(string username, string password)
         {
             GoToPage();
-            _page.UserName.SetText(username);
-            _page.Password.SetText(password);
-            _page.LoginButton.Click();
+            Page.UserName.SetText(username);
+            Page.Password.SetText(password);
+            Page.LoginButton.Click();
 
             Wait.Create().Until(() =>
             {
-                var url = _uiTab.GetTabUriAsString();
+                var url = UiTab.GetTabUriAsString();
                 return url.EndsWith("HomeTestPage");
             });
         }

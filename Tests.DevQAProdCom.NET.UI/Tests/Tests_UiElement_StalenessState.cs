@@ -63,15 +63,15 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Get_Table_Row_IUIElementsListOfCells_Text_Add_Delete_Add_Table_Without_StaleElementReferenceException()
         {
             //GIVEN
-            _testPage2Actions._page.AddTableButton.Click();
-            var expectedCellsText = _testPage2Actions._page.DeletableTable.Row.Cells.Select(x => x.GetTextContent()).ToList();
+            _testPage2Actions.Page.AddTableButton.Click();
+            var expectedCellsText = _testPage2Actions.Page.DeletableTable.Row.Cells.Select(x => x.GetTextContent()).ToList();
 
             //WHEN
-            _testPage2Actions._page.DeleteTableButton.Click();
-            _testPage2Actions._page.AddTableButton.Click();
+            _testPage2Actions.Page.DeleteTableButton.Click();
+            _testPage2Actions.Page.AddTableButton.Click();
 
             //THEN
-            var actualCellsText = _testPage2Actions._page.DeletableTable.Row.Cells.Select(x => x.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions.Page.DeletableTable.Row.Cells.Select(x => x.GetTextContent()).ToList();
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
         }
     }

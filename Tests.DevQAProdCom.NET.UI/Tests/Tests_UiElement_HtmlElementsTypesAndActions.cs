@@ -24,8 +24,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var file2 = Path.Combine(Environment.CurrentDirectory, "TestData", expectedUploadedFiles.ElementAt(1));
 
             //WHEN
-            _pageActions._page.UploadFileInputFieldOfFileType.UploadFiles(file1, file2);
-            var actualUploadedFiles = _pageActions._page.UploadFileInputFieldOfFileType.GetUploadedFilesList();
+            _pageActions.Page.UploadFileInputFieldOfFileType.UploadFiles(file1, file2);
+            var actualUploadedFiles = _pageActions.Page.UploadFileInputFieldOfFileType.GetUploadedFilesList();
 
             //THEN
             actualUploadedFiles.Should().BeEquivalentTo(expectedUploadedFiles);

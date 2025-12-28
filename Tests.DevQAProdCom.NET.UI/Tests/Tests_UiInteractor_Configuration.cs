@@ -29,8 +29,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actualDirectoryFilesBeforeDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
 
             //WHEN
-            _pageActions._page.InputFieldForDownloadedFileName.SetText(expectedFileName);
-            _pageActions._page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
+            _pageActions.Page.InputFieldForDownloadedFileName.SetText(expectedFileName);
+            _pageActions.Page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
 
             Thread.Sleep(500);
             var actualDirectoryFilesAfterDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();

@@ -1,5 +1,6 @@
 ﻿using ApplicationName.QA.Global.DependencyInjection;
 using ApplicationName.QA.TestsBasis.DependencyInjection;
+using ApplicationName.QA.TestsBasis.Ui.PageServices;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
 using DevQAProdCom.NET.UI.Playwright.DependencyInjection;
@@ -24,6 +25,7 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
         {
             base.ConfigureServices();
             AddUiInteractorTechnology();
+            AddPageActions();
         }
 
         protected override void ConfigureExternalDiContainers()
@@ -57,6 +59,12 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
                     .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
                     .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute>();
             }
+
+        }
+
+        private void AddPageActions()
+        {
+            _serviceCollection.AddTransient<TestPage2Actions>();
         }
     }
 }

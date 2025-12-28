@@ -37,7 +37,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 //GIVEN
-                var seleniumUiElement = (SeleniumUiElement)_testPage2Actions._page.Table2.Row.InternalUiElement;
+                var seleniumUiElement = (SeleniumUiElement)_testPage2Actions.Page.Table2.Row.InternalUiElement;
 
                 //THEN
                 AssertSeleniumUiElementNativeObjects(seleniumUiElement, ExpectedUrl, ExpectedTrTagName);
@@ -50,7 +50,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 //GIVEN
-                var cells = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells;
+                var cells = _testPage2Actions.Page.Table2.Rows.ElementAt(1).Cells;
 
                 //WHEN
                 using (new AssertionScope())
@@ -65,7 +65,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Playwright)
             {
                 //GIVEN
-                var playwrightUiElement = (PlaywrightUiElement)_testPage2Actions._page.Table2.Row.InternalUiElement;
+                var playwrightUiElement = (PlaywrightUiElement)_testPage2Actions.Page.Table2.Row.InternalUiElement;
 
                 //WHEN
                 var actualNativeObjects = GetPlaywrightUiElementNativeObjects(playwrightUiElement);
@@ -81,7 +81,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Playwright)
             {
                 //GIVEN
-                var cells = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells;
+                var cells = _testPage2Actions.Page.Table2.Rows.ElementAt(1).Cells;
 
                 //THEN
                 using (new AssertionScope())

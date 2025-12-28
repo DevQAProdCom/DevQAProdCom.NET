@@ -17,7 +17,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _keyboardTestPageActions = UiInteractor.Interact<KeyboardTestPageActions>()._page;
+            _keyboardTestPageActions = UiInteractor.Interact<KeyboardTestPageActions>().Page;
         }
 
         [TestCase(Key.Null, "Unidentified", "0")] //Playwright Unknown key: "Unidentified"

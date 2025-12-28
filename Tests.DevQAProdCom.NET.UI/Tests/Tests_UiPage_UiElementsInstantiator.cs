@@ -23,7 +23,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedCellText = Const.Table2Rows[1].Cells![1].Text!;
 
             //WHEN
-            var actualCellText = _testPage2Actions._page.Dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.GetTextContent();
+            var actualCellText = _testPage2Actions.Page.Dynamic_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.GetTextContent();
 
             //THEN
             actualCellText.Should().Be(expectedCellText);
@@ -36,7 +36,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedCellText = Const.Table2Rows[1].Cells![1].Text!;
 
             //WHEN
-            var actualCellText = _testPage2Actions._page.Dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.GetTextContent();
+            var actualCellText = _testPage2Actions.Page.Dynamic_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.GetTextContent();
 
             //THEN
             actualCellText.Should().Be(expectedCellText);
@@ -53,7 +53,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Actions._page.Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.Select(x => x.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions.Page.Dynamic_UiElementsList_IUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.Select(x => x.GetTextContent()).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
@@ -70,7 +70,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Actions._page.Dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.Select(x => x.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions.Page.Dynamic_UiElementsList_TUiElement_Without_Find_Attribute_Without_Parent_Using_UiElementInstantiator.Select(x => x.GetTextContent()).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);

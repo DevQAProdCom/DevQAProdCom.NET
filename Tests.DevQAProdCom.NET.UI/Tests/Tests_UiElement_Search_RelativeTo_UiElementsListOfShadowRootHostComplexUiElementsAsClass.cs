@@ -30,8 +30,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_bbe0.Select(x => x.SimpleUiElementAsInterface_bbe0.GetTextContent()).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_bbe0.Select(x => x.SimpleUiElementAsInterface_bbe0.GetTextContent()).ToList();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -53,8 +53,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_46e3.Select(x => x.ComplexUiElementAsClass_a41c.GetTextContent()).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_46e3.Select(x => x.ComplexUiElementAsClass_a41c.GetTextContent()).ToList();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -78,9 +78,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a368
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a368
                 .SelectMany(x => x.UiElementsListOfSimpleUiElementsAsInterface_a1a9.Select(x => x.GetTextContent())).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -104,9 +104,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_c417
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_c417
                 .SelectMany(x => x.UiElementsListOfComplexUiElementsAsClass_2b8c.Select(x => x.GetTextContent())).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -128,8 +128,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_1e08.Select(x => x.FrameSimpleUiElementAsInterface_1e08.GetNonBooleanAttribute(Const.dataText)).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_1e08.Select(x => x.FrameSimpleUiElementAsInterface_1e08.GetNonBooleanAttribute(Const.dataText)).ToList();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -153,9 +153,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a939
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a939
                 .SelectMany(x => x.UiElementsListOfFrameSimpleUiElementsAsInterface_4bf9.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -177,9 +177,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a6e8
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_a6e8
                 .Select(x => x.FrameComplexUiElementAsClass_53dd.FrameSimpleUiElementAsInterface_53dd.GetNonBooleanAttribute(Const.dataText)).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -201,8 +201,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_9efe.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_9efe.GetNonBooleanAttribute(Const.dataText)).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_9efe.Select(x => x.ShadowRootHostSimpleUiElementAsInterface_9efe.GetNonBooleanAttribute(Const.dataText)).ToList();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -226,9 +226,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_2377
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_2377
                 .SelectMany(x => x.UiElementsListOfShadowRootHostSimpleUiElementsAsInterface_cc40.Select(x => x.GetNonBooleanAttribute(Const.dataText))).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -250,9 +250,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualValues = _pageActions._page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_378f
+            var actualValues = _pageActions.Page.Page_UiElementsListOfShadowRootHostComplexUiElementsAsClass_378f
                 .Select(x => x.ShadowRootHostComplexUiElementAsClass_eea5.ShadowRootHostSimpleUiElementAsInterface_eea5.GetNonBooleanAttribute(Const.dataText)).ToList();
-            var actualTopLevelUiElementTextContent = _pageActions._page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
+            var actualTopLevelUiElementTextContent = _pageActions.Page.Page_TopLevelSimpleUiElementAsInterface.GetTextContent();
 
             //THEN
             using (new AssertionScope())

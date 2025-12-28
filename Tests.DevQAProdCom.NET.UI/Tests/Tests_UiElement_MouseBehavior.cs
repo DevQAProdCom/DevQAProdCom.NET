@@ -22,9 +22,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedNameAfterMouseClick = "Button Name After Mouse Click";
 
             //WHEN
-            var actualNameBeforeMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Actions._page.MouseClickDoubleClickButton.Click();
-            var actualNameAfterMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
+            var actualNameBeforeMouseClick = _testPage2Actions.Page.MouseClickDoubleClickButton.GetTextContent();
+            _testPage2Actions.Page.MouseClickDoubleClickButton.Click();
+            var actualNameAfterMouseClick = _testPage2Actions.Page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -43,9 +43,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedButtonNameAfterMouseContextRightClick = "Button Name After Mouse Context/Right Click";
 
             //WHEN
-            var actualButtonNameBeforeMouseContextRightClick = _testPage2Actions._page.MouseContextRightClickButton.GetTextContent();
-            _testPage2Actions._page.MouseContextRightClickButton.ContextClickJs();
-            var actualButtonNameAfterMouseContextRightClick = _testPage2Actions._page.MouseContextRightClickButton.GetTextContent();
+            var actualButtonNameBeforeMouseContextRightClick = _testPage2Actions.Page.MouseContextRightClickButton.GetTextContent();
+            _testPage2Actions.Page.MouseContextRightClickButton.ContextClickJs();
+            var actualButtonNameAfterMouseContextRightClick = _testPage2Actions.Page.MouseContextRightClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -64,9 +64,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedButtonNameAfterMouseDoubleClick = "Button Name After Mouse Double Click";
 
             //WHEN
-            var actualButtonNameBeforeMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Actions._page.MouseClickDoubleClickButton.DoubleClick();
-            var actualButtonNameAfterMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
+            var actualButtonNameBeforeMouseClick = _testPage2Actions.Page.MouseClickDoubleClickButton.GetTextContent();
+            _testPage2Actions.Page.MouseClickDoubleClickButton.DoubleClick();
+            var actualButtonNameAfterMouseClick = _testPage2Actions.Page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -85,9 +85,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedButtonNameAfterMouseHover = "Button Name After Mouse Hover";
 
             //WHEN
-            var actualButtonNameBeforeMouseHover = _testPage2Actions._page.MouseHoverButton.GetTextContent();
-            _testPage2Actions._page.MouseHoverButton.MouseHover();
-            var actualButtonNameAfterMouseHover = _testPage2Actions._page.MouseHoverButton.GetTextContent();
+            var actualButtonNameBeforeMouseHover = _testPage2Actions.Page.MouseHoverButton.GetTextContent();
+            _testPage2Actions.Page.MouseHoverButton.MouseHover();
+            var actualButtonNameAfterMouseHover = _testPage2Actions.Page.MouseHoverButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -106,9 +106,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedButtonNameAfterMouseDown = "Button Name After Mouse Down";
 
             //WHEN
-            var actualButtonNameBeforeMouseDown = _testPage2Actions._page.MouseDownButton.GetTextContent();
-            _testPage2Actions._page.MouseDownButton.MouseDown();
-            var actualButtonNameAfterMouseDown = _testPage2Actions._page.MouseDownButton.GetTextContent();
+            var actualButtonNameBeforeMouseDown = _testPage2Actions.Page.MouseDownButton.GetTextContent();
+            _testPage2Actions.Page.MouseDownButton.MouseDown();
+            var actualButtonNameAfterMouseDown = _testPage2Actions.Page.MouseDownButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -127,10 +127,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedButtonNameAfterMouseUp = "Button Name After Mouse Up";
 
             //WHEN
-            var actualButtonNameBeforeMouseUp = _testPage2Actions._page.MouseUpButton.GetTextContent();
-            _testPage2Actions._page.MouseUpButton.MouseDown();
-            _testPage2Actions._page.MouseUpButton.MouseUp();
-            var actualButtonNameAfterMouseUp = _testPage2Actions._page.MouseUpButton.GetTextContent();
+            var actualButtonNameBeforeMouseUp = _testPage2Actions.Page.MouseUpButton.GetTextContent();
+            _testPage2Actions.Page.MouseUpButton.MouseDown();
+            _testPage2Actions.Page.MouseUpButton.MouseUp();
+            var actualButtonNameAfterMouseUp = _testPage2Actions.Page.MouseUpButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -145,7 +145,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //GIVEN
             _dragAndDropTestPageActions = UiInteractor.Interact<DragAndDropTestPageActions>();
-            var page = _dragAndDropTestPageActions._page;
+            var page = _dragAndDropTestPageActions.Page;
             List<string> expectedDoneListAfterDragAndDrop = new(Const.DragAndDrop.DoneListInitialState) { Const.DragAndDrop.ElementToDrag };
 
             //WHEN
@@ -167,7 +167,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         {
             //GIVEN
             _dragAndDropTestPageActions = UiInteractor.Interact<DragAndDropTestPageActions>();
-            var page = _dragAndDropTestPageActions._page;
+            var page = _dragAndDropTestPageActions.Page;
             List<string> expectedDoneListAfterDragAndDrop = new(Const.DragAndDrop.DoneListInitialState) { Const.DragAndDrop.ElementToDrag };
 
             //WHEN
