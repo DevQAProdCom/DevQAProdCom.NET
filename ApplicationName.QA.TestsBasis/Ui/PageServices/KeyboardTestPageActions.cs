@@ -5,9 +5,9 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class KeyboardPageService : SingleUiPageService<KeyboardTestPage>
+    public class KeyboardTestPageActions : SingleUiPageActions<KeyboardTestPage>
     {
-        public KeyboardPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public KeyboardTestPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
     }

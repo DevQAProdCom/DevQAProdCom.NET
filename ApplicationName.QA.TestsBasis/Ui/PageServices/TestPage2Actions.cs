@@ -5,9 +5,9 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class TestPage2Service : SingleUiPageService<TestPage2>
+    public class TestPage2Actions : SingleUiPageActions<TestPage2>
     {
-        public TestPage2Service(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public TestPage2Actions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
     }

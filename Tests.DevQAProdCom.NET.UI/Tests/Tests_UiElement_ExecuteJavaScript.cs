@@ -17,8 +17,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
-            _visibleButtonArgument = new KeyValuePair<string, object>("uiElementArgument", _testPage2Service._page.VisibleButton);
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
+            _visibleButtonArgument = new KeyValuePair<string, object>("uiElementArgument", _testPage2Actions._page.VisibleButton);
         }
 
         #region Execute JavaScript Relative to UiElement
@@ -27,11 +27,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Execute_Void_JavaScript_Relative_To_UiElement()
         {
             //GIVEN
-            var actualBackgroundColorBeforeScriptExecution = _testPage2Service._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
+            var actualBackgroundColorBeforeScriptExecution = _testPage2Actions._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
 
             //WHEN
-            _testPage2Service._page.VisibleButton.ExecuteJavaScript(_fileWithSyncJavaScriptVoidRelativeToUiElement);
-            var actualBackgroundColorAfterScriptExecution = _testPage2Service._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
+            _testPage2Actions._page.VisibleButton.ExecuteJavaScript(_fileWithSyncJavaScriptVoidRelativeToUiElement);
+            var actualBackgroundColorAfterScriptExecution = _testPage2Actions._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
 
             //THEN
             using (new AssertionScope())
@@ -45,7 +45,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Non_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_UiElement()
         {
             //WHEN
-            var actualBoundingClientRect = _testPage2Service._page.VisibleButton.ExecuteJavaScript<BoundingClientRect>(_fileWithSyncJavaScriptToReturnNonPrimitiveValueRelativeToUiElement);
+            var actualBoundingClientRect = _testPage2Actions._page.VisibleButton.ExecuteJavaScript<BoundingClientRect>(_fileWithSyncJavaScriptToReturnNonPrimitiveValueRelativeToUiElement);
 
             //THEN
             using (new AssertionScope())
@@ -59,7 +59,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_UiElement()
         {
             //WHEN
-            var actualBoundingClientRectWidth = _testPage2Service._page.VisibleButton.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToUiElement);
+            var actualBoundingClientRectWidth = _testPage2Actions._page.VisibleButton.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToUiElement);
 
             //THEN
             actualBoundingClientRectWidth.Should().Be(ExpectedBoundingClientRectWidth);
@@ -73,11 +73,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Execute_Void_JavaScript_Relative_To_UiElement_As_Parent_Container()
         {
             //GIVEN
-            var actualBackgroundColorBeforeScriptExecution = _testPage2Service._page.Form.GetCssValue(BackgroundColorPropertyName);
+            var actualBackgroundColorBeforeScriptExecution = _testPage2Actions._page.Form.GetCssValue(BackgroundColorPropertyName);
 
             //WHEN
-            _testPage2Service._page.Form.ExecuteJavaScript(_fileWithSyncJavaScriptVoidRelativeToUiElement);
-            var actualBackgroundColorAfterScriptExecution = _testPage2Service._page.Form.GetCssValue(BackgroundColorPropertyName);
+            _testPage2Actions._page.Form.ExecuteJavaScript(_fileWithSyncJavaScriptVoidRelativeToUiElement);
+            var actualBackgroundColorAfterScriptExecution = _testPage2Actions._page.Form.GetCssValue(BackgroundColorPropertyName);
 
             //THEN
             using (new AssertionScope())
@@ -91,7 +91,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Non_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_UiElement_As_Parent_Container()
         {
             //WHEN
-            var actualBoundingClientRect = _testPage2Service._page.Form.ExecuteJavaScript<BoundingClientRect>(_fileWithSyncJavaScriptToReturnNonPrimitiveValueRelativeToUiElement);
+            var actualBoundingClientRect = _testPage2Actions._page.Form.ExecuteJavaScript<BoundingClientRect>(_fileWithSyncJavaScriptToReturnNonPrimitiveValueRelativeToUiElement);
 
             //THEN
             using (new AssertionScope())
@@ -105,7 +105,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_UiElement_As_Parent_Container()
         {
             //WHEN
-            var actualBoundingClientRectWidth = _testPage2Service._page.Form.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToUiElement);
+            var actualBoundingClientRectWidth = _testPage2Actions._page.Form.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToUiElement);
 
             //THEN
             actualBoundingClientRectWidth.Should().Be(ExpectedBoundingClientRectWidth);

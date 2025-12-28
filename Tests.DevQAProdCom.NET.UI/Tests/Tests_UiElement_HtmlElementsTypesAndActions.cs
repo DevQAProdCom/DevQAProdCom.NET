@@ -7,12 +7,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.Fixtures)]
     internal class Tests_UiElement_HtmlElementsTypesAndActions : PerFeatureBaseTest
     {
-        private HtmlElementsTypesAndActionsTestPageService _pageService;
+        private HtmlElementsTypesAndActionsTestPageActions _pageActions;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _pageService = UiInteractor.Interact<HtmlElementsTypesAndActionsTestPageService>();
+            _pageActions = UiInteractor.Interact<HtmlElementsTypesAndActionsTestPageActions>();
         }
 
         [Test]
@@ -24,8 +24,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var file2 = Path.Combine(Environment.CurrentDirectory, "TestData", expectedUploadedFiles.ElementAt(1));
 
             //WHEN
-            _pageService._page.UploadFileInputFieldOfFileType.UploadFiles(file1, file2);
-            var actualUploadedFiles = _pageService._page.UploadFileInputFieldOfFileType.GetUploadedFilesList();
+            _pageActions._page.UploadFileInputFieldOfFileType.UploadFiles(file1, file2);
+            var actualUploadedFiles = _pageActions._page.UploadFileInputFieldOfFileType.GetUploadedFilesList();
 
             //THEN
             actualUploadedFiles.Should().BeEquivalentTo(expectedUploadedFiles);

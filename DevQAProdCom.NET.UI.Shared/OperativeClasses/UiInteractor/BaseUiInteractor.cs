@@ -232,21 +232,21 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             return tab.FindAll<TUiElement>(findOptions, parentUiElement, name: name);
         }
 
-        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : ISingleUiPageService
+        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : ISingleUiPageActions
         {
             var tab = GetTab(tabName);
             var service = tab.GetSingleUiPageService<TUiPageService>(applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri);
             return service;
         }
 
-        public TUiPageService GetMultipleUiPagesService<TUiPageService>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : IMultipleUiPagesService
+        public TUiPageService GetMultipleUiPagesService<TUiPageService>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : IMultipleUiPagesActions
         {
             var tab = GetTab(tabName);
             var service = tab.GetMultipleUiPagesService<TUiPageService>();
             return service;
         }
 
-        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageService
+        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageActions
         {
             var tab = GetTab(tabName);
             var service = tab.GetSingleUiPageService<TUiPageService>(applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri);

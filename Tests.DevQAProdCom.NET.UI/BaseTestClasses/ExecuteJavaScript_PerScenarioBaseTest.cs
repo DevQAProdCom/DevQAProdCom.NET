@@ -4,7 +4,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
 {
     internal class ExecuteJavaScript_PerScenarioBaseTest : PerScenarioBaseTest
     {
-        [ThreadStatic] protected static TestPage2Service? _testPage2Service;
+        [ThreadStatic] protected static TestPage2Actions? _testPage2Actions;
 
         protected const string ExpectedBackgroundColorBeforeScriptExecution = "154, 205, 50";
         protected const string ExpectedBackgroundColorAfterScriptExecution = "0, 255, 255";

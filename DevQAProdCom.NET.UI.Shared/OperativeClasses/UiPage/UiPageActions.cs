@@ -4,12 +4,12 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 {
-    public abstract class UiPageService : IUiPageService
+    public abstract class UiPageActions : IUiPageActions
     {
         protected readonly internal IUiInteractorTab _uiTab;
         protected readonly internal IUiInteractor _uiInteractor;
 
-        public UiPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab)
+        public UiPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab)
         {
             tabName ??= SharedUiConstants.DefaultUiInteractorTab;
             _uiInteractor = uiInteractor;

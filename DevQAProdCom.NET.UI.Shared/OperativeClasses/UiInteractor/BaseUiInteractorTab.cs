@@ -115,7 +115,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             return page.FindAll<TUiElement>(findOptions, parentUiElement, name: name);
         }
 
-        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) where TUiPageService : ISingleUiPageService
+        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) where TUiPageService : ISingleUiPageActions
         {
             TUiPageService service = default;
 
@@ -127,13 +127,13 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             return service;
         }
 
-        public TUiPageService GetMultipleUiPagesService<TUiPageService>() where TUiPageService : IMultipleUiPagesService
+        public TUiPageService GetMultipleUiPagesService<TUiPageService>() where TUiPageService : IMultipleUiPagesActions
         {
             TUiPageService service = (TUiPageService)Activator.CreateInstance(typeof(TUiPageService), UiInteractor, Name);
             return service;
         }
 
-        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageService
+        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageActions
         {
             TUiPageService service = GetSingleUiPageService<TUiPageService>(applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri);
             service.GoToPage(urlPlaceholderValues);

@@ -5,10 +5,11 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class DragAndDropTestPageService : SingleUiPageService<DragAndDropTestPage>
+    public class MouseActionsTestPageActions : SingleUiPageActions<MouseActionsTestPage>
     {
-        public DragAndDropTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public MouseActionsTestPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
+
         }
     }
 }

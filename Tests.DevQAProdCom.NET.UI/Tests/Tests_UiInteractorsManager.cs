@@ -49,7 +49,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             //GIVEN
             var manager1 = DiContainer.Instance.GetRequiredService<IUiInteractorsManager>();
             var interactor1_1 = manager1.GetUiInteractor(Const.Interactor1);
-            interactor1_1.Interact<TestPage2Service>();
+            interactor1_1.Interact<TestPage2Actions>();
             interactor1_1.Dispose();
         }
     }

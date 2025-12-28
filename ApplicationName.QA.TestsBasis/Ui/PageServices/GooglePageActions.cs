@@ -5,9 +5,9 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class GooglePageService : SingleUiPageService<GooglePage>
+    public class GooglePageActions : SingleUiPageActions<GooglePage>
     {
-        public GooglePageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public GooglePageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
 

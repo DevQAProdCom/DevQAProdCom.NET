@@ -5,9 +5,9 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class ScrollTestPageService : SingleUiPageService<ScrollTestPage>
+    public class ScrollTestPageActions : SingleUiPageActions<ScrollTestPage>
     {
-        public ScrollTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public ScrollTestPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
         }
     }

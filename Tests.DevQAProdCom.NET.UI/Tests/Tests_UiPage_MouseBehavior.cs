@@ -14,12 +14,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         private const string ExpectedElementForPageMouseScrollHorizontallyTextContent = "Element for Page Mouse Scroll Horizontally";
         private const int expectedScrollTimeToBeGreaterOrEqualToSec = 5;
 
-
         [Test]
         public void Should_Page_MouseScroll()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScroll;
 
             //WHEN
@@ -42,7 +41,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Page_MouseScroll_UntilCondition()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScroll;
 
             //WHEN
@@ -71,7 +70,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Page_MouseScrollVertically()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScrollVertically;
 
             //WHEN
@@ -94,7 +93,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Page_MouseScrollVertically_UntilCondition()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScrollVertically;
 
             //WHEN
@@ -123,7 +122,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Page_MouseScrollHorizontally()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScrollHorizontally;
 
             //WHEN
@@ -146,7 +145,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Page_MouseScrollHorizontally_UntilCondition()
         {
             //GIVEN
-            var page = UiInteractor.Interact<ScrollTestPageService>()._page;
+            var page = UiInteractor.Interact<ScrollTestPageActions>()._page;
             var element = page.ElementForPageMouseScrollHorizontally;
 
             //WHEN
@@ -178,7 +177,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedElementContentBeforeMouseMove = "Element for Mouse Move (Mouse Enter) - Content Before Mouse Move (Mouse Enter)";
             var expectedElementContentAfterMouseMove = "Element for Mouse Move (Mouse Enter) - Content After Mouse Move (Mouse Enter)";
 
-            var page = UiInteractor.Interact<MouseActionsTestPageService>()._page;
+            var page = UiInteractor.Interact<MouseActionsTestPageActions>()._page;
             var element = page.ElementForMouseMoveMouseEnter;
             var actualElementLocation = element.GetLocation();
 

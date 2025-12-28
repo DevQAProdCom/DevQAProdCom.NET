@@ -18,7 +18,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Category("TestClassCategory")]
     internal class Tests_UiElement_NativeObjects : PerScenarioBaseTest
     {
-        [ThreadStatic] private static TestPage2Service _testPage2Service;
+        [ThreadStatic] private static TestPage2Actions _testPage2Actions;
 
         private const string ExpectedUrl = "TestPage2";
         private const string ExpectedThTagName = "th";
@@ -27,7 +27,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
         }
 
         [Test, Category("Selenium")]
@@ -37,7 +37,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 //GIVEN
-                var seleniumUiElement = (SeleniumUiElement)_testPage2Service._page.Table2.Row.InternalUiElement;
+                var seleniumUiElement = (SeleniumUiElement)_testPage2Actions._page.Table2.Row.InternalUiElement;
 
                 //THEN
                 AssertSeleniumUiElementNativeObjects(seleniumUiElement, ExpectedUrl, ExpectedTrTagName);
@@ -50,7 +50,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 //GIVEN
-                var cells = _testPage2Service._page.Table2.Rows.ElementAt(1).Cells;
+                var cells = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells;
 
                 //WHEN
                 using (new AssertionScope())
@@ -65,7 +65,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Playwright)
             {
                 //GIVEN
-                var playwrightUiElement = (PlaywrightUiElement)_testPage2Service._page.Table2.Row.InternalUiElement;
+                var playwrightUiElement = (PlaywrightUiElement)_testPage2Actions._page.Table2.Row.InternalUiElement;
 
                 //WHEN
                 var actualNativeObjects = GetPlaywrightUiElementNativeObjects(playwrightUiElement);
@@ -81,7 +81,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             if (DiContainer.CurrentTechnology == UiInteractorTechnology.Playwright)
             {
                 //GIVEN
-                var cells = _testPage2Service._page.Table2.Rows.ElementAt(1).Cells;
+                var cells = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells;
 
                 //THEN
                 using (new AssertionScope())

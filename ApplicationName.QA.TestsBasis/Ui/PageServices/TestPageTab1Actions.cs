@@ -5,11 +5,10 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class MouseActionsTestPageService : SingleUiPageService<MouseActionsTestPage>
+    public class TestPageTab1Actions : SingleUiPageActions<TestPageTab1>
     {
-        public MouseActionsTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public TestPageTab1Actions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
-
         }
     }
 }

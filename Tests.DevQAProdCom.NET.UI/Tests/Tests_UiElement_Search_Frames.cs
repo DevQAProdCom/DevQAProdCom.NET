@@ -9,12 +9,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.All)]
     internal class Tests_UiElement_Search_Frames : PerScenarioBaseTest
     {
-        [ThreadStatic] private static FramesTestPageService _framesTestPageService;
+        [ThreadStatic] private static FramesTestPageActions _framesTestPageActions;
 
         [SetUp]
         public void SetUp()
         {
-            _framesTestPageService = UiInteractor.Interact<FramesTestPageService>();
+            _framesTestPageActions = UiInteractor.Interact<FramesTestPageActions>();
         }
 
         [Test]
@@ -22,9 +22,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_FindAttributeWithElementInFrame()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.ButtonInsideTopLevel0Frame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.ButtonInsideTopLevel0Frame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -49,9 +49,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.CellsInsideTopLevel0Frame.Select(x => x.GetTextContent()).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.CellsInsideTopLevel0Frame.Select(x => x.GetTextContent()).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -76,9 +76,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.Table2InsideTopLevel0Frame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.Table2InsideTopLevel0Frame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -94,9 +94,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_FrameAttribute_FindAttributeWithElementInFrame()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TopLevelFrame.ButtonFrameInsideFrame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TopLevelFrame.ButtonFrameInsideFrame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -112,9 +112,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_FrameAttribute_Element()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -139,9 +139,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TopLevelFrame.Cells.Select(x => x.GetTextContent()).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TopLevelFrame.Cells.Select(x => x.GetTextContent()).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -166,9 +166,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -184,9 +184,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_FrameAttribute_FrameAttribute_Element()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TopLevelFrame.FrameInsideFrame.ButtonFrameInsideFrame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TopLevelFrame.FrameInsideFrame.ButtonFrameInsideFrame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -211,10 +211,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContentOfFrameInsideFrameTable = _framesTestPageService._page.TopLevelFrame.FrameInsideFrame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualTextContentOfTopLevelFrameTable = _framesTestPageService._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContentOfFrameInsideFrameTable = _framesTestPageActions._page.TopLevelFrame.FrameInsideFrame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualTextContentOfTopLevelFrameTable = _framesTestPageActions._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -240,10 +240,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContentOfFrameInsideFrameTable = _framesTestPageService._page.TopLevelFrame.FrameInsideFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualTextContentOfTopLevelFrameTable = _framesTestPageService._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContentOfFrameInsideFrameTable = _framesTestPageActions._page.TopLevelFrame.FrameInsideFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualTextContentOfTopLevelFrameTable = _framesTestPageActions._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -260,9 +260,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_Element_FrameAttribute_Element()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -287,9 +287,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.Cells.Select(x => x.GetTextContent()).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.Cells.Select(x => x.GetTextContent()).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -314,9 +314,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -332,9 +332,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_Element_FrameAttribute_FrameAttribute_Element()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.ButtonFrameInsideFrame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.ButtonFrameInsideFrame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -359,10 +359,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContentOfFrameInsideFrameTable = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualTextContentOfTopLevelFrameTable = _framesTestPageService._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContentOfFrameInsideFrameTable = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualTextContentOfTopLevelFrameTable = _framesTestPageActions._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -388,10 +388,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContentOfFrameInsideFrameTable = _framesTestPageService._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualTextContentOfTopLevelFrameTable = _framesTestPageService._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContentOfFrameInsideFrameTable = _framesTestPageActions._page.TableWithCellsWithFrames.TopLevelFrame.FrameInsideFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualTextContentOfTopLevelFrameTable = _framesTestPageActions._page.TopLevelFrame.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -409,9 +409,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Support_Interaction_Page_Element_CollectionOfElementsIndex_CollectionOfElementsIndex_FrameAttribute_Element()
         {
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualFrameButtonText = _framesTestPageService._page.TableWithCellsWithFrames.RowsWithCellsWithFrames[1].CellsWithFrames[1].TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualFrameButtonText = _framesTestPageActions._page.TableWithCellsWithFrames.RowsWithCellsWithFrames[1].CellsWithFrames[1].TopLevelFrame.ButtonInsideTopLevel0Frame.GetTextContent();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -434,9 +434,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TopLevelFramesList.Select(x => x.ButtonInsideTopLevel0Frame.GetTextContent()).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TopLevelFramesList.Select(x => x.ButtonInsideTopLevel0Frame.GetTextContent()).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -466,9 +466,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TopLevelFramesList.SelectMany(x => x.Cells).Select(x => x.GetTextContent()).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TopLevelFramesList.SelectMany(x => x.Cells).Select(x => x.GetTextContent()).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -498,9 +498,9 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
-            var actualTextContent = _framesTestPageService._page.TopLevelFramesList.Select(x => x.Table2).SelectMany(x => x.Rows).SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
-            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageService._page.ButtonNotInFrame.GetTextContent();
+            var actualNonFrameButtonTextBeforeInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
+            var actualTextContent = _framesTestPageActions._page.TopLevelFramesList.Select(x => x.Table2).SelectMany(x => x.Rows).SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualNonFrameButtonTextAfterInteractionWithFrame = _framesTestPageActions._page.ButtonNotInFrame.GetTextContent();
 
             //THEN
             using (new AssertionScope())

@@ -5,11 +5,10 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class HtmlElementsTypesAndActionsTestPageService : SingleUiPageService<HtmlElementsTypesAndActionsTestPage>
+    public class HomeTestPageActions : SingleUiPageActions<HomeTestPage>
     {
-        public HtmlElementsTypesAndActionsTestPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
+        public HomeTestPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName)
         {
-
         }
     }
 }

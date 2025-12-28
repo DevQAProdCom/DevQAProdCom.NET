@@ -4,20 +4,20 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage
 {
-    public abstract class SingleUiPageService<T> : UiPageService, ISingleUiPageService where T : IUiPage
+    public abstract class SingleUiPageActions<T> : UiPageActions, ISingleUiPageActions where T : IUiPage
     {
         protected readonly internal T _page;
 
-        public SingleUiPageService(IUiInteractor uiInteractor, string tabName) : base(uiInteractor, tabName)
+        public SingleUiPageActions(IUiInteractor uiInteractor, string tabName) : base(uiInteractor, tabName)
         {
             _page = _uiTab.GetPage<T>();
         }
 
-        public SingleUiPageService(IUiInteractor uiInteractor) : this(uiInteractor, SharedUiConstants.DefaultUiInteractorTab)
+        public SingleUiPageActions(IUiInteractor uiInteractor) : this(uiInteractor, SharedUiConstants.DefaultUiInteractorTab)
         {
         }
 
-        public SingleUiPageService(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab, string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) : base(uiInteractor, tabName)
+        public SingleUiPageActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab, string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) : base(uiInteractor, tabName)
         {
             _page = _uiTab.GetPage<T>(applicationName: applicationName, pageName: pageName, baseUri: baseUri, relativeUri: relativeUri);
         }

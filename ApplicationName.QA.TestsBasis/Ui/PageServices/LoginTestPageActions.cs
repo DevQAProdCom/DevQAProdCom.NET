@@ -5,9 +5,9 @@ using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 
 namespace ApplicationName.QA.TestsBasis.Ui.PageServices
 {
-    public class LoginTestPageService : SingleUiPageService<LoginTestPage>
+    public class LoginTestPageActions : SingleUiPageActions<LoginTestPage>
     {
-        public LoginTestPageService(IUiInteractor uiInteractor) : base(uiInteractor)
+        public LoginTestPageActions(IUiInteractor uiInteractor) : base(uiInteractor)
         {
         }
 

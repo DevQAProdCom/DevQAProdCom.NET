@@ -10,12 +10,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
     internal class Tests_UiElement_UsageCombinations : PerScenarioBaseTest
     {
-        [ThreadStatic] private static TestPage2Service _testPage2Service;
+        [ThreadStatic] private static TestPage2Actions _testPage2Actions;
 
         [SetUp]
         public void SetUp()
         {
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedCellText = Const.Table2Rows[1].Cells![1].Text!;
 
             //WHEN
-            var actualCellText = _testPage2Service._page.Table2.Rows.ElementAt(1).Cell.GetTextContent();
+            var actualCellText = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cell.GetTextContent();
 
             //THEN
             actualCellText.Should().Be(expectedCellText);
@@ -38,7 +38,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var expectedCellText = Const.Table2Rows[1].Cells![1].Text!;
 
             //WHEN
-            var actualCellText = _testPage2Service._page.Table2.Rows.ElementAt(1).Cells.ElementAt(1).GetTextContent();
+            var actualCellText = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells.ElementAt(1).GetTextContent();
 
             //THEN
             actualCellText.Should().Be(expectedCellText);
@@ -55,7 +55,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Service._page.Table2.Rows.Select(x => x.Cell.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions._page.Table2.Rows.Select(x => x.Cell.GetTextContent()).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
@@ -72,7 +72,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Service._page.Table2.Rows.ElementAt(1).Cells.Select(x => x.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions._page.Table2.Rows.ElementAt(1).Cells.Select(x => x.GetTextContent()).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
@@ -91,7 +91,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Service._page.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
+            var actualCellsText = _testPage2Actions._page.Table2.Rows.SelectMany(x => x.Cells.Select(y => y.GetTextContent())).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
@@ -108,7 +108,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualCellsText = _testPage2Service._page.Rows.ElementAt(1).Cells.Select(x => x.GetTextContent()).ToList();
+            var actualCellsText = _testPage2Actions._page.Rows.ElementAt(1).Cells.Select(x => x.GetTextContent()).ToList();
 
             //THEN
             actualCellsText.Should().BeEquivalentTo(expectedCellsText);
@@ -125,7 +125,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             };
 
             //WHEN
-            var actualListText = _testPage2Service._page.Rows3!.ElementAt(1).Cells!.ElementAt(1).UlList!.Select(x => x.GetTextContent()).ToList();
+            var actualListText = _testPage2Actions._page.Rows3!.ElementAt(1).Cells!.ElementAt(1).UlList!.Select(x => x.GetTextContent()).ToList();
 
             //THEN
             actualListText.Should().BeEquivalentTo(expectedListText);
@@ -135,8 +135,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Get_TestListItemByIndex_Div_Button_Text()
         {
             //WHEN
-            var actualButton0TextContent = _testPage2Service._page.TestListItems1[0].DivA.ButtonA.GetTextContent();
-            var actualButton1TextContent = _testPage2Service._page.TestListItems1[1].DivA.ButtonA.GetTextContent();
+            var actualButton0TextContent = _testPage2Actions._page.TestListItems1[0].DivA.ButtonA.GetTextContent();
+            var actualButton1TextContent = _testPage2Actions._page.TestListItems1[1].DivA.ButtonA.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -150,7 +150,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Get_TestListItemsSelect_Div_Button_Text()
         {
             //WHEN
-            var actualText = _testPage2Service._page.TestListItems1.Select(x => x.DivA.ButtonA.GetTextContent()).ToList();
+            var actualText = _testPage2Actions._page.TestListItems1.Select(x => x.DivA.ButtonA.GetTextContent()).ToList();
 
             //THEN
             actualText.Should().BeEquivalentTo(Const.TestListItems1DivButtonsTextContent);
@@ -160,7 +160,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Empty_List_Without_Throwing_Exceptions_When_No_Elements_Found_In_The_DOM()
         {
             //WHEN
-            var listCount = _testPage2Service._page.NotExistingInTheDomList.Count();
+            var listCount = _testPage2Actions._page.NotExistingInTheDomList.Count();
 
             //THEN
             listCount.Should().Be(0);

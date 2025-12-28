@@ -10,21 +10,21 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 
     internal class Tests_UiElement_MouseBehavior : PerScenarioBaseTest
     {
-        [ThreadStatic] private static TestPage2Service _testPage2Service;
-        [ThreadStatic] private static DragAndDropTestPageService _dragAndDropTestPageService;
+        [ThreadStatic] private static TestPage2Actions _testPage2Actions;
+        [ThreadStatic] private static DragAndDropTestPageActions _dragAndDropTestPageActions;
 
         [Test]
         public void Should_MouseClick_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedNameBeforeMouseClick = "Button Name Before Mouse Click/DoubleClick";
             var expectedNameAfterMouseClick = "Button Name After Mouse Click";
 
             //WHEN
-            var actualNameBeforeMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Service._page.MouseClickDoubleClickButton.Click();
-            var actualNameAfterMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
+            var actualNameBeforeMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
+            _testPage2Actions._page.MouseClickDoubleClickButton.Click();
+            var actualNameAfterMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -38,14 +38,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_MouseContextClick_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedButtonNameBeforeMouseContextRightClick = "Button Name Before Mouse Context/Right Click";
             var expectedButtonNameAfterMouseContextRightClick = "Button Name After Mouse Context/Right Click";
 
             //WHEN
-            var actualButtonNameBeforeMouseContextRightClick = _testPage2Service._page.MouseContextRightClickButton.GetTextContent();
-            _testPage2Service._page.MouseContextRightClickButton.ContextClickJs();
-            var actualButtonNameAfterMouseContextRightClick = _testPage2Service._page.MouseContextRightClickButton.GetTextContent();
+            var actualButtonNameBeforeMouseContextRightClick = _testPage2Actions._page.MouseContextRightClickButton.GetTextContent();
+            _testPage2Actions._page.MouseContextRightClickButton.ContextClickJs();
+            var actualButtonNameAfterMouseContextRightClick = _testPage2Actions._page.MouseContextRightClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -59,14 +59,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_DoubleClick_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedButtonNameBeforeMouseDoubleClick = "Button Name Before Mouse Click/DoubleClick";
             var expectedButtonNameAfterMouseDoubleClick = "Button Name After Mouse Double Click";
 
             //WHEN
-            var actualButtonNameBeforeMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
-            _testPage2Service._page.MouseClickDoubleClickButton.DoubleClick();
-            var actualButtonNameAfterMouseClick = _testPage2Service._page.MouseClickDoubleClickButton.GetTextContent();
+            var actualButtonNameBeforeMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
+            _testPage2Actions._page.MouseClickDoubleClickButton.DoubleClick();
+            var actualButtonNameAfterMouseClick = _testPage2Actions._page.MouseClickDoubleClickButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -80,14 +80,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_MouseHover_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedButtonNameBeforeMouseHover = "Button Name Before Mouse Hover";
             var expectedButtonNameAfterMouseHover = "Button Name After Mouse Hover";
 
             //WHEN
-            var actualButtonNameBeforeMouseHover = _testPage2Service._page.MouseHoverButton.GetTextContent();
-            _testPage2Service._page.MouseHoverButton.MouseHover();
-            var actualButtonNameAfterMouseHover = _testPage2Service._page.MouseHoverButton.GetTextContent();
+            var actualButtonNameBeforeMouseHover = _testPage2Actions._page.MouseHoverButton.GetTextContent();
+            _testPage2Actions._page.MouseHoverButton.MouseHover();
+            var actualButtonNameAfterMouseHover = _testPage2Actions._page.MouseHoverButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -101,14 +101,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_MouseDown_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedButtonNameBeforeMouseDown = "Button Name Before Mouse Down";
             var expectedButtonNameAfterMouseDown = "Button Name After Mouse Down";
 
             //WHEN
-            var actualButtonNameBeforeMouseDown = _testPage2Service._page.MouseDownButton.GetTextContent();
-            _testPage2Service._page.MouseDownButton.MouseDown();
-            var actualButtonNameAfterMouseDown = _testPage2Service._page.MouseDownButton.GetTextContent();
+            var actualButtonNameBeforeMouseDown = _testPage2Actions._page.MouseDownButton.GetTextContent();
+            _testPage2Actions._page.MouseDownButton.MouseDown();
+            var actualButtonNameAfterMouseDown = _testPage2Actions._page.MouseDownButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -122,15 +122,15 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_MouseUp_IUiElement()
         {
             //GIVEN
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
             var expectedButtonNameBeforeMouseUp = "Button Name Before Mouse Up";
             var expectedButtonNameAfterMouseUp = "Button Name After Mouse Up";
 
             //WHEN
-            var actualButtonNameBeforeMouseUp = _testPage2Service._page.MouseUpButton.GetTextContent();
-            _testPage2Service._page.MouseUpButton.MouseDown();
-            _testPage2Service._page.MouseUpButton.MouseUp();
-            var actualButtonNameAfterMouseUp = _testPage2Service._page.MouseUpButton.GetTextContent();
+            var actualButtonNameBeforeMouseUp = _testPage2Actions._page.MouseUpButton.GetTextContent();
+            _testPage2Actions._page.MouseUpButton.MouseDown();
+            _testPage2Actions._page.MouseUpButton.MouseUp();
+            var actualButtonNameAfterMouseUp = _testPage2Actions._page.MouseUpButton.GetTextContent();
 
             //THEN
             using (new AssertionScope())
@@ -144,8 +144,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_DragAndDrop_IUiElement()
         {
             //GIVEN
-            _dragAndDropTestPageService = UiInteractor.Interact<DragAndDropTestPageService>();
-            var page = _dragAndDropTestPageService._page;
+            _dragAndDropTestPageActions = UiInteractor.Interact<DragAndDropTestPageActions>();
+            var page = _dragAndDropTestPageActions._page;
             List<string> expectedDoneListAfterDragAndDrop = new(Const.DragAndDrop.DoneListInitialState) { Const.DragAndDrop.ElementToDrag };
 
             //WHEN
@@ -166,8 +166,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_DragAndDropByOffset_IUiElement()
         {
             //GIVEN
-            _dragAndDropTestPageService = UiInteractor.Interact<DragAndDropTestPageService>();
-            var page = _dragAndDropTestPageService._page;
+            _dragAndDropTestPageActions = UiInteractor.Interact<DragAndDropTestPageActions>();
+            var page = _dragAndDropTestPageActions._page;
             List<string> expectedDoneListAfterDragAndDrop = new(Const.DragAndDrop.DoneListInitialState) { Const.DragAndDrop.ElementToDrag };
 
             //WHEN

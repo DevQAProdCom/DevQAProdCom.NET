@@ -1,6 +1,6 @@
 ﻿namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiPage
 {
-    public interface IUiPageService
+    public interface IUiPageActions
     {
     }
 }

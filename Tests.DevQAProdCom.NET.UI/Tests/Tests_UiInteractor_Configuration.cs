@@ -11,12 +11,12 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     internal class Tests_UiInteractor_Configuration : PerFeatureBaseTest
     {
 
-        private HtmlElementsTypesAndActionsTestPageService _pageService;
+        private HtmlElementsTypesAndActionsTestPageActions _pageActions;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _pageService = UiInteractor.Interact<HtmlElementsTypesAndActionsTestPageService>();
+            _pageActions = UiInteractor.Interact<HtmlElementsTypesAndActionsTestPageActions>();
         }
 
         [Test]
@@ -29,8 +29,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var actualDirectoryFilesBeforeDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
 
             //WHEN
-            _pageService._page.InputFieldForDownloadedFileName.SetText(expectedFileName);
-            _pageService._page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
+            _pageActions._page.InputFieldForDownloadedFileName.SetText(expectedFileName);
+            _pageActions._page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
 
             Thread.Sleep(500);
             var actualDirectoryFilesAfterDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();

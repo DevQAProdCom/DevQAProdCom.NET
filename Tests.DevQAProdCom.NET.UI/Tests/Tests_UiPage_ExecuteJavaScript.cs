@@ -18,8 +18,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _testPage2Service = UiInteractor.Interact<TestPage2Service>();
-            _visibleButtonArgument = new KeyValuePair<string, object>("uiElementArgument", _testPage2Service._page.VisibleButton);
+            _testPage2Actions = UiInteractor.Interact<TestPage2Actions>();
+            _visibleButtonArgument = new KeyValuePair<string, object>("uiElementArgument", _testPage2Actions._page.VisibleButton);
         }
 
         #region Execute JavaScript Relative to Page
@@ -28,11 +28,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Execute_Void_JavaScript_Relative_To_Page()
         {
             //GIVEN
-            var actualBackgroundColorBeforeScriptExecution = _testPage2Service._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
+            var actualBackgroundColorBeforeScriptExecution = _testPage2Actions._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
 
             //WHEN
-            _testPage2Service._page.ExecuteJavaScript(_fileSyncJavaScriptVoidRelativeToPage, _visibleButtonArgument);
-            var actualBackgroundColorAfterScriptExecution = _testPage2Service._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
+            _testPage2Actions._page.ExecuteJavaScript(_fileSyncJavaScriptVoidRelativeToPage, _visibleButtonArgument);
+            var actualBackgroundColorAfterScriptExecution = _testPage2Actions._page.VisibleButton.GetCssValue(BackgroundColorPropertyName);
 
             //THEN
             using (new AssertionScope())
@@ -46,7 +46,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Non_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_Page()
         {
             //WHEN
-            var actualBoundingClientRect = _testPage2Service._page
+            var actualBoundingClientRect = _testPage2Actions._page
                 .ExecuteJavaScript<BoundingClientRect>(_fileWithSyncJavaScriptToReturnNonPrimitiveValueRelativeToPage, _visibleButtonArgument);
 
             //THEN
@@ -61,7 +61,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         public void Should_Return_Primitive_Value_Using_Execute_JavaScript_T_Relative_To_Page()
         {
             //WHEN
-            var actualBoundingClientRectWidth = _testPage2Service._page.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToPage, _visibleButtonArgument);
+            var actualBoundingClientRectWidth = _testPage2Actions._page.ExecuteJavaScript<int>(_fileWithSyncJavaScriptToReturnPrimitiveValueRelativeToPage, _visibleButtonArgument);
 
             //THEN
             actualBoundingClientRectWidth.Should().Be(ExpectedBoundingClientRectWidth);

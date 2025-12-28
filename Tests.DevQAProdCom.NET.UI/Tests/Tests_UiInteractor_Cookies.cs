@@ -11,8 +11,8 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.All)]
     internal class Tests_UiInteractor_Cookies : PerScenarioBaseTest
     {
-        [ThreadStatic] private static TestPageTab1Service _service1;
-        [ThreadStatic] private static TestPageTab2Service _service2;
+        [ThreadStatic] private static TestPageTab1Actions _testPageTab1Actions;
+        [ThreadStatic] private static TestPageTab2Actions _testPageTab2Actions;
         [ThreadStatic] private static IUiElement _tab1Button;
         [ThreadStatic] private static IUiElement _tab2Button;
 
@@ -25,11 +25,11 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         [SetUp]
         public void SetUp()
         {
-            _service1 = UiInteractor.Interact<TestPageTab1Service>(tabName: Const.Tab1);
-            _service2 = UiInteractor.Interact<TestPageTab2Service>(tabName: Const.Tab2);
+            _testPageTab1Actions = UiInteractor.Interact<TestPageTab1Actions>(tabName: Const.Tab1);
+            _testPageTab2Actions = UiInteractor.Interact<TestPageTab2Actions>(tabName: Const.Tab2);
 
-            _tab1Button = _service1._page.Tab1ButtonCheckCookie;
-            _tab2Button = _service2._page.Tab2ButtonCheckCookie;
+            _tab1Button = _testPageTab1Actions._page.Tab1ButtonCheckCookie;
+            _tab2Button = _testPageTab2Actions._page.Tab2ButtonCheckCookie;
         }
 
         [Test]
@@ -142,10 +142,10 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             UiInteractor.SetCookies(Const.CookieBWithDomainPathConstructor);
 
             var tab3 = UiInteractor.GetTab(Const.Tab3);
-            var service3 = UiInteractor.Interact<TestPageTab3Service>(tabName: Const.Tab3);
+            var actions3 = UiInteractor.Interact<TestPageTab3Actions>(tabName: Const.Tab3);
 
             var actualCookie = UiInteractor.GetCookie(Const.CookieBWithDomainPathConstructor.Name);
-            var tab3Button = service3._page.Tab3ButtonCheckCookie;
+            var tab3Button = actions3._page.Tab3ButtonCheckCookie;
 
             tab3Button.Click();
             var actualButtonTextAfterCookieSet = tab3Button.GetTextContent();
