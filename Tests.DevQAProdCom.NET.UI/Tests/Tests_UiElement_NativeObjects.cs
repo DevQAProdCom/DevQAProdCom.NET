@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements;

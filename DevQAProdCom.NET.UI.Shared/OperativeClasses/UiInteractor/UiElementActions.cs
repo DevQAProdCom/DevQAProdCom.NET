@@ -1,19 +1,16 @@
 ﻿using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 {
-    public class UiElementActions<T> where T : IUiElement
+    public abstract class UiElementActions<T> : BaseActions, IUiElementActions
+        where T : IUiElement
     {
-        protected internal readonly IUiInteractorTab _uiTab;
-        protected internal readonly IUiInteractor _uiInteractor;
+        public abstract T UiElement { get; }
 
-        public UiElementActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab)
-        {
-            tabName ??= SharedUiConstants.DefaultUiInteractorTab;
-            _uiInteractor = uiInteractor;
-            _uiTab = _uiInteractor.GetTab(tabName);
-        }
+        public UiElementActions(IUiInteractorsManagersProvider uiInteractorsManagersProvider) : base(uiInteractorsManagersProvider) { }
+        public UiElementActions(IUiInteractor uiInteractor, string tabName = SharedUiConstants.DefaultUiInteractorTab) : base(uiInteractor, tabName) { }
     }
 }

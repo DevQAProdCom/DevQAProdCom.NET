@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.Components.Search.RelativeToShadowRootHostComplexUiElementAsClass;
+﻿using ApplicationName.QA.TestsBasis.Ui.UiElements.Search.RelativeToShadowRootHostComplexUiElementAsClass;
 using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 

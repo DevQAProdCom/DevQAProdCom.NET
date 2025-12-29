@@ -39,9 +39,10 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor
         public IUiElementsList<TUiElement> FindAll<TUiElement>(Use method, string criteria, IUiElement? parentUiElement = null, string? name = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiElement : IUiElement;
         public IUiElementsList<TUiElement> FindAll<TUiElement>(List<IUiElementsFindInfo> findOptions, IUiElement? parentUiElement = null, string? name = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiElement : IUiElement;
 
-        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : ISingleUiPageActions;
-        public TUiPageService GetMultipleUiPagesService<TUiPageService>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageService : IMultipleUiPagesActions;
-        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageActions;
+        public TUiPageActions GetSingleUiPageActions<TUiPageActions>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPageActions : ISingleUiPageActions;
+        public TUiPagesActions GetMultipleUiPagesActions<TUiPagesActions>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiPagesActions : IMultipleUiPagesActions;
+        public TUiElementActions GetUiElementActions<TUiElementActions>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TUiElementActions : IUiElementActions;
+        public TUiPageActions Interact<TUiPageActions>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, string tabName = SharedUiConstants.DefaultUiInteractorTab, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageActions : ISingleUiPageActions;
         public TNativeTab GetNativeTab<TNativeTab>(string tabName = SharedUiConstants.DefaultUiInteractorTab) where TNativeTab : class;
 
         #endregion Tabs

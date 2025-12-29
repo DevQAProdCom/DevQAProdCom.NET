@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using ApplicationName.QA.TestsBasis.Ui.PageServices;
+using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;

@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 
 namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
 {

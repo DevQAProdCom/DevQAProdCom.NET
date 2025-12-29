@@ -1,5 +1,5 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.Pages;
-using ApplicationName.QA.TestsBasis.Ui.PageServices;
+using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using FluentAssertions;
 using FluentAssertions.Execution;

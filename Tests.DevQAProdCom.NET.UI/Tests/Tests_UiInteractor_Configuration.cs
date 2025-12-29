@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Helpers;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Files;

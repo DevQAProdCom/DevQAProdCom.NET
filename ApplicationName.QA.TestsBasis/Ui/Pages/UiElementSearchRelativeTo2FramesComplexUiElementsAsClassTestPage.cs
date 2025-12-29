@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.Components.Search.RelativeTo2FramesComplexUiElementsAsClass;
+﻿using ApplicationName.QA.TestsBasis.Ui.UiElements.Search.RelativeTo2FramesComplexUiElementsAsClass;
 using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 

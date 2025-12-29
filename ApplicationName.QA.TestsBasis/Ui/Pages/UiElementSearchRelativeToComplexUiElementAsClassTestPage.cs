@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.Components.Search.RelativeToComplexUiElementAsClass;
+﻿using ApplicationName.QA.TestsBasis.Ui.UiElements.Search.RelativeToComplexUiElementAsClass;
 using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 

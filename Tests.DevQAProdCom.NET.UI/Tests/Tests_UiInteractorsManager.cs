@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using FluentAssertions;
 using FluentAssertions.Execution;

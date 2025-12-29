@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.Components;
+﻿using ApplicationName.QA.TestsBasis.Ui.UiElements;
 using DevQAProdCom.NET.UI.Shared.Attributes;
 using DevQAProdCom.NET.UI.Shared.Enumerations;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements;

@@ -47,9 +47,10 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor
         //public void CloseTab(); //TODO or NOT TODO? Implemented on UiInteractor level
 
         public TUiPage GetPage<TUiPage>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) where TUiPage : IUiPage;
-        public TUiPageService GetSingleUiPageService<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) where TUiPageService : ISingleUiPageActions;
-        public TUiPageService GetMultipleUiPagesService<TUiPageService>() where TUiPageService : IMultipleUiPagesActions;
-        public TUiPageService Interact<TUiPageService>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageService : ISingleUiPageActions;
+        public TUiPageActions GetSingleUiPageActions<TUiPageActions>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null) where TUiPageActions : ISingleUiPageActions;
+        public TUiPageActions GetMultipleUiPagesActions<TUiPageActions>() where TUiPageActions : IMultipleUiPagesActions;
+        public TUiPageActions GetUiElementActions<TUiPageActions>() where TUiPageActions : IUiElementActions;
+        public TUiPageActions Interact<TUiPageActions>(string? applicationName = null, string? pageName = null, string? baseUri = null, string? relativeUri = null, params KeyValuePair<string, string>[] urlPlaceholderValues) where TUiPageActions : ISingleUiPageActions;
 
         public TNativeTab GetNativeTab<TNativeTab>() where TNativeTab : class;
         public Dictionary<string, string> GetLocalStorageData();

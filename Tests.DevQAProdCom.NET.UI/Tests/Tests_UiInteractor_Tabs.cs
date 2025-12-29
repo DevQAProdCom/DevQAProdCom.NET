@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
@@ -9,7 +9,6 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
     [Parallelizable(ParallelScope.All)]
     internal class Tests_UiInteractor_Tabs : PerScenarioBaseTest
     {
-
         [Test]
         public void Should_UiInteractor_Operate_With_Several_Tabs()
         {

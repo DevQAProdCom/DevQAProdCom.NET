@@ -1,4 +1,4 @@
-﻿using ApplicationName.QA.TestsBasis.Ui.PageServices;
+﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using FluentAssertions;
 using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
 using Tests.DevQAProdCom.NET.UI.Models;
