@@ -5,8 +5,7 @@ using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
 
 namespace Tests.DevQAProdCom.NET.UI.Tests
 {
-    [Parallelizable(ParallelScope.All)]
-
+    [Parallelizable(ParallelScope.Fixtures)]
     internal class Tests_UiElement_Search_UseMethods : PerFeatureBaseTest
     {
         private TestPage2Actions _testPage2Actions;

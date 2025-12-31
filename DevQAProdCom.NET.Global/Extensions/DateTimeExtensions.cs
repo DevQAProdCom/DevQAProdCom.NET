@@ -52,7 +52,12 @@
             if (dateTime == null)
                 return null;
 
-            return (float)new DateTimeOffset(dateTime.Value).ToUnixTimeSeconds();
+            return ToUnixTimeSeconds(dateTime.Value);
+        }
+
+        public static float ToUnixTimeSeconds(this DateTime dateTime)
+        {
+            return (float)new DateTimeOffset(dateTime).ToUnixTimeSeconds();
         }
 
         public static DateTime ConvertToUtc(this DateTime? dateTime)

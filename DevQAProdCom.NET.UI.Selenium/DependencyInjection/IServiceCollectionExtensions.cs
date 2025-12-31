@@ -7,7 +7,6 @@ using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors.Keyboar
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Behaviors.Text;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search.FindOptionSearchers;
-using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor.Behaviors;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiPage.Behaviors.Keyboard;
@@ -22,7 +21,6 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Text;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor.Behaviors;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
@@ -36,9 +34,9 @@ namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigureSelenium(this IServiceCollection serviceCollection, Func<IServiceProvider, ISeleniumWebDriverFactory>? customWebDriverFactoryFunc = null)
+        public static IServiceCollection ConfigureSelenium(this IServiceCollection serviceCollection, Func<string>? getCurrentFeatureIdentifierFunc, Func<IServiceProvider, ISeleniumWebDriverFactory>? customWebDriverFactoryFunc = null)
         {
-            serviceCollection.AddBaseUiInteractionServices();
+            serviceCollection.AddBaseUiInteractionServices(getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc);
 
             if (customWebDriverFactoryFunc != null)
                 serviceCollection.AddSingleton<ISeleniumWebDriverFactory>(customWebDriverFactoryFunc);

@@ -9,7 +9,7 @@ using Tests.DevQAProdCom.NET.UI.Constants;
 namespace Tests.DevQAProdCom.NET.UI.Tests
 {
     [Parallelizable(ParallelScope.All)]
-    internal class Tests_UiElement_KeyboardBehavior : PerScenarioBaseTest
+    internal class Tests_UiElement_Behaviors_Keyboard : PerScenarioBaseTest
     {
         [ThreadStatic] private static KeyboardTestPage _keyboardTestPageActions;
         private const string CopyPasteValue = "CopyPasteValue";

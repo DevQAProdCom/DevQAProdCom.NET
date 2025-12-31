@@ -6,7 +6,17 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
 {
-    public class UiInteractorsManagersProvider(Func<IUiInteractorsManager> getUiInteractorManagerFunc, ILogger log) : IUiInteractorsManagersProvider
+    /// <summary>
+    /// Provides single/singleton entry point of orchestrating UiInteractorsManagers and theirs UiInteractors for different tests/features.
+    /// </summary>
+    /// <param name="getUiInteractorManagerFunc"></param>
+    /// <param name="log"></param>
+    /// <param name="getCurrentFeatureIdentifierFunc">Can be set to null. However is not preferable.
+    /// As far as, at the same time with ThreadId, it is better to use it as Name of UiInteractorsManager in composite key in Pool of UiInteractorManagers to strictly identify which of them belongs to particular test.  
+    /// And is required parameter to avoid situations when UiInteractor of Feature scope is used. In such case on is created in OneTimeSetup and is disposed in OneTimeTearDown.
+    /// However, as far as OneTimeTearDown may be executed in different thread, than OneTimeSetup, in parallel runs conflict situation may appear when another feature tries to access Pool and gets UiInteractorsManager by DefaultName and ThreadId 
+    /// and then OneTimeTearDown of previous feature is executed by other thread, disposes UiInteractor and removes the record from the pool.</param>
+    public class UiInteractorsManagersProvider(Func<IUiInteractorsManager> getUiInteractorManagerFunc, ILogger log, Func<string>? getCurrentFeatureIdentifierFunc) : IUiInteractorsManagersProvider
     {
         public Guid Id { get; } = Guid.NewGuid();
 
@@ -30,6 +40,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
         public IUiInteractorsManager GetUiInteractorsManager(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, int? threadId = null)
         {
             threadId = Thread.CurrentThread.ManagedThreadId;
+            uiInteractorsManagerName = GetUiInteractorsManagerName(uiInteractorsManagerName);
 
             var key = (uiInteractorsManagerName, Thread.CurrentThread.ManagedThreadId);
 
@@ -90,6 +101,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
         public void DisposeUiInteractorsManager(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, int? threadId = null)
         {
             threadId ??= Thread.CurrentThread.ManagedThreadId;
+            uiInteractorsManagerName = GetUiInteractorsManagerName(uiInteractorsManagerName);
 
             if (_uiInteractorsManagers.TryRemove((uiInteractorsManagerName, threadId.Value), out var manager))
             {
@@ -106,6 +118,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
 
         public void DisposeUiInteractorsManagers(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance)
         {
+            uiInteractorsManagerName = GetUiInteractorsManagerName(uiInteractorsManagerName);
             var keys = _uiInteractorsManagers.Keys.Where(k => k.Name == uiInteractorsManagerName).ToList();
 
             foreach (var key in keys)
@@ -172,6 +185,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
 
         private KeyValuePair<(string Name, int ThreadId), IUiInteractorsManager>? GetUiInteractorManagerEntryOrDefault(string uiInteractorsManagerName = SharedUiConstants.DefaultUiInteractorsManagerInstance, int? threadId = null)
         {
+            uiInteractorsManagerName = GetUiInteractorsManagerName(uiInteractorsManagerName);
             IEnumerable<KeyValuePair<(string Name, int ThreadId), IUiInteractorsManager>>? uiInteractorsManagers = null;
 
             if (threadId == null)
@@ -188,6 +202,16 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
             return null;
         }
 
+        private string GetUiInteractorsManagerName(string uiInteractorsManagerName)
+        {
+            uiInteractorsManagerName ??= SharedUiConstants.DefaultUiInteractorsManagerInstance;
+
+            if (uiInteractorsManagerName == SharedUiConstants.DefaultUiInteractorsManagerInstance && getCurrentFeatureIdentifierFunc != null)
+                uiInteractorsManagerName = getCurrentFeatureIdentifierFunc();
+
+            return uiInteractorsManagerName;
+        }
+
         private string KeyToString((string Name, int ThreadId) key)
         {
             return $"UiInteractorsManager Entry: '{key.Name}' name, '{key.ThreadId}' threadId.";
@@ -196,391 +220,3 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
         #endregion AuxiliaryMethods
     }
 }
-
-
-/*
-
-using System.Collections.Concurrent;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using DevQAProdCom.NET.UI.Shared.Constants;
-using DevQAProdCom.NET.UI.Shared.Enumerations;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
-
-namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
-{
-    public class UiInteractorsManagersProvider(Func<IUiInteractorsManager> getUiInteractorManagerFunc, ILogger log,
-        Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null) : IUiInteractorsManagersProvider
-    {
-        public Guid Id { get; } = Guid.NewGuid();
-
-        private string? _name;
-        public string? Name
-        {
-            get
-            {
-                if (_name == null)
-                    _name = GetType().FullName;
-
-                return _name;
-            }
-            set { _name = value; }
-        }
-
-        #region UiInteractorsManagers
-
-        private readonly ConcurrentDictionary<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager> _uiInteractorsManagers = new();
-
-        public IUiInteractorsManager GetUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            uiInteractorsManagerName ??= GetUiInteractorsManagerName(uiInteractorsManagerScope);
-            var key = (uiInteractorsManagerScope, uiInteractorsManagerName, Thread.CurrentThread.ManagedThreadId);
-
-            // Use GetOrAdd to ensure atomicity and avoid race conditions
-            var uiInteractorsManager = _uiInteractorsManagers.GetOrAdd(key, _ =>
-            {
-                var manager = getUiInteractorManagerFunc();
-                if (manager == null)
-                    throw new Exception($"Unable to create UiInteractorsManager instance for {uiInteractorsManagerName}.");
-                return manager;
-            });
-
-            return uiInteractorsManager;
-        }
-
-        public IUiInteractorsManager GetUiInteractorsManagerOfCurrentThread()
-        {
-            var threadId = Thread.CurrentThread.ManagedThreadId;
-            foreach (var uiInteractorManagerEntry in _uiInteractorsManagers)
-            {
-                if (uiInteractorManagerEntry.Key.ThreadId == threadId)
-                    return uiInteractorManagerEntry.Value;
-            }
-
-            throw new Exception($"No UiInteractorsManager found for current thread (ID: {threadId}).");
-        }
-
-        public IUiInteractorsManager GetUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, int threadId, string? uiInteractorsManagerName = null)
-        {
-            uiInteractorsManagerName ??= GetUiInteractorsManagerName(uiInteractorsManagerScope);
-            var key = (uiInteractorsManagerScope, uiInteractorsManagerName, threadId);
-            if (_uiInteractorsManagers.TryGetValue(key, out var manager))
-                return manager;
-            return GetUiInteractorsManager(uiInteractorsManagerScope, uiInteractorsManagerName);
-        }
-
-        public void DisposeAllUiInteractorsManagers()
-        {
-            foreach (var key in _uiInteractorsManagers.Keys.ToList())
-            {
-                if (_uiInteractorsManagers.TryRemove(key, out var manager))
-                {
-                    try
-                    {
-                        manager.DisposeAllUiInteractors();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error($"Error disposing UiInteractorsManager for key {key}: {ex.Message}", ex);
-                    }
-                }
-            }
-        }
-
-        public void DisposeUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            uiInteractorsManagerName ??= GetUiInteractorsManagerName(uiInteractorsManagerScope);
-            var keys = _uiInteractorsManagers.Keys
-                .Where(k => k.Scope == uiInteractorsManagerScope && k.Name == uiInteractorsManagerName)
-                .ToList();
-
-            foreach (var key in keys)
-            {
-                if (_uiInteractorsManagers.TryRemove(key, out var manager))
-                {
-                    try
-                    {
-                        manager.DisposeAllUiInteractors();
-                    }
-                    catch (Exception ex)
-                    {
-                        log.Error($"Error disposing UiInteractorsManager for key {key}: {ex.Message}", ex);
-                    }
-                }
-            }
-        }
-
-        #endregion UiInteractorsManagers
-
-        #region UiInteractors
-
-        public IUiInteractor GetUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManager(uiInteractorsManagerScope, uiInteractorsManagerName).GetUiInteractor(uiInteractorName);
-        }
-
-        public IUiInteractor GetUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, int threadId, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManager(uiInteractorsManagerScope, threadId, uiInteractorsManagerName).GetUiInteractor(uiInteractorName);
-        }
-
-        public IUiInteractor GetUiInteractorOfCurrentThread(string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManagerOfCurrentThread().GetUiInteractor(uiInteractorName);
-        }
-
-        public void DisposeUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            var manager = GetUiInteractorsManager(uiInteractorsManagerScope, uiInteractorsManagerName);
-            try
-            {
-                manager.DisposeUiInteractor(uiInteractorName);
-            }
-            catch (Exception ex)
-            {
-                log.Error($"Error disposing UiInteractor '{uiInteractorName}' in manager '{uiInteractorsManagerName}': {ex.Message}", ex);
-            }
-        }
-
-        public void DisposeAllUiInteractors(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            var manager = GetUiInteractorsManager(uiInteractorsManagerScope, uiInteractorsManagerName);
-            try
-            {
-                manager.DisposeAllUiInteractors();
-            }
-            catch (Exception ex)
-            {
-                log.Error($"Error disposing all UiInteractors in manager '{uiInteractorsManagerName}': {ex.Message}", ex);
-            }
-        }
-
-        #endregion UiInteractors
-
-        #region AuxiliaryMethods
-
-        private string GetUiInteractorsManagerName(UiInteractorsManagerScope uiInteractorsManagerScope)
-        {
-            string? uiInteractorsManagerName = null;
-
-            try
-            {
-                if (uiInteractorsManagerScope == UiInteractorsManagerScope.Test)
-                {
-                    if (getCurrentTestIdentifierFunc != null)
-                        uiInteractorsManagerName = getCurrentTestIdentifierFunc();
-                    else
-                        throw new Exception("Unable to get UiInteractorsManager identifier for Test scope. Please provide a function to get current test identifier.");
-                }
-                else if (uiInteractorsManagerScope == UiInteractorsManagerScope.Feature)
-                {
-                    if (getCurrentFeatureIdentifierFunc != null)
-                        uiInteractorsManagerName = getCurrentFeatureIdentifierFunc();
-                    else
-                        throw new Exception("Unable to get UiInteractorsManager identifier for Feature scope. Please provide a function to get current feature identifier.");
-                }
-
-                if (uiInteractorsManagerName == null)
-                    throw new Exception("Unable to get UiInteractorsManager identifier. Please provide at least one of the functions to get current test or feature identifier.");
-            }
-            catch (Exception ex)
-            {
-                log.Error($"Error getting UiInteractorsManagerName for scope '{uiInteractorsManagerScope}': {ex.Message}", ex);
-                throw;
-            }
-
-            return uiInteractorsManagerName;
-        }
-
-        private KeyValuePair<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager>? GetUiInteractorManagerEntry(UiInteractorsManagerScope uiInteractorsManagerScope, string uiInteractorsManagerName)
-        {
-            foreach (var uiInteractorManagerEntry in _uiInteractorsManagers)
-                if (uiInteractorManagerEntry.Key.Scope == uiInteractorsManagerScope && uiInteractorManagerEntry.Key.Name == uiInteractorsManagerName)
-                    return uiInteractorManagerEntry;
-
-            return null;
-        }
-
-        #endregion AuxiliaryMethods
-    }
-}
-
-
-*/
-
-
-/*
-using System.Collections.Concurrent;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using DevQAProdCom.NET.UI.Shared.Constants;
-using DevQAProdCom.NET.UI.Shared.Enumerations;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
-
-namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractorsManager
-{
-    public class UiInteractorsManagersProvider(Func<IUiInteractorsManager> getUiInteractorManagerFunc, ILogger log,
-        Func<string>? getCurrentTestIdentifierFunc = null, Func<string>? getCurrentFeatureIdentifierFunc = null) : IUiInteractorsManagersProvider
-    {
-        public Guid Id { get; } = Guid.NewGuid();
-
-        private string? _name;
-        public string? Name
-        {
-            get
-            {
-                if (_name == null)
-                    _name = GetType().FullName;
-
-                return _name;
-            }
-            set { _name = value; }
-        }
-
-
-        #region UiInteractorsManagers
-
-        private ConcurrentDictionary<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager> _uiInteractorsManagers = new();
-
-        public IUiInteractorsManager GetUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            uiInteractorsManagerName ??= GetUiInteractorsManagerName(uiInteractorsManagerScope);
-            IUiInteractorsManager? uiInteractorsManager = GetUiInteractorManagerEntry(uiInteractorsManagerScope, uiInteractorsManagerName)?.Value;
-
-            if (uiInteractorsManager == null)
-            {
-                uiInteractorsManager = getUiInteractorManagerFunc();
-                _uiInteractorsManagers.TryAdd((uiInteractorsManagerScope, uiInteractorsManagerName, Thread.CurrentThread.ManagedThreadId), uiInteractorsManager);
-            }
-
-            if (uiInteractorsManager == null)
-                throw new Exception($"Unable to get UiInteractorsManager instance for {uiInteractorsManagerName}.");
-
-            return uiInteractorsManager;
-        }
-
-        public IUiInteractorsManager GetUiInteractorsManagerOfCurrentThread()
-        {
-            var threadId = Thread.CurrentThread.ManagedThreadId;
-            foreach (var uiInteractorManagerEntry in _uiInteractorsManagers)
-                if (uiInteractorManagerEntry.Key.ThreadId == threadId)
-                    return uiInteractorManagerEntry.Value;
-
-            throw new Exception($"No UiInteractorsManager found for current thread (ID: {threadId}).");
-        }
-
-        public IUiInteractorsManager GetUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, int threadId, string? uiInteractorsManagerName = null)
-        {
-            uiInteractorsManagerName ??= GetUiInteractorsManagerName(uiInteractorsManagerScope);
-
-            var uiInteractorsManagerEntry = GetUiInteractorManagerEntry(uiInteractorsManagerScope, uiInteractorsManagerName, threadId);
-
-            if (uiInteractorsManagerEntry != null)
-                return uiInteractorsManagerEntry.Value.Value;
-            else
-                return GetUiInteractorsManager(uiInteractorsManagerScope: uiInteractorsManagerScope, uiInteractorsManagerName: uiInteractorsManagerName);
-        }
-
-        public void DisposeAllUiInteractorsManagers()
-        {
-            foreach (var uiInteractorsManager in _uiInteractorsManagers)
-            {
-                uiInteractorsManager.Value.DisposeAllUiInteractors();
-                _uiInteractorsManagers.TryRemove(uiInteractorsManager.Key, out _);
-            }
-        }
-
-        public void DisposeUiInteractorsManager(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            KeyValuePair<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager>? uiInteractorsManagerEntry = GetUiInteractorManagerEntry(uiInteractorsManagerScope, uiInteractorsManagerName);
-
-            if (uiInteractorsManagerEntry != null)
-            {
-                uiInteractorsManagerEntry.Value.Value.DisposeAllUiInteractors();
-                _uiInteractorsManagers.TryRemove(uiInteractorsManagerEntry.Value.Key, out _);
-            }
-        }
-
-        #endregion UiInteractorsManagers
-
-        #region UiInteractors
-
-        public IUiInteractor GetUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManager(uiInteractorsManagerScope: uiInteractorsManagerScope, uiInteractorsManagerName: uiInteractorsManagerName).GetUiInteractor(uiInteractorName);
-        }
-
-        public IUiInteractor GetUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, int threadId, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManager(uiInteractorsManagerScope: uiInteractorsManagerScope, threadId: threadId, uiInteractorsManagerName: uiInteractorsManagerName).GetUiInteractor(uiInteractorName);
-        }
-
-        public IUiInteractor GetUiInteractorOfCurrentThread(string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            return GetUiInteractorsManagerOfCurrentThread().GetUiInteractor(uiInteractorName);
-        }
-
-        public void DisposeUiInteractor(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null, string uiInteractorName = SharedUiConstants.DefaultUiInteractorInstance)
-        {
-            IUiInteractorsManager uiInteractorsManager = GetUiInteractorsManager(uiInteractorsManagerScope: uiInteractorsManagerScope, uiInteractorsManagerName: uiInteractorsManagerName);
-            uiInteractorsManager.DisposeUiInteractor(uiInteractorName);
-        }
-
-        public void DisposeAllUiInteractors(UiInteractorsManagerScope uiInteractorsManagerScope, string? uiInteractorsManagerName = null)
-        {
-            IUiInteractorsManager uiInteractorsManager = GetUiInteractorsManager(uiInteractorsManagerScope: uiInteractorsManagerScope, uiInteractorsManagerName: uiInteractorsManagerName);
-            uiInteractorsManager.DisposeAllUiInteractors();
-        }
-
-        #endregion UiInteractors
-
-        #region AuxiliaryMethods
-
-        private string GetUiInteractorsManagerName(UiInteractorsManagerScope uiInteractorsManagerScope)
-        {
-            string? uiInteractorsManagerName = null;
-
-            if (uiInteractorsManagerScope == UiInteractorsManagerScope.Test)
-            {
-                if (getCurrentTestIdentifierFunc != null)
-                    uiInteractorsManagerName = getCurrentTestIdentifierFunc();
-                else
-                    throw new Exception("Unable to get UiInteractorsManager identifier for Test scope. Please provide a function to get current test identifier.");
-            }
-            else if (uiInteractorsManagerScope == UiInteractorsManagerScope.Feature)
-            {
-                if (getCurrentFeatureIdentifierFunc != null)
-                    uiInteractorsManagerName = getCurrentFeatureIdentifierFunc();
-                else
-                    throw new Exception("Unable to get UiInteractorsManager identifier for Feature scope. Please provide a function to get current feature identifier.");
-            }
-
-            if (uiInteractorsManagerName == null)
-                throw new Exception("Unable to get UiInteractorsManager identifier. Please provide at least one of the functions to get current test or feature identifier.");
-
-            return uiInteractorsManagerName;
-        }
-
-        private KeyValuePair<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager>? GetUiInteractorManagerEntry
-            (UiInteractorsManagerScope uiInteractorsManagerScope, string uiInteractorsManagerName)
-        {
-            foreach (var uiInteractorManagerEntry in _uiInteractorsManagers)
-                if (uiInteractorManagerEntry.Key.Scope == uiInteractorsManagerScope && uiInteractorManagerEntry.Key.Name == uiInteractorsManagerName)
-                    return uiInteractorManagerEntry;
-
-            return null;
-        }
-
-        private KeyValuePair<(UiInteractorsManagerScope Scope, string Name, int ThreadId), IUiInteractorsManager>? GetUiInteractorManagerEntry(UiInteractorsManagerScope uiInteractorsManagerScope, string uiInteractorsManagerName, int threadId)
-        {
-            foreach (var uiInteractorManagerEntry in _uiInteractorsManagers)
-                if (uiInteractorManagerEntry.Key.Scope == uiInteractorsManagerScope && uiInteractorManagerEntry.Key.Name == uiInteractorsManagerName && uiInteractorManagerEntry.Key.ThreadId == threadId)
-                    return uiInteractorManagerEntry;
-
-            return null;
-        }
-
-        #endregion AuxiliaryMethods
-    }
-}
-*/

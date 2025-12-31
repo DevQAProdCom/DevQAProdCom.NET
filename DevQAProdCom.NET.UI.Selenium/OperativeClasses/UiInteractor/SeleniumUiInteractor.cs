@@ -76,6 +76,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiInteractor
 
             _tabs.Clear();
             NativeObjects.Clear();
+            KeepAliveTimer?.Stop();
         }
 
         private void DisposeForRecreation()

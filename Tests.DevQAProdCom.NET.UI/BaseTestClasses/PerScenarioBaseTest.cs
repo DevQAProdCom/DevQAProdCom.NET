@@ -7,7 +7,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
     public class PerScenarioBaseTest : BaseTest
     {
         protected IUiInteractorsManagersProvider UiInteractorsManagersProvider;
-        protected IUiInteractor UiInteractor => UiInteractorsManagersProvider.GetUiInteractor(uiInteractorsManagerName: TestContext.CurrentContext.Test.ID);
+        protected IUiInteractor UiInteractor => UiInteractorsManagersProvider.GetUiInteractorOfCurrentThread();
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -19,7 +19,7 @@ namespace Tests.DevQAProdCom.NET.UI.BaseTestClasses
         public void TearDown()
         {
             UiInteractor.MakeScreenshots(directoryPath: Const.Screenshot_Directory);
-            UiInteractorsManagersProvider.DisposeUiInteractorsManager(uiInteractorsManagerName: TestContext.CurrentContext.Test.ID);
+            UiInteractorsManagersProvider.DisposeUiInteractorsManagerOfCurrentThread();
         }
     }
 }

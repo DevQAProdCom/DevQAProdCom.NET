@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor;
 using Tests.DevQAProdCom.NET.UI.DependencyInjection;
 using Tests.DevQAProdCom.NET.UI.Models;
@@ -82,6 +83,7 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
 
         public const string id = "id";
         public const string dataText = "data-text";
+        public const string style = "style";
 
         public const string SomePath = "SomePath";
         public const string SomePath2 = "SomePath2";
@@ -108,6 +110,7 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
         public static readonly IUiInteractorCookie CookieAWithDomainPathConstructor = new UiInteractorCookie(CookieAName, CookieAValue, CookieAUri.Host, CookieAUri.AbsolutePath)
         {
             Expires = CookieAExpires,
+            ExpiresInSeconds = CookieAExpires.ToUnixTimeSeconds(),
             HttpOnly = false,
             Secure = false,
             SameSite = "Strict"
@@ -116,6 +119,7 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
         public static readonly IUiInteractorCookie CookieAWithUriConstructor = new UiInteractorCookie(CookieAName, CookieAValue, CookieAUri)
         {
             Expires = CookieAWithDomainPathConstructor.Expires,
+            ExpiresInSeconds = CookieAWithDomainPathConstructor.ExpiresInSeconds,
             HttpOnly = CookieAWithDomainPathConstructor.HttpOnly,
             Secure = CookieAWithDomainPathConstructor.Secure,
             SameSite = CookieAWithDomainPathConstructor.SameSite
@@ -140,6 +144,7 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
         public static readonly IUiInteractorCookie CookieBWithDomainPathConstructor = new UiInteractorCookie(CookieBName, CookieBValue, CookieBUri.Host, CookieBUri.AbsolutePath)
         {
             Expires = CookieBExpires,
+            ExpiresInSeconds = CookieBExpires.ToUnixTimeSeconds(),
             HttpOnly = false,
             Secure = true,
             SameSite = "Lax"
@@ -158,10 +163,10 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
         public static DateTime CookieXExpiresFullDateTime = DateTime.UtcNow.AddHours(1).AddMinutes(1);
         public static DateTime CookieXExpires = new DateTime(CookieXExpiresFullDateTime.Year, CookieXExpiresFullDateTime.Month, CookieXExpiresFullDateTime.Day, CookieXExpiresFullDateTime.Hour, CookieXExpiresFullDateTime.Minute, CookieXExpiresFullDateTime.Second, DateTimeKind.Utc);
 
-
         public static readonly IUiInteractorCookie CookieXWithDomainPathConstructor = new UiInteractorCookie(CookieXName, CookieXValue, CookieXUri.Host, CookieXUri.AbsolutePath)
         {
             Expires = CookieXExpires,
+            ExpiresInSeconds = CookieXExpires.ToUnixTimeSeconds(),
             HttpOnly = true,
             Secure = true,
             SameSite = "Lax"

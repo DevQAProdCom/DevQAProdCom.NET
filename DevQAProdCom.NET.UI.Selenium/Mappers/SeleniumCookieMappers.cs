@@ -14,6 +14,7 @@ namespace DevQAProdCom.NET.UI.Selenium.Mappers
             uiInteractorCookie.Secure = seleniumCookie.Secure;
             uiInteractorCookie.HttpOnly = seleniumCookie.IsHttpOnly;
             uiInteractorCookie.Expires = seleniumCookie.Expiry != default ? seleniumCookie.Expiry.ConvertToUtc() : default;
+            uiInteractorCookie.ExpiresInSeconds = seleniumCookie.Expiry != default ? seleniumCookie.Expiry.ToUnixTimeSeconds() : default;
             uiInteractorCookie.SameSite = seleniumCookie.SameSite;
 
             return uiInteractorCookie;

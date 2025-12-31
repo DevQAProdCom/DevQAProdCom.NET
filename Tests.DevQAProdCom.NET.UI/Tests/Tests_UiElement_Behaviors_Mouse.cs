@@ -8,7 +8,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
 {
     [Parallelizable(ParallelScope.All)]
 
-    internal class Tests_UiElement_MouseBehavior : PerScenarioBaseTest
+    internal class Tests_UiElement_Behaviors_Mouse : PerScenarioBaseTest
     {
         [ThreadStatic] private static TestPage2Actions _testPage2Actions;
         [ThreadStatic] private static DragAndDropTestPageActions _dragAndDropTestPageActions;

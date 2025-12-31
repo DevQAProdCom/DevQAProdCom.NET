@@ -47,13 +47,13 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
             return serviceCollection;
         }
 
-        public static IServiceCollection AddUiInteractorsManagersProvider(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddUiInteractorsManagersProvider(this IServiceCollection serviceCollection, Func<string>? getCurrentFeatureIdentifierFunc)
         {
             serviceCollection.AddSingleton<IUiInteractorsManagersProvider, UiInteractorsManagersProvider>(provider =>
                {
                    ILogger log = provider.GetRequiredService<ILogger>();
                    Func<IUiInteractorsManager> getUiInteractorManagerFunc = () => provider.GetRequiredService<IUiInteractorsManager>();
-                   return new UiInteractorsManagersProvider(getUiInteractorManagerFunc: getUiInteractorManagerFunc, log: log);
+                   return new UiInteractorsManagersProvider(getUiInteractorManagerFunc: getUiInteractorManagerFunc, log: log, getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc);
                });
 
             return serviceCollection;
@@ -117,9 +117,9 @@ namespace DevQAProdCom.NET.UI.Shared.DependencyInjection
             return serviceCollection;
         }
 
-        public static IServiceCollection AddBaseUiInteractionServices(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddBaseUiInteractionServices(this IServiceCollection serviceCollection, Func<string>? getCurrentFeatureIdentifierFunc)
         {
-            serviceCollection.AddUiInteractorsManagersProvider()
+            serviceCollection.AddUiInteractorsManagersProvider(getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc)
                 .AddSingleton<IUiPageFactoryProvider, UiPageFactoryProvider>()
                 .AddSingleton<IBehaviorProvider>(_ => new BehaviorProvider(serviceCollection))
                 .AddSingleton<IUiInteractorBehaviorFactory, UiInteractorBehaviorFactory>()

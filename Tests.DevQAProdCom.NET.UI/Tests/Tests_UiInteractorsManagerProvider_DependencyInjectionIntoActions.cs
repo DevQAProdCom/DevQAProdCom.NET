@@ -1,7 +1,6 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using ApplicationName.QA.TestsBasis.Ui.UiElementsActions;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Tests.DevQAProdCom.NET.UI.Constants;
 using Tests.DevQAProdCom.NET.UI.DependencyInjection;
 
@@ -24,7 +23,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [Test]
-        public void Should_Find_UiElement_Using_IdEquals()
+        public void Should_Using_UiPageActions_From_DiContainer_Find_UiElement_Using_IdEquals()
         {
             //WHEN
             var actualText = _testPage2Actions.Page.UseIdEquals.GetTextContent();
@@ -34,22 +33,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [Test]
-        public void Should_Find_UiElement_Using_IdContains()
-        {
-            //WHEN
-            var actualText = _testPage2Actions.Page.UseIdContains.GetTextContent();
-            var actualIdAttribute = _testPage2Actions.Page.UseIdContains.GetIdAttribute();
-
-            //THEN
-            using (new AssertionScope())
-            {
-                actualText.Should().Be("Use.IdContains");
-                actualIdAttribute.Should().Be("use-id-contains-value");
-            }
-        }
-
-        [Test]
-        public void Should_Get_Dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator()
+        public void Should_Using_UiElementActions_From_DiContainer_Get_Dynamic_UiElementsList_TUiElement_Without_Find_Attribute_With_Parent_Using_UiElementInstantiator()
         {
             //GIVEN
             _tableUiElementActions = DiContainer.Instance.GetRequiredService<TableUiElementActions>();
@@ -67,7 +51,7 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [Test]
-        public void Should_Service_Injected_Into_Actions_Class_Return_Result()
+        public void Should_ServiceClass_Injected_Into_UiPageActions_From_DiContainer_Return_Result()
         {
             //WHEN
             var actualText = _testPage2Actions.ServiceForDependencyInjectionIntoActions.GetMessage();

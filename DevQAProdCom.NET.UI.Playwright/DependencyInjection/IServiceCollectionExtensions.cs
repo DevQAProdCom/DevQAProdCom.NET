@@ -34,9 +34,9 @@ namespace DevQAProdCom.NET.UI.Playwright.DependencyInjection
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigurePlaywright(this IServiceCollection serviceCollection, Func<IServiceProvider, IPlaywrightBrowserFactory>? customBrowserFactoryFunc = null)
+        public static IServiceCollection ConfigurePlaywright(this IServiceCollection serviceCollection, Func<string>? getCurrentFeatureIdentifierFunc, Func<IServiceProvider, IPlaywrightBrowserFactory>? customBrowserFactoryFunc = null)
         {
-            serviceCollection.AddBaseUiInteractionServices();
+            serviceCollection.AddBaseUiInteractionServices(getCurrentFeatureIdentifierFunc: getCurrentFeatureIdentifierFunc);
 
             if (customBrowserFactoryFunc != null)
                 serviceCollection.AddSingleton<IPlaywrightBrowserFactory>(customBrowserFactoryFunc);

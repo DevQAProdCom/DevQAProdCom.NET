@@ -16,6 +16,7 @@ namespace DevQAProdCom.NET.UI.Playwright.Mappers
             uiInteractorCookie.Secure = playwrightCookie.Secure;
             uiInteractorCookie.HttpOnly = playwrightCookie.HttpOnly;
             uiInteractorCookie.Expires = playwrightCookie.Expires.ToDateTimeFromUnixTimeSeconds();
+            uiInteractorCookie.ExpiresInSeconds = playwrightCookie.Expires;
             uiInteractorCookie.SameSite = playwrightCookie.SameSite.ToString();
 
             return uiInteractorCookie;
@@ -30,7 +31,7 @@ namespace DevQAProdCom.NET.UI.Playwright.Mappers
             playwrightCookie.Path = uiInteractorCookie.Path;
             playwrightCookie.Secure = uiInteractorCookie.Secure ?? false;
             playwrightCookie.HttpOnly = uiInteractorCookie.HttpOnly ?? false;
-            playwrightCookie.Expires = uiInteractorCookie.Expires.ToUnixTimeSeconds();
+            playwrightCookie.Expires = uiInteractorCookie.ExpiresInSeconds;
             playwrightCookie.SameSite = uiInteractorCookie.SameSite?.ToEnum<SameSiteAttribute>();
 
             return playwrightCookie;

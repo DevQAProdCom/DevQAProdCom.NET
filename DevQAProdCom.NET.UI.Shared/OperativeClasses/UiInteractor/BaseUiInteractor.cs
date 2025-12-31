@@ -41,6 +41,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 
         public TimeSpan? TimeToLive { get; set; } = SharedUiConstants.Configurations.DefaultUiInteractorTimeToLive;
         public int UiElementsSearchImplicitWaitSeconds { get; set; } = SharedUiConstants.Configurations.DefaultUiElementsSearchImplicitWaitSeconds;
+        public double? KeepAliveTimerSeconds { get; set; }
         public Dictionary<string, object>? Data { get; set; }
 
         public string? _downloadsDefaultDirectory;
@@ -81,6 +82,12 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
 
             if (uiInteractorConfiguration?.UiElementsSearchImplicitWaitSeconds != null)
                 UiElementsSearchImplicitWaitSeconds = uiInteractorConfiguration.UiElementsSearchImplicitWaitSeconds;
+
+            if (uiInteractorConfiguration?.KeepAliveTimerSeconds != null)
+            {
+                KeepAliveTimerSeconds = uiInteractorConfiguration.KeepAliveTimerSeconds;
+                SetupKeepAliveTimer();
+            }
         }
 
         #endregion IUiInteractorConfiguration
@@ -88,28 +95,33 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         protected List<IUiInteractorTab> _tabs;
         protected ILogger _log;
 
-        private System.Timers.Timer? _keepAliveTimer;
+        protected System.Timers.Timer? KeepAliveTimer;
 
         // Is added to keep remotes session alive. Cause they may have max expiration time and idle timeout. This one will call IsInteractable every 30 seconds to reset idle timeout. 
-        private void StartKeepAliveTimer()
+        private void SetupKeepAliveTimer()
         {
-            if (_keepAliveTimer != null)
-                return;
-
-            _keepAliveTimer = new System.Timers.Timer(30000); // 30 seconds
-            _keepAliveTimer.Elapsed += (s, e) =>
+            if (KeepAliveTimerSeconds != null)
             {
-                try
+                if (KeepAliveTimer != null)
+                    return;
+
+                KeepAliveTimer = new System.Timers.Timer(TimeSpan.FromSeconds(KeepAliveTimerSeconds.Value).TotalMilliseconds); // 30 seconds
+                KeepAliveTimer.Elapsed += (s, e) =>
                 {
-                    IsInteractable();
-                }
-                catch
-                {
-                    // Optionally log or handle exceptions
-                }
-            };
-            _keepAliveTimer.AutoReset = true;
-            _keepAliveTimer.Start();
+                    try
+                    {
+                        IsInteractable();
+                    }
+                    catch
+                    {
+                        // Stop the timer if an exception occurs
+                        KeepAliveTimer?.Stop();
+                        // TODO Optionally log or handle exceptions
+                    }
+                };
+                KeepAliveTimer.AutoReset = true;
+                KeepAliveTimer.Start();
+            }
         }
 
         public BaseUiInteractor(ILogger log, IUiInteractorsManager uiInteractorsManager, IUiInteractorBehaviorFactory uiInteractorBehaviorFactory, IUiInteractorTabBehaviorFactory uiInteractorTabBehaviorFactory)
@@ -119,7 +131,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
             _tabs = new();
             UiInteractorBehaviorFactory = uiInteractorBehaviorFactory;
             UiInteractorTabBehaviorFactory = uiInteractorTabBehaviorFactory;
-            StartKeepAliveTimer();//TODO Add Config with parameter IsRemote
         }
 
         #region Tabs

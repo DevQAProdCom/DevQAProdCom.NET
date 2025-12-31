@@ -9,6 +9,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         public string? Domain { get; }
         public string? Path { get; }
         public DateTime? Expires { get; set; }
+        public float? ExpiresInSeconds { get; set; }
         public bool? HttpOnly { get; set; }
         public bool? Secure { get; set; }
         public string? SameSite { get; set; }
@@ -53,6 +54,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
                    string.Equals(Domain, other.Domain, StringComparison.OrdinalIgnoreCase) &&
                    string.Equals(Path, other.Path, StringComparison.Ordinal) &&
                    Nullable.Equals(Expires, other.Expires) &&
+                   Nullable.Equals(ExpiresInSeconds, other.ExpiresInSeconds) &&
                    HttpOnly == other.HttpOnly &&
                    Secure == other.Secure &&
                    string.Equals(SameSite, other.SameSite, StringComparison.OrdinalIgnoreCase);

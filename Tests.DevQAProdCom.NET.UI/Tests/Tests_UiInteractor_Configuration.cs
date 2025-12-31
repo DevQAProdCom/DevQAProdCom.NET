@@ -8,6 +8,7 @@ using Tests.DevQAProdCom.NET.UI.BaseTestClasses;
 
 namespace Tests.DevQAProdCom.NET.UI.Tests
 {
+    [Parallelizable(ParallelScope.Fixtures)]
     internal class Tests_UiInteractor_Configuration : PerFeatureBaseTest
     {
 

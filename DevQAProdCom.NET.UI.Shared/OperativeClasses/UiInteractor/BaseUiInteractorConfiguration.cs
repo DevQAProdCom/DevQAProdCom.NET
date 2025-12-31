@@ -30,5 +30,6 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiInteractor
         public DateTime? ExpirationTime => Created.HasValue && TimeToLive.HasValue ? Created.Value.Add(TimeToLive.Value) : null;
         public Dictionary<string, object>? Data { get; set; }
         public int UiElementsSearchImplicitWaitSeconds { get; set; } = SharedUiConstants.Configurations.DefaultUiElementsSearchImplicitWaitSeconds;
+        public double? KeepAliveTimerSeconds { get; set; }
     }
 }

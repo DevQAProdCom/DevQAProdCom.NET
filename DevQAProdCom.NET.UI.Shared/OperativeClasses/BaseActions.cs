@@ -1,7 +1,6 @@
 ﻿using DevQAProdCom.NET.UI.Shared.Constants;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace DevQAProdCom.NET.UI.Shared.OperativeClasses
 {
@@ -26,7 +25,10 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses
         {
             get
             {
-                if (_uiInteractor == null && UiInteractorsManagersProvider != null)
+                if (_uiInteractor != null)
+                    return _uiInteractor;
+
+                if (UiInteractorsManagersProvider != null)
                     _uiInteractor = UiInteractorsManagersProvider.GetUiInteractorOfCurrentThread();
 
                 return _uiInteractor ?? throw new Exception("UiInteractor is not set in UiPageActions.");
