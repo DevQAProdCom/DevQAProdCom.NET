@@ -493,7 +493,7 @@ namespace DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements.Search
 
         #region Auxiliary
 
-        private void SwitchToFrame(List<IFindParametersWithSearchResult> findParametersChain, IFindParametersWithSearchResult findParameters)
+        protected override void SwitchToFrame(List<IFindParametersWithSearchResult> findParametersChain, IFindParametersWithSearchResult findParameters)
         {
             _webDriver.SwitchTo().DefaultContent();
             var indexOfCurrentlySearchedElement = findParametersChain.IndexOf(findParameters);

@@ -173,11 +173,8 @@ namespace ApplicationName.QA.TestsBasis.Ui.Pages
         [Find("DataTestIdContains", "use-data-testid-contains")]
         public IUiElement UseDataTestIdContains;
 
-        [Find("CustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute", "attribute-for-custom-find-option-search-method-registered-from-di-value")]
-        public IUiElement UseCustomFindOptionSearchMethodRegisteredFromDi;
-
-        [Find("CustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute", "attribute-for-custom-find-option-search-method-registered-from-activator-create-instance-t-value")]
-        public IUiElement UseCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceT;
+        [Find("CustomFindOptionSearchMethod", "attribute-for-custom-find-option-search-method-value")]
+        public IUiElement UseCustomFindOptionSearchMethod;
 
         [Find(Use.NameEquals, "test-list-item-1")]
         public IUiElementsList<TestListItemA> TestListItems1;

@@ -44,25 +44,25 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
             if (IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && !IsFindOptionSet(ShadowRootHostsFindOption))
                 return Enumerations.SearchKind.ElementsInFrame;
 
-            if (IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.FrameInsideShadowRoot)
+            if (IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.FrameInsideShadowRootHost)
                 return Enumerations.SearchKind.ElementsInFrameInsideShadowRoot;
 
             if (IsFindOptionSet(ElementsFindOption) && !IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption))
                 return Enumerations.SearchKind.ElementsInShadowRoot;
 
-            if (IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.ShadowRootInsideFrame)
+            if (IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.ShadowRootHostInsideFrame)
                 return Enumerations.SearchKind.ElementsInShadowRootInsideFrame;
 
             if (!IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && !IsFindOptionSet(ShadowRootHostsFindOption))
                 return Enumerations.SearchKind.FrameElements;
 
-            if (!IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.FrameInsideShadowRoot)
+            if (!IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.FrameInsideShadowRootHost)
                 return Enumerations.SearchKind.FrameElementsInsideShadowRoot;
 
             if (!IsFindOptionSet(ElementsFindOption) && !IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption))
                 return Enumerations.SearchKind.ShadowRootHostElements;
 
-            if (!IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.ShadowRootInsideFrame)
+            if (!IsFindOptionSet(ElementsFindOption) && IsFindOptionSet(FramesFindOption) && IsFindOptionSet(ShadowRootHostsFindOption) && FindOrderType == Enumerations.FindOrderType.ShadowRootHostInsideFrame)
                 return Enumerations.SearchKind.ShadowRootHostElementsInsideFrame;
 
             return Enumerations.SearchKind.NotSet;

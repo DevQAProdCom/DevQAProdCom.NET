@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces;
+﻿using DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.Extensions;
+using DevQAProdCom.NET.UI.Playwright.Browsers.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Browsers.OperativeClasses;
 using DevQAProdCom.NET.UI.Playwright.Interfaces;
 using DevQAProdCom.NET.UI.Playwright.Mappers;
@@ -9,7 +10,6 @@ using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.Keybo
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Behaviors.Text;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Search.FindOptionSearchers;
-using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractor;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiPage.Behaviors.Mouse;
@@ -21,7 +21,6 @@ using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Mouse;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Text;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search;
-using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractorsManager;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Keyboard;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Behaviors.Mouse;
@@ -100,14 +99,13 @@ namespace DevQAProdCom.NET.UI.Playwright.DependencyInjection
         public static IServiceCollection AddPlaywrightFindOptionSearchMethod<TImplementation>(this IServiceCollection serviceCollection)
             where TImplementation : class, IPlaywrightFindOptionSearchMethod
         {
+            if (!serviceCollection.ContainsService<TImplementation>())
+                serviceCollection.AddSingleton<TImplementation>();
+
             IServiceProvider provider = serviceCollection.BuildServiceProvider();
             IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod> searcher = provider.GetRequiredService<IFindOptionSearchMethodsProvider<IPlaywrightFindOptionSearchMethod>>();
-            IPlaywrightFindOptionSearchMethod? method = provider.GetService<TImplementation>(); // it is done for cases for not parametreless constructor
-
-            if (method != null)
-                searcher.RegisterFindOptionSearchMethod(method);
-            else
-                searcher.RegisterFindOptionSearchMethod<TImplementation>();
+            IPlaywrightFindOptionSearchMethod? method = provider.GetRequiredService<TImplementation>(); // it is done for cases for not parametreless constructor
+            searcher.RegisterFindOptionSearchMethod(method);
 
             return serviceCollection;
         }

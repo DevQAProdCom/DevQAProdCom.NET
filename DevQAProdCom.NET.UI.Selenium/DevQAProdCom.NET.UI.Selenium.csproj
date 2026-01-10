@@ -11,12 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Selenium.WebDrivers\DevQAProdCom.NET.UI.Selenium.WebDrivers.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.UI.UiElements\DevQAProdCom.NET.UI.UiElements.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft.Shared" />
     <PackageReference Include="DevQAProdCom.NET.UI.Shared" />
     <PackageReference Include="DevQAProdCom.NET.UI.Selenium.WebDrivers" />
     <PackageReference Include="DevQAProdCom.NET.UI.UiElements" />

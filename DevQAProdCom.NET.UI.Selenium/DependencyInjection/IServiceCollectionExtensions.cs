@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.UI.Selenium.Interfaces;
+﻿using DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.Extensions;
+using DevQAProdCom.NET.UI.Selenium.Interfaces;
 using DevQAProdCom.NET.UI.Selenium.Mappers;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses;
 using DevQAProdCom.NET.UI.Selenium.OperativeClasses.UiElements;
@@ -105,14 +106,13 @@ namespace DevQAProdCom.NET.UI.Selenium.DependencyInjection
         public static IServiceCollection AddSeleniumFindOptionSearchMethod<TImplementation>(this IServiceCollection serviceCollection)
             where TImplementation : class, ISeleniumFindOptionSearchMethod
         {
+            if (!serviceCollection.ContainsService<TImplementation>())
+                serviceCollection.AddSingleton<TImplementation>();
+
             IServiceProvider provider = serviceCollection.BuildServiceProvider();
             IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod> searcher = provider.GetRequiredService<IFindOptionSearchMethodsProvider<ISeleniumFindOptionSearchMethod>>();
-            ISeleniumFindOptionSearchMethod? method = provider.GetService<TImplementation>(); // it is done for cases for not parametreless constructor
-
-            if (method != null)
-                searcher.RegisterFindOptionSearchMethod(method);
-            else
-                searcher.RegisterFindOptionSearchMethod<TImplementation>();
+            ISeleniumFindOptionSearchMethod? method = provider.GetRequiredService<TImplementation>(); // it is done for cases for not parametreless constructor
+            searcher.RegisterFindOptionSearchMethod(method);
 
             return serviceCollection;
         }

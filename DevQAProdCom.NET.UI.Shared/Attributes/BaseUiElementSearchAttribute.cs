@@ -32,8 +32,8 @@ namespace DevQAProdCom.NET.UI.Shared.Attributes
             if (!string.IsNullOrEmpty(FramesFindMethod) && !string.IsNullOrEmpty(FramesFindCriteria)
                 && !string.IsNullOrEmpty(ShadowRootHostsFindMethod) && !string.IsNullOrEmpty(ShadowRootHostsFindCriteria))
             {
-                if (FindOrderType != FindOrderType.FrameInsideShadowRoot || FindOrderType != FindOrderType.ShadowRootInsideFrame)
-                    throw new ArgumentException(@$"Either '{FindOrderType.FrameInsideShadowRoot}' or '{FindOrderType.ShadowRootInsideFrame}' 'FindOrderType findOrderType' parameter should be set 
+                if (FindOrderType != FindOrderType.FrameInsideShadowRootHost || FindOrderType != FindOrderType.ShadowRootHostInsideFrame)
+                    throw new ArgumentException(@$"Either '{FindOrderType.FrameInsideShadowRootHost}' or '{FindOrderType.ShadowRootHostInsideFrame}' 'FindOrderType findOrderType' parameter should be set 
                            when both FramesFindMethod, FramesFindCriteria and ShadowRootHostsFindMethod, ShadowRootHostsFindCriteria are set.");
             }
         }

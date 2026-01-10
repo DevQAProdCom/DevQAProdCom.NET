@@ -49,18 +49,12 @@ namespace Tests.DevQAProdCom.NET.UI.DependencyInjection
             if (CurrentTechnology == UiInteractorTechnology.Playwright)
             {
                 _serviceCollection.ConfigurePlaywright(getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName, customBrowserFactoryFunc: (provider) => { return new PlaywrightBrowserFactory(provider.GetRequiredService<ILogger>()); })
-                    .AddSingleton<TestClassForDiInjection>()
-                    .AddSingleton<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
-                    .AddPlaywrightFindOptionSearchMethod<PlaywrightCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
-                    .AddPlaywrightFindOptionSearchMethod<PlaywrightCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute>();
+                    .AddPlaywrightFindOptionSearchMethod<PlaywrightCustomFindOptionSearchMethod>();
             }
             else if (CurrentTechnology == UiInteractorTechnology.Selenium)
             {
                 _serviceCollection.ConfigureSelenium(getCurrentFeatureIdentifierFunc: () => TestContext.CurrentContext.Test.ClassName, customWebDriverFactoryFunc: (provider) => { return new SeleniumWebDriverFactory(provider.GetRequiredService<ILogger>()); })
-                    .AddSingleton<TestClassForDiInjection>()
-                    .AddSingleton<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
-                    .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute>()
-                    .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute>();
+                    .AddSeleniumFindOptionSearchMethod<SeleniumCustomFindOptionSearchMethod>();
             }
         }
 

@@ -10,5 +10,6 @@ namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Search
         public List<IFindParametersWithSearchResult>? FindChain { get; set; }
         public int? TotalAmountOfElementsFound { get; set; }
         public Exception? Exception { get; set; }
+        public void ClearFindStateData();
     }
 }

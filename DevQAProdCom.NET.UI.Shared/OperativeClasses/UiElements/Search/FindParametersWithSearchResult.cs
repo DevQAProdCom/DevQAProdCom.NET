@@ -52,5 +52,16 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
 
             return FindState.NotSearched;
         }
+
+        public void ClearFindStateData()
+        {
+            Exception = null;
+            TotalAmountOfElementsFound = null;
+            UriBeforeSearch = null;
+            UriAfterSearch = null;
+            NativeElement = null;
+            NativeFrameElement = null;
+            NativeShadowRootHostElement = null;
+        }
     }
 }

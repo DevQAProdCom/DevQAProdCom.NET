@@ -6,9 +6,9 @@ namespace DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.Extensions
     {
         //Initially was inside "DevQAProdCom.NET.DependencyInjection.Microsoft".
         //But eventually was moved to shared project because of circular dependency between DevQAProdCom.NET.Configurations and DevQAProdCom.NET.DependencyInjection.Microsoft projects
-        public static bool ContainsService<TService>(this IServiceCollection serviceCollection)
+        public static bool ContainsService<TImplementation>(this IServiceCollection serviceCollection)
         {
-            return serviceCollection.Any(serviceDescriptor => serviceDescriptor.ServiceType == typeof(TService));
+            return serviceCollection.Any(descriptor => descriptor.ServiceType == typeof(TImplementation) || descriptor.ImplementationType == typeof(TImplementation));
         }
     }
 }

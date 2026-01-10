@@ -38,11 +38,8 @@ namespace Tests.DevQAProdCom.NET.UI.Constants
 
         public static class Ui
         {
-            public const string AttributeForCustomFindOptionSearchMethodRegisteredFromDi = "attribute-for-custom-find-option-search-method-registered-from-di";
-            public const string CustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute = "CustomFindOptionSearchMethodRegisteredFromDiUsingCustomAttribute";
-
-            public const string AttributeForCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceT = "attribute-for-custom-find-option-search-method-registered-from-activator-create-instance-t";
-            public const string CustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute = "CustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceTUsingCustomAttribute";
+            public const string AttributeForCustomFindOptionSearchMethod = "attribute-for-custom-find-option-search-method";
+            public const string CustomFindOptionSearchMethod = "CustomFindOptionSearchMethod";
         }
 
         public const string ButtonNotInFrame = "Button Not In Frame";

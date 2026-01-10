@@ -263,23 +263,13 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
         }
 
         [Test]
-        public void Should_Find_UiElement_Using_Custom_Find_Option_Search_Method_Registered_From_Di_Using_Custom_Attribute()
+        public void Should_Find_UiElement_Using_Custom_Find_Option_Search_Method()
         {
             //WHEN
-            var actualText = _testPage2Actions.Page.UseCustomFindOptionSearchMethodRegisteredFromDi.GetTextContent();
+            var actualText = _testPage2Actions.Page.UseCustomFindOptionSearchMethod.GetTextContent();
 
             //THEN
-            actualText.Should().Be("Use.CustomFindOptionSearchMethodRegisteredFromDi");
-        }
-
-        [Test]
-        public void Should_Find_UiElement_Using_Custom_Find_Option_Search_Method_Registered_From_Activator_Create_Instance_T()
-        {
-            //WHEN
-            var actualText = _testPage2Actions.Page.UseCustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceT.GetTextContent();
-
-            //THEN
-            actualText.Should().Be("Use.CustomFindOptionSearchMethodRegisteredFromActivatorCreateInstanceT");
+            actualText.Should().Be("Use.CustomFindOptionSearchMethod");
         }
     }
 }

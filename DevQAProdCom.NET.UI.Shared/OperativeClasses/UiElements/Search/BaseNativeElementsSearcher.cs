@@ -70,6 +70,21 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
                     {
                         var findChain = findData.FindChainCombinations[i];
 
+                        #region Retry Cleanup Logic
+
+                        void ClearFindStateDataInFindChain()
+                        {
+                            //Clear all find state data in find chain from the start search index to the end of the chain. All data before start search index should be kept as is.
+                            //Usually corresponds to situation when previous element IsElementOfList, and search starts from this list element that has particular index.
+                            for (int i = findData.StartSearchFromIndex; i < findChain.Count(); i++)
+                                findChain[i].ClearFindStateData();
+                        }
+
+                        ClearFindStateDataInFindChain();
+                        SwitchToFrame(findChain, findChain[findData.StartSearchFromIndex]);
+
+                        #endregion Retry Cleanup Logic
+
                         try
                         {
                             var result = FindElementsFromIndexOfFindChain(findChain, findData.StartSearchFromIndex, uiElementInfo);
@@ -413,6 +428,7 @@ namespace DevQAProdCom.NET.UI.Shared.OperativeClasses.UiElements.Search
         }
 
         protected abstract Uri GetCurrentUri();
+        protected abstract void SwitchToFrame(List<IFindParametersWithSearchResult> findParametersChain, IFindParametersWithSearchResult findParameters);
 
         #endregion Auxiliary
     }

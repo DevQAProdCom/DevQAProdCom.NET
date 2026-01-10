@@ -17,7 +17,7 @@ namespace DevQAProdCom.NET.UI.Shared.Attributes
 
         public ShadowRootHostAttribute(string shadowRootHostsFindMethod, string shadowRootHostsFindCriteria, string framesFindMethod, string framesFindCriteria)
             : base(shadowRootHostsFindMethod: shadowRootHostsFindMethod, shadowRootHostsFindCriteria: shadowRootHostsFindCriteria,
-                  framesFindMethod: framesFindMethod, framesFindCriteria: framesFindCriteria, findOrderType: FindOrderType.FrameInsideShadowRoot)
+                  framesFindMethod: framesFindMethod, framesFindCriteria: framesFindCriteria, findOrderType: FindOrderType.FrameInsideShadowRootHost)
         {
         }
 

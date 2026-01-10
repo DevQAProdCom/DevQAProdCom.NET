@@ -531,6 +531,11 @@ namespace DevQAProdCom.NET.UI.Playwright.OperativeClasses.UiElements.Search
             return new Uri(uri);
         }
 
+        protected override void SwitchToFrame(List<IFindParametersWithSearchResult> findParametersChain, IFindParametersWithSearchResult findParameters)
+        {
+            //No need to switch to frame in Playwright as we always have reference to IFrameLocator. Added to keep the structure consistent with Selenium for BaseNativeElementsSearcher.
+        }
+
         #endregion Auxiliary
     }
 }

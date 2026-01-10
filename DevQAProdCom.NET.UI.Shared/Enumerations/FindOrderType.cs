@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.UI.Shared.Enumerations
     public enum FindOrderType
     {
         NotSet,
-        FrameInsideShadowRoot,
-        ShadowRootInsideFrame
+        FrameInsideShadowRootHost,
+        ShadowRootHostInsideFrame
     }
 }
