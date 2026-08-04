@@ -175,7 +175,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             }
             catch (Exception ex)
             {
-                Logger.Error($"🔴 Agent Workflow stopped because of exception: {ex.Message}.");
+                throw new Exception($"🔴 Agent Workflow stopped because of exception: {ex.Message}.");
             }
             finally
             {

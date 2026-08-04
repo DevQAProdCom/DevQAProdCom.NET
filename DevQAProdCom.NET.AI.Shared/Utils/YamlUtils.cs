@@ -20,6 +20,7 @@ namespace DevQAProdCom.NET.AI.Shared.Utils
                 throw new Exception($"Error reading file '{filePath}': {ex.Message}");
             }
 
+            fileContent = fileContent.TrimStart('\uFEFF');
             var yamlDelimiter = "---";
             if (fileContent.StartsWith(yamlDelimiter))
             {
