@@ -10,6 +10,10 @@ namespace DevQAProdCom.NET.Global.Enumerations.Files
         Ini,
         [Description(".json")]
         Json,
+        [Description(".md")]
+        Md,
+        [Description(".sln")]
+        Sln,
         [Description(".xls")]
         Xls,
         [Description(".xlsx")]

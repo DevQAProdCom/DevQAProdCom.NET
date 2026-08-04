@@ -1,4 +1,6 @@
-﻿namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
+﻿using System.Text.Json;
+
+namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
 {
     public static class GeneralStringExtensions
     {
@@ -72,6 +74,23 @@
                 return null;
 
             return Boolean.Parse(@string);
+        }
+
+        public static T? FromJson<T>(this string json, JsonSerializerOptions? options = null)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                throw new ArgumentException("JSON string cannot be null or whitespace.", nameof(json));
+            }
+
+            try
+            {
+                return JsonSerializer.Deserialize<T>(json, options);
+            }
+            catch (Exception ex)
+            {
+                throw new JsonException($"An error occurred while deserializing to type '{typeof(T).Name}' JSON string: \n{json}\nException: {ex.Message}");
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Helpers;
+﻿using DevQAProdCom.NET.Global.Utils;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.Constants;
 using Tests.DevQAProdCom.NET.Logging.TestRunners.NUnit.PreconditionsTests.DependencyInjection;
@@ -9,7 +9,7 @@ internal class RunHooks
     [OneTimeSetUp]
     public void StartRun()
     {
-        IoHelper.CleanDirectory("Logs");
+        IoUtils.CleanDirectory("Logs");
         DiContainer.Instance.Log.SetTestRunLoggingInfo(testRunId: SharedTestConstants.ManuallySetTestRunId, testRunDescription: SharedTestConstants.ManuallySetTestRunDescription,
             testRunName: SharedTestConstants.ManuallySetTestRunName, versionUnderTest: SharedTestConstants.ManuallySetVersionUnderTest);
         DiContainer.Instance.Log.Info($"SetUpFixture/OneTimeSetUp/StartRun [{{LogRecordId}}]", SharedTestConstants.LogRecordId.a18dee14);

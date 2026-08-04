@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Helpers;
+﻿using DevQAProdCom.NET.Global.Utils;
 using Tests.DevQAProdCom.NET.UI.Constants;
 using Tests.DevQAProdCom.NET.UI.DependencyInjection;
 
@@ -20,7 +20,7 @@ internal class RunHooks
     private void CleanLogsDirectory()
     {
         //TODO Create LogDirectory for each separate run
-        IoHelper.CleanDirectory("Logs");
+        IoUtils.CleanDirectory("Logs");
     }
 
     private void InitializeDiContainer()

@@ -1,6 +1,6 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.PagesActions;
 using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Global.Helpers;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiElements.Behaviors.Files;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -27,14 +27,14 @@ namespace Tests.DevQAProdCom.NET.UI.Tests
             var downloadsDefaultDirectory = UiInteractor.DownloadsDefaultDirectory!;
             downloadsDefaultDirectory.Should().NotBeNullOrEmpty();
             var expectedFileName = $"random-file_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}.txt";
-            var actualDirectoryFilesBeforeDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
+            var actualDirectoryFilesBeforeDownload = IoUtils.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
 
             //WHEN
             _pageActions.Page.InputFieldForDownloadedFileName.SetText(expectedFileName);
             _pageActions.Page.DownloadFileButton.AddBehavior<IUiElementBehaviorDownloadFile>().DownloadFile();
 
             Thread.Sleep(500);
-            var actualDirectoryFilesAfterDownload = IoHelper.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
+            var actualDirectoryFilesAfterDownload = IoUtils.GetFilesInDirectory(downloadsDefaultDirectory).Select(x => x.Name).ToList();
 
             //THEN
             using (new AssertionScope())

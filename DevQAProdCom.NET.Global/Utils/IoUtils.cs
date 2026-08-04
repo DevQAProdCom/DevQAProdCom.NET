@@ -1,6 +1,9 @@
-﻿namespace DevQAProdCom.NET.Global.Helpers
+﻿using DevQAProdCom.NET.Global.Enumerations.Files;
+using DevQAProdCom.NET.Global.Extensions;
+
+namespace DevQAProdCom.NET.Global.Utils
 {
-    public static class IoHelper
+    public static class IoUtils
     {
         public static List<FileInfo> GetFilesInDirectory(string directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
         {
@@ -60,6 +63,64 @@
             using (var writer = new StreamWriter(filePath))
                 foreach (var row in data)
                     writer.WriteLine(string.Join(delimiter, row));
+        }
+
+        public static string? GetNearestDirectoryAsCurrentOrParentWithFilesWithExtensions(string initialDirectory, params string[] extensions)
+        {
+            var extensionsSet = new HashSet<string>(extensions
+                .Where(e => !string.IsNullOrWhiteSpace(e)).Select(e => e.StartsWith(".") ? e : $".{e}"), StringComparer.OrdinalIgnoreCase);
+
+            if (extensionsSet.Count == 0)
+                return null;
+
+            var dir = new DirectoryInfo(initialDirectory);
+
+            while (dir != null)
+            {
+                if (dir.Exists && dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Any(f => extensionsSet.Contains(f.Extension)))
+                {
+                    return dir.FullName;
+                }
+
+                dir = dir.Parent;
+            }
+
+            return null;
+        }
+
+        public static string GetNearestSolutionDirectoryAsCurrentOrParent(string? initialDirectory = null)
+        {
+            initialDirectory ??= Directory.GetCurrentDirectory();
+            var solutionDirectory = GetNearestDirectoryAsCurrentOrParentWithFilesWithExtensions(initialDirectory, FileExtension.Sln.GetDescriptionAttributeValue());
+
+            if (solutionDirectory == null)
+                throw new DirectoryNotFoundException($"No solution directory (with '{FileExtension.Sln.GetDescriptionAttributeValue()}' file) found starting from '{initialDirectory}' and moving up the directory tree.");
+
+            return solutionDirectory;
+        }
+
+        public static List<string> GetMarkdownFiles(string initialDirectory)
+        {
+            return Directory.EnumerateFiles(initialDirectory, $"*{FileExtension.Md.GetDescriptionAttributeValue()}", SearchOption.AllDirectories).ToList();
+        }
+
+        public static List<string> GetMarkdownFiles(List<string> entries)
+        {
+            var result = new List<string>();
+            foreach (var entry in entries)
+            {
+                if (File.Exists(entry) && Path.GetExtension(entry).Equals(FileExtension.Md.GetDescriptionAttributeValue(), StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(entry);
+                }
+                else if (Directory.Exists(entry))
+                {
+                    var mdFiles = GetMarkdownFiles(entry);
+                    result.AddRange(mdFiles);
+                }
+            }
+
+            return result;
         }
     }
 }

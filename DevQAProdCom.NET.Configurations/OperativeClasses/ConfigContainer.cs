@@ -4,7 +4,7 @@ using DevQAProdCom.NET.Configurations.Extensions;
 using DevQAProdCom.NET.Configurations.Interfaces;
 using DevQAProdCom.NET.Global.Enumerations.Files;
 using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Global.Helpers;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Extensions.Configuration;
 
@@ -642,7 +642,7 @@ namespace DevQAProdCom.NET.Configurations.OperativeClasses
                 }
             }
             else
-                IoHelper.GetFilesInDirectory(directory.FullName).ForEach(f => _log.Debug($"Ignored file is not added to configuration: '{f.FullName}'."));
+                IoUtils.GetFilesInDirectory(directory.FullName).ForEach(f => _log.Debug($"Ignored file is not added to configuration: '{f.FullName}'."));
 
             return files;
         }

@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 
-namespace DevQAProdCom.NET.Global.Helpers
+namespace DevQAProdCom.NET.Global.Utils
 {
-    public class JsonHelper
+    public class JsonUtils
     {
         public static void UpdateJsonValue(string filePath, string key, string newValue)
         {

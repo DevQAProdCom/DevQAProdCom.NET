@@ -1,5 +1,5 @@
 ﻿using ApplicationName.QA.TestsBasis.Ui.Pages;
-using DevQAProdCom.NET.Global.Helpers;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.UI.Shared.Interfaces.UiInteractor;
 using DevQAProdCom.NET.UI.Shared.OperativeClasses.UiPage;
 

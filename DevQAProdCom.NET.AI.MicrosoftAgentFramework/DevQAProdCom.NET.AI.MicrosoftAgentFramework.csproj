@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Agents.AI" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevQAProdCom.NET.AI.GitHubCopilot\DevQAProdCom.NET.AI.GitHubCopilot.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.AI.Shared\DevQAProdCom.NET.AI.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

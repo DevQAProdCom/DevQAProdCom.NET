@@ -1,6 +1,6 @@
-﻿namespace DevQAProdCom.NET.Global.Helpers
+﻿namespace DevQAProdCom.NET.Global.Utils
 {
-    public static class DataGenerationHelper
+    public static class DataGenerationUtils
     {
         public static List<List<string>> GeneratePairwiseCombinations(List<string> elements)
         {

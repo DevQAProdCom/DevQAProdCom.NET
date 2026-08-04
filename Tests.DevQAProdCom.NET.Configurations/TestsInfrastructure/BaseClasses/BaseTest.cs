@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using DevQAProdCom.NET.Configurations.OperativeClasses;
-using DevQAProdCom.NET.Global.Helpers;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Moq;
 using Tests.DevQAProdCom.NET.Configurations.Constants;
@@ -19,9 +19,9 @@ namespace Tests.DevQAProdCom.NET.Configurations.TestsInfrastructure.BaseClasses
             tempDirectory = $"{Const.Directories.ConfigurationsTemp} {Guid.NewGuid().ToString().Substring(0, 5)}";
             configContainer.Setup(c => c.DefaultBaseConfigurationsFolder).Returns(tempDirectory);
 
-            IoHelper.CopyDirectory(Const.Directories.Configurations, tempDirectory, (filePath) => includeFilesWithNames
+            IoUtils.CopyDirectory(Const.Directories.Configurations, tempDirectory, (filePath) => includeFilesWithNames
             .Any(fileName => fileName == Path.GetFileName(filePath)) || Path.GetFileName(filePath) == Const.Files.EnvironmentJson);
-            JsonHelper.UpdateJsonValue(Path.Combine(tempDirectory, Const.Files.EnvironmentJson), Const.ENVIRONMENT.ToLower(), env.ToString());
+            JsonUtils.UpdateJsonValue(Path.Combine(tempDirectory, Const.Files.EnvironmentJson), Const.ENVIRONMENT.ToLower(), env.ToString());
 
             _tempDirectories.Add(tempDirectory);
 

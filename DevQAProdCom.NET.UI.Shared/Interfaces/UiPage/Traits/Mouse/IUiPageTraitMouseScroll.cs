@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Helpers;
+﻿using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.UI.Shared.Constants;
 
 namespace DevQAProdCom.NET.UI.Shared.Interfaces.UiPage.Traits.Mouse

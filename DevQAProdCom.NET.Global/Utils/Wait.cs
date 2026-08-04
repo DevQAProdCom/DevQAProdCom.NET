@@ -1,4 +1,4 @@
-﻿namespace DevQAProdCom.NET.Global.Helpers
+﻿namespace DevQAProdCom.NET.Global.Utils
 {
     public static class Wait
     {
