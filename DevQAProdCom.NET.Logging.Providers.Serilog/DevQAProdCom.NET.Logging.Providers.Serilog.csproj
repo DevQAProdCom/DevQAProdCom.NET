@@ -50,4 +50,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
+  </ItemGroup>
 </Project>

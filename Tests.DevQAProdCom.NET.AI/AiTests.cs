@@ -11,15 +11,16 @@
         [Test]
         public void Test1()
         {
+            DependencyInjection.DiContainer.Instance.Log.Info("Test1 executed.");
             Console.WriteLine("Test1 executed.");
-            //Assert.Pass();
+            Assert.Pass();
         }
 
         [Test]
         public void Test2()
         {
             Console.WriteLine("Test2 executed.");
-            Assert.Pass();
+            Assert.Fail();
         }
     }
 }

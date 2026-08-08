@@ -1,13 +1,9 @@
 ﻿using ApplicationName.QA.Global.Models;
 using DevQAProdCom.NET.DependencyInjection.Microsoft.OperativeClasses;
-using DevQAProdCom.NET.Logging.Providers.Serilog;
 using DevQAProdCom.NET.Logging.Providers.Serilog.DependencyInjection;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using DevQAProdCom.NET.Logging.Shared.OperativeClasses;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.DependencyInjection;
 using DevQAProdCom.NET.Logging.TestRunners.NUnit.Models;
 using DevQAProdCom.NET.Logging.TestRunners.Shared.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ApplicationName.QA.Global.DependencyInjection
 {
@@ -44,18 +40,9 @@ namespace ApplicationName.QA.Global.DependencyInjection
             //    testRunName: "RunName: RegressionTestRun",
             //    versionUnderTest: "Version: v0.3");
 
-
             _serviceCollection
                 .AddSerilogLoggingProviderFactory()
-                .AddSingleton<ILoggingProviderFactoriesSet>(provider =>
-                {
-                    ILoggingProviderFactoriesSet loggingProviderFactoriesSet = new LoggingProviderFactoriesSet();
-                    ILoggingProviderFactory serilogLoggingProviderFactory = provider.GetRequiredService<SerilogLoggingProviderFactory>();
-
-                    loggingProviderFactoriesSet.LoggingProviderFactories.TryAdd(typeof(SerilogLoggingProviderFactory).FullName!, serilogLoggingProviderFactory);
-
-                    return loggingProviderFactoriesSet;
-                })
+                .AddSerilogLoggingProviderFactorySet()
                 .AddNUnitTestLogger(nUnitTestLoggerConfigParameters);
         }
     }

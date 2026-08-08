@@ -9,24 +9,30 @@
     <IsTestProject Condition="'$(AsApp)' == 'true'">false</IsTestProject>
     <IsTestProject Condition="'$(AsApp)' != 'true'">true</IsTestProject>
     <OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
-    <GenerateProgramFile Condition="'$(AsApp)' == 'true'">false</GenerateProgramFile>
+    <DefineConstants Condition="'$(AsApp)' == 'true'">$(DefineConstants);AS_APP</DefineConstants>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Moq" />
-    <PackageReference Include="NUnit" />
-    <PackageReference Include="NUnit.Analyzers" />
-    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="coverlet.collector" Condition="'$(AsApp)' != 'true'" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Condition="'$(AsApp)' != 'true'" />
+    <PackageReference Include="NUnit" Condition="'$(AsApp)' != 'true'" />
+    <PackageReference Include="NUnit.Analyzers" Condition="'$(AsApp)' != 'true'" />
+    <PackageReference Include="NUnit3TestAdapter" Condition="'$(AsApp)' != 'true'" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DevQAProdCom.NET.Global\DevQAProdCom.NET.Global.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Providers.Serilog\DevQAProdCom.NET.Logging.Providers.Serilog.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="NUnit.Framework" />
+    <Using Include="NUnit.Framework" Condition="'$(AsApp)' != 'true'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(AsApp)' == 'true'">
+    <Compile Remove="**\*Tests.cs" />
   </ItemGroup>
 
 </Project>
