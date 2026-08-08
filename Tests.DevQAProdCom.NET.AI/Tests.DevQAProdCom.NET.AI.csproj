@@ -10,15 +10,14 @@
     <IsTestProject Condition="'$(AsApp)' != 'true'">true</IsTestProject>
     <OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
     <DefineConstants Condition="'$(AsApp)' == 'true'">$(DefineConstants);AS_APP</DefineConstants>
-    <DisableImplicitNUnitUsingAttribute Condition="'$(AsApp)' == 'true'">true</DisableImplicitNUnitUsingAttribute>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Condition="'$(AsApp)' != 'true'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Condition="'$(AsApp)' != 'true'" />
     <PackageReference Include="NUnit" />
-    <PackageReference Include="NUnit.Analyzers" Condition="'$(AsApp)' != 'true'" />
-    <PackageReference Include="NUnit3TestAdapter" Condition="'$(AsApp)' != 'true'" />
+    <PackageReference Include="NUnit.Analyzers" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="coverlet.collector" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,4 +27,4 @@
     <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
   </ItemGroup>
 
-</Project>  
+</Project>
