@@ -101,6 +101,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevQAProdCom.NET.AI.GitHubC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevQAProdCom.NET.AI.MicrosoftAgentFramework", "DevQAProdCom.NET.AI.MicrosoftAgentFramework\DevQAProdCom.NET.AI.MicrosoftAgentFramework.csproj", "{8C9A67D0-EB27-40EB-B6AF-24457268B3EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.DevQAProdCom.NET.AI", "Tests.DevQAProdCom.NET.AI\Tests.DevQAProdCom.NET.AI.csproj", "{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -227,6 +229,10 @@ Global
 		{8C9A67D0-EB27-40EB-B6AF-24457268B3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C9A67D0-EB27-40EB-B6AF-24457268B3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C9A67D0-EB27-40EB-B6AF-24457268B3EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +281,7 @@ Global
 		{40674186-D4DC-4016-9839-03BFBC5047F5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{20F8256F-940D-4AD6-8876-54D8793E55BF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8C9A67D0-EB27-40EB-B6AF-24457268B3EF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3} = {818250BC-823E-4BC7-9F67-E2CB4ED4568A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {072B6B76-6C41-4BA2-8622-3960BE210481}

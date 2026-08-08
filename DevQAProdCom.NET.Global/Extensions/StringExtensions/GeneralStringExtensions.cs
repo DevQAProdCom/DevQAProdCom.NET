@@ -92,5 +92,26 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
                 throw new JsonException($"An error occurred while deserializing to type '{typeof(T).Name}' JSON string: \n{json}\nException: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Truncates the string to the specified number of symbols and appends a suffix indicating remaining symbols if truncated.
+        /// </summary>
+        /// <param name="string">The string to truncate.</param>
+        /// <param name="maxSymbols">The maximum number of symbols to include before truncation.</param>
+        /// <returns>The truncated string with a suffix showing remaining symbols count, or the original string if no truncation occurred.</returns>
+        public static string TruncateWithCount(this string @string, int maxSymbols)
+        {
+            if (string.IsNullOrEmpty(@string))
+                return @string;
+
+            if (maxSymbols < 0)
+                throw new ArgumentException("Maximum symbols must be non-negative.", nameof(maxSymbols));
+
+            if (@string.Length <= maxSymbols)
+                return @string;
+
+            var remaining = @string.Length - maxSymbols;
+            return $"{@string.Substring(0, maxSymbols)}...[{remaining} symbols]";
+        }
     }
 }
