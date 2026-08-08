@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class AiEntityWithTYamlConfigurationType<TYamlConfigurationType> : AiEntityModel, IAiEntityWithTYamlConfigurationType<TYamlConfigurationType>
+    public class AiEntityWithTYamlConfigurationTypeModel<TYamlConfigurationType> : AiEntityModel, IAiEntityWithTYamlConfigurationType<TYamlConfigurationType>
     {
         public TYamlConfigurationType ConfigurationData { get; set; }
     }

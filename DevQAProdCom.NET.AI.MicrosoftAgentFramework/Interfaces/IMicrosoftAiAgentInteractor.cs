@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
 {
-    public interface IMicrosoftAiAgentInteractor : IAiAgentInteractor
+    public interface IMicrosoftAiAgentInteractor : IAiEntityWithTYamlConfigurationTypeInteractor
     {
     }
 }

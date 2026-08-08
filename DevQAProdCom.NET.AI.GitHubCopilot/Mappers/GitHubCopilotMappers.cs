@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
 {
     public class GitHubCopilotMappers
     {
-        public CustomAgentConfig ToCustomAgentConfig(IAiAgent<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent)
+        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent)
         {
             var config = new CustomAgentConfig();
 

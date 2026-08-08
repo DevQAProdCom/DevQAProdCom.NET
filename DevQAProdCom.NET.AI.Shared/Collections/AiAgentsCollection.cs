@@ -1,17 +1,18 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.Utils;
 
 namespace DevQAProdCom.NET.AI.Shared.Collections
 {
-    public class AiAgentsCollection<TAiAgentYamlConfiguration> : IAiAgentsCollection<TAiAgentYamlConfiguration>
+    public class AiAgentsCollection<TAiAgentYamlConfiguration> : IAiEntityWithTYamlConfigurationTypesCollection<TAiAgentYamlConfiguration>
         where TAiAgentYamlConfiguration : IBaseAiAgentYamlConfiguration, new()
     {
         public string? BaseFolder { get; set; }
         public static List<string> SharedAgentsLocations { get; set; } = new();
 
-        protected List<IAiAgent<TAiAgentYamlConfiguration>> Agents = new();
+        protected List<IAiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration>> Agents = new();
 
         public AiAgentsCollection()
         {
@@ -23,7 +24,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             BaseFolder = baseFolder;
         }
 
-        public IAiAgent<TAiAgentYamlConfiguration> GetAgentData(string agentIdentifier)
+        public IAiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration> GetAgentData(string agentIdentifier)
         {
             if (TryGetAgentData(agentIdentifier, out var agentData))
             {
@@ -34,7 +35,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         }
 
 
-        public bool TryGetAgentData(string agentIdentifier, out IAiAgent<TAiAgentYamlConfiguration>? agentData)
+        public bool TryGetAgentData(string agentIdentifier, out IAiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration>? agentData)
         {
             var matchingAgents = Agents.Where(x => x.ConfigurationData.Name == agentIdentifier).ToList();
 
@@ -66,11 +67,11 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             }
         }
 
-        public IAiAgent<TAiAgentYamlConfiguration> AddAgentData(string filePath)
+        public IAiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration> AddAgentData(string filePath)
         {
             if (File.Exists(filePath))
             {
-                var agentData = YamlUtils.SplitEntityDataAndYamlMetaData<AiAgentModel<TAiAgentYamlConfiguration>, TAiAgentYamlConfiguration>(filePath);
+                var agentData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTYamlConfigurationTypeModel<TAiAgentYamlConfiguration>, TAiAgentYamlConfiguration>(filePath);
                 agentData.FilePath = filePath;
                 Agents.Add(agentData);
                 return agentData;

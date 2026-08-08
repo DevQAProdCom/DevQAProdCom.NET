@@ -2,15 +2,15 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Interfaces.Interactions
 {
-    public interface IAiAgentInteractor: IAsyncDisposable
+    public interface IAiEntityWithTYamlConfigurationTypeInteractor: IAsyncDisposable
     {
         public Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(IAiInteractionRequest request,
             Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
             int maxAttempts = 1,
             CancellationToken cancellationToken = default);
 
-        public IAiAgentInteractor WithAgent(string agentIdentifier);
-        public IAiAgentInteractor WithAgent(FileInfo filePath);
-        public IAiAgentInteractor WithWorkingDirectory(string workingDirectory);
+        public IAiEntityWithTYamlConfigurationTypeInteractor WithAgent(string agentIdentifier);
+        public IAiEntityWithTYamlConfigurationTypeInteractor WithAgent(FileInfo filePath);
+        public IAiEntityWithTYamlConfigurationTypeInteractor WithWorkingDirectory(string workingDirectory);
     }
 }

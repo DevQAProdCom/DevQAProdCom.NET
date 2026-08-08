@@ -18,8 +18,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private PermissionDecisionsCollection? _permissionDecisionsCollection;
         private PermissionDecisionsCollection? PermissionDecisionsCollection => _permissionDecisionsCollection ??= new();
 
-        private IAiAgentsCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _aiAgentsCollection;
-        private IAiAgentsCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection();
+        private IAiEntityWithTYamlConfigurationTypesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _aiAgentsCollection;
+        private IAiEntityWithTYamlConfigurationTypesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection();
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
