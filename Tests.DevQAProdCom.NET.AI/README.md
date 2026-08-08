@@ -16,12 +16,22 @@ Add conditional logic to your `<IsTestProject>` block:
   <TargetFramework>net8.0</TargetFramework>
   <ImplicitUsings>enable</ImplicitUsings>
   <Nullable>enable</Nullable>
-  
+
   <!-- If 'AsApp' is true, disable test project behavior to allow execution -->
   <IsTestProject Condition="'\$(AsApp)' == 'true'">false</IsTestProject>
   <IsTestProject Condition="'\$(AsApp)' != 'true'">true</IsTestProject>
+
+  <!-- When running as an app, produce an executable and prevent the test SDK from generating its own Main -->
+  <OutputType Condition="'\$(AsApp)' == 'true'">Exe</OutputType>
+  <GenerateProgramFile Condition="'\$(AsApp)' == 'true'">false</GenerateProgramFile>
+
   <IsPackable>false</IsPackable>
 </PropertyGroup>
+
+<!-- In test mode, exclude Program.cs so there is only one entry point -->
+<ItemGroup Condition="'\$(AsApp)' != 'true'">
+  <Compile Remove="Program.cs" />
+</ItemGroup>
 ```
 
 ### 2. CLI Execution Commands
@@ -39,6 +49,8 @@ Add conditional logic to your `<IsTestProject>` block:
   ```bash
   dotnet run /p:AsApp=true -- CalculatorTests RunSum 10 25
   ```
+
+> **Note:** The reflection runner resolves the class by full name (e.g., `MyNamespace.CalculatorTests`) or by short name (`CalculatorTests`) in the entry assembly. You do not need to type the full namespace unless there are multiple classes with the same short name.
 
 ---
 
