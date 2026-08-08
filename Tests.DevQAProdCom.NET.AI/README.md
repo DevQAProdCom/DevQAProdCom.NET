@@ -1,126 +1,85 @@
-# Dynamic Test & App Runner Setup
+﻿# Dynamic Test & App Runner Setup
+# Dual-Mode Test/Application Project
 
-This project is configured to work as both an **NUnit Test Suite** and a **Runnable Console Application**. By default, it acts as a test project, but it can be toggled into an application via build properties or command-line parameters.
-
----
-
-## Primary Setup: Custom MSBuild Property (Recommended)
-
-This approach dynamically toggles the project type during compilation using the `/p:AsApp=true` switch.
-
-### 1. Project Configuration (`.csproj`)
-Add conditional logic to your `<IsTestProject>` block:
-
-```xml
-<PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <ImplicitUsings>enable</ImplicitUsings>
-  <Nullable>enable</Nullable>
-
-  <!-- If 'AsApp' is true, disable test project behavior to allow execution -->
-  <IsTestProject Condition="'\$(AsApp)' == 'true'">false</IsTestProject>
-  <IsTestProject Condition="'\$(AsApp)' != 'true'">true</IsTestProject>
-
-  <!-- When running as an app, produce an executable and prevent the test SDK from generating its own Main -->
-  <OutputType Condition="'\$(AsApp)' == 'true'">Exe</OutputType>
-  <GenerateProgramFile Condition="'\$(AsApp)' == 'true'">false</GenerateProgramFile>
-
-  <IsPackable>false</IsPackable>
-</PropertyGroup>
-
-<!-- In test mode, exclude Program.cs so there is only one entry point -->
-<ItemGroup Condition="'\$(AsApp)' != 'true'">
-  <Compile Remove="Program.cs" />
-</ItemGroup>
-```
-
-### 2. CLI Execution Commands
-
-* **To run standard NUnit tests via IDE or runner:**
-  ```bash
-  dotnet test
-  ```
-
-* **To run a specific class and method as an application (Program.cs):**
-  ```bash
-  dotnet run /p:AsApp=true -- <ClassName> <MethodName> [Param1] [Param2]
-  ```
-  *Example:*
-  ```bash
-  dotnet run /p:AsApp=true -- CalculatorTests RunSum 10 25
-  ```
-
-> **Note:** The reflection runner resolves the class by full name (e.g., `MyNamespace.CalculatorTests`) or by short name (`CalculatorTests`) in the entry assembly. You do not need to type the full namespace unless there are multiple classes with the same short name.
+This project works as both an **NUnit Test Suite** and a **Console Application**, controlled by the `AsApp` build property.
 
 ---
 
-## Alternative Setup: Programmatic Switch (`Program.cs`)
+## How It Works
 
-If you prefer avoiding MSBuild flags (`/p:AsApp=true`) entirely, you can permanently classify the project as a runnable application and use code routing instead.
+### The Problem
+.NET projects with `Microsoft.NET.Test.Sdk` cannot have a `Main` entry point—it causes build conflicts.
 
-### 1. Project Configuration (`.csproj`)
-Set `<IsTestProject>` permanently to `false` and force the compiler to output an executable:
+### The Solution
+We use a **long method name** that MSBuild renames during app builds:
 
-```xml
-<PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <ImplicitUsings>enable</ImplicitUsings>
-  <Nullable>enable</Nullable>
-  
-  <!-- Always false so the project entry point (Program.cs) is never bypassed -->
-  <IsTestProject>false</IsTestProject> 
-  <OutputType>Exe</OutputType>
-</PropertyGroup>
+- **Test Mode (default):** Method is named `Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp` → not recognized as entry point → tests run normally
+- **App Mode (`AsApp=true`):** MSBuild target renames it to `Main` → becomes entry point → executable created
 
-<ItemGroup>
-  <!-- NUnitLite package is required to programmatically run tests via code -->
-  <PackageReference Include="NUnitLite" Version="4.2.2" />
-</ItemGroup>
+---
+
+## Project Structure
+
+```
+Tests.DevQAProdCom.NET.AI/
+├── Build/RenameMainMethod.targets   # Renames method during build
+├── Program.cs                       # Entry point with long method name
+├── AiTests.cs                       # Test classes
+└── Tests.DevQAProdCom.NET.AI.csproj # Controls mode switching
 ```
 
-### 2. Implementation (`Program.cs`)
-Handle the switch routing programmatically using NUnitLite:
+---
+
+## Key Configuration
+
+### `.csproj` Settings
+
+```xml
+<!-- Switch between test/app mode -->
+<IsTestProject Condition="'$(AsApp)' == 'true'">false</IsTestProject>
+<OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
+
+<!-- Exclude Test SDK in app mode (prevents conflicts) -->
+<PackageReference Include="Microsoft.NET.Test.Sdk" Condition="'$(AsApp)' != 'true'" />
+
+<!-- Import rename logic only when needed -->
+<Import Project="Build\RenameMainMethod.targets" Condition="'$(AsApp)' == 'true'" />
+```
+
+### `Program.cs` Entry Point
 
 ```csharp
-using System;
-using NUnitLite;
-
-class Program
+static void Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp(string[] args)
 {
-    static int Main(string[] args)
-    {
-        // Detect if the user passed the explicit test flag
-        bool runAsTests = args.Length > 0 && args[0] == "--tests";
-
-        if (runAsTests)
-        {
-            Console.WriteLine("Running as NUnit Test Suite...");
-            return new AutoRun().Execute(args); 
-        }
-
-        // Otherwise, execute regular application reflection logic
-        if (args.Length < 2)
-        {
-            Console.WriteLine("Usage: dotnet run -- <ClassName> <MethodName> [Params...]");
-            return 1;
-        }
-
-        // Call your Reflection handler here
-        return 0;
-    }
+    // Uses reflection to invoke: <ClassName> <MethodName> [Parameters...]
+    ReflectionUtils.InvokeMethodWithArgs(className, methodName, args, logger);
 }
 ```
 
-### 3. CLI Execution Commands
+### `Build\RenameMainMethod.targets`
 
-* **To run tests dynamically:**
-  ```bash
-  dotnet run -- --tests
-  ```
+MSBuild target that:
+1. Reads `Program.cs`
+2. Replaces long method name with `Main`
+3. Writes temp file to `obj/` directory
+4. Compiles temp file instead of original
 
-* **To run your class/method logic:**
-  ```bash
-  dotnet run -- <ClassName> <MethodName> [Param1] [Param2]
-  ```
+---
 
+## Usage
 
+### Run as NUnit Tests (Default)
+
+```bash
+dotnet test
+```
+
+- `Program.cs` is compiled but ignored (long method name ≠ entry point)
+- NUnit test methods execute normally
+
+### Run as Console Application
+
+```bash
+# From solution root
+dotnet run --project Tests.DevQAProdCom.NET.AI -p:AsApp=true -- TestsSuite TestName [Optional Arguments]
+```
