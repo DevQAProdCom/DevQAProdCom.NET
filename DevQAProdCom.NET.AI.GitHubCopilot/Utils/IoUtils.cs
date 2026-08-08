@@ -5,9 +5,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 {
     public interface IoUtils
     {
-        public static List<string> GetCopilotAgents(string initialFolder)
+        public static List<string> GetCopilotAgents(string directory)
         {
-            var agentsDirectory = Path.Combine(initialFolder, Const.Directories.GetGitHubAgentsDirectory());
+            var agentsDirectory = Path.Combine(directory, Const.Directories.GetGitHubAgentsDirectory());
 
             if (!Directory.Exists(agentsDirectory))
             {
@@ -15,6 +15,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             }
 
             return GlobalIoUtils.GetMarkdownFiles(agentsDirectory);
+        }
+
+        public static List<string> GetCopilotInstructions(string directory)
+        {
+            var instructionsDirectory = Path.Combine(directory, Const.Directories.GetGitHubInstructionsDirectory());
+
+            if (!Directory.Exists(instructionsDirectory))
+            {
+                return new List<string>();
+            }
+
+            return GlobalIoUtils.GetMarkdownFiles(instructionsDirectory);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
         where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
     {
-        public string? BaseFolder { get; set; }
+        public string? BaseDirectory { get; set; }
 
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
 
@@ -19,7 +19,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
         public AiEntitiesCollection(string baseFolder) : this()
         {
-            BaseFolder = baseFolder;
+            BaseDirectory = baseFolder;
         }
 
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetEntityData(string entityIdentifier)
@@ -53,7 +53,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
         private void InitializeCollection()
         {
-            var baseEntitiesLocations = GetBaseEntitiesLocations();
+            var baseEntitiesLocations = GetEntitiesLocations();
             var mdFiles = IoUtils.GetMarkdownFiles(baseEntitiesLocations);
 
             foreach (var mdFile in mdFiles)
@@ -75,6 +75,34 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             throw new Exception($"File '{filePath}' with entity is not found.");
         }
 
-        protected virtual List<string> GetBaseEntitiesLocations() => new();
+        protected List<string> GetEntitiesLocations()
+        {
+            var entitiesLocations = new List<string>();
+
+            if (!string.IsNullOrEmpty(BaseDirectory))
+            {
+                var entities = FindEntitiesInDirectory(BaseDirectory);
+                entitiesLocations.AddRange(entities);
+            }
+            else
+            {
+                var currentDirectory = Directory.GetCurrentDirectory();
+                var entities = FindEntitiesInDirectory(currentDirectory);
+                entitiesLocations.AddRange(entities);
+
+                var solutionFolder = IoUtils.GetNearestSolutionDirectoryAsCurrentOrParent(currentDirectory);
+                entities = FindEntitiesInDirectory(solutionFolder);
+                entitiesLocations.AddRange(entities);
+            }
+
+            return entitiesLocations;
+        }
+
+        /// <summary>
+        /// Finds all entity file paths within the specified directory.
+        /// </summary>
+        /// <param name="directory">The directory path to search for entities.</param>
+        /// <returns>A list of file paths for entities found in the directory.</returns>
+        protected virtual List<string> FindEntitiesInDirectory(string directory) => new List<string>();
     }
 }

@@ -6,15 +6,25 @@
         {
             public const string GITHUB = ".github";
             public const string AGENTS = "agents";
-
-            public static string GetGitHubAgentsDirectory(string? initialDirectory = null)
+            public const string INSTRUCTIONS = "instructions";
+            public static string GetGitHubAgentsDirectory(string? directory = null)
             {
-                if (!string.IsNullOrEmpty(initialDirectory))
+                if (!string.IsNullOrEmpty(directory))
                 {
-                    return Path.Combine(initialDirectory, GITHUB, AGENTS);
+                    return Path.Combine(directory, GITHUB, AGENTS);
                 }
 
                 return Path.Combine(GITHUB, AGENTS);
+            }
+
+            public static string GetGitHubInstructionsDirectory(string? directory = null)
+            {
+                if (!string.IsNullOrEmpty(directory))
+                {
+                    return Path.Combine(directory, GITHUB, INSTRUCTIONS);
+                }
+
+                return Path.Combine(GITHUB, INSTRUCTIONS);
             }
         }
     }

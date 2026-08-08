@@ -14,4 +14,8 @@
     <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="LOCAL\" />
+  </ItemGroup>
+
 </Project>
