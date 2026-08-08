@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 

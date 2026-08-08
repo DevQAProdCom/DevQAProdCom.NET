@@ -1,4 +1,4 @@
-﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
+﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.Agents
 {
     public interface IAiAgentsCollection<TAiAgentYamlConfiguration> where TAiAgentYamlConfiguration : IBaseAiAgentYamlConfiguration, new()
     {

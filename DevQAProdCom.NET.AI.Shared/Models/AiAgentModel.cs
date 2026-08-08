@@ -1,11 +1,8 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class AiAgentModel<TAiAgentYamlConfiguration> : IAiAgent<TAiAgentYamlConfiguration>
+    public class AiAgentModel<TAiAgentYamlConfiguration> : AiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration>, IAiAgent<TAiAgentYamlConfiguration>
     {
-        public string? FilePath { get; set; }
-        public TAiAgentYamlConfiguration? ConfigurationData { get; set; }
-        public string Prompt { get; set; }
     }
 }

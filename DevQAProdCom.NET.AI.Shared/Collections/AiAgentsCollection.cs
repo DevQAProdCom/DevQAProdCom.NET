@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.Utils;

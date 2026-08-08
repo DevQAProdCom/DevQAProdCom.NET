@@ -1,6 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Builders;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
-using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;

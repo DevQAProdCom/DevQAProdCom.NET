@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {

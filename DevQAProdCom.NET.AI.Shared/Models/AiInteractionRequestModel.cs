@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {

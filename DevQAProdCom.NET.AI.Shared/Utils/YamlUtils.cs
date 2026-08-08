@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.Shared.Utils

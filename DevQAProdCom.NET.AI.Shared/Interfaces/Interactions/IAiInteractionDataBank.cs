@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace DevQAProdCom.NET.AI.Shared.Interfaces
+namespace DevQAProdCom.NET.AI.Shared.Interfaces.Interactions
 {
     public interface IAiInteractionDataBank
     {
