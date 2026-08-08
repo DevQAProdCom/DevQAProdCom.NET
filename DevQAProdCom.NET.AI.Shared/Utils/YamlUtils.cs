@@ -1,5 +1,4 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
-using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.Shared.Utils
@@ -8,7 +7,7 @@ namespace DevQAProdCom.NET.AI.Shared.Utils
     {
         public static TEntity SplitEntityDataAndYamlMetaData<TEntity, TYamlConfig>(string filePath)
             where TEntity : IAiEntityWithTYamlConfigurationType<TYamlConfig>, new()
-            where TYamlConfig : IBaseAiAgentYamlConfiguration, new()
+            where TYamlConfig : IAiEntityYamlConfiguration, new()
         {
             string? fileContent = null;
 

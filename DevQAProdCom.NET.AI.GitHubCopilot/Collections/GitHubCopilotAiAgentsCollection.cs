@@ -5,33 +5,33 @@ using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
-    public class GitHubCopilotAiAgentsCollection : AiAgentsCollection<GitHubCopilotAiAgentYamlConfigurationModel>
+    public class GitHubCopilotAiAgentsCollection : AiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>
     {
         public GitHubCopilotAiAgentsCollection() : base() { }
 
         public GitHubCopilotAiAgentsCollection(string baseFolder) : base(baseFolder) { }
 
-        protected override List<string> GetBaseAgentsLocations()
+        protected override List<string> GetBaseEntitiesLocations()
         {
-            var agentsLocations = new List<string>();
+            var entitiesLocations = new List<string>();
 
             if (!string.IsNullOrEmpty(BaseFolder))
             {
-                var agents = IoUtils.GetCopilotAgents(BaseFolder);
-                agentsLocations.AddRange(agents);
+                var entities = IoUtils.GetCopilotAgents(BaseFolder);
+                entitiesLocations.AddRange(entities);
             }
             else
             {
                 var currentDirectory = Directory.GetCurrentDirectory();
-                var agents = IoUtils.GetCopilotAgents(currentDirectory);
-                agentsLocations.AddRange(agents);
+                var entities = IoUtils.GetCopilotAgents(currentDirectory);
+                entitiesLocations.AddRange(entities);
 
                 var solutionFolder = GlobalIoUtils.GetNearestSolutionDirectoryAsCurrentOrParent(currentDirectory);
-                agents = IoUtils.GetCopilotAgents(solutionFolder);
-                agentsLocations.AddRange(agents);
+                entities = IoUtils.GetCopilotAgents(solutionFolder);
+                entitiesLocations.AddRange(entities);
             }
 
-            return agentsLocations;
+            return entitiesLocations;
         }
     }
 }

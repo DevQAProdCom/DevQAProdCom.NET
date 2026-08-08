@@ -1,7 +1,7 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
-using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
+using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
@@ -18,8 +18,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private PermissionDecisionsCollection? _permissionDecisionsCollection;
         private PermissionDecisionsCollection? PermissionDecisionsCollection => _permissionDecisionsCollection ??= new();
 
-        private IAiEntityWithTYamlConfigurationTypesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _aiAgentsCollection;
-        private IAiEntityWithTYamlConfigurationTypesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection();
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _aiAgentsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection();
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -45,8 +45,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgent(FileInfo filePath)
         {
-            var agentData = AiAgentsCollection.AddAgentData(filePath.FullName);
-            _sessionConfig.Agent = agentData.ConfigurationData.Name;
+            var entityData = AiAgentsCollection.AddEntityData(filePath.FullName);
+            _sessionConfig.Agent = entityData.ConfigurationData.Name;
             return this;
         }
 
@@ -85,8 +85,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithCustomAgentConfig(string agentIdentifier)
         {
-            var agent = AiAgentsCollection.GetAgentData(agentIdentifier);
-            var config = GitHubCopilotMappers.ToCustomAgentConfig(agent);
+            var entity = AiAgentsCollection.GetEntityData(agentIdentifier);
+            var config = GitHubCopilotMappers.ToCustomAgentConfig(entity);
             return WithCustomAgentConfig(config);
         }
 
@@ -126,21 +126,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if (_sessionConfig.Agent != null)
             {
-                if (AiAgentsCollection.TryGetAgentData(_sessionConfig.Agent, out var agentData))
+                if (AiAgentsCollection.TryGetEntityData(_sessionConfig.Agent, out var entityData))
                 {
-                    var model = agentData!.ConfigurationData.Model;
+                    var model = entityData!.ConfigurationData.Model;
 
                     if (!string.IsNullOrEmpty(model))
                     {
                         _sessionConfig.Model = model;
                     }
-                    _sessionConfig.AvailableTools = agentData.ConfigurationData.Tools;
+                    _sessionConfig.AvailableTools = entityData.ConfigurationData.Tools;
 
                     WithCustomAgentConfig(_sessionConfig.Agent);
 
-                    if (agentData.ConfigurationData.CustomPermissions?.Count() > 0)
+                    if (entityData.ConfigurationData.CustomPermissions?.Count() > 0)
                     {
-                        foreach (var permission in agentData.ConfigurationData.CustomPermissions)
+                        foreach (var permission in entityData.ConfigurationData.CustomPermissions)
                         {
                             WithPermission(permission);
                         }
