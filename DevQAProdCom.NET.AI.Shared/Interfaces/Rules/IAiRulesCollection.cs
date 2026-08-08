@@ -2,8 +2,8 @@
 {
     public interface IAiRulesCollection<TAiRuleYamlConfiguration> where TAiRuleYamlConfiguration : IBaseAiRuleYamlConfiguration, new()
     {
-        public IAiRule<TAiRuleYamlConfiguration> GetRuleData(string agentIdentifier);
-        public bool TryGetRuleData(string agentIdentifier, out IAiRule<TAiRuleYamlConfiguration>? agent);
-        public IAiRule<TAiRuleYamlConfiguration> AddRuleData(string filePath);
+        public IAiEntityWithTYamlConfigurationType<TAiRuleYamlConfiguration> GetRuleData(string agentIdentifier);
+        public bool TryGetRuleData(string agentIdentifier, out IAiEntityWithTYamlConfigurationType<TAiRuleYamlConfiguration>? agent);
+        public IAiEntityWithTYamlConfigurationType<TAiRuleYamlConfiguration> AddRuleData(string filePath);
     }
 }
