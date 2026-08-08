@@ -34,7 +34,6 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             throw new InvalidOperationException($"Agent with identifier/name '{agentIdentifier}' is not found in the collection.");
         }
 
-
         public bool TryGetAgentData(string agentIdentifier, out IAiEntityWithTYamlConfigurationType<TAiAgentYamlConfiguration>? agentData)
         {
             var matchingAgents = Agents.Where(x => x.ConfigurationData.Name == agentIdentifier).ToList();
