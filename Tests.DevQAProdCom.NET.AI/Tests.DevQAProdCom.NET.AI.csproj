@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,8 +6,10 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-    <IsTestProject Condition="'\$(AsApp)' == 'true'">false</IsTestProject>
-    <IsTestProject Condition="'\$(AsApp)' != 'true'">true</IsTestProject>
+    <IsTestProject Condition="'$(AsApp)' == 'true'">false</IsTestProject>
+    <IsTestProject Condition="'$(AsApp)' != 'true'">true</IsTestProject>
+    <OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
+    <GenerateProgramFile Condition="'$(AsApp)' == 'true'">false</GenerateProgramFile>
   </PropertyGroup>
 
   <ItemGroup>

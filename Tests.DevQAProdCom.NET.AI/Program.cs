@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.Global.Utils;
+using System;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -6,6 +7,8 @@ namespace Tests.DevQAProdCom.NET.AI
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(args.Length > 0 ? $"Application Started with arguments: {string.Join(", ", args)}" : "Application Started with no arguments");
+
             // Expecting at least: class_name method_name
             if (args.Length < 2)
             {

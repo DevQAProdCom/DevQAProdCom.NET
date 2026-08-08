@@ -18,7 +18,12 @@ namespace DevQAProdCom.NET.Global.Utils
             {
                 // 1. Find the type in the current assembly (first by full name, then by short name)
                 Type? type = Type.GetType(className) ??
+                             Assembly.GetEntryAssembly()?.GetType(className) ??
                              Assembly.GetExecutingAssembly().GetType(className);
+
+                // If not found by full name, search by short class name in the entry and executing assemblies
+                type ??= Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(t => t.Name == className);
+                type ??= Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.Name == className);
 
                 if (type == null)
                 {

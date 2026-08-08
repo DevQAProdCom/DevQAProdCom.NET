@@ -11,6 +11,14 @@
         [Test]
         public void Test1()
         {
+            Console.WriteLine("Test1 executed.");
+            //Assert.Pass();
+        }
+
+        [Test]
+        public void Test2()
+        {
+            Console.WriteLine("Test2 executed.");
             Assert.Pass();
         }
     }
