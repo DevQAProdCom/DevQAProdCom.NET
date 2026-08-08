@@ -9,7 +9,6 @@
     <IsTestProject Condition="'$(AsApp)' == 'true'">false</IsTestProject>
     <IsTestProject Condition="'$(AsApp)' != 'true'">true</IsTestProject>
     <OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
-    <DefineConstants Condition="'$(AsApp)' == 'true'">$(DefineConstants);AS_APP</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,31 +26,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
   </ItemGroup>
 
-  <!-- When building as app, replace Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp with Main to create entry point -->
-  <Target Name="RenameMainMethod" BeforeTargets="CoreCompile" Condition="'$(AsApp)' == 'true'">
-    <PropertyGroup>
-      <ProgramCsPath>$(MSBuildProjectDirectory)\Program.cs</ProgramCsPath>
-      <ProgramCsTempPath>$(IntermediateOutputPath)Program.temp.cs</ProgramCsTempPath>
-    </PropertyGroup>
-
-    <!-- Read, replace, and write to intermediate output -->
-    <ReadLinesFromFile File="$(ProgramCsPath)">
-      <Output TaskParameter="Lines" ItemName="OriginalProgramLines" />
-    </ReadLinesFromFile>
-
-    <ItemGroup>
-      <ModifiedProgramLines Include="@(OriginalProgramLines->Replace('Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp', 'Main'))" />
-    </ItemGroup>
-
-    <WriteLinesToFile File="$(ProgramCsTempPath)" Lines="@(ModifiedProgramLines)" Overwrite="true" />
-
-    <!-- Remove original and include modified version -->
-    <ItemGroup>
-      <Compile Remove="Program.cs" />
-      <Compile Include="$(ProgramCsTempPath)">
-        <Link>Program.cs</Link>
-      </Compile>
-    </ItemGroup>
-  </Target>
+  <Import Project="Build\RenameMainMethod.targets" Condition="'$(AsApp)' == 'true'" />
 
 </Project>
