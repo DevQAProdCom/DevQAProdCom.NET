@@ -1,4 +1,6 @@
-﻿namespace Tests.DevQAProdCom.NET.AI
+﻿using NUnit.Framework;
+
+namespace Tests.DevQAProdCom.NET.AI
 {
     public class AiTests
     {
@@ -13,7 +15,7 @@
         {
             DependencyInjection.DiContainer.Instance.Log.Info("Test1 executed.");
             Console.WriteLine("Test1 executed.");
-            Assert.Pass();
+            //Assert.Pass();
         }
 
         [Test]
