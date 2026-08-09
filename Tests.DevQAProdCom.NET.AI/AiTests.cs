@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -15,14 +16,14 @@ namespace Tests.DevQAProdCom.NET.AI
         {
             DependencyInjection.DiContainer.Instance.Log.Info("Test1 executed.");
             Console.WriteLine("Test1 executed.");
-            //Assert.Pass();
+            true.Should().BeTrue();
         }
 
         [Test]
         public void Test2()
         {
             Console.WriteLine("Test2 executed.");
-            Assert.Fail();
+            true.Should().BeFalse();
         }
     }
 }

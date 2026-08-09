@@ -374,12 +374,9 @@ MigrationBackup/
 **/npm-debug.log
 **/yarn-debug.log
 
-
 LOCAL*
 local*
 
 AGENTS.md
-
-.github/
 
 Reserve.bat
