@@ -7,12 +7,13 @@ namespace DevQAProdCom.NET.Global.Utils
     {
         /// <summary>
         /// Dynamically finds a class, creates an instance, parses string arguments, and invokes the specified method.
+        /// Supports both synchronous and asynchronous methods.
         /// </summary>
         /// <param name="className">The full or relative name of the class.</param>
         /// <param name="methodName">The name of the method to invoke.</param>
         /// <param name="args">An array of string arguments from the command line.</param>
         /// <param name="logger">An optional logger instance for logging messages.</param>
-        public static void InvokeMethodWithArgs(string className, string methodName, List<string>? args = null, ILogger? logger = null)
+        public static async Task InvokeMethodWithArgsAsync(string className, string methodName, List<string>? args = null, ILogger? logger = null)
         {
             try
             {
@@ -23,7 +24,7 @@ namespace DevQAProdCom.NET.Global.Utils
 
                 // If not found by full name, search by short class name in the entry and executing assemblies
                 type ??= Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(t => t.Name == className);
-                type ??= Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.Name == className);
+                type ??= Assembly.GetExecutingAssembly()?.GetTypes().FirstOrDefault(t => t.Name == className);
 
                 if (type == null)
                 {
@@ -86,12 +87,19 @@ namespace DevQAProdCom.NET.Global.Utils
                 {
                     Console.WriteLine(invokeMessage);
                 }
-                method.Invoke(instance, convertedArgs);
+
+                object? result = method.Invoke(instance, convertedArgs);
+
+                // If the method returns a Task, await it
+                if (result is Task task)
+                {
+                    await task.ConfigureAwait(false);
+                }
             }
             catch (TargetInvocationException ex)
             {
                 // Handles an error that occurred inside the invoked method itself
-                var message = $" Method execution error: {ex.InnerException?.Message ?? ex.Message}";
+                var message = $" Method execution error: {ex.InnerException?.Message ?? ex.Message}\nStack Trace: {ex.InnerException?.StackTrace ?? ex.StackTrace}";
                 if (logger != null)
                 {
                     logger.Error(message);
@@ -104,11 +112,15 @@ namespace DevQAProdCom.NET.Global.Utils
             catch (Exception ex)
             {
                 // Handles reflection errors or type parsing errors
-                var message = $" Reflection error: {ex.Message}";
+                var message = $" Error while invoking class '{className}' method '{methodName}': {ex.Message}\nStack Trace: {ex.StackTrace}";
                 if (logger != null)
+                {
                     logger.Error(message);
+                }
                 else
+                {
                     Console.WriteLine(message);
+                }
             }
         }
     }

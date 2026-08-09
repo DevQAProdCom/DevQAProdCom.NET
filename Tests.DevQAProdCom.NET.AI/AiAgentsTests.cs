@@ -12,9 +12,8 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task ReadWriteAgentTest()
         {
-            var testDirectory = Path.Combine(Environment.CurrentDirectory, nameof(ReadWriteAgentTest));
+            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(ReadWriteAgentTest));
             GlobalIoUtils.DeleteDirectory(testDirectory);
-
 
             if (Directory.Exists(testDirectory))
             {
@@ -39,21 +38,76 @@ namespace Tests.DevQAProdCom.NET.AI
 
             var responseValidator = new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent);
 
-            var agent = AiAgentsInteractorsFactory
+            await using (var agent = AiAgentsInteractorsFactory
                 .GetGitHubCopilotAiAgentInteractor()
                 .WithAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
                 .WithIsolation()
-                .WithWorkingDirectory(testDirectory);
-
-            var request = new AiInteractionRequestModel
+                .WithWorkingDirectory(testDirectory))
             {
-                Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath)
-            };
+                var request = new AiInteractionRequestModel
+                {
+                    Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath)
+                };
 
-            await agent.InvokeAiAgentWithStreamingAsync(
-                request,
-                responseValidationFunc: responseValidator.Validate,
-                maxAttempts: 3);
+                await agent.InvokeAiAgentWithStreamingAsync(
+                    request,
+                    responseValidationFunc: responseValidator.Validate,
+                    maxAttempts: 3);
+            }
+
+            var finalValidation = responseValidator.Validate();
+            finalValidation.IsSuccessful.Should().BeTrue(finalValidation.Error);
+
+            GlobalIoUtils.DeleteDirectory(testDirectory);
+        }
+
+
+        [Test]
+        public async Task ReadWriteAgentTest()
+        {
+            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(ReadWriteAgentTest));
+            GlobalIoUtils.DeleteDirectory(testDirectory);
+
+            if (Directory.Exists(testDirectory))
+            {
+                Directory.Delete(testDirectory, recursive: true);
+            }
+
+            Directory.CreateDirectory(testDirectory);
+
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss");
+
+            var inputFileName = $"file_to_read_{timestamp}.txt";
+            var inputFilePath = Path.Combine(testDirectory, inputFileName);
+            var inputContent = $"Random content for {timestamp} - {Guid.NewGuid()}";
+            await File.WriteAllTextAsync(inputFilePath, inputContent);
+
+            var outputFolderName = $"output_folder_to_write_{timestamp}";
+            var outputFolderPath = Path.Combine(testDirectory, outputFolderName);
+            Directory.CreateDirectory(outputFolderPath);
+
+            var expectedOutputFileName = $"file_to_read_{timestamp}_copilot.txt";
+            var expectedOutputFilePath = Path.Combine(outputFolderPath, expectedOutputFileName);
+
+            var responseValidator = new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent);
+
+            await using (var agent = AiAgentsInteractorsFactory
+                .GetGitHubCopilotAiAgentInteractor()
+                .WithAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
+                .WithIsolation()
+                //.WithSessionConfig(config=> config.WithIn)
+                .WithWorkingDirectory(testDirectory))
+            {
+                var request = new AiInteractionRequestModel
+                {
+                    Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath)
+                };
+
+                await agent.InvokeAiAgentWithStreamingAsync(
+                    request,
+                    responseValidationFunc: responseValidator.Validate,
+                    maxAttempts: 3);
+            }
 
             var finalValidation = responseValidator.Validate();
             finalValidation.IsSuccessful.Should().BeTrue(finalValidation.Error);

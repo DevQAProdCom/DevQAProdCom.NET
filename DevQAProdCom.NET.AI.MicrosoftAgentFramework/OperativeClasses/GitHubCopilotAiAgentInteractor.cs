@@ -236,7 +236,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                 _copilotClient = null;
             }
 
-            if (_copilotClientOptions.BaseDirectory != null)
+            if (_copilotClientOptions?.BaseDirectory != null)
             {
                 Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
             }

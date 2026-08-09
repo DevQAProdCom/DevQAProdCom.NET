@@ -12,7 +12,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot
         {
             if (content.RawRepresentation != null)
             {
-                var rawRepresentation = content.ToJson();
+                var rawRepresentation = content.RawRepresentation.ToJson();
                 handler.HandleEvent(rawRepresentation, interactionDataBank);
             }
         }

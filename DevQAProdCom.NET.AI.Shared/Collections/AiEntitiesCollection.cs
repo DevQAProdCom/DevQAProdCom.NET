@@ -1,7 +1,9 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
+using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Utils;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.Shared.Collections
 {
@@ -12,12 +14,16 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
 
-        public AiEntitiesCollection()
+        protected ILogger Log;
+
+        public AiEntitiesCollection(ILogger logger)
         {
+            ArgumentNullException.ThrowIfNull(logger);
+            Log = logger;
             InitializeCollection();
         }
 
-        public AiEntitiesCollection(string baseFolder) : this()
+        public AiEntitiesCollection(string baseFolder, ILogger logger) : this(logger)
         {
             BaseDirectory = baseFolder;
         }
@@ -38,7 +44,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
             if (matchingEntities.Count > 1)
             {
-                throw new InvalidOperationException($"Multiple entities with identifier/name '{entityIdentifier}' found in the collection.");
+                throw new InvalidOperationException($"Multiple entities with identifier/name '{entityIdentifier}' found in the collection. {matchingEntities.ToJson()}");
             }
 
             if (matchingEntities.Count == 1)
@@ -66,12 +72,15 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             if (File.Exists(filePath))
             {
+                Log.Info($"Adding entity data from file: {filePath}");
                 var entityData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTYamlConfigurationTypeModel<TAiEntityYamlConfiguration>, TAiEntityYamlConfiguration>(filePath);
                 entityData.FilePath = filePath;
                 Entities.Add(entityData);
+                Log.Info($"Successfully added entity data from file: {filePath}");
                 return entityData;
             }
 
+            Log.Error($"File '{filePath}' with entity is not found.");
             throw new Exception($"File '{filePath}' with entity is not found.");
         }
 
@@ -79,20 +88,42 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             var entitiesLocations = new List<string>();
 
+            Log.Info("Starting to gather entity locations.");
+
             if (!string.IsNullOrEmpty(BaseDirectory))
             {
+                Log.Info($"Using specified BaseDirectory: {BaseDirectory}");
                 var entities = FindEntitiesInDirectory(BaseDirectory);
                 entitiesLocations.AddRange(entities);
+                Log.Info($"Found {entities.Count} entities in BaseDirectory.");
             }
             else
             {
+                Log.Info("BaseDirectory not specified, searching in current directory and solution folder.");
                 var currentDirectory = Directory.GetCurrentDirectory();
+                Log.Info($"Current directory: {currentDirectory}");
                 var entities = FindEntitiesInDirectory(currentDirectory);
                 entitiesLocations.AddRange(entities);
+                Log.Info($"Found {entities.Count} entities in current directory.");
 
-                var solutionFolder = IoUtils.GetNearestSolutionDirectoryAsCurrentOrParent(currentDirectory);
-                entities = FindEntitiesInDirectory(solutionFolder);
-                entitiesLocations.AddRange(entities);
+                var solutionDirectory = IoUtils.GetNearestSolutionDirectoryAsCurrentOrParent(currentDirectory);
+                if (solutionDirectory != currentDirectory)
+                {
+                    Log.Info($"Solution folder: {solutionDirectory}");
+                    entities = FindEntitiesInDirectory(solutionDirectory);
+                    entitiesLocations.AddRange(entities);
+                    Log.Info($"Found {entities.Count} entities in solution folder.");
+                }
+            }
+
+            Log.Info($"Total entity locations found: {entitiesLocations.Count}");
+            if (entitiesLocations.Any())
+            {
+                Log.Info($"Entity locations: {string.Join(", ", entitiesLocations)}");
+            }
+            else
+            {
+                Log.Warning("No entity locations were found.");
             }
 
             return entitiesLocations;

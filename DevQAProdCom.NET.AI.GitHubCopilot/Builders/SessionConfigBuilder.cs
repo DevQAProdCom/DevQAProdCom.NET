@@ -23,7 +23,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private PermissionDecisionsCollection PermissionDecisionsCollection => _permissionDecisionsCollection ??= new();
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _aiAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection();
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AiAgentsCollection => _aiAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger);
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -131,17 +131,24 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="config"/> is <see langword="null"/>.</exception>
         public SessionConfigBuilder WithCustomAgentConfig(CustomAgentConfig config)
         {
-            ArgumentNullException.ThrowIfNull(config);
+            if (config == null)
+            {
+                _logger.Error("Attempted to add null {PropertyName} to {TypeName}", nameof(_sessionConfig.CustomAgents), nameof(SessionConfig));
+                throw new ArgumentNullException(nameof(config), $"Custom agent configuration cannot be null when adding to {nameof(_sessionConfig.CustomAgents)}.");
+            }
 
-            _logger.Info("Setting {TypeName} '{PropertyName}' parameter for agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
             _sessionConfig.CustomAgents ??= new List<CustomAgentConfig>();
             var existingAgent = _sessionConfig.CustomAgents.FirstOrDefault(a => a.Name == config.Name);
 
             if (existingAgent != null)
             {
-                _logger.Info("Replacing existing {TypeName} '{PropertyName}' entry for agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
+                _logger.Info("Replacing existing {TypeName} '{PropertyName}' entry as agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
                 _sessionConfig.CustomAgents.Remove(existingAgent);
+                _sessionConfig.CustomAgents.Add(config);
+                return this;
             }
+
+            _logger.Info("Adding {TypeName} '{PropertyName}' parameter as agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
             _sessionConfig.CustomAgents.Add(config);
 
             return this;
@@ -482,7 +489,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
             };
 
-            _logger.Info("{TypeName} built successfully (Model: {Model}, Agent: {Agent})", nameof(SessionConfig), _sessionConfig.Model ?? "null", _sessionConfig.Agent ?? "null");
+            _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
 

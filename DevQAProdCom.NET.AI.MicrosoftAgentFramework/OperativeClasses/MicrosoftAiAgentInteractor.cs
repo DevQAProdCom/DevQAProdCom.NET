@@ -18,6 +18,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
         public MicrosoftAiAgentInteractor(ILogger logger)
         {
+            ArgumentNullException.ThrowIfNull(logger);
             Logger = logger;
         }
 
@@ -42,7 +43,13 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
         public IAiAgentInteractor WithAiContentHandlers(params IAiContentHandler[] handlers)
         {
-            AiContentHandlers.AddRange(handlers);
+            if (handlers != null && handlers.Length > 0)
+            {
+                var handlerTypes = string.Join(", ", handlers.Select(h => h.GetType().Name));
+                Logger.Info($"Adding {handlers.Length} AI Content Handler(s): {handlerTypes}");
+                AiContentHandlers.AddRange(handlers);
+            }
+
             return this;
         }
 
