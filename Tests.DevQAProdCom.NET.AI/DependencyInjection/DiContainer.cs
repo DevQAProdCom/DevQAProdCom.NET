@@ -1,6 +1,10 @@
-﻿using DevQAProdCom.NET.DependencyInjection.Microsoft.OperativeClasses;
+﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.DependencyInjection;
+using DevQAProdCom.NET.DependencyInjection.Microsoft.OperativeClasses;
 using DevQAProdCom.NET.Logging.Providers.Serilog.DependencyInjection;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Interfaces;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Services;
 
 namespace Tests.DevQAProdCom.NET.AI.DependencyInjection
 {
@@ -13,18 +17,16 @@ namespace Tests.DevQAProdCom.NET.AI.DependencyInjection
 
         protected override void ConfigureServices()
         {
-            AddLogger();
+            _serviceCollection.AddSerilogLogger();
+            _serviceCollection.AddGitHubCopilotAiAgentInteractor();
+            _serviceCollection.AddMicrosoftAgentFrameworkAiAgentInteractorsFactory();
+            _serviceCollection.AddSingleton<IAiAgentsService, AiAgentsService>();
         }
 
         protected override void InitializeRequiredServices()
         {
             base.InitializeRequiredServices();
             Log = GetRequiredService<ILogger>();
-        }
-
-        private void AddLogger()
-        {
-            _serviceCollection.AddSerilogLogger();
         }
     }
 }

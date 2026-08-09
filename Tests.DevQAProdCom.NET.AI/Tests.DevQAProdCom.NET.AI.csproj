@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DevQAProdCom.NET.AI.MicrosoftAgentFramework\DevQAProdCom.NET.AI.MicrosoftAgentFramework.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.Global\DevQAProdCom.NET.Global.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.Logging.Providers.Serilog\DevQAProdCom.NET.Logging.Providers.Serilog.csproj" />

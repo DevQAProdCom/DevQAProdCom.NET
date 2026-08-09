@@ -36,17 +36,17 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
-        public abstract IAiEntityWithTYamlConfigurationTypeInteractor WithAgent(string agentIdentifier);
-        public abstract IAiEntityWithTYamlConfigurationTypeInteractor WithAgent(FileInfo filePath);
-        public abstract IAiEntityWithTYamlConfigurationTypeInteractor WithWorkingDirectory(string workingDirectory);
+        public abstract IAiAgentInteractor WithAgent(string agentIdentifier);
+        public abstract IAiAgentInteractor WithAgent(FileInfo filePath);
+        public abstract IAiAgentInteractor WithWorkingDirectory(string workingDirectory);
 
-        public IAiEntityWithTYamlConfigurationTypeInteractor WithAiContentHandlers(params IAiContentHandler[] handlers)
+        public IAiAgentInteractor WithAiContentHandlers(params IAiContentHandler[] handlers)
         {
             AiContentHandlers.AddRange(handlers);
             return this;
         }
 
-        public IAiEntityWithTYamlConfigurationTypeInteractor WithAgentRunOptions(Func<AgentRunOptionsBuilder, AgentRunOptionsBuilder> updateAgentRunOptionsFunc)
+        public IAiAgentInteractor WithAgentRunOptions(Func<AgentRunOptionsBuilder, AgentRunOptionsBuilder> updateAgentRunOptionsFunc)
         {
             _agentRunOptionsBuilder ??= new();
             updateAgentRunOptionsFunc.Invoke(_agentRunOptionsBuilder);

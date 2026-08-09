@@ -28,7 +28,7 @@ namespace DevQAProdCom.NET.Global.Utils
                     CleanDirectory(subdirectory); // Recursive call to clean subdirectories
 
                 // Finally, delete the directory itself
-                if (!directoryPath.EndsWith("Logs"))
+                if (!directoryPath.EndsWith("Logs")) //TODO : Pass as configurable parameter what to exclude from deletion
                     Directory.Delete(directoryPath);
             }
         }

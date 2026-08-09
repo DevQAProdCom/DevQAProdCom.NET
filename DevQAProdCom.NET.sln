@@ -103,6 +103,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevQAProdCom.NET.AI.Microso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.DevQAProdCom.NET.AI", "Tests.DevQAProdCom.NET.AI\Tests.DevQAProdCom.NET.AI.csproj", "{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BCC3-2229-49E7-B94C-1FB185A45AE8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -282,6 +289,8 @@ Global
 		{20F8256F-940D-4AD6-8876-54D8793E55BF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8C9A67D0-EB27-40EB-B6AF-24457268B3EF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3} = {818250BC-823E-4BC7-9F67-E2CB4ED4568A}
+		{6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915} = {1A002A56-75E7-42A1-8CAF-AB3E8E6CF2ED}
+		{8353BCC3-2229-49E7-B94C-1FB185A45AE8} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {072B6B76-6C41-4BA2-8622-3960BE210481}
