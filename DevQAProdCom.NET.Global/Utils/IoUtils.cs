@@ -122,5 +122,13 @@ namespace DevQAProdCom.NET.Global.Utils
 
             return result;
         }
+
+        public static void DeleteDirectory(string directoryPath, bool recursive = true)
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, recursive);
+            }
+        }
     }
 }

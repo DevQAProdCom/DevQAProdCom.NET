@@ -78,8 +78,8 @@ dotnet test
 - NUnit test methods execute normally
 
 ### Run as Console Application
-
+Always rebuild when switching to app mode (ensures RenameMainMethod.targets runs)
 ```bash
-# From solution root
-dotnet run --project Tests.DevQAProdCom.NET.AI -p:AsApp=true -- TestsSuite TestName [Optional Arguments]
+dotnet build Tests.DevQAProdCom.NET.AI -p:AsApp=true --force
+dotnet run --project Tests.DevQAProdCom.NET.AI -p:AsApp=true --no-build -- TestsSuite TestName
 ```

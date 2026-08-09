@@ -122,7 +122,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                             }
                             catch (Exception ex)
                             {
-                                Logger.Error($"Error processing content: {ex.Message}");
+                                Logger.Error($"Error processing content. {ex.Message}");
 
                             }
                         }

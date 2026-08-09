@@ -20,11 +20,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 
         protected T? GetEvent<T>(string @event) where T : class
         {
-            var sessionEvent = @event.FromJson<SessionEvent>()!;
+            var normalizedEvent = @event.Replace("\"$type\":", "\"type\":");
+
+            var sessionEvent = normalizedEvent.FromJson<SessionEvent>()!;
             switch (sessionEvent.Type)
             {
                 case Const.SessionEvents.ASSISTANT_MESSAGE when typeof(T) == typeof(AssistantMessageEvent):
-                    return @event.FromJson<AssistantMessageEvent>() as T;
+                    return normalizedEvent.FromJson<AssistantMessageEvent>() as T;
 
                 default:
                     return null;

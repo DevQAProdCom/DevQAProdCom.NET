@@ -17,6 +17,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
         private readonly SessionConfigBuilder _sessionConfigBuilder;
         private CopilotClient? _copilotClient;
         private readonly CopilotClientOptionsBuilder _copilotClientOptionsBuilder = new();
+        private CopilotClientOptions _copilotClientOptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GitHubCopilotAiAgentInteractor"/> class.
@@ -214,8 +215,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                 return AiAgent;
             }
 
-            var copilotClientOptions = _copilotClientOptionsBuilder.Build();
-            _copilotClient = new CopilotClient(copilotClientOptions);
+            _copilotClientOptions = _copilotClientOptionsBuilder.Build();
+            _copilotClient = new CopilotClient(_copilotClientOptions);
             await _copilotClient.StartAsync(cancellationToken);
 
             var sessionConfig = _sessionConfigBuilder.Build();
@@ -233,6 +234,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             {
                 await _copilotClient.DisposeAsync();
                 _copilotClient = null;
+            }
+
+            if (_copilotClientOptions.BaseDirectory != null)
+            {
+                Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
             }
         }
     }

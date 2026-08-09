@@ -422,7 +422,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         /// <returns>A fully configured <see cref="SessionConfig"/> instance.</returns>
         public SessionConfig Build()
         {
-            _logger.Info("Building {TypeName} (Model: {Model}, Agent: {Agent})", nameof(SessionConfig), _sessionConfig.Model ?? "null", _sessionConfig.Agent ?? "null");
+            _logger.Info("Building {TypeName} Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
 
             if (_sessionConfig.Agent != null)
             {
