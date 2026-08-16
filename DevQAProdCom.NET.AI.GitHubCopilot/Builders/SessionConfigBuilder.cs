@@ -165,30 +165,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
 
             _sessionConfig.CustomAgents ??= new List<CustomAgentConfig>();
-            var existingAgent = _sessionConfig.CustomAgents.FirstOrDefault(a => a.Name == config.Name);
 
-            if (existingAgent != null)
+            if (_sessionConfig.CustomAgents.Any(a => a.Name == config.Name))
             {
-                _logger.Info("Replacing existing {TypeName} '{PropertyName}' entry as agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
-                _sessionConfig.CustomAgents.Remove(existingAgent);
-                _sessionConfig.CustomAgents.Add(config);
-                return this;
+                _logger.Error("Agent with name '{AgentName}' already exists in {PropertyName} list", config.Name, nameof(_sessionConfig.CustomAgents));
+                throw new InvalidOperationException($"Agent with name '{config.Name}' already exists in CustomAgentConfig list. Use {nameof(WithCustomAgentConfig)} to add a new agent config with a different name.");
             }
 
             _logger.Info("Adding {TypeName} '{PropertyName}' parameter as agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
             _sessionConfig.CustomAgents.Add(config);
 
             return this;
-        }
-
-        public SessionConfigBuilder WithCustomAgentConfig(string agentIdentifier)
-        {
-            ArgumentNullException.ThrowIfNull(agentIdentifier);
-
-            _logger.Info("Loading {TypeName} '{PropertyName}' from agent identifier '{AgentIdentifier}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entity = SessionAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
-            var config = GitHubCopilotMappers.ToCustomAgentConfig(entity);
-            return WithCustomAgentConfig(config);
         }
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
