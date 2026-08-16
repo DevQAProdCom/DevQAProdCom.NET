@@ -7,35 +7,34 @@ namespace DevQAProdCom.NET.Global.Utils
     {
         public static List<FileInfo> GetFilesInDirectory(string directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            if (!Directory.Exists(directoryPath))
-                throw new DirectoryNotFoundException($"No such directory exists: '{directoryPath}'.");
-
+            CheckDirectoryMustExist(directoryPath);
             return Directory.GetFiles(directoryPath, searchPattern, searchOption).Select(x => new FileInfo(x)).ToList();
         }
 
         public static void CleanDirectory(string directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            if (Directory.Exists(directoryPath))
-            {
-                // Delete all files in the directory
-                List<string> files = GetFilesInDirectory(directoryPath, searchPattern, searchOption).Select(x => x.FullName).ToList();
-                foreach (string file in files)
-                    File.Delete(file);
+            if (!DirectoryExists(directoryPath))
+                return;
 
-                // Delete all subdirectories and their contents
-                string[] subdirectories = Directory.GetDirectories(directoryPath);
-                foreach (string subdirectory in subdirectories)
-                    CleanDirectory(subdirectory); // Recursive call to clean subdirectories
+            // Delete all files in the directory
+            List<string> files = GetFilesInDirectory(directoryPath, searchPattern, searchOption).Select(x => x.FullName).ToList();
+            foreach (string file in files)
+                File.Delete(file);
 
-                // Finally, delete the directory itself
-                if (!directoryPath.EndsWith("Logs")) //TODO : Pass as configurable parameter what to exclude from deletion
-                    Directory.Delete(directoryPath);
-            }
+            // Delete all subdirectories and their contents
+            string[] subdirectories = Directory.GetDirectories(directoryPath);
+            foreach (string subdirectory in subdirectories)
+                CleanDirectory(subdirectory); // Recursive call to clean subdirectories
+
+            // Finally, delete the directory itself
+            if (!directoryPath.EndsWith("Logs")) //TODO : Pass as configurable parameter what to exclude from deletion
+                Directory.Delete(directoryPath);
         }
 
         public static void CopyDirectory(string sourceDirectory, string targetDirectory, Func<string, bool>? filterFiles = null)
         {
-            Directory.CreateDirectory(targetDirectory);
+            CheckDirectoryMustExist(sourceDirectory);
+            CreateDirectory(targetDirectory);
 
             foreach (var file in Directory.GetFiles(sourceDirectory))
             {
@@ -73,11 +72,12 @@ namespace DevQAProdCom.NET.Global.Utils
             if (extensionsSet.Count == 0)
                 return null;
 
-            var dir = new DirectoryInfo(initialDirectory);
+            if (!TryGetDirectory(initialDirectory, out var dir))
+                return null;
 
             while (dir != null)
             {
-                if (dir.Exists && dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Any(f => extensionsSet.Contains(f.Extension)))
+                if (dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly).Any(f => extensionsSet.Contains(f.Extension)))
                 {
                     return dir.FullName;
                 }
@@ -101,6 +101,9 @@ namespace DevQAProdCom.NET.Global.Utils
 
         public static List<string> GetMarkdownFiles(string initialDirectory)
         {
+            if (!DirectoryExists(initialDirectory))
+                return new List<string>();
+
             return Directory.EnumerateFiles(initialDirectory, $"*{FileExtension.Md.GetDescriptionAttributeValue()}", SearchOption.AllDirectories).ToList();
         }
 
@@ -109,11 +112,11 @@ namespace DevQAProdCom.NET.Global.Utils
             var result = new List<string>();
             foreach (var entry in entries)
             {
-                if (File.Exists(entry) && Path.GetExtension(entry).Equals(FileExtension.Md.GetDescriptionAttributeValue(), StringComparison.OrdinalIgnoreCase))
+                if (FileExists(entry) && Path.GetExtension(entry).Equals(FileExtension.Md.GetDescriptionAttributeValue(), StringComparison.OrdinalIgnoreCase))
                 {
                     result.Add(entry);
                 }
-                else if (Directory.Exists(entry))
+                else if (DirectoryExists(entry))
                 {
                     var mdFiles = GetMarkdownFiles(entry);
                     result.AddRange(mdFiles);
@@ -125,10 +128,8 @@ namespace DevQAProdCom.NET.Global.Utils
 
         public static void DeleteDirectory(string directoryPath, bool recursive = true)
         {
-            if (Directory.Exists(directoryPath))
-            {
+            if (DirectoryExists(directoryPath))
                 Directory.Delete(directoryPath, recursive);
-            }
         }
 
         public static bool DirectoryExists(string directoryPath)
@@ -141,10 +142,10 @@ namespace DevQAProdCom.NET.Global.Utils
             if (!TryGetDirectory(directoryPath, out var directory))
                 throw new DirectoryNotFoundException($"No such directory exists: '{directoryPath}'.");
 
-            return directory;
+            return directory!;
         }
 
-        public static bool TryGetDirectory(string directoryPath, out DirectoryInfo directory)
+        public static bool TryGetDirectory(string directoryPath, out DirectoryInfo? directory)
         {
             if (DirectoryExists(directoryPath))
             {
@@ -152,14 +153,14 @@ namespace DevQAProdCom.NET.Global.Utils
                 return true;
             }
 
-            directory = null!;
+            directory = null;
             return false;
         }
 
-        public static DirectoryInfo GetDirectory(string path)
+        public static DirectoryInfo CreateDirectory(string path)
         {
             if (TryGetDirectory(path, out var directory))
-                return directory;
+                return directory!;
 
             return Directory.CreateDirectory(path);
         }
@@ -174,10 +175,10 @@ namespace DevQAProdCom.NET.Global.Utils
             if (!TryGetFile(filePath, out var file))
                 throw new FileNotFoundException($"No such file exists: '{filePath}'.", filePath);
 
-            return file;
+            return file!;
         }
 
-        public static bool TryGetFile(string filePath, out FileInfo file)
+        public static bool TryGetFile(string filePath, out FileInfo? file)
         {
             if (FileExists(filePath))
             {
@@ -185,7 +186,7 @@ namespace DevQAProdCom.NET.Global.Utils
                 return true;
             }
 
-            file = null!;
+            file = null;
             return false;
         }
     }
