@@ -106,13 +106,27 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             return entityData;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] AddEntitiesDataFromFiles(params string[] filePaths)
+        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] AddEntitiesDataFromFiles(params string[] filesPaths)
         {
             var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
 
-            foreach (var filePath in filePaths)
+            foreach (var filePath in filesPaths)
             {
                 addedEntities.Add(AddEntityDataFromFile(filePath));
+            }
+
+            return addedEntities.ToArray();
+        }
+
+        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] AddEntitiesDataFromDirectory(string directoryPath)
+        {
+            IoUtils.CheckDirectoryMustExist(directoryPath);
+            var mdFiles = IoUtils.GetMarkdownFiles(directoryPath);
+            var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
+
+            foreach (var mdFile in mdFiles)
+            {
+                addedEntities.Add(AddEntityDataFromFile(mdFile));
             }
 
             return addedEntities.ToArray();
@@ -124,13 +138,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
             foreach (var directoryPath in directoriesPaths)
             {
-                IoUtils.CheckDirectoryMustExist(directoryPath);
-                var mdFiles = IoUtils.GetMarkdownFiles(directoryPath);
-
-                foreach (var mdFile in mdFiles)
-                {
-                    addedEntities.Add(AddEntityDataFromFile(mdFile));
-                }
+                addedEntities.AddRange(AddEntitiesDataFromDirectory(directoryPath));
             }
 
             return addedEntities.ToArray();
