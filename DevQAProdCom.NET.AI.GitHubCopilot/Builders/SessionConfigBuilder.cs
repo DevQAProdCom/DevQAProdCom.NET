@@ -45,30 +45,29 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         {
-            ArgumentNullException.ThrowIfNull(agentIdentifier);
-
             WithAgent(agentIdentifier);
             var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
+            WithModel(entityData.ConfigurationData.Model!);
+            WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray()!);
+            WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray()!);
+
             return this;
         }
 
         public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath)
         {
-            ArgumentNullException.ThrowIfNull(filePath);
-
             WithAgentFromFile(filePath);
             var entityData = SessionAgentsCollection.GetEntityDataByFilePath(filePath);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
+
             return this;
         }
 
         public SessionConfigBuilder WithAgent(string agentIdentifier)
         {
-            ArgumentNullException.ThrowIfNull(agentIdentifier);
-
             _logger.Info("Loading {TypeName} '{PropertyName}' from agent identifier '{AgentIdentifier}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), agentIdentifier);
             var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             SessionAgentsCollection.AddEntityData(entityData);
@@ -90,8 +89,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgentFromFile(string filePath)
         {
-            ArgumentNullException.ThrowIfNull(filePath);
-
             IoUtils.CheckFileMustExist(filePath);
             var entityData = AllAgentsCollection.AddEntityDataFromFile(filePath);
             SessionAgentsCollection.AddEntityData(entityData);
@@ -112,7 +109,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgentsFromDirectory(string directoryPath)
         {
-            ArgumentNullException.ThrowIfNull(directoryPath);
             var entities = AllAgentsCollection.AddEntitiesDataFromDirectory(directoryPath);
             var sessionEntities = SessionAgentsCollection.AddEntitiesDataFromDirectory(directoryPath);
 
@@ -143,9 +139,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAvailableTools(params string[] tools)
         {
-            var toolList = tools.ToList();
-            LogCollectionSetting(nameof(_sessionConfig.AvailableTools), toolList);
-            _sessionConfig.AvailableTools = toolList;
+            if (tools?.Length > 0)
+            {
+                var toolList = tools.ToList();
+                LogCollectionSetting(nameof(_sessionConfig.AvailableTools), toolList);
+                _sessionConfig.AvailableTools ??= new List<string>();
+
+                foreach (var tool in toolList)
+                {
+                    if (!_sessionConfig.AvailableTools.Contains(tool))
+                    {
+                        _sessionConfig.AvailableTools.Add(tool);
+                    }
+                }
+            }
+
             return this;
         }
 
@@ -180,9 +188,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
         {
-            ArgumentNullException.ThrowIfNull(name);
-            ArgumentNullException.ThrowIfNull(config);
-
             _logger.Info("Setting {TypeName} '{PropertyName}' parameter for server '{ServerName}'", nameof(SessionConfig), nameof(_sessionConfig.McpServers), name);
             _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
             _sessionConfig.McpServers[name] = config;
@@ -307,6 +312,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
+        public SessionConfigBuilder WithPermissions(params string[] identifiers)
+        {
+            if (identifiers?.Count() > 0)
+                foreach (var identifier in identifiers)
+                {
+                    WithPermission(identifier);
+                }
+
+            return this;
+        }
+
         public SessionConfigBuilder WithSessionConfig(Func<SessionConfig, SessionConfig> updateSessionConfig)
         {
             ArgumentNullException.ThrowIfNull(updateSessionConfig);
@@ -319,33 +335,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfig Build()
         {
             _logger.Info("Building {TypeName} Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-
-            if (_sessionConfig.Agent != null)
-            {
-                if (SessionAgentsCollection.TryGetEntityDataByIdentifier(_sessionConfig.Agent, out var entityData))
-                {
-                    var model = entityData!.ConfigurationData.Model;
-
-                    if (!string.IsNullOrEmpty(model))
-                    {
-                        _logger.Info("Overriding {TypeName} '{PropertyName}' parameter to '{Value}' from agent configuration", nameof(SessionConfig), nameof(_sessionConfig.Model), model);
-                        _sessionConfig.Model = model;
-                    }
-                    var agentTools = entityData.ConfigurationData.Tools;
-                    _logger.Info("Setting {TypeName} '{PropertyName}' parameter from agent configuration to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.AvailableTools), string.Join(", ", agentTools ?? Enumerable.Empty<string>()));
-                    _sessionConfig.AvailableTools = agentTools;
-
-                    WithCustomAgentConfig(_sessionConfig.Agent);
-
-                    if (entityData.ConfigurationData.CustomPermissions?.Count() > 0)
-                    {
-                        foreach (var permission in entityData.ConfigurationData.CustomPermissions)
-                        {
-                            WithPermission(permission);
-                        }
-                    }
-                }
-            }
 
             _sessionConfig.OnPermissionRequest = async (request, invocation) =>
             {
