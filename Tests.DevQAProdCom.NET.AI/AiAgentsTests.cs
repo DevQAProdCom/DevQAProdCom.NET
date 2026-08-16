@@ -63,9 +63,9 @@ namespace Tests.DevQAProdCom.NET.AI
 
 
         [Test]
-        public async Task ReadWriteAgentTest()
+        public async Task ReadWriteAgentWithInstructionsTest()
         {
-            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(ReadWriteAgentTest));
+            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(ReadWriteAgentWithInstructionsTest));
             GlobalIoUtils.DeleteDirectory(testDirectory);
 
             if (Directory.Exists(testDirectory))

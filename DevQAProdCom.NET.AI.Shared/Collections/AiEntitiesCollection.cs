@@ -16,14 +16,18 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
         protected ILogger Log;
 
-        public AiEntitiesCollection(ILogger logger)
+        public AiEntitiesCollection(ILogger logger, bool skipInitialization = false)
         {
             ArgumentNullException.ThrowIfNull(logger);
             Log = logger;
-            InitializeCollection();
+
+            if (!skipInitialization)
+            {
+                InitializeCollection();
+            }
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger) : this(logger)
+        public AiEntitiesCollection(string baseFolder, ILogger logger, bool skipInitialization = false) : this(logger, skipInitialization)
         {
             BaseDirectory = baseFolder;
         }

@@ -110,6 +110,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BC
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instructions", "instructions", "{FB627170-D56E-4BE1-8D1C-CEFBF6AB1F7D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\instructions\generate-random-data.instructions.md = .github\instructions\generate-random-data.instructions.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +296,7 @@ Global
 		{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3} = {818250BC-823E-4BC7-9F67-E2CB4ED4568A}
 		{6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915} = {1A002A56-75E7-42A1-8CAF-AB3E8E6CF2ED}
 		{8353BCC3-2229-49E7-B94C-1FB185A45AE8} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
+		{FB627170-D56E-4BE1-8D1C-CEFBF6AB1F7D} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {072B6B76-6C41-4BA2-8622-3960BE210481}

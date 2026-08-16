@@ -130,5 +130,63 @@ namespace DevQAProdCom.NET.Global.Utils
                 Directory.Delete(directoryPath, recursive);
             }
         }
+
+        public static bool DirectoryExists(string directoryPath)
+        {
+            return Directory.Exists(directoryPath);
+        }
+
+        public static DirectoryInfo CheckDirectoryMustExist(string directoryPath)
+        {
+            if (!TryGetDirectory(directoryPath, out var directory))
+                throw new DirectoryNotFoundException($"No such directory exists: '{directoryPath}'.");
+
+            return directory;
+        }
+
+        public static bool TryGetDirectory(string directoryPath, out DirectoryInfo directory)
+        {
+            if (DirectoryExists(directoryPath))
+            {
+                directory = new DirectoryInfo(directoryPath);
+                return true;
+            }
+
+            directory = null!;
+            return false;
+        }
+
+        public static DirectoryInfo GetDirectory(string path)
+        {
+            if (TryGetDirectory(path, out var directory))
+                return directory;
+
+            return Directory.CreateDirectory(path);
+        }
+
+        public static bool FileExists(string filePath)
+        {
+            return File.Exists(filePath);
+        }
+
+        public static FileInfo CheckFileMustExist(string filePath)
+        {
+            if (!TryGetFile(filePath, out var file))
+                throw new FileNotFoundException($"No such file exists: '{filePath}'.", filePath);
+
+            return file;
+        }
+
+        public static bool TryGetFile(string filePath, out FileInfo file)
+        {
+            if (FileExists(filePath))
+            {
+                file = new FileInfo(filePath);
+                return true;
+            }
+
+            file = null!;
+            return false;
+        }
     }
 }

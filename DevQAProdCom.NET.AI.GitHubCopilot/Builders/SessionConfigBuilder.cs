@@ -57,7 +57,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         /// </summary>
         /// <param name="agentIdentifier">The name of the custom agent to activate.</param>
         /// <returns>The current <see cref="SessionConfigBuilder"/> instance.</returns>
-        public SessionConfigBuilder WithAgent(string agentIdentifier)
+        public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         {
             LogSetting(nameof(_sessionConfig.Agent), agentIdentifier);
             _sessionConfig.Agent = agentIdentifier;
@@ -71,7 +71,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         /// <param name="filePath">The file containing the agent YAML configuration.</param>
         /// <returns>The current <see cref="SessionConfigBuilder"/> instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="filePath"/> is <see langword="null"/>.</exception>
-        public SessionConfigBuilder WithAgent(FileInfo filePath)
+        public SessionConfigBuilder WithPrimaryAgent(FileInfo filePath)
         {
             ArgumentNullException.ThrowIfNull(filePath);
 

@@ -80,7 +80,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
         {
             ArgumentNullException.ThrowIfNull(agentIdentifier);
 
-            _sessionConfigBuilder.WithAgent(agentIdentifier);
+            _sessionConfigBuilder.WithPrimaryAgent(agentIdentifier);
             return this;
         }
 
@@ -95,7 +95,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
         {
             ArgumentNullException.ThrowIfNull(agentMdFilePath);
 
-            _sessionConfigBuilder.WithAgent(agentMdFilePath);
+            _sessionConfigBuilder.WithPrimaryAgent(agentMdFilePath);
             return this;
         }
 
