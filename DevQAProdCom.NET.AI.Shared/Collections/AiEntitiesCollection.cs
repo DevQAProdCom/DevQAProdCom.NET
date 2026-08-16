@@ -16,18 +16,18 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
         protected ILogger Log;
 
-        public AiEntitiesCollection(ILogger logger, bool skipInitialization = false)
+        public AiEntitiesCollection(ILogger logger, bool initializeWithDefaultLocations = true)
         {
             ArgumentNullException.ThrowIfNull(logger);
             Log = logger;
 
-            if (!skipInitialization)
+            if (initializeWithDefaultLocations)
             {
-                InitializeCollection();
+                InitializeCollectionFromDefaultLocations();
             }
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger, bool skipInitialization = false) : this(logger, skipInitialization)
+        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true) : this(logger, initializeWithDefaultLocations)
         {
             BaseDirectory = baseFolder;
         }
@@ -61,7 +61,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             return false;
         }
 
-        private void InitializeCollection()
+        private void InitializeCollectionFromDefaultLocations()
         {
             var baseEntitiesLocations = GetEntitiesLocations();
             var mdFiles = IoUtils.GetMarkdownFiles(baseEntitiesLocations);

@@ -7,9 +7,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
     public class GitHubCopilotAiAgentsCollection : AiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>
     {
-        public GitHubCopilotAiAgentsCollection(ILogger logger) : base(logger) { }
+        public GitHubCopilotAiAgentsCollection(ILogger logger, bool initializeWithDefaultLocations = true) : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations) { }
 
-        public GitHubCopilotAiAgentsCollection(string baseFolder, ILogger logger) : base(baseFolder, logger) { }
+        public GitHubCopilotAiAgentsCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true) : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations) { }
 
         protected override List<string> FindEntitiesInDirectory(string directory)
         {
