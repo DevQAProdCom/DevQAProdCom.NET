@@ -109,6 +109,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             return this;
         }
+
         public SessionConfigBuilder WithAgentsFromDirectory(string directoryPath)
         {
             ArgumentNullException.ThrowIfNull(directoryPath);
@@ -123,11 +124,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgentsFromDirectories(params string[] directoryPaths)
+        public SessionConfigBuilder WithAgentsFromDirectories(params string[] directoriesPaths)
         {
-            foreach (var directoryPath in directoryPaths)
+            foreach (var directoryPath in directoriesPaths)
             {
-                WithAgentFromDirectory(directoryPath);
+                WithAgentsFromDirectory(directoryPath);
             }
 
             return this;
