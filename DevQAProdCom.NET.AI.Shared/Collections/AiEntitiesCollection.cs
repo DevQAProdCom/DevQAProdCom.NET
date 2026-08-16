@@ -29,41 +29,16 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             BaseDirectory = baseFolder;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetEntityDataByIdentifier(string entityIdentifier)
+        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntityData(IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> entity)
         {
-            if (TryGetEntityDataByIdentifier(entityIdentifier, out var entityData))
-            {
-                return entityData!;
-            }
+            //set file path from entity
 
-            throw new InvalidOperationException($"Entity with identifier/name '{entityIdentifier}' is not found in the collection.");
         }
 
-        public bool TryGetEntityDataByIdentifier(string entityIdentifier, out IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityData)
+        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntitiesData(params IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] entities)
         {
-            var matchingEntities = Entities.Where(x => x.ConfigurationData.Name == entityIdentifier).ToList();
 
-            if (matchingEntities.Count > 1)
-            {
-                var filePaths = matchingEntities
-                    .Select(x => x.FilePath)
-                    .Where(x => !string.IsNullOrEmpty(x))
-                    .ToList();
 
-                throw new InvalidOperationException(
-                    $"There are several entities with the same name '{entityIdentifier}' under several file paths: " +
-                    $"{string.Join(", ", filePaths)}. " +
-                    "Please get the entity by file path instead of by name.");
-            }
-
-            if (matchingEntities.Count == 1)
-            {
-                entityData = matchingEntities.First();
-                return true;
-            }
-
-            entityData = default;
-            return false;
         }
 
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntityDataFromFile(string filePath)
@@ -142,6 +117,43 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             }
 
             return addedEntities.ToArray();
+        }
+
+        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetEntityDataByIdentifier(string entityIdentifier)
+        {
+            if (TryGetEntityDataByIdentifier(entityIdentifier, out var entityData))
+            {
+                return entityData!;
+            }
+
+            throw new InvalidOperationException($"Entity with identifier/name '{entityIdentifier}' is not found in the collection.");
+        }
+
+        public bool TryGetEntityDataByIdentifier(string entityIdentifier, out IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityData)
+        {
+            var matchingEntities = Entities.Where(x => x.ConfigurationData.Name == entityIdentifier).ToList();
+
+            if (matchingEntities.Count > 1)
+            {
+                var filePaths = matchingEntities
+                    .Select(x => x.FilePath)
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .ToList();
+
+                throw new InvalidOperationException(
+                    $"There are several entities with the same name '{entityIdentifier}' under several file paths: " +
+                    $"{string.Join(", ", filePaths)}. " +
+                    "Please get the entity by file path instead of by name.");
+            }
+
+            if (matchingEntities.Count == 1)
+            {
+                entityData = matchingEntities.First();
+                return true;
+            }
+
+            entityData = default;
+            return false;
         }
 
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetEntityDataByFilePath(string filePath)

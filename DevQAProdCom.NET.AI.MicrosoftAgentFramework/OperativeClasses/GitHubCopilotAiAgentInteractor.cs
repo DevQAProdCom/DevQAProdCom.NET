@@ -95,7 +95,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
         {
             ArgumentNullException.ThrowIfNull(agentMdFilePath);
 
-            _sessionConfigBuilder.WithAgent(agentMdFilePath);
+            _sessionConfigBuilder.WithPrimaryAgentFromFile(agentMdFilePath.FullName);
             return this;
         }
 
