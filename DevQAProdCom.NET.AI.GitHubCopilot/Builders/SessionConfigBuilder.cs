@@ -76,7 +76,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(filePath);
 
             _logger.Info("Loading {TypeName} '{PropertyName}' from file '{FilePath}'", nameof(SessionConfig), nameof(_sessionConfig.Agent), filePath.FullName);
-            var entityData = AiAgentsCollection.AddEntityData(filePath.FullName);
+            var entityData = AiAgentsCollection.AddEntityDataFromFile(filePath.FullName);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
             return this;
@@ -166,7 +166,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(agentIdentifier);
 
             _logger.Info("Loading {TypeName} '{PropertyName}' from agent identifier '{AgentIdentifier}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entity = AiAgentsCollection.GetEntityData(agentIdentifier);
+            var entity = AiAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             var config = GitHubCopilotMappers.ToCustomAgentConfig(entity);
             return WithCustomAgentConfig(config);
         }
@@ -433,7 +433,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             if (_sessionConfig.Agent != null)
             {
-                if (AiAgentsCollection.TryGetEntityData(_sessionConfig.Agent, out var entityData))
+                if (AiAgentsCollection.TryGetEntityDataByIdentifier(_sessionConfig.Agent, out var entityData))
                 {
                     var model = entityData!.ConfigurationData.Model;
 

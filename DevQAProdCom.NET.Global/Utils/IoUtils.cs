@@ -189,5 +189,15 @@ namespace DevQAProdCom.NET.Global.Utils
             file = null;
             return false;
         }
+
+        public static string NormalizeFilePath(string? filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                return string.Empty;
+            }
+
+            return Path.GetFullPath(filePath).TrimEnd('\\', '/');
+        }
     }
 }
