@@ -31,6 +31,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private readonly ILogger _logger;
 
+        private string? _sessionDirectory = null;
+
         public SessionConfigBuilder(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
