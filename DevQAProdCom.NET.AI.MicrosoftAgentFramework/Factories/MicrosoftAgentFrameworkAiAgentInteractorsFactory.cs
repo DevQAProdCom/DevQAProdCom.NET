@@ -6,9 +6,9 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
 {
     public class MicrosoftAgentFrameworkAiAgentInteractorsFactory(IServiceProvider serviceProvider) : IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
-        public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor()
+        public GitHubCopilotAiAgentInteractorService GetGitHubCopilotAiAgentInteractor()
         {
-            return serviceProvider.GetService<GitHubCopilotAiAgentInteractor>() ?? throw new InvalidOperationException($"{nameof(GitHubCopilotAiAgentInteractor)} is not registered in the {nameof(IServiceProvider)}.");
+            return serviceProvider.GetService<GitHubCopilotAiAgentInteractorService>() ?? throw new InvalidOperationException($"{nameof(GitHubCopilotAiAgentInteractorService)} is not registered in the {nameof(IServiceProvider)}.");
         }
     }
 }

@@ -4,6 +4,6 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
 {
     public interface IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
-        public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor();
+        public GitHubCopilotAiAgentInteractorService GetGitHubCopilotAiAgentInteractor();
     }
 }

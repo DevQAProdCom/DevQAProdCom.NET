@@ -9,39 +9,32 @@ using Microsoft.Extensions.AI;
 
 namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 {
-    public abstract class MicrosoftAiAgentInteractor : IMicrosoftAiAgentInteractor
+    public abstract class MicrosoftAiAgentInteractorService<T> : IMicrosoftAiAgentInteractorService<T>
+        where T: IMicrosoftAiAgentInteractorService<T>
     {
         protected AIAgent? AiAgent { get; set; }
         protected AgentRunOptionsBuilder? _agentRunOptionsBuilder;
         protected List<IAiContentHandler> AiContentHandlers = new();
         protected ILogger Logger { get; }
 
-        public MicrosoftAiAgentInteractor(ILogger logger)
+        public MicrosoftAiAgentInteractorService(ILogger logger) { 
+            ArgumentNullException.ThrowIfNull(logger);
+            Logger = logger;
+        }
+
+        public MicrosoftAiAgentInteractorService(AIAgent agent, ILogger logger, AgentRunOptions? agentRunOptions = null, List<IAiContentHandler>? aiContentHandlers = null): this(logger)
         {
             ArgumentNullException.ThrowIfNull(logger);
             Logger = logger;
         }
 
-        protected async Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default)
-        {
-            if (AiAgent == null)
-                AiAgent = await BuildAiAgentAsync(cancellationToken);
-
-            return AiAgent;
-        }
-
-        protected abstract Task<AIAgent> BuildAiAgentAsync(CancellationToken cancellationToken = default);
-        public virtual IMicrosoftAiAgentInteractor WithAiAgent(AIAgent aiAgent)
+        public T WithAiAgent(AIAgent aiAgent)
         {
             AiAgent = aiAgent;
-            return this;
+            return (T)this;
         }
 
-        public abstract IAiAgentInteractor WithAgent(string agentIdentifier);
-        public abstract IAiAgentInteractor WithAgent(FileInfo filePath);
-        public abstract IAiAgentInteractor WithWorkingDirectory(string workingDirectory);
-
-        public IAiAgentInteractor WithAiContentHandlers(params IAiContentHandler[] handlers)
+        public T WithAiContentHandlers(params IAiContentHandler[] handlers)
         {
             if (handlers != null && handlers.Length > 0)
             {
@@ -53,7 +46,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
-        public IAiAgentInteractor WithAgentRunOptions(Func<AgentRunOptionsBuilder, AgentRunOptionsBuilder> updateAgentRunOptionsFunc)
+        public T WithAgentRunOptions(Func<AgentRunOptionsBuilder, AgentRunOptionsBuilder> updateAgentRunOptionsFunc)
         {
             _agentRunOptionsBuilder ??= new();
             updateAgentRunOptionsFunc.Invoke(_agentRunOptionsBuilder);
@@ -76,17 +69,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 cancellationToken = cts.Token;
             }
 
-            var agent = await GetAiAgentAsync();
-
             AgentSession session;
 
             try
             {
-                session = await agent.CreateSessionAsync(cancellationToken);
+                session = await AiAgent.CreateSessionAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                var errorMessage = $"Failed to create agent session for '{agent.Name}' agent. Exception: {ex.Message}";
+                var errorMessage = $"Failed to create agent session for '{AiAgent.Name}' agent. Exception: {ex.Message}";
                 Logger.Error(errorMessage);
                 throw new Exception(errorMessage, ex);
             }
@@ -114,7 +105,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
                     Logger.Info($"{attemptLogStatementWithIcon} -> Agent Interaction Started");
 
-                    var streamingResponse = agent.RunStreamingAsync(currentPropmt, session, options: options, cancellationToken: cancellationToken);
+                    var streamingResponse = AiAgent.RunStreamingAsync(currentPropmt, session, options: options, cancellationToken: cancellationToken);
 
                     await foreach (AgentResponseUpdate update in streamingResponse)
                     {
@@ -197,7 +188,5 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
             return interactionDataBank;
         }
-
-        public abstract ValueTask DisposeAsync();
     }
 }

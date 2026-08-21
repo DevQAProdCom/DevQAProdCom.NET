@@ -1,45 +1,41 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using Microsoft.Agents.AI;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
+namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Builders
 {
-    public class GitHubCopilotAiAgentInteractor : MicrosoftAiAgentInteractor
+    public class GitHubCopilotAiAgentInteractorBuilder : MicrosoftAiAgentInteractorBuilder
     {
         private readonly SessionConfigBuilder _sessionConfigBuilder;
         private CopilotClient? _copilotClient;
         private readonly CopilotClientOptionsBuilder _copilotClientOptionsBuilder = new();
-        private CopilotClientOptions _copilotClientOptions;
+        private CopilotClientOptions? _copilotClientOptions;
 
-        public GitHubCopilotAiAgentInteractor(ILogger logger) : base(logger)
+        public GitHubCopilotAiAgentInteractorBuilder(ILogger logger) : base(logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(logger);
 
-            var handler = new GitHubCopilotAssistantMessageEventAiContentHandler(logger);
-            WithAiContentHandlers(handler);
         }
 
-        public GitHubCopilotAiAgentInteractor(string agentIdentifier, ILogger logger) : this(logger)
+        public GitHubCopilotAiAgentInteractorBuilder(string agentIdentifier, ILogger logger) : this(logger)
         {
             WithAgent(agentIdentifier);
         }
 
-        public GitHubCopilotAiAgentInteractor(string agentIdentifier, string workingDirectory, ILogger logger) : this(agentIdentifier, logger)
+        public GitHubCopilotAiAgentInteractorBuilder(string agentIdentifier, string workingDirectory, ILogger logger) : this(agentIdentifier, logger)
         {
             _copilotClientOptionsBuilder.WithWorkingDirectory(workingDirectory);
         }
 
-        public GitHubCopilotAiAgentInteractor(FileInfo agentMdFilePath, string workingDirectory, ILogger logger) : this(logger)
+        public GitHubCopilotAiAgentInteractorBuilder(FileInfo agentMdFilePath, string workingDirectory, ILogger logger) : this(logger)
         {
             _copilotClientOptionsBuilder.WithWorkingDirectory(workingDirectory);
         }
 
 
-        public override GitHubCopilotAiAgentInteractor WithAgent(string agentIdentifier)
+        public GitHubCopilotAiAgentInteractorBuilder WithAgent(string agentIdentifier)
         {
             ArgumentNullException.ThrowIfNull(agentIdentifier);
 
@@ -47,7 +43,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        public override GitHubCopilotAiAgentInteractor WithAgent(FileInfo agentMdFilePath)
+        public GitHubCopilotAiAgentInteractorBuilder WithAgent(FileInfo agentMdFilePath)
         {
             ArgumentNullException.ThrowIfNull(agentMdFilePath);
 
@@ -55,7 +51,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        public override GitHubCopilotAiAgentInteractor WithWorkingDirectory(string workingDirectory)
+        public GitHubCopilotAiAgentInteractorBuilder WithWorkingDirectory(string workingDirectory)
         {
             ArgumentNullException.ThrowIfNull(workingDirectory);
 
@@ -63,7 +59,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        public GitHubCopilotAiAgentInteractor WithSessionConfig(Func<SessionConfigBuilder, SessionConfigBuilder> updateSessionConfigFunc)
+        public GitHubCopilotAiAgentInteractorBuilder WithSessionConfig(Func<SessionConfigBuilder, SessionConfigBuilder> updateSessionConfigFunc)
         {
             ArgumentNullException.ThrowIfNull(updateSessionConfigFunc);
 
@@ -71,7 +67,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        public GitHubCopilotAiAgentInteractor WithCopilotClientOptions(Func<CopilotClientOptionsBuilder, CopilotClientOptionsBuilder> updateCopilotClientOptionsFunc)
+        public GitHubCopilotAiAgentInteractorBuilder WithCopilotClientOptions(Func<CopilotClientOptionsBuilder, CopilotClientOptionsBuilder> updateCopilotClientOptionsFunc)
         {
             ArgumentNullException.ThrowIfNull(updateCopilotClientOptionsFunc);
 
@@ -79,7 +75,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        public GitHubCopilotAiAgentInteractor WithIsolation(string? baseDirectory = null)
+        public GitHubCopilotAiAgentInteractorBuilder WithIsolation(string? baseDirectory = null)
         {
             baseDirectory ??= Path.Combine(
                 Environment.CurrentDirectory,
@@ -91,7 +87,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return this;
         }
 
-        protected override async Task<AIAgent> BuildAiAgentAsync(CancellationToken cancellationToken = default)
+        protected async Task<AIAgent> BuildAiAgentAsync(CancellationToken cancellationToken = default)
         {
             if (AiAgent != null)
             {
@@ -107,7 +103,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return agent;
         }
 
-        public override async ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             if (_copilotClient != null)
             {

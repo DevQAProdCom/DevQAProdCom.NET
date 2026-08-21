@@ -10,8 +10,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.DependencyInjection
     {
         public static IServiceCollection AddGitHubCopilotAiAgentInteractor(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<GitHubCopilotAiAgentInteractor>();
-            serviceCollection.AddTransient<IAiAgentInteractor, GitHubCopilotAiAgentInteractor>();
+            serviceCollection.AddTransient<GitHubCopilotAiAgentInteractorService>();
+            serviceCollection.AddTransient<IAiAgentInteractorService, GitHubCopilotAiAgentInteractorService>();
             return serviceCollection;
         }
 
