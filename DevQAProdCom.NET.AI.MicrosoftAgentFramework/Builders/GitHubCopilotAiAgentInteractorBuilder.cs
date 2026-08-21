@@ -1,4 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
+using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
+using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Models;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
@@ -87,20 +89,22 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Builders
             return this;
         }
 
-        protected async Task<AIAgent> BuildAiAgentAsync(CancellationToken cancellationToken = default)
+        public async Task<IMicrosoftAiAgent> BuildAsync(CancellationToken cancellationToken = default)
         {
-            if (AiAgent != null)
-            {
-                return AiAgent;
-            }
-
             _copilotClientOptions = _copilotClientOptionsBuilder.Build();
             _copilotClient = new CopilotClient(_copilotClientOptions);
             await _copilotClient.StartAsync(cancellationToken);
 
             var sessionConfig = _sessionConfigBuilder.Build();
-            AIAgent agent = _copilotClient.AsAIAgent(sessionConfig, ownsClient: true);
-            return agent;
+            AIAgent aiAgent = _copilotClient.AsAIAgent(sessionConfig, ownsClient: true);
+
+            var microsoftAiAgent = new MicrosoftAiAgent
+            {
+                AiAgent = aiAgent,
+                DisposeProviderResourcesAsync = DisposeAsync
+            };
+
+            return microsoftAiAgent;
         }
 
         public async ValueTask DisposeAsync()

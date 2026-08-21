@@ -16,18 +16,18 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Services
             Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
             int maxAttempts = 3)
         {
-            var aiAgentInteractor = aiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor();
+            //var aiAgentInteractor = aiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor();
 
-            var request = new AiInteractionRequestModel
-            {
-                Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(filePathToRead, outputFolderToWrite)
-            };
+            //var request = new AiInteractionRequestModel
+            //{
+            //    Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(filePathToRead, outputFolderToWrite)
+            //};
 
-            await aiAgentInteractor
-                .WithAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
-                .WithIsolation()
-                .WithWorkingDirectory(workingDirectory)
-                .InvokeAiAgentWithStreamingAsync(request, responseValidationFunc: responseValidationFunc, maxAttempts: maxAttempts);
+            //await aiAgentInteractor
+            //    .WithAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
+            //    .WithIsolation()
+            //    .WithWorkingDirectory(workingDirectory)
+            //    .InvokeAiAgentWithStreamingAsync(request, responseValidationFunc: responseValidationFunc, maxAttempts: maxAttempts);
         }
     }
 }

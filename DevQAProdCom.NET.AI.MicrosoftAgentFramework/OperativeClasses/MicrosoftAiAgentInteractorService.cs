@@ -10,7 +10,7 @@ using Microsoft.Extensions.AI;
 namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 {
     public abstract class MicrosoftAiAgentInteractorService<T> : IMicrosoftAiAgentInteractorService<T>
-        where T: IMicrosoftAiAgentInteractorService<T>
+        where T : MicrosoftAiAgentInteractorService<T>
     {
         protected AIAgent? AiAgent { get; set; }
         protected AgentRunOptionsBuilder? _agentRunOptionsBuilder;
@@ -22,10 +22,28 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             Logger = logger;
         }
 
-        public MicrosoftAiAgentInteractorService(AIAgent agent, ILogger logger, AgentRunOptions? agentRunOptions = null, List<IAiContentHandler>? aiContentHandlers = null): this(logger)
+        public MicrosoftAiAgentInteractorService(AIAgent agent, ILogger logger, AgentRunOptions? agentRunOptions = null, List<IAiContentHandler>? aiContentHandlers = null) : this(logger)
         {
-            ArgumentNullException.ThrowIfNull(logger);
-            Logger = logger;
+            ArgumentNullException.ThrowIfNull(agent);
+            WithAiAgent(agent);
+
+            if (agentRunOptions != null)
+            {
+                _agentRunOptionsBuilder = new AgentRunOptionsBuilder()
+                    .WithContinuationToken(agentRunOptions.ContinuationToken)
+                    .WithAdditionalProperties(agentRunOptions.AdditionalProperties)
+                    .WithResponseFormat(agentRunOptions.ResponseFormat);
+
+                if (agentRunOptions.AllowBackgroundResponses.HasValue)
+                {
+                    _agentRunOptionsBuilder.WithAllowBackgroundResponses(agentRunOptions.AllowBackgroundResponses.Value);
+                }
+            }
+
+            if (aiContentHandlers != null && aiContentHandlers.Count > 0)
+            {
+                WithAiContentHandlers(aiContentHandlers.ToArray());
+            }
         }
 
         public T WithAiAgent(AIAgent aiAgent)
@@ -43,17 +61,17 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 AiContentHandlers.AddRange(handlers);
             }
 
-            return this;
+            return (T)this;
         }
 
         public T WithAgentRunOptions(Func<AgentRunOptionsBuilder, AgentRunOptionsBuilder> updateAgentRunOptionsFunc)
         {
             _agentRunOptionsBuilder ??= new();
             updateAgentRunOptionsFunc.Invoke(_agentRunOptionsBuilder);
-            return this;
+            return (T)this;
         }
 
-        public async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(IAiInteractionRequest request,
+        public virtual async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(IAiInteractionRequest request,
             Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
             int maxAttempts = 1,
             CancellationToken cancellationToken = default)
@@ -67,6 +85,11 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             {
                 cts = new CancellationTokenSource(TimeSpan.FromMinutes(15));
                 cancellationToken = cts.Token;
+            }
+
+            if (AiAgent == null)
+            {
+                throw new InvalidOperationException("AI Agent is not set. Call WithAiAgent before invoking the agent.");
             }
 
             AgentSession session;

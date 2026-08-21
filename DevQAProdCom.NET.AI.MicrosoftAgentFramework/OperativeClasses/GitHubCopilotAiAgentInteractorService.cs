@@ -8,11 +8,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
 {
     public class GitHubCopilotAiAgentInteractorService : MicrosoftAiAgentInteractorService<GitHubCopilotAiAgentInteractorService>
     {
-        public GitHubCopilotAiAgentInteractorService(ILogger logger) : base(logger) { }
-
-        public GitHubCopilotAiAgentInteractorService(AIAgent agent, ILogger logger, AgentRunOptions? agentRunOptions = null, List<IAiContentHandler>? aiContentHandlers = null) : base(logger)
+        public GitHubCopilotAiAgentInteractorService(ILogger logger, bool addDefaultContentHanlders = true) : base(logger)
         {
-            var handler = new GitHubCopilotAssistantMessageEventAiContentHandler(logger);
+            if (addDefaultContentHanlders)
+            {
+                AddDefaultContentHandlers();
+            }
+        }
+
+        public GitHubCopilotAiAgentInteractorService(AIAgent agent, ILogger logger, AgentRunOptions? agentRunOptions = null, List<IAiContentHandler>? aiContentHandlers = null, bool addDefaultContentHanlders = true) : base(agent, logger, agentRunOptions, aiContentHandlers)
+        {
+            if (addDefaultContentHanlders)
+            {
+                AddDefaultContentHandlers();
+            }
+        }
+
+        private void AddDefaultContentHandlers()
+        {
+            var handler = new GitHubCopilotAssistantMessageEventAiContentHandler(Logger);
             WithAiContentHandlers(handler);
         }
     }
