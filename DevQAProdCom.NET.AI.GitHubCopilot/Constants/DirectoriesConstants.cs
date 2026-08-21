@@ -7,6 +7,8 @@
             public const string GITHUB = ".github";
             public const string AGENTS = "agents";
             public const string INSTRUCTIONS = "instructions";
+            public const string PRIMARY = "Primary";
+            public const string SUB_AGENTS = "SubAgents";
             public static string GetGitHubAgentsDirectory(string? directory = null)
             {
                 if (!string.IsNullOrEmpty(directory))

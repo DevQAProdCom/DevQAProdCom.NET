@@ -33,42 +33,67 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            if (string.IsNullOrEmpty(entity.FilePath))
+            var entityName = entity.ConfigurationData.Name;
+            var addedEntityFilePath = entity.FilePath;
+            var hasFilePath = !string.IsNullOrEmpty(addedEntityFilePath);
+
+            if (hasFilePath)
             {
-                throw new ArgumentException("Entity file path must be specified.", nameof(entity));
-            }
+                IoUtils.CheckFileMustExist(addedEntityFilePath!);
 
-            IoUtils.CheckFileMustExist(entity.FilePath);
+                var addedEntityNormalizedFilePath = IoUtils.NormalizeFilePath(addedEntityFilePath);
 
-            var addedEntityNormalizedFilePath = IoUtils.NormalizeFilePath(entity.FilePath);
-            var existingEntityByFilePath = Entities.FirstOrDefault(x => IoUtils.NormalizeFilePath(x.FilePath) == addedEntityNormalizedFilePath);
+                var existingEntityByFilePath = Entities
+                    .FirstOrDefault(x => !string.IsNullOrEmpty(x.FilePath) && IoUtils.NormalizeFilePath(x.FilePath) == addedEntityNormalizedFilePath);
 
-            if (existingEntityByFilePath != null)
-            {
-                Log.Warning($"Entity with file path '{entity.FilePath}' already exists in the collection and will be replaced with the new one.");
-                Entities.Remove(existingEntityByFilePath);
-            }
+                if (existingEntityByFilePath != null)
+                {
+                    Log.Warning($"Entity with file path '{addedEntityFilePath}' already exists in the collection and will be replaced with the new one.");
+                    Entities.Remove(existingEntityByFilePath);
+                }
 
-            var duplicateNameEntities = Entities
-                .Where(x => x.ConfigurationData.Name == entity.ConfigurationData.Name)
-                .Where(x => IoUtils.NormalizeFilePath(x.FilePath) != addedEntityNormalizedFilePath)
-                .ToList();
-
-            if (duplicateNameEntities.Any())
-            {
-                var duplicateFilePaths = duplicateNameEntities
-                    .Select(x => x.FilePath)
-                    .Where(x => !string.IsNullOrEmpty(x))
+                var duplicateNameEntities = Entities
+                    .Where(x => x.ConfigurationData.Name == entityName)
+                    .Where(x => string.IsNullOrEmpty(x.FilePath) || IoUtils.NormalizeFilePath(x.FilePath) != addedEntityNormalizedFilePath)
                     .ToList();
 
-                Log.Warning(
-                    $"Entity with name '{entity.ConfigurationData.Name}' is already present in the collection " +
-                    $"under different file path(s): {string.Join(", ", duplicateFilePaths)}. " +
-                    $"Adding another entity with the same name from file path '{entity.FilePath}'.");
+                if (duplicateNameEntities.Any())
+                {
+                    var allHaveDifferentFilePaths = duplicateNameEntities.All(x => !string.IsNullOrEmpty(x.FilePath));
+
+                    if (!allHaveDifferentFilePaths)
+                    {
+                        throw new InvalidOperationException(
+                            $"Entity with name '{entityName}' already exists in the collection with a missing or identical file path. " +
+                            $"Entities with the same identifier can only be added when they have different file paths.");
+                    }
+
+                    var duplicateFilePaths = duplicateNameEntities
+                        .Select(x => x.FilePath)
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .ToList();
+
+                    Log.Warning(
+                        $"Entity with name '{entityName}' is already present in the collection " +
+                        $"under different file path(s): {string.Join(", ", duplicateFilePaths)}. " +
+                        $"Adding another entity with the same name from file path '{addedEntityFilePath}'.");
+                }
+
+                Entities.Add(entity);
+                Log.Info($"Successfully added entity with name '{entityName}' from file: {addedEntityFilePath}");
+                return entity;
+            }
+
+            // Entity added dynamically without creating an md file (file path is null or empty)
+            if (Entities.Any(x => x.ConfigurationData.Name == entityName))
+            {
+                throw new InvalidOperationException(
+                    $"Entity with name '{entityName}' already exists in the collection. " +
+                    $"Entities added dynamically without a file path must have a unique identifier.");
             }
 
             Entities.Add(entity);
-            Log.Info($"Successfully added entity with name '{entity.ConfigurationData.Name}' from file: {entity.FilePath}");
+            Log.Info($"Successfully added dynamic entity with name '{entityName}' without a file path.");
             return entity;
         }
 

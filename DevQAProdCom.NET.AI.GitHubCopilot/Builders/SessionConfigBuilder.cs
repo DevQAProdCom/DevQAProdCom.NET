@@ -1,17 +1,22 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
+using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
+using System.Globalization;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
-    public class SessionConfigBuilder
+    public class SessionConfigBuilder : IDisposable
     {
         private readonly SessionConfig _sessionConfig = new();
 
@@ -25,6 +30,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _sessionAgentsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeWithDefaultLocations: false);
+
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _allInstructionsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger);
+
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeWithDefaultLocations: false);
+
+        private readonly List<IAiEntityWithTYamlConfigurationType<GitHubCopilotAiInstructionYamlConfigurationModel>> _sessionInstructionEntities = new();
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -127,6 +140,97 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             foreach (var directoryPath in directoriesPaths)
             {
                 WithAgentsFromDirectory(directoryPath);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstruction(string instructionIdentifier)
+        {
+            _logger.Info("Loading {TypeName} instruction '{InstructionIdentifier}' from all instructions collection", nameof(SessionConfig), instructionIdentifier);
+            var entityData = AllInstructionsCollection.GetEntityDataByIdentifier(instructionIdentifier);
+
+            if (SessionInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _))
+            {
+                throw new InvalidOperationException($"Instruction with identifier '{instructionIdentifier}' already exists in the session instructions collection.");
+            }
+
+            SessionInstructionsCollection.AddEntityData(entityData);
+            TrackSessionInstruction(entityData);
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstructions(params string[] instructionsIdentifiers)
+        {
+            foreach (var instructionIdentifier in instructionsIdentifiers)
+            {
+                WithInstruction(instructionIdentifier);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstruction(string instructionIdentifier, string prompt)
+        {
+            _logger.Info("Adding {TypeName} instruction '{InstructionIdentifier}' with custom prompt", nameof(SessionConfig), instructionIdentifier);
+
+            if (AllInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _) ||
+                SessionInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _))
+            {
+                throw new InvalidOperationException($"Instruction with identifier '{instructionIdentifier}' already exists in the instructions collection. Use a different instruction identifier.");
+            }
+
+            var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiInstructionYamlConfigurationModel>
+            {
+                ConfigurationData = new GitHubCopilotAiInstructionYamlConfigurationModel { Name = instructionIdentifier },
+                Prompt = prompt
+            };
+
+            AllInstructionsCollection.AddEntityData(entityData);
+            SessionInstructionsCollection.AddEntityData(entityData);
+            TrackSessionInstruction(entityData);
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstructionFromFile(string filePath)
+        {
+            IoUtils.CheckFileMustExist(filePath);
+            var entityData = AllInstructionsCollection.AddEntityDataFromFile(filePath);
+            SessionInstructionsCollection.AddEntityData(entityData);
+            TrackSessionInstruction(entityData);
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstructionsFromFiles(params string[] filePaths)
+        {
+            foreach (var filePath in filePaths)
+            {
+                WithInstructionFromFile(filePath);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstructionsFromDirectory(string directoryPath)
+        {
+            AllInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
+            var sessionEntities = SessionInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
+
+            foreach (var entity in sessionEntities)
+            {
+                TrackSessionInstruction(entity);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithInstructionsFromDirectories(params string[] directoryPaths)
+        {
+            foreach (var directoryPath in directoryPaths)
+            {
+                WithInstructionsFromDirectory(directoryPath);
             }
 
             return this;
@@ -334,6 +438,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
+        public SessionConfigBuilder WithSessionDirectory(string? directoryPath = null)
+        {
+            if (string.IsNullOrEmpty(directoryPath))
+            {
+                directoryPath = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
+            }
+
+            LogSetting(nameof(_sessionDirectory), directoryPath);
+            _sessionDirectory = directoryPath;
+            return this;
+        }
+
         public SessionConfig Build()
         {
             _logger.Info("Building {TypeName} Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
@@ -369,10 +485,196 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
             };
 
+            EnsureSessionDirectory();
+            SaveSessionData();
+
+            if (_sessionInstructionEntities.Any())
+            {
+                var instructionsDirectory = Path.Combine(_sessionDirectory!, Const.Directories.INSTRUCTIONS);
+                _sessionConfig.InstructionDirectories = new List<string> { instructionsDirectory };
+            }
+
             _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
 
+        private void EnsureSessionDirectory()
+        {
+            if (string.IsNullOrEmpty(_sessionDirectory))
+            {
+                WithSessionDirectory();
+            }
+        }
+
+        private void SaveSessionData()
+        {
+            if (string.IsNullOrEmpty(_sessionDirectory))
+            {
+                throw new InvalidOperationException("Session directory is not set.");
+            }
+
+            IoUtils.CreateDirectory(_sessionDirectory);
+
+            var agentsDirectory = Path.Combine(_sessionDirectory, Const.Directories.AGENTS);
+            var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
+            var subAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.SUB_AGENTS);
+            var instructionsDirectory = Path.Combine(_sessionDirectory, Const.Directories.INSTRUCTIONS);
+
+            IoUtils.CreateDirectory(primaryAgentsDirectory);
+            IoUtils.CreateDirectory(subAgentsDirectory);
+            IoUtils.CreateDirectory(instructionsDirectory);
+
+            SaveAgents(primaryAgentsDirectory, subAgentsDirectory);
+            SaveInstructions(instructionsDirectory);
+        }
+
+        private void SaveAgents(string primaryAgentsDirectory, string subAgentsDirectory)
+        {
+            var primaryAgentName = _sessionConfig.Agent;
+
+            if (!string.IsNullOrEmpty(primaryAgentName))
+            {
+                var primaryAgentConfig = GetAgentConfigByName(primaryAgentName);
+
+                if (primaryAgentConfig != null)
+                {
+                    SaveAgentFile(primaryAgentConfig, primaryAgentsDirectory);
+                }
+            }
+
+            foreach (var customAgent in _sessionConfig.CustomAgents ?? Enumerable.Empty<CustomAgentConfig>())
+            {
+                if (customAgent.Name == primaryAgentName)
+                {
+                    continue;
+                }
+
+                SaveAgentFile(customAgent, subAgentsDirectory);
+            }
+        }
+
+        private CustomAgentConfig? GetAgentConfigByName(string agentName)
+        {
+            if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentName, out var sessionAgent))
+            {
+                return GitHubCopilotMappers.ToCustomAgentConfig(sessionAgent!);
+            }
+
+            return _sessionConfig.CustomAgents?.FirstOrDefault(a => a.Name == agentName);
+        }
+
+        private void SaveAgentFile(CustomAgentConfig agentConfig, string directory)
+        {
+            if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
+            {
+                var sourceFile = sessionAgent.FilePath;
+                var destinationFile = GetUniqueFilePath(directory, Path.GetFileName(sourceFile!));
+                File.Copy(sourceFile!, destinationFile);
+                return;
+            }
+
+            var fileName = $"{agentConfig.Name}.agent.md";
+            var destinationPath = GetUniqueFilePath(directory, fileName);
+            File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
+        }
+
+        private string SerializeAgentConfig(CustomAgentConfig agentConfig)
+        {
+            var serializer = new SerializerBuilder()
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                .Build();
+
+            var frontmatterData = new
+            {
+                agentConfig.Name,
+                agentConfig.DisplayName,
+                agentConfig.Description,
+                agentConfig.Tools,
+                agentConfig.Skills,
+                agentConfig.Model,
+                agentConfig.McpServers,
+                agentConfig.Infer
+            };
+
+            var yaml = serializer.Serialize(frontmatterData);
+            var prompt = agentConfig.Prompt ?? string.Empty;
+
+            return $"---\n{yaml}---\n\n{prompt}";
+        }
+
+        private void TrackSessionInstruction(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiInstructionYamlConfigurationModel> instruction)
+        {
+            var existing = _sessionInstructionEntities.FirstOrDefault(x =>
+                (!string.IsNullOrEmpty(x.FilePath) && !string.IsNullOrEmpty(instruction.FilePath) && IoUtils.NormalizeFilePath(x.FilePath) == IoUtils.NormalizeFilePath(instruction.FilePath)) ||
+                (string.IsNullOrEmpty(x.FilePath) && string.IsNullOrEmpty(instruction.FilePath) && x.ConfigurationData.Name == instruction.ConfigurationData.Name));
+
+            if (existing == null)
+            {
+                _sessionInstructionEntities.Add(instruction);
+            }
+        }
+
+        private void SaveInstructions(string instructionsDirectory)
+        {
+            foreach (var instruction in _sessionInstructionEntities)
+            {
+                if (!string.IsNullOrEmpty(instruction.FilePath))
+                {
+                    var destinationFile = GetUniqueFilePath(instructionsDirectory, Path.GetFileName(instruction.FilePath));
+                    File.Copy(instruction.FilePath, destinationFile);
+                }
+                else
+                {
+                    var fileName = $"{instruction.ConfigurationData.Name}.instructions.md";
+                    var destinationFile = Path.Combine(instructionsDirectory, fileName);
+
+                    if (IoUtils.FileExists(destinationFile))
+                    {
+                        throw new InvalidOperationException(
+                            $"Instruction with name '{instruction.ConfigurationData.Name}' already exists in '{instructionsDirectory}'. " +
+                            $"Use {nameof(WithInstruction)}(string instructionIdentifier, string prompt) to add an instruction with a different name.");
+                    }
+
+                    File.WriteAllText(destinationFile, instruction.Prompt);
+                }
+            }
+        }
+
+        private string GetUniqueFilePath(string directory, string fileName)
+        {
+            var destinationFile = Path.Combine(directory, fileName);
+
+            if (!IoUtils.FileExists(destinationFile))
+            {
+                return destinationFile;
+            }
+
+            var nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            var extension = Path.GetExtension(fileName);
+            var counter = 1;
+
+            while (true)
+            {
+                var newFileName = $"{counter}_{nameWithoutExtension}{extension}";
+                var newDestinationFile = Path.Combine(directory, newFileName);
+
+                if (!IoUtils.FileExists(newDestinationFile))
+                {
+                    _logger.Warning("Two files with the same name '{FileName}' were found; renaming to '{NewFileName}'", fileName, newFileName);
+                    return newDestinationFile;
+                }
+
+                counter++;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!string.IsNullOrEmpty(_sessionDirectory) && IoUtils.DirectoryExists(_sessionDirectory))
+            {
+                IoUtils.DeleteDirectory(_sessionDirectory);
+            }
+        }
 
         private void LogSetting(string propertyName, object value)
         {
