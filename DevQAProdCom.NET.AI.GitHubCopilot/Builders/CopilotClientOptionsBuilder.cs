@@ -1,9 +1,10 @@
-﻿using GitHub.Copilot;
-using Microsoft.Extensions.Logging;
+﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using GitHub.Copilot;
+using MicrosoftLogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
-    public class CopilotClientOptionsBuilder
+    public class CopilotClientOptionsBuilder(ILogger logger)
     {
         private readonly CopilotClientOptions _options = new();
 
@@ -43,7 +44,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public CopilotClientOptionsBuilder WithLogger(ILogger? logger)
+        public CopilotClientOptionsBuilder WithLogger(MicrosoftLogger? logger)
         {
             _options.Logger = logger;
             return this;

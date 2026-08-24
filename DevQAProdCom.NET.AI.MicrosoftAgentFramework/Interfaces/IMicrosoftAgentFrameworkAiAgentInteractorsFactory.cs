@@ -1,9 +1,9 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses;
+﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 
 namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
 {
     public interface IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
-        public GitHubCopilotAiAgentInteractorService GetGitHubCopilotAiAgentInteractor();
+        public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor();
     }
 }

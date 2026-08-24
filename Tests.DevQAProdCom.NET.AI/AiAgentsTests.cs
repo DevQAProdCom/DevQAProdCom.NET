@@ -1,10 +1,10 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Builders;
+﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.AI.Shared.Models;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Tests.DevQAProdCom.NET.AI.Constants;
+using Tests.DevQAProdCom.NET.AI.DependencyInjection;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Validators;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
@@ -12,6 +12,8 @@ namespace Tests.DevQAProdCom.NET.AI
 {
     internal class AiAgentsTests : BaseTest
     {
+
+
         [Test]
         public async Task ReadWriteAgentTest()
         {
@@ -41,11 +43,7 @@ namespace Tests.DevQAProdCom.NET.AI
 
             var responseValidator = new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent);
 
-            await using (var aiAgent = await new GitHubCopilotAiAgentInteractorBuilder(logger: Log)
-                .WithAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
-                .WithIsolation()
-                .WithWorkingDirectory(testDirectory)
-                .BuildAsync())
+            var aiAgent =  
             {
                 var request = new AiInteractionRequestModel
                 {
@@ -65,6 +63,54 @@ namespace Tests.DevQAProdCom.NET.AI
 
             GlobalIoUtils.DeleteDirectory(testDirectory);
         }
+
+        [Test]
+        public async Task MemorizeNumberTest()
+        {
+            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(MemorizeNumberTest));
+            GlobalIoUtils.DeleteDirectory(testDirectory);
+
+            if (Directory.Exists(testDirectory))
+            {
+                Directory.Delete(testDirectory, recursive: true);
+            }
+
+            Directory.CreateDirectory(testDirectory);
+
+            await using (var aiAgent = await new GitHubCopilotAiAgentInteractor(logger: Log)
+                .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
+                .WithWorkingDirectory(testDirectory)
+                .GetAiAgentAsync())
+            {
+                var randomNumber = new Random().Next(1000, 9999);
+
+                var request = new AiInteractionRequestModel
+                {
+                    Prompt = $"Memorize number {randomNumber}. And write it down."
+                };
+
+                var interactor = new GitHubCopilotAiAgentInteractorService(Log)
+                    .WithAiAgent(aiAgent.AiAgent);
+
+                await interactor.InvokeAiAgentWithStreamingAsync(
+                     request,
+                     maxAttempts: 3);
+
+                var request2 = new AiInteractionRequestModel
+                {
+                    Prompt = $"Subtract 1 from previously memorized number."
+                };
+
+                await interactor.InvokeAiAgentWithStreamingAsync(
+                    request2,
+                    maxAttempts: 3);
+            }
+
+            GlobalIoUtils.DeleteDirectory(testDirectory);
+        }
+
+
+
 
 
         //[Test]

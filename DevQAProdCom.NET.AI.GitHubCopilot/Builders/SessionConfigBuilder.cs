@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
+﻿using System.Globalization;
+using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
 using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
@@ -10,7 +11,6 @@ using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
-using System.Globalization;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -233,6 +233,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 WithInstructionsFromDirectory(directoryPath);
             }
 
+            return this;
+        }
+
+        public SessionConfigBuilder WithWorkingDirectory(string workingDirectory)
+        {
+            LogSetting(nameof(_sessionConfig.WorkingDirectory), workingDirectory);
+            _sessionConfig.WorkingDirectory = workingDirectory;
             return this;
         }
 

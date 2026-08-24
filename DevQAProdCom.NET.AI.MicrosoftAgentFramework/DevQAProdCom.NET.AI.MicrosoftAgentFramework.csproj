@@ -15,4 +15,8 @@
     <ProjectReference Include="..\DevQAProdCom.NET.AI.Shared\DevQAProdCom.NET.AI.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>
