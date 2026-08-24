@@ -75,9 +75,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
-        public IMicrosoftAiAgentInteractor WithResponseValidationFunction(Func<IAiInteractionDataBank, IValidate> responseValidationFunc)
+        public IMicrosoftAiAgentInteractor WithResponseValidationFunction(Func<IAiInteractionDataBank, IValidate>? responseValidationFunc)
         {
             _responseValidationFunc = responseValidationFunc;
+            return this;
+        }
+
+        public IMicrosoftAiAgentInteractor WithResponseValidator(IAiInteractionResultValidator responseValidator)
+        {
+            _responseValidationFunc = responseValidator.Validate;
             return this;
         }
 

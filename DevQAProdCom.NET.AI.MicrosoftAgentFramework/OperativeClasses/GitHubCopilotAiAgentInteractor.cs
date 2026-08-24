@@ -90,7 +90,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
-        public async Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default)
+        public override async Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default)
         {
             if (AiAgent == null)
             {

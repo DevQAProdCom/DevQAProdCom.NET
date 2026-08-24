@@ -11,10 +11,6 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         where T : class, IMicrosoftAiAgentInteractorT<T>
     {
         protected AIAgent? AiAgent { get; set; }
-        private AgentRunOptionsBuilder? _agentRunOptionsBuilder;
-        private AgentRunOptions? _agentRunOptions;
-        private List<IAiContentHandler> _aiContentHandlers = new();
-        private AgentSession? _session;
         protected ILogger Logger { get; }
 
         protected string? Prompt = string.Empty;
@@ -73,9 +69,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this as T;
         }
 
-        public T WithResponseValidationFunction(Func<IAiInteractionDataBank, IValidate> responseValidationFunc)
+        public T WithResponseValidationFunction(Func<IAiInteractionDataBank, IValidate>? responseValidationFunc)
         {
             MicrosoftAiAgentInteractor.WithResponseValidationFunction(responseValidationFunc);
+            return this as T;
+        }
+
+        public T WithResponseValidator(IAiInteractionResultValidator responseValidator)
+        {
+            MicrosoftAiAgentInteractor.WithResponseValidator(responseValidator);
             return this as T;
         }
 
@@ -84,13 +86,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             int maxAttempts = 1,
             CancellationToken cancellationToken = default)
         {
+            AiAgent = await GetAiAgentAsync();
+            MicrosoftAiAgentInteractor.WithAiAgent(AiAgent);
             return await MicrosoftAiAgentInteractor.InvokeAiAgentWithStreamingAsync(request, responseValidationFunc, maxAttempts, cancellationToken);
         }
 
-        public async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(CancellationToken cancellationToken = default)
         {
+            AiAgent = await GetAiAgentAsync();
+            MicrosoftAiAgentInteractor.WithAiAgent(AiAgent);
             return await MicrosoftAiAgentInteractor.InvokeAiAgentWithStreamingAsync();
         }
+
+        public abstract Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default);
 
         public virtual ValueTask DisposeAsync()
         {

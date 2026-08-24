@@ -1,32 +1,17 @@
-﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
-using DevQAProdCom.NET.AI.Shared.Models;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using Tests.DevQAProdCom.NET.AI.Constants;
-using Tests.DevQAProdCom.NET.AI.DependencyInjection;
-using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Validators;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
     internal class AiAgentsTests : BaseTest
     {
-
-
         [Test]
         public async Task ReadWriteAgentTest()
         {
-            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(ReadWriteAgentTest));
-            GlobalIoUtils.DeleteDirectory(testDirectory);
-
-            if (Directory.Exists(testDirectory))
-            {
-                Directory.Delete(testDirectory, recursive: true);
-            }
-
-            Directory.CreateDirectory(testDirectory);
-
+            var testDirectory = PrepareTempTestWorkingDirectory();
             var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss");
 
             var inputFileName = $"file_to_read_{timestamp}.txt";
@@ -41,25 +26,14 @@ namespace Tests.DevQAProdCom.NET.AI
             var expectedOutputFileName = $"file_to_read_{timestamp}_copilot.txt";
             var expectedOutputFilePath = Path.Combine(outputFolderPath, expectedOutputFileName);
 
-            var responseValidator = new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent);
-
-            var aiAgent =  
+            await using (var agent = AiAgentsLibrary
+                .GetReadWriteAgentWithResponseValidator(testDirectory, inputFilePath, expectedOutputFilePath, inputContent)
+                .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
+                .WithMaxAttempts(3))
             {
-                var request = new AiInteractionRequestModel
-                {
-                    Prompt = Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath)
-                };
-
-                await new GitHubCopilotAiAgentInteractorService(Log)
-                    .WithAiAgent(aiAgent.AiAgent)
-                    .InvokeAiAgentWithStreamingAsync(
-                    request,
-                    responseValidationFunc: responseValidator.Validate,
-                    maxAttempts: 3);
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+                await act.Should().NotThrowAsync();
             }
-
-            var finalValidation = responseValidator.Validate();
-            finalValidation.IsSuccessful.Should().BeTrue(finalValidation.Error);
 
             GlobalIoUtils.DeleteDirectory(testDirectory);
         }
@@ -67,51 +41,25 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task MemorizeNumberTest()
         {
-            var testDirectory = Path.Combine(Path.GetTempPath(), nameof(MemorizeNumberTest));
-            GlobalIoUtils.DeleteDirectory(testDirectory);
+            var testDirectory = PrepareTempTestWorkingDirectory(nameof(MemorizeNumberTest));
 
-            if (Directory.Exists(testDirectory))
-            {
-                Directory.Delete(testDirectory, recursive: true);
-            }
-
-            Directory.CreateDirectory(testDirectory);
-
-            await using (var aiAgent = await new GitHubCopilotAiAgentInteractor(logger: Log)
+            await using (var aiAgent = GetGitHubCopilotAiAgentInteractor()
+                .WithDefaultContentHandlers()
                 .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
-                .WithWorkingDirectory(testDirectory)
-                .GetAiAgentAsync())
+                .WithWorkingDirectory(testDirectory))
             {
                 var randomNumber = new Random().Next(1000, 9999);
 
-                var request = new AiInteractionRequestModel
-                {
-                    Prompt = $"Memorize number {randomNumber}. And write it down."
-                };
+                await aiAgent
+                    .WithPrompt($"Memorize number {randomNumber}.")
+                    .InvokeAiAgentWithStreamingAsync();
 
-                var interactor = new GitHubCopilotAiAgentInteractorService(Log)
-                    .WithAiAgent(aiAgent.AiAgent);
-
-                await interactor.InvokeAiAgentWithStreamingAsync(
-                     request,
-                     maxAttempts: 3);
-
-                var request2 = new AiInteractionRequestModel
-                {
-                    Prompt = $"Subtract 1 from previously memorized number."
-                };
-
-                await interactor.InvokeAiAgentWithStreamingAsync(
-                    request2,
-                    maxAttempts: 3);
+                await aiAgent
+                    .WithPrompt($"Subtract 1 from previously memorized number.")
+                    .InvokeAiAgentWithStreamingAsync();
             }
-
             GlobalIoUtils.DeleteDirectory(testDirectory);
         }
-
-
-
-
 
         //[Test]
         //public async Task ReadWriteAgentWithInstructionsTest()

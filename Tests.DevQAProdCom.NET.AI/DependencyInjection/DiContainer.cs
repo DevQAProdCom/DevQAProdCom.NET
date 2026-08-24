@@ -1,6 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.DependencyInjection;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.DependencyInjection.Microsoft.OperativeClasses;
 using DevQAProdCom.NET.Logging.Providers.Serilog.DependencyInjection;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
@@ -21,8 +20,7 @@ namespace Tests.DevQAProdCom.NET.AI.DependencyInjection
         protected override void ConfigureServices()
         {
             _serviceCollection.AddSerilogLogger();
-            _serviceCollection.AddGitHubCopilotAiAgentInteractor();
-            _serviceCollection.AddMicrosoftAgentFrameworkAiAgentInteractorsFactory();
+            _serviceCollection.AddMicrosoftAgentFrameworkDependencies();
             _serviceCollection.AddSingleton<IAiAgentsService, AiAgentsService>();
             _serviceCollection.AddSingleton<AiAgentsLibrary>();
         }
@@ -33,8 +31,8 @@ namespace Tests.DevQAProdCom.NET.AI.DependencyInjection
             Log = GetRequiredService<ILogger>();
         }
 
-        private IMicrosoftAgentFrameworkAiAgentInteractorsFactory? _aiAgentsInteractorsFactory;
-        public IMicrosoftAgentFrameworkAiAgentInteractorsFactory AiAgentsInteractorsFactory => _aiAgentsInteractorsFactory ??= GetRequiredService<IMicrosoftAgentFrameworkAiAgentInteractorsFactory>();
+        private IMicrosoftAgentFrameworkAiAgentInteractorsFactory? _microsoftAiAgentsInteractorsFactory;
+        public IMicrosoftAgentFrameworkAiAgentInteractorsFactory MicrosoftAiAgentsInteractorsFactory => _microsoftAiAgentsInteractorsFactory ??= GetRequiredService<IMicrosoftAgentFrameworkAiAgentInteractorsFactory>();
 
         private AiAgentsLibrary? _aiAgentsLibrary;
         public AiAgentsLibrary AiAgentsLibrary => _aiAgentsLibrary ??= GetRequiredService<AiAgentsLibrary>();
