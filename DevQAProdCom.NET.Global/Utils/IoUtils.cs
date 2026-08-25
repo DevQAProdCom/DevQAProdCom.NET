@@ -1,5 +1,7 @@
-﻿using DevQAProdCom.NET.Global.Enumerations.Files;
+﻿using System.Text;
 using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 
 namespace DevQAProdCom.NET.Global.Utils
 {

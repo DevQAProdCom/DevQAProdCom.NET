@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DevQAProdCom.NET.Global.Enumerations.Files
+namespace DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files
 {
     public enum FileExtension
     {
