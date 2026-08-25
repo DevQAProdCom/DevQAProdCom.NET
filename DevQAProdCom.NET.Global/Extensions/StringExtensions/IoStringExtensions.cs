@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.Text;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations;
 using DevQAProdCom.NET.Global.Utils;
 
@@ -18,15 +17,16 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             return new MemoryStream(byteArray);
         }
 
-        public static string ToFileName(this string @string, string directoryPath, string? extension = null, int maxAmountOfChars = int.MaxValue)
+        public static string ToFileName(this string @string, string directoryPath, string? extension = null, int maxAmountOfChars = int.MaxValue, int minimumFileNameSizeToApplyTruncation = 7)
         {
             if (@string == null)
                 throw new ArgumentNullException(nameof(@string));
 
-            return ToFileName(@string, extension, maxAmountOfChars);
+            var limits = RuntimeUtils.GetOsFileSystemLimits();
+            return ToFileName(@string, extension, maxAmountOfChars, limits.MaxFileNameLength, limits.Unit, minimumFileNameSizeToApplyTruncation);
         }
 
-        public static string ToFilePath(this string fileName, string directoryPath, string extension, int maxAmountOfCharsInFileName = int.MaxValue)
+        public static string ToFilePath(this string fileName, string directoryPath, string extension, int maxAmountOfCharsInFileName = int.MaxValue, int minimumFileNameSizeToApplyTruncation = 7)
         {
             var limits = RuntimeUtils.GetOsFileSystemLimits();
             var safeDirectoryPath = directoryPath ?? string.Empty;
@@ -35,45 +35,57 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             var pathBudget = limits.MaxPathLength - directoryPathSize - separatorSize;
             var effectiveMaxFileNameSize = Math.Min(limits.MaxFileNameLength, pathBudget);
 
-            var fileNameWithExtension = ToFileName(fileName, extension, maxAmountOfCharsInFileName, effectiveMaxFileNameSize, limits.Unit);
+            var fileNameWithExtension = ToFileName(fileName, extension, maxAmountOfCharsInFileName, effectiveMaxFileNameSize, limits.Unit, minimumFileNameSizeToApplyTruncation);
 
             return Path.Combine(safeDirectoryPath, fileNameWithExtension);
         }
 
-        private static string ToFileName(string @string, string? extension, int maxAmountOfChars)
+        private static string ToFileName(string @string, string? extension, int maxAmountOfChars, int osMaxFileNameSize, FileSystemNamingLimitUnit unit, int minimumFileNameSizeToApplyTruncation = 7)
         {
-            var limits = RuntimeUtils.GetOsFileSystemLimits();
+            if (minimumFileNameSizeToApplyTruncation < 1)
+                throw new ArgumentException($"'{nameof(minimumFileNameSizeToApplyTruncation)}' cannot be less than 1");
 
             var fileNameWithoutInvalidChars = WithoutInvalidFileNameChars(@string);
             var normalizedExtensionChars = NormalizeExtension(extension);
 
-            if (limits.Unit == FileSystemNamingLimitUnit.Characters)
+            if (unit == FileSystemNamingLimitUnit.Characters)
             {
-                // Calculate the maximum allowed characters for the file name with extension. Either the user-defined 'maxAmountOfChars' or the OS Max limit, whichever is smaller.
-                // This always ensures that the total length of the file name (including the extension) does not exceed the OS limit.
-                var maxAllowedTotalCharsForFileNameWithExtension = Math.Min(limits.MaxFileNameLength, maxAmountOfChars);
-                var maxAllowedTotalCharsForFileNameWithoutExtension = Math.Max(0, maxAllowedTotalCharsForFileNameWithExtension - normalizedExtensionChars.Length);
-                var truncatedFileNameWithoutExtension = TruncateWithXxxByChars(value: fileNameWithoutInvalidChars, maxLength: maxAllowedTotalCharsForFileNameWithoutExtension);
+                var maxAvailableTotalCharsForFileNameWithExtension = Math.Min(osMaxFileNameSize, maxAmountOfChars);
+                var maxAvailableTotalCharsForFileNameWithoutExtension = maxAvailableTotalCharsForFileNameWithExtension - normalizedExtensionChars.Length;
+
+                if (maxAvailableTotalCharsForFileNameWithoutExtension < 1)
+                    throw new ArgumentException("Not enough space for the filename and extension within the specified max OS allowed size limits.", nameof(extension));
+
+                var truncatedFileNameWithoutExtension = TruncateWithXxxByChars(value: fileNameWithoutInvalidChars, maxLength: maxAvailableTotalCharsForFileNameWithoutExtension,
+                    minimumFileNameSizeToApplyTruncation: minimumFileNameSizeToApplyTruncation);
                 return truncatedFileNameWithoutExtension + normalizedExtensionChars;
             }
-            else if (limits.Unit == FileSystemNamingLimitUnit.Bytes)
+            else if (unit == FileSystemNamingLimitUnit.Bytes)
             {
-                var maxAllowedTotalCharsForFileNameWithoutExtension = Math.Max(0, maxAmountOfChars - normalizedExtensionChars.Length);
-                var baseNameInChars = TruncateWithXxxByChars(value: fileNameWithoutInvalidChars, maxLength: maxAllowedTotalCharsForFileNameWithoutExtension);
+                var maxAvailableTotalCharsForFileNameWithoutExtension = maxAmountOfChars - normalizedExtensionChars.Length;
 
-                var extensionSizeInBytes = RuntimeUtils.GetSize(normalizedExtensionChars, limits.Unit);
-                var totalSizeOfFileNameWithExtensionInBytes = RuntimeUtils.GetSize(baseNameInChars, limits.Unit) + extensionSizeInBytes;
+                if (maxAvailableTotalCharsForFileNameWithoutExtension < 1)
+                    throw new ArgumentException("Not enough space for the filename and extension within the specified limits.", nameof(extension));
 
-                if (totalSizeOfFileNameWithExtensionInBytes > limits.MaxFileNameLength)
+                var baseNameInChars = TruncateWithXxxByChars(value: fileNameWithoutInvalidChars, maxLength: maxAvailableTotalCharsForFileNameWithoutExtension, minimumFileNameSizeToApplyTruncation: minimumFileNameSizeToApplyTruncation);
+
+                var extensionSizeInBytes = RuntimeUtils.GetSize(normalizedExtensionChars, unit);
+                var totalSizeOfFileNameWithExtensionInBytes = RuntimeUtils.GetSize(baseNameInChars, unit) + extensionSizeInBytes;
+
+                if (totalSizeOfFileNameWithExtensionInBytes > osMaxFileNameSize)
                 {
-                    var baseNameMaxSize = Math.Max(0, limits.MaxFileNameLength - extensionSizeInBytes);
-                    baseNameInChars = TruncateWithXxxByBytes(value: fileNameWithoutInvalidChars, maxBytes: baseNameMaxSize);
+                    var baseNameMaxSize = osMaxFileNameSize - extensionSizeInBytes;
+
+                    if (TruncateToByteLength(fileNameWithoutInvalidChars, baseNameMaxSize).Length < 1)
+                        throw new ArgumentException("Not enough space for the filename and extension within the specified limits.", nameof(extension));
+
+                    baseNameInChars = TruncateWithXxxByBytes(value: fileNameWithoutInvalidChars, maxBytes: baseNameMaxSize, minimumFileNameSizeToApplyTruncation: minimumFileNameSizeToApplyTruncation);
                 }
 
                 return baseNameInChars + normalizedExtensionChars;
             }
 
-            throw new Exception($"Unsupported value/type of '{nameof(FileSystemNamingLimitUnit)}': '{limits.Unit}'.");
+            throw new Exception($"Unsupported value/type of '{nameof(FileSystemNamingLimitUnit)}': '{unit}'.");
         }
 
         public static string WithoutInvalidFileNameChars(string @string)
@@ -92,7 +104,7 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             return cleaned.ToString();
         }
 
-        private static string TruncateWithXxxByChars(string value, int maxLength)
+        private static string TruncateWithXxxByChars(string value, int maxLength, int minimumFileNameSizeToApplyTruncation)
         {
             if (maxLength < 0)
                 throw new ArgumentException($"'{nameof(maxLength)}' cannot be negative");
@@ -100,13 +112,24 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             if (value.Length <= maxLength)
                 return value;
 
-            if (maxLength <= XXX.Length)
-                return value.Substring(0, maxLength);
+            if (maxLength < minimumFileNameSizeToApplyTruncation + XXX.Length)
+                return TruncateByCharsOrDefault(value, maxLength);
 
             return value.Substring(0, maxLength - XXX.Length) + XXX;
         }
 
-        private static string TruncateWithXxxByBytes(string value, int maxBytes)
+        private static string TruncateByCharsOrDefault(string value, int maxLength)
+        {
+            if (maxLength <= 0)
+                throw new ArgumentException($"'{nameof(maxLength)}' cannot be negative");
+
+            if (value.Length <= maxLength)
+                return value;
+
+            return value.Substring(0, maxLength);
+        }
+
+        private static string TruncateWithXxxByBytes(string value, int maxBytes, int minimumFileNameSizeToApplyTruncation)
         {
             if (maxBytes < 0)
                 throw new ArgumentException($"'{nameof(maxBytes)}' cannot be negative");
@@ -114,11 +137,15 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             if (Encoding.UTF8.GetByteCount(value) <= maxBytes)
                 return value;
 
-            if (maxBytes <= XXX.Length)
+            var rawPartMaxBytes = maxBytes - XXX.Length;
+            if (rawPartMaxBytes < 0)
                 return TruncateToByteLength(value, maxBytes);
 
-            var withoutXxx = TruncateToByteLength(value, maxBytes - XXX.Length);
-            return withoutXxx + XXX;
+            var rawPart = TruncateToByteLength(value, rawPartMaxBytes);
+            if (rawPart.Length >= minimumFileNameSizeToApplyTruncation)
+                return rawPart + XXX;
+
+            return TruncateToByteLength(value, maxBytes);
         }
 
         private static string TruncateToByteLength(string value, int maxBytes)
