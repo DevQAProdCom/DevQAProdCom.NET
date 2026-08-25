@@ -52,18 +52,6 @@ namespace DevQAProdCom.NET.Global.Utils
             }
         }
 
-        public static void WriteToFile(List<List<string>> data, string filePath, string delimiter = ";")
-        {
-            if (data == null || data.Count == 0)
-            {
-                throw new ArgumentException("Data cannot be null or empty.", nameof(data));
-            }
-
-            using (var writer = new StreamWriter(filePath))
-                foreach (var row in data)
-                    writer.WriteLine(string.Join(delimiter, row));
-        }
-
         public static string? GetNearestDirectoryAsCurrentOrParentWithFilesWithExtensions(string initialDirectory, params string[] extensions)
         {
             var extensionsSet = new HashSet<string>(extensions

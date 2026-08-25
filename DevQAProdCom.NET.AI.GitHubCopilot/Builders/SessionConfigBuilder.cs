@@ -493,7 +493,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             {
                 foreach (var entity in _sessionInstructionEntities)
                 {
-                    //TODO IF Instruction is 
+                    //TODO IF Instruction is file 
                     var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory!, Const.Directories.INSTRUCTIONS);
                     _sessionConfig.InstructionDirectories = new List<string> { instructionsDirectory };
                 }
@@ -505,17 +505,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SaveInteractionConfigurationData()
         {
-
             if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
                 _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
             else
                 IoUtils.CleanDirectory(_interactionConfigurationDirectory);
 
-            SaveAgents(_interactionConfigurationDirectory);
-            SaveInstructions(_interactionConfigurationDirectory);
+            SaveAiAgents(_interactionConfigurationDirectory);
+            SaveAiInstructions(_interactionConfigurationDirectory);
         }
 
-        private void SaveAgents(string rootDirectory)
+        private void SaveAiAgents(string rootDirectory)
         {
             var agentsDirectory = Path.Combine(rootDirectory, Const.Directories.AGENTS);
             var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
@@ -526,24 +525,26 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             var primaryAgentName = _sessionConfig.Agent;
 
+            // Save Primary Agent
             if (!string.IsNullOrEmpty(primaryAgentName))
             {
                 var primaryAgent = SessionAgentsCollection.GetEntityDataByIdentifier(primaryAgentName);
                 SaveAgentFile(primaryAgent, primaryAgentsDirectory);
             }
 
+            // Save Sub-Agents
             foreach (var agent in SessionAgentsCollection)
             {
-                if (customAgent.Name == primaryAgentName)
+                if (agent.ConfigurationData.Name == primaryAgentName)
                 {
                     continue;
                 }
 
-                SaveAgentFile(customAgent, subAgentsDirectory);
+                SaveAgentFile(agent, subAgentsDirectory);
             }
         }
 
-        private void SaveInstructions(string rootDirectory)
+        private void SaveAiInstructions(string rootDirectory)
         {
             var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS);
             IoUtils.CreateDirectory(instructionsDirectory);
@@ -582,19 +583,26 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return _sessionConfig.CustomAgents?.FirstOrDefault(a => a.Name == agentName);
         }
 
-        private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel>, string directory)
+        private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent, string destinationDirectory)
         {
-            if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
+            if (!string.IsNullOrEmpty(aiAgent.FilePath))
+                IoUtils.CopyFile(aiAgent.FilePath, destinationDirectory);
+            else
             {
-                var sourceFile = sessionAgent.FilePath;
-                var destinationFile = GetUniqueFilePath(directory, Path.GetFileName(sourceFile!));
-                File.Copy(sourceFile!, destinationFile);
-                return;
+                var fileName = $"{agentConfig.Name}.agent.md";
+
+                IoUtils.WriteToFile();
+                var destinationPath = GetUniqueFilePath(destinationDirectory, fileName);
+                File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
             }
 
-            var fileName = $"{agentConfig.Name}.agent.md";
-            var destinationPath = GetUniqueFilePath(directory, fileName);
-            File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
+            //if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
+            //{
+            //    var sourceFile = sessionAgent.FilePath;
+            //    var destinationFile = GetUniqueFilePath(destinationDirectory, Path.GetFileName(sourceFile!));
+            //    File.Copy(sourceFile!, destinationFile);
+            //    return;
+            //}
         }
 
         private string SerializeAgentConfig(CustomAgentConfig agentConfig)
