@@ -1,5 +1,5 @@
 ---
-name: Generate Random Data
+name: Append CUSTOM INSTRUCTION CHECK to Read Write Agent content property
 description: Instruction file for customizing random data generation behavior in the Read Write Agent
 ---
 

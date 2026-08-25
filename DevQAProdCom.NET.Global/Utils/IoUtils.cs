@@ -11,9 +11,9 @@ namespace DevQAProdCom.NET.Global.Utils
             return Directory.GetFiles(directoryPath, searchPattern, searchOption).Select(x => new FileInfo(x)).ToList();
         }
 
-        public static void CleanDirectory(string directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
+        public static void CleanDirectory(string? directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
         {
-            if (!DirectoryExists(directoryPath))
+            if (string.IsNullOrEmpty(directoryPath) || !DirectoryExists(directoryPath))
                 return;
 
             // Delete all files in the directory
@@ -198,6 +198,19 @@ namespace DevQAProdCom.NET.Global.Utils
             }
 
             return Path.GetFullPath(filePath).TrimEnd('\\', '/');
+        }
+
+        public static void CopyFile(string sourceFilePath, string destinationFilePath, bool overwrite = true)
+        {
+            CheckFileMustExist(sourceFilePath);
+
+            var destinationDirectory = Path.GetDirectoryName(destinationFilePath);
+            if (!string.IsNullOrEmpty(destinationDirectory))
+            {
+                CreateDirectory(destinationDirectory);
+            }
+
+            File.Copy(sourceFilePath, destinationFilePath, overwrite);
         }
     }
 }

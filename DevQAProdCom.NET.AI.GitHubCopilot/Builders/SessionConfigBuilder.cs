@@ -44,7 +44,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private readonly ILogger _logger;
 
-        private string? _sessionDirectory = null;
+        private string? _interactionConfigurationDirectory = null;
 
         public SessionConfigBuilder(ILogger logger)
         {
@@ -236,6 +236,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
+        public SessionConfigBuilder WithInstructionDirectories(params string[] instructionDirectories)
+        {
+            var directoryList = instructionDirectories.ToList();
+            LogCollectionSetting(nameof(_sessionConfig.InstructionDirectories), directoryList);
+            _sessionConfig.InstructionDirectories = directoryList;
+            return this;
+        }
+
         public SessionConfigBuilder WithWorkingDirectory(string workingDirectory)
         {
             LogSetting(nameof(_sessionConfig.WorkingDirectory), workingDirectory);
@@ -351,14 +359,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithInstructionDirectories(params string[] instructionDirectories)
-        {
-            var directoryList = instructionDirectories.ToList();
-            LogCollectionSetting(nameof(_sessionConfig.InstructionDirectories), directoryList);
-            _sessionConfig.InstructionDirectories = directoryList;
-            return this;
-        }
-
         public SessionConfigBuilder WithDisabledSkills(params string[] disabledSkills)
         {
             var skillList = disabledSkills.ToList();
@@ -445,15 +445,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithSessionDirectory(string? directoryPath = null)
+        public SessionConfigBuilder WithInteractionConfigurationDirectory(string directoryPath)
         {
-            if (string.IsNullOrEmpty(directoryPath))
-            {
-                directoryPath = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
-            }
-
-            LogSetting(nameof(_sessionDirectory), directoryPath);
-            _sessionDirectory = directoryPath;
+            LogSetting(nameof(_interactionConfigurationDirectory), directoryPath);
+            _interactionConfigurationDirectory = directoryPath;
             return this;
         }
 
@@ -492,64 +487,52 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
             };
 
-            EnsureSessionDirectory();
-            SaveSessionData();
+            SaveInteractionConfigurationData();
 
             if (_sessionInstructionEntities.Any())
             {
-                var instructionsDirectory = Path.Combine(_sessionDirectory!, Const.Directories.INSTRUCTIONS);
-                _sessionConfig.InstructionDirectories = new List<string> { instructionsDirectory };
+                foreach (var entity in _sessionInstructionEntities)
+                {
+                    //TODO IF Instruction is 
+                    var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory!, Const.Directories.INSTRUCTIONS);
+                    _sessionConfig.InstructionDirectories = new List<string> { instructionsDirectory };
+                }
             }
 
             _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
 
-        private void EnsureSessionDirectory()
+        private void SaveInteractionConfigurationData()
         {
-            if (string.IsNullOrEmpty(_sessionDirectory))
-            {
-                WithSessionDirectory();
-            }
+
+            if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+                _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
+            else
+                IoUtils.CleanDirectory(_interactionConfigurationDirectory);
+
+            SaveAgents(_interactionConfigurationDirectory);
+            SaveInstructions(_interactionConfigurationDirectory);
         }
 
-        private void SaveSessionData()
+        private void SaveAgents(string rootDirectory)
         {
-            if (string.IsNullOrEmpty(_sessionDirectory))
-            {
-                throw new InvalidOperationException("Session directory is not set.");
-            }
-
-            IoUtils.CreateDirectory(_sessionDirectory);
-
-            var agentsDirectory = Path.Combine(_sessionDirectory, Const.Directories.AGENTS);
+            var agentsDirectory = Path.Combine(rootDirectory, Const.Directories.AGENTS);
             var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
             var subAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.SUB_AGENTS);
-            var instructionsDirectory = Path.Combine(_sessionDirectory, Const.Directories.INSTRUCTIONS);
 
             IoUtils.CreateDirectory(primaryAgentsDirectory);
             IoUtils.CreateDirectory(subAgentsDirectory);
-            IoUtils.CreateDirectory(instructionsDirectory);
 
-            SaveAgents(primaryAgentsDirectory, subAgentsDirectory);
-            SaveInstructions(instructionsDirectory);
-        }
-
-        private void SaveAgents(string primaryAgentsDirectory, string subAgentsDirectory)
-        {
             var primaryAgentName = _sessionConfig.Agent;
 
             if (!string.IsNullOrEmpty(primaryAgentName))
             {
-                var primaryAgentConfig = GetAgentConfigByName(primaryAgentName);
-
-                if (primaryAgentConfig != null)
-                {
-                    SaveAgentFile(primaryAgentConfig, primaryAgentsDirectory);
-                }
+                var primaryAgent = SessionAgentsCollection.GetEntityDataByIdentifier(primaryAgentName);
+                SaveAgentFile(primaryAgent, primaryAgentsDirectory);
             }
 
-            foreach (var customAgent in _sessionConfig.CustomAgents ?? Enumerable.Empty<CustomAgentConfig>())
+            foreach (var agent in SessionAgentsCollection)
             {
                 if (customAgent.Name == primaryAgentName)
                 {
@@ -557,6 +540,35 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 }
 
                 SaveAgentFile(customAgent, subAgentsDirectory);
+            }
+        }
+
+        private void SaveInstructions(string rootDirectory)
+        {
+            var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS);
+            IoUtils.CreateDirectory(instructionsDirectory);
+
+            foreach (var instruction in _sessionInstructionEntities)
+            {
+                if (!string.IsNullOrEmpty(instruction.FilePath))
+                {
+                    var destinationFile = GetUniqueFilePath(instructionsDirectory, Path.GetFileName(instruction.FilePath));
+                    File.Copy(instruction.FilePath, destinationFile);
+                }
+                else
+                {
+                    var fileName = $"{instruction.ConfigurationData.Name}.instructions.md";
+                    var destinationFile = Path.Combine(instructionsDirectory, fileName);
+
+                    if (IoUtils.FileExists(destinationFile))
+                    {
+                        throw new InvalidOperationException(
+                            $"Instruction with name '{instruction.ConfigurationData.Name}' already exists in '{instructionsDirectory}'. " +
+                            $"Use {nameof(WithInstruction)}(string instructionIdentifier, string prompt) to add an instruction with a different name.");
+                    }
+
+                    File.WriteAllText(destinationFile, instruction.Prompt);
+                }
             }
         }
 
@@ -570,7 +582,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return _sessionConfig.CustomAgents?.FirstOrDefault(a => a.Name == agentName);
         }
 
-        private void SaveAgentFile(CustomAgentConfig agentConfig, string directory)
+        private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel>, string directory)
         {
             if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
             {
@@ -621,31 +633,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private void SaveInstructions(string instructionsDirectory)
-        {
-            foreach (var instruction in _sessionInstructionEntities)
-            {
-                if (!string.IsNullOrEmpty(instruction.FilePath))
-                {
-                    var destinationFile = GetUniqueFilePath(instructionsDirectory, Path.GetFileName(instruction.FilePath));
-                    File.Copy(instruction.FilePath, destinationFile);
-                }
-                else
-                {
-                    var fileName = $"{instruction.ConfigurationData.Name}.instructions.md";
-                    var destinationFile = Path.Combine(instructionsDirectory, fileName);
 
-                    if (IoUtils.FileExists(destinationFile))
-                    {
-                        throw new InvalidOperationException(
-                            $"Instruction with name '{instruction.ConfigurationData.Name}' already exists in '{instructionsDirectory}'. " +
-                            $"Use {nameof(WithInstruction)}(string instructionIdentifier, string prompt) to add an instruction with a different name.");
-                    }
-
-                    File.WriteAllText(destinationFile, instruction.Prompt);
-                }
-            }
-        }
 
         private string GetUniqueFilePath(string directory, string fileName)
         {
@@ -677,9 +665,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public void Dispose()
         {
-            if (!string.IsNullOrEmpty(_sessionDirectory) && IoUtils.DirectoryExists(_sessionDirectory))
+            if (!string.IsNullOrEmpty(_interactionConfigurationDirectory) && IoUtils.DirectoryExists(_interactionConfigurationDirectory))
             {
-                IoUtils.DeleteDirectory(_sessionDirectory);
+                IoUtils.DeleteDirectory(_interactionConfigurationDirectory);
             }
         }
 

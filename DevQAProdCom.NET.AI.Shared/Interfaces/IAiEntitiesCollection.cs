@@ -1,6 +1,8 @@
-﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
+﻿using System.Collections.Generic;
+
+namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
-    public interface IAiEntitiesCollection<TAiEntityYamlConfiguration> where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
+    public interface IAiEntitiesCollection<TAiEntityYamlConfiguration> : IEnumerable<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
     {
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntityData(IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> entity);
         public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddEntitiesData(params IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] entities);

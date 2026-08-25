@@ -7,7 +7,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
 {
     internal class AiAgentsLibrary
     {
-        public GitHubCopilotAiAgentInteractor GetBaseReadWriteAgent(string workingDirectory)
+        public GitHubCopilotAiAgentInteractor GetBaseReadWriteAgent(string workingDirectory, string inputFilePath, string outputFolderPath)
         {
             return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
                 .GetGitHubCopilotAiAgentInteractor()
@@ -15,13 +15,15 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
                 .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
                 .WithIsolation()
                 .WithWorkingDirectory(workingDirectory)
-                .WithDefaultContentHandlers();
+                .WithDefaultContentHandlers()
+                .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath));
+
         }
 
-        public GitHubCopilotAiAgentInteractor GetReadWriteAgentWithResponseValidator(string workingDirectory, string inputFilePath, string expectedOutputFilePath, string inputContent)
+        public GitHubCopilotAiAgentInteractor GetReadWriteAgentWithResponseValidator(string workingDirectory, string inputFilePath, string outputFolderPath, string expectedOutputFilePath, string inputContent)
         {
             var responseValidator = new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent);
-            var baseReadWriteAgent = GetBaseReadWriteAgent(workingDirectory);
+            var baseReadWriteAgent = GetBaseReadWriteAgent(workingDirectory, inputFilePath, outputFolderPath);
 
             return baseReadWriteAgent.WithResponseValidator(responseValidator);
         }

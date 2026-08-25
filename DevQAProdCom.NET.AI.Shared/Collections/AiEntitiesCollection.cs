@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+﻿using System.Collections;
+using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.Utils;
@@ -32,6 +33,9 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntityData(IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
+
+            //TODO Add validation that Each Entity has Yaml Configuration with Name // or add random generation of name if case not exists for use cases when one dont have access to files in those folders
+            //or add config to not intialize such rules at all without names and log warning - then this method should be nullable
 
             var entityName = entity.ConfigurationData.Name;
             var addedEntityFilePath = entity.FilePath;
@@ -215,6 +219,16 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             var normalizedFilePath = IoUtils.NormalizeFilePath(filePath);
             entityData = Entities.FirstOrDefault(x => IoUtils.NormalizeFilePath(x.FilePath) == normalizedFilePath);
             return entityData != null;
+        }
+
+        public IEnumerator<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> GetEnumerator()
+        {
+            return Entities.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         private void InitializeCollectionFromDefaultLocations()

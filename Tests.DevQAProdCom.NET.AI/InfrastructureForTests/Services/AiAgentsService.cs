@@ -16,8 +16,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Services
             int maxAttempts = 3)
         {
             await using var agent = aiAgentsLibrary
-                 .GetBaseReadWriteAgent(workingDirectory)
-                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(filePathToRead, outputFolderToWrite))
+                 .GetBaseReadWriteAgent(workingDirectory, filePathToRead, outputFolderToWrite)
                  .WithResponseValidationFunction(responseValidationFunc)
                  .WithMaxAttempts(3);
 
