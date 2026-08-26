@@ -31,7 +31,7 @@ namespace DevQAProdCom.NET.Global.Utils
                 case OsPlatform.OSX:
                     return GlobalConst.Runtime.OSX_FILESYSTEM_LIMITS_MODEL;
                 default:
-                    return new FileSystemNamingLimitsModel() { MaxFileNameLength = 255, MaxPathLength = 260, Unit = FileSystemNamingLimitUnit.Bytes };
+                    return new FileSystemNamingLimitsModel() { MaxFileNameWithExtensionLength = 255, MaxPathLength = 260, Unit = FileSystemNamingLimitUnit.Bytes };
             }
         }
 
