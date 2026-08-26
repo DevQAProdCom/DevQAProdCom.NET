@@ -211,6 +211,8 @@ namespace DevQAProdCom.NET.Global.Utils
             if (@string == null)
                 throw new ArgumentNullException(nameof(@string));
 
+            ValidateMaxAmountOfCharsInFileName(maxAmountOfCharsInFileName, extension);
+
             var limits = RuntimeUtils.GetOsFileSystemLimits();
             return ToTruncatedFileNameOrDefault(@string, extension, limits.MaxFileNameWithExtensionLength, limits.Unit,
                 maxAmountOfCharsInFileName: maxAmountOfCharsInFileName,
@@ -244,15 +246,7 @@ namespace DevQAProdCom.NET.Global.Utils
             int? maxAmountOfCharsInFileName = null,
             int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = GlobalConst.Io.MINIMUM_REQUIRED_CHARS_LENGTH_OF_FILE_NAME_WITHOUT_EXTENSION_TO_APPLY_TRUNCATION)
         {
-            if (maxAmountOfCharsInFileName != null)
-            {
-                var limits = RuntimeUtils.GetOsFileSystemLimits();
-                var maxBudgetSizeForAmountOfCharsInFileName = limits.GetMaxFileNameWithoutExtensionLength(extension);
-
-                if (maxAmountOfCharsInFileName < 1 || maxAmountOfCharsInFileName > maxBudgetSizeForAmountOfCharsInFileName)
-                    throw new ArgumentException($"'{nameof(maxAmountOfCharsInFileName)}' must be at least 1 and ({maxAmountOfCharsInFileName}) cannot be greater than the maximum allowed file name length without extension of {maxBudgetSizeForAmountOfCharsInFileName} characters for the current operating system. " +
-                                                $"(Calculated as: max file name with extension [{limits.MaxFileNameWithExtensionLength}] - extension length [{extension?.Length ?? 0}])");
-            }
+            ValidateMaxAmountOfCharsInFileName(maxAmountOfCharsInFileName, extension);
 
             if (minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation < 1)
                 throw new ArgumentException($"'{nameof(minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation)}' cannot be less than 1");
@@ -460,6 +454,19 @@ namespace DevQAProdCom.NET.Global.Utils
                 return string.Empty;
 
             return extension.StartsWith(".") ? extension : $".{extension}";
+        }
+
+        private static void ValidateMaxAmountOfCharsInFileName(int? maxAmountOfCharsInFileName, string? extension)
+        {
+            if (maxAmountOfCharsInFileName == null)
+                return;
+
+            var limits = RuntimeUtils.GetOsFileSystemLimits();
+            var maxBudgetSizeForAmountOfCharsInFileName = limits.GetMaxFileNameWithoutExtensionLength(extension);
+
+            if (maxAmountOfCharsInFileName < 1 || maxAmountOfCharsInFileName > maxBudgetSizeForAmountOfCharsInFileName)
+                throw new ArgumentException($"'{nameof(maxAmountOfCharsInFileName)}' must be between 1 and {maxBudgetSizeForAmountOfCharsInFileName}. The specified value {maxAmountOfCharsInFileName} is not valid. The maximum allowed length for a file name without extension on this operating system is {maxBudgetSizeForAmountOfCharsInFileName} characters. " +
+                                            $"(Calculated as {limits.MaxFileNameWithExtensionLength} characters for the full file name with extension, minus {extension?.Length ?? 0} characters for the extension.)");
         }
     }
 }
