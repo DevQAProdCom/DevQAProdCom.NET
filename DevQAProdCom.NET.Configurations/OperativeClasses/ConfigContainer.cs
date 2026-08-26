@@ -2,8 +2,8 @@
 using DevQAProdCom.NET.Configurations.Constants;
 using DevQAProdCom.NET.Configurations.Extensions;
 using DevQAProdCom.NET.Configurations.Interfaces;
-using DevQAProdCom.NET.Global.Enumerations.Files;
 using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Extensions.Configuration;

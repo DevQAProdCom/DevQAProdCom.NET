@@ -589,11 +589,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 IoUtils.CopyFile(aiAgent.FilePath, destinationDirectory);
             else
             {
-                var fileName = $"{agentConfig.Name}.agent.md";
+                //var fileName = $"{agentConfig.Name}.agent.md";
 
-                IoUtils.WriteToFile();
-                var destinationPath = GetUniqueFilePath(destinationDirectory, fileName);
-                File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
+                //IoUtils.WriteToFile();
+                //var destinationPath = GetUniqueFilePath(destinationDirectory, fileName);
+                //File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
             }
 
             //if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
