@@ -26,7 +26,7 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             return ToTruncatedFileNameOrDefault(@string, extension, maxAmountOfChars, limits.MaxFileNameWithExtensionLength, limits.Unit, minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation);
         }
 
-        public static string ToFilePath(this string fileName, string extension, string directoryPath, int maxAmountOfCharsInFileName = int.MaxValue, int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = 7)
+        public static string ToFilePathWithFileNameTruncationOrDefault(this string fileName, string extension, string directoryPath, int maxAmountOfCharsInFileName = int.MaxValue, int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = 7)
         {
             if (string.IsNullOrEmpty(directoryPath))
                 throw new ArgumentException(nameof(directoryPath));
