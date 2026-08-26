@@ -103,11 +103,7 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             if (fileName.Length < minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation)
                 throw new Exception($"File name '{fileName}' is too short to apply truncation. Minimum length required: {minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation} chars.");
 
-            ////Make checks to assure that budgetSizeInChars >= XXX_TRUNCATION_INDICATOR.Length, so it is safe to truncate and append the truncation indicator.
-            //if (budgetSizeInChars < XXX_TRUNCATION_INDICATOR.Length)
-            //    throw new Exception($"Budget size '{budgetSizeInChars}' is less than the length of the truncation indicator '{XXX_TRUNCATION_INDICATOR.Length}'.");
-
-            //Previous checks assure that
+            //Previous checks assure that:
             //1) fileName.Length is greater than or equal budgetSizeInChars
             //2) fileName.Length is greater than or equal XXX_TRUNCATION_INDICATOR.Length (of 3 symbols)
             //3) fileName.Length is greater than or equal minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation
@@ -169,18 +165,6 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             return cleaned.ToString();
         }
 
-
-
-
-        //private static string TruncateFileNameWithoutExtensionByChars(string fileName, int budgetSizeInChars)
-        //{
-        //    if (fileName.Length <= budgetSizeInChars)
-        //        return fileName;
-
-        //    return fileName.Substring(0, budgetSizeInChars - XXX.Length) + XXX;
-        //}
-
-
         private static string TruncateFileNameWithoutExtensionByBytes(string fileName, int budgetSizeInBytes, int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation)
         {
             var fileNameSizeInBytes = RuntimeUtils.GetSize(fileName, FileSystemNamingLimitUnit.Bytes);
@@ -189,31 +173,23 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
                 return fileName;
 
             //If fileNameSizeInBytes > budgetSizeInBytes, then truncation is needed. But we need to check if the fileName is long enough to apply truncation.
-            var xxxTruncationIndicatorSizeInBytes = RuntimeUtils.GetSize(XXX_TRUNCATION_INDICATOR, FileSystemNamingLimitUnit.Bytes);
 
-            if (minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation < XXX_TRUNCATION_INDICATOR.Length)
+            //Make checks to assure that fileNameSizeInBytes >= minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation >= XXX_TRUNCATION_INDICATOR.Length, so it is safe to truncate and append the truncation indicator.
+            var xxxTruncationIndicatorSizeInBytes = RuntimeUtils.GetSize(XXX_TRUNCATION_INDICATOR, FileSystemNamingLimitUnit.Bytes);
+            var minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncationSizeInBytes = RuntimeUtils.GetSize(new string('*', minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation), FileSystemNamingLimitUnit.Bytes);
+
+            if (minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncationSizeInBytes < xxxTruncationIndicatorSizeInBytes)
                 throw new Exception($"Minimum length required for truncation '{minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation}' is less than the length of the truncation indicator '{XXX_TRUNCATION_INDICATOR.Length}'.");
 
-            if (fileName.Length < minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation)
+            if (fileNameSizeInBytes < minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncationSizeInBytes)
                 throw new Exception($"File name '{fileName}' is too short to apply truncation. Minimum length required: {minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation} chars.");
 
-            return fileName.Substring(0, budgetSizeInChars - XXX_TRUNCATION_INDICATOR.Length) + XXX_TRUNCATION_INDICATOR;
-        }
-
-
-
-
-        private static string TruncateFileNameWithoutExtensionByBytes(string fileName, int maxBytes)
-        {
-            if (Encoding.UTF8.GetByteCount(fileName) <= maxBytes)
-                return fileName;
-
-            var rawPartMaxBytes = maxBytes - XXX_TRUNCATION_INDICATOR.Length;
-            if (rawPartMaxBytes < 0)
-                return TruncateToByteLength(fileName, maxBytes);
-
-
-            return TruncateToByteLength(fileName, maxBytes);
+            //Previous checks assure that:
+            //1) fileNameSizeInBytes is greater than or equal budgetSizeInBytes
+            //2) fileNameSizeInBytes is greater than or equal xxxTruncationIndicatorSizeInBytes (of 3 symbols)
+            //3) fileNameSizeInBytes is greater than or equal minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncationSizeInBytes
+            // So eventually, as far as fileNameSizeInBytes >= budgetSizeInBytes >= minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncationSizeInBytes >= xxxTruncationIndicatorSizeInBytes it is safe to truncate and append the truncation indicator
+            return TruncateToByteLength(fileName, budgetSizeInBytes - xxxTruncationIndicatorSizeInBytes) + XXX_TRUNCATION_INDICATOR;
         }
 
         private static string TruncateToByteLength(string value, int maxBytes)
@@ -224,9 +200,9 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             int byteCount = 0;
             int charCount = 0;
 
-            foreach (var c in value)
+            foreach (var @char in value)
             {
-                var charBytes = Encoding.UTF8.GetByteCount(new[] { c });
+                var charBytes = Encoding.UTF8.GetByteCount(new[] { @char });
                 if (byteCount + charBytes > maxBytes)
                     break;
 
