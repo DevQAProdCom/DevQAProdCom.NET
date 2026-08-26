@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace DevQAProdCom.NET.Global.Extensions
 {
@@ -50,6 +52,25 @@ namespace DevQAProdCom.NET.Global.Extensions
                 return string.Empty;
 
             return JsonSerializer.Serialize(@object, options ?? new JsonSerializerOptions());
+        }
+
+        public static string ToYaml(this object @object, Action<SerializerBuilder>? configure = null)
+        {
+            if (@object == null)
+                return string.Empty;
+
+            var builder = new SerializerBuilder();
+
+            if (configure != null)
+                configure(builder);
+            else
+            {
+                builder
+                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitEmptyCollections);
+            }
+
+            return builder.Build().Serialize(@object);
         }
     }
 }

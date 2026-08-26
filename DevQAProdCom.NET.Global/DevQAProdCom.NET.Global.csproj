@@ -16,6 +16,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
     <PackageReference Include="System.Collections.Concurrent" />
+    <PackageReference Include="YamlDotNet" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">

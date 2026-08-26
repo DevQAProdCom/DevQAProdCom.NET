@@ -6,5 +6,10 @@ namespace DevQAProdCom.NET.AI.Shared.Models
     {
         public string? FilePath { get; set; }
         public string Prompt { get; set; }
+
+        public virtual string ToMdFileContent()
+        {
+            return Prompt;
+        }
     }
 }
