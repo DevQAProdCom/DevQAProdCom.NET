@@ -123,7 +123,7 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
 
         private static string ToTruncatedFileNameByBytesOrDefault(string fileNameWithoutInvalidChars, string normalizedExtension, int maxAmountOfCharsInFileName, int fileNameBudgetSizeInBytes, int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation)
         {
-            var maxAmountOfCharsInFileNameSizeInBytes = Math.Min(maxAmountOfCharsInFileName, fileNameBudgetSizeInBytes);
+            var maxAmountOfCharsInFileNameSizeInBytes = Math.Min(RuntimeUtils.GetSize(new string('*', maxAmountOfCharsInFileName), FileSystemNamingLimitUnit.Bytes), fileNameBudgetSizeInBytes);
             var fileNameWithoutInvalidCharsSizeInBytes = RuntimeUtils.GetSize(fileNameWithoutInvalidChars, FileSystemNamingLimitUnit.Bytes);
             var normalizedExtensionSizeInBytes = RuntimeUtils.GetSize(normalizedExtension, FileSystemNamingLimitUnit.Bytes);
 
