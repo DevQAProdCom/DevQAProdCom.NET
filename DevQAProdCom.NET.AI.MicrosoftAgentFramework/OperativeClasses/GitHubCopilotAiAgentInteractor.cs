@@ -77,23 +77,31 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
-        public GitHubCopilotAiAgentInteractor WithIsolation(string? baseDirectory = null)
+        public GitHubCopilotAiAgentInteractor WithFullIsolation(string? baseDirectory = null)
         {
-            baseDirectory ??= Path.Combine(
-                Environment.CurrentDirectory,
-                $"COPILOT_SESSSION_BASE_DIR_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}");
-
             Logger.Info($"Creating isolated GitHub Copilot session with base directory: {baseDirectory}");
 
-            _sessionConfigBuilder.WithBaseDirectory(baseDirectory);
+            //_sessionConfigBuilder.WithBaseDirectory(baseDirectory);
 
             _gitHubCopilotClientService
-                .WithCopilotClientOptions(builder => builder.WithBaseDirectory(baseDirectory).WithMode(CopilotClientMode.Empty));
+                .WithCopilotClientOptions(builder => builder
+                .WithBaseDirectory(baseDirectory)
+                .WithMode(CopilotClientMode.Empty));
 
-            _sessionConfigBuilder.WithSkipCustomInstructions(false)
-                .WithEnableOnDemandInstructionDiscovery(true);
+            _sessionConfigBuilder.WithFullIsolation();
+            return this;
+        }
 
-            //_sessionConfigBuilder.WithIsolation();
+        public GitHubCopilotAiAgentInteractor WithSelectiveIsolation(string? baseDirectory = null)
+        {
+            Logger.Info($"Creating isolated GitHub Copilot session with base directory: {baseDirectory}");
+
+            _gitHubCopilotClientService
+                .WithCopilotClientOptions(builder => builder
+                .WithBaseDirectory(baseDirectory)
+                .WithMode(CopilotClientMode.Empty));
+
+            _sessionConfigBuilder.WithSelectiveIsolation();
             return this;
         }
 

@@ -79,15 +79,23 @@ namespace DevQAProdCom.NET.Global.Utils
             return null;
         }
 
-        public static string GetNearestSolutionDirectoryAsCurrentOrParent(string? initialDirectory = null)
+        public static bool TryGetNearestSolutionDirectoryAsCurrentOrParent(out string? solutionDirectory, string? initialDirectory = null)
         {
             initialDirectory ??= Directory.GetCurrentDirectory();
-            var solutionDirectory = GetNearestDirectoryAsCurrentOrParentWithFilesWithExtensions(initialDirectory, FileExtension.Sln.GetDescriptionAttributeValue());
+            solutionDirectory = GetNearestDirectoryAsCurrentOrParentWithFilesWithExtensions(initialDirectory, FileExtension.Sln.GetDescriptionAttributeValue());
 
             if (solutionDirectory == null)
+                return false;
+
+            return true;
+        }
+
+        public static string GetNearestSolutionDirectoryAsCurrentOrParent(string? initialDirectory = null)
+        {
+          if (!TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, initialDirectory))
                 throw new DirectoryNotFoundException($"No solution directory (with '{FileExtension.Sln.GetDescriptionAttributeValue()}' file) found starting from '{initialDirectory}' and moving up the directory tree.");
 
-            return solutionDirectory;
+            return solutionDirectory!;
         }
 
         public static List<string> GetMarkdownFiles(string initialDirectory)

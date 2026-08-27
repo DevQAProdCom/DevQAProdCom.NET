@@ -78,10 +78,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath)
         {
-            WithAgentFromFile(filePath);
-            var entityData = SessionAgentsCollection.GetEntityDataByFilePath(filePath);
-            _sessionConfig.Agent = entityData.ConfigurationData.Name;
-            LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
+            IoUtils.CheckFileMustExist(filePath);
+            var entityData = AllAgentsCollection.AddEntityDataFromFile(filePath);
+            SessionAgentsCollection.AddEntityData(entityData);
+            WithPrimaryAgent(entityData.ConfigurationData.Name);
 
             return this;
         }
@@ -372,14 +372,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithIsolation()
+        public SessionConfigBuilder WithFullIsolation()
         {
-            _logger.Info("Applying isolation configuration to {TypeName}", nameof(SessionConfig));
+            _logger.Info("Applying Full Isolation configuration to {TypeName}", nameof(SessionConfig));
             return WithSkipCustomInstructions(true)
                 .WithCustomAgentsLocalOnly(true)
                 .WithEnableSkills(false)
                 .WithEnableConfigDiscovery(false)
                 .WithEnableOnDemandInstructionDiscovery(false)
+                .WithIncludeSubAgentStreamingEvents(false);
+        }
+
+        public SessionConfigBuilder WithSelectiveIsolation() //WithEnhancedIsolation//WithReinforcedIsolation
+        {
+            _logger.Info("Applying Selective Isolation configuration to {TypeName}", nameof(SessionConfig));
+            return WithSkipCustomInstructions(false)
+                .WithEnableOnDemandInstructionDiscovery(true)
+                .WithCustomAgentsLocalOnly(true)
+                .WithEnableSkills(false)
+                .WithEnableConfigDiscovery(false)
                 .WithIncludeSubAgentStreamingEvents(false);
         }
 
@@ -482,7 +493,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SetUpInstructionDirectories()
         {
-            if ((_sessionConfig.InstructionDirectories==null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
             {
                 var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory);
 
@@ -493,12 +504,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 }
             }
 
-            if (_sessionConfig.InstructionDirectories?.Count > 0)
-                foreach (var directory in _sessionConfig.InstructionDirectories)
-                {
-                    IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-                    IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-                }
+            //if (_sessionConfig.InstructionDirectories?.Count > 0)
+            //    foreach (var directory in _sessionConfig.InstructionDirectories)
+            //    {
+            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+            //    }
         }
 
         private void CreateFolderWithInteractionConfigurationData()

@@ -13,7 +13,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
                 .GetGitHubCopilotAiAgentInteractor()
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT)
                 .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
-                .WithIsolation()
+                .WithSelectiveIsolation()
                 .WithWorkingDirectory(workingDirectory)
                 .WithDefaultContentHandlers()
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath));
@@ -32,8 +32,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
             return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
                 .GetGitHubCopilotAiAgentInteractor()
                 .WithPrimaryAgent(Const.AiAgents.Names.SHOW_INSTRUCTIONS_AGENT)
-                .WithSessionConfig(config => config.WithModel("claude-sonnet-4.5"))
-                .WithIsolation()
+                .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
                 .WithWorkingDirectory(workingDirectory)
                 .WithDefaultContentHandlers()
                 .WithPrompt($"Execute agent 'Show Instructions Agent'. And answer 'What is My favorite animal?");

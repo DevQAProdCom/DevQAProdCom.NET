@@ -264,8 +264,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
                 entitiesLocations.AddRange(entities);
                 Log.Info($"Found {entities.Count} entities in current directory.");
 
-                var solutionDirectory = IoUtils.GetNearestSolutionDirectoryAsCurrentOrParent(currentDirectory);
-                if (solutionDirectory != currentDirectory)
+                if (IoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && solutionDirectory != currentDirectory)
                 {
                     Log.Info($"Solution folder: {solutionDirectory}");
                     entities = FindEntitiesInDirectory(solutionDirectory);

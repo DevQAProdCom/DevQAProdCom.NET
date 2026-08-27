@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+﻿using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using MicrosoftLogger = Microsoft.Extensions.Logging.ILogger;
 
@@ -26,8 +27,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public CopilotClientOptionsBuilder WithBaseDirectory(string? baseDirectory)
+        public CopilotClientOptionsBuilder WithBaseDirectory(string? baseDirectory = null)
         {
+            baseDirectory ??= Path.Combine(Path.GetTempPath(), $"COPILOT_SESSSION_BASE_DIR_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}");
             _options.BaseDirectory = baseDirectory;
             return this;
         }
