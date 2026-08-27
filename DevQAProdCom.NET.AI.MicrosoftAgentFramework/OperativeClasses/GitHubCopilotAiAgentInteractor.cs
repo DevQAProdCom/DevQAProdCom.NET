@@ -2,7 +2,6 @@
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
-using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using Microsoft.Agents.AI;
