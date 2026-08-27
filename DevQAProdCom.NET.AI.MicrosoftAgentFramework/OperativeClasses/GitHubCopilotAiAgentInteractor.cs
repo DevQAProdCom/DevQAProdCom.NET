@@ -83,10 +83,17 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 Environment.CurrentDirectory,
                 $"COPILOT_SESSSION_BASE_DIR_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}");
 
+            Logger.Info($"Creating isolated GitHub Copilot session with base directory: {baseDirectory}");
+
+            _sessionConfigBuilder.WithBaseDirectory(baseDirectory);
+
             _gitHubCopilotClientService
                 .WithCopilotClientOptions(builder => builder.WithBaseDirectory(baseDirectory).WithMode(CopilotClientMode.Empty));
 
-            _sessionConfigBuilder.WithIsolation();
+            _sessionConfigBuilder.WithSkipCustomInstructions(false)
+                .WithEnableOnDemandInstructionDiscovery(true);
+
+            //_sessionConfigBuilder.WithIsolation();
             return this;
         }
 

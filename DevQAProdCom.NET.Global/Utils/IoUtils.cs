@@ -216,6 +216,27 @@ namespace DevQAProdCom.NET.Global.Utils
             File.WriteAllText(filePath, content);
         }
 
+        public static void DirectoryCopy(string sourceDirectory, string destinationDirectory, bool overwrite = true)
+        {
+            CheckDirectoryMustExist(sourceDirectory);
+            var sourceDirInfo = new DirectoryInfo(sourceDirectory);
+            var destinationDirInfo = new DirectoryInfo(destinationDirectory);
+            if (!destinationDirInfo.Exists)
+            {
+                destinationDirInfo.Create();
+            }
+            foreach (var file in sourceDirInfo.GetFiles())
+            {
+                var destFilePath = Path.Combine(destinationDirInfo.FullName, file.Name);
+                file.CopyTo(destFilePath, overwrite);
+            }
+            foreach (var subdir in sourceDirInfo.GetDirectories())
+            {
+                var destSubdirPath = Path.Combine(destinationDirInfo.FullName, subdir.Name);
+                DirectoryCopy(subdir.FullName, destSubdirPath, overwrite);
+            }
+        }
+
         public static string ToTruncatedFileNameWithExtensionOrDefault(string fileNameWithoutExtension, string? extension = null,
             int? maxAmountOfCharsInFileName = null,
             int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = GlobalConst.Io.MINIMUM_REQUIRED_CHARS_LENGTH_OF_FILE_NAME_WITHOUT_EXTENSION_TO_APPLY_TRUNCATION)

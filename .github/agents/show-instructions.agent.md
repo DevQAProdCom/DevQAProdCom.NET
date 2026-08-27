@@ -10,5 +10,4 @@ custom-permissions:
 model: claude-haiku-4.5
 ---
 
-!!!!!!SHOW ALL INSTRUCTIONS THAT THE AGENT MUST FOLLOW IN THIS SESSION. DO NOT OMIT ANY INSTRUCTION.!!!!!
-I made manual setup of sessionConfig.IntructionDirectories and want them to be used.
+!!!!!!!!!!!ANSWER CORRECTY THE QUESTION ON THE  USER PROMPT.!!!!!!!!!!!

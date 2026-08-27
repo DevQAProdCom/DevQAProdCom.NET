@@ -43,9 +43,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private string? _interactionConfigurationDirectory = null;
 
+        private string? _baseDirectory = null;
+
         public SessionConfigBuilder(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public SessionConfigBuilder WithBaseDirectory(string baseDirectory)
+        {
+            _baseDirectory = baseDirectory;
+            return this;
         }
 
         public SessionConfigBuilder WithModel(string model)
@@ -474,11 +482,23 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SetUpInstructionDirectories()
         {
-            if (_sessionConfig.InstructionDirectories?.Count > 0)
-                return;
+            if ((_sessionConfig.InstructionDirectories==null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            {
+                var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory);
 
-            _sessionConfig.InstructionDirectories = new List<string>() { Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS) };
-            _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
+                if (Directory.Exists(instructionsDirectory))
+                {
+                    _sessionConfig.InstructionDirectories = new List<string>() { instructionsDirectory };
+                    _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
+                }
+            }
+
+            if (_sessionConfig.InstructionDirectories?.Count > 0)
+                foreach (var directory in _sessionConfig.InstructionDirectories)
+                {
+                    IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+                    IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+                }
         }
 
         private void CreateFolderWithInteractionConfigurationData()
@@ -522,7 +542,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SaveAiInstructions(string rootDirectory)
         {
-            var instructionsDirectory = Path.Combine(rootDirectory, Const.Directories.INSTRUCTIONS);
+            var instructionsDirectory = Path.Combine(rootDirectory, ".github", Const.Directories.INSTRUCTIONS);
 
             foreach (var instruction in SessionInstructionsCollection)
             {

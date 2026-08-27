@@ -61,10 +61,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
                 _copilotClient = null;
             }
 
-            if (_copilotClientOptions?.BaseDirectory != null)
-            {
-                Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
-            }
+            //if (_copilotClientOptions?.BaseDirectory != null)
+            //{
+            //    Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
+            //}
         }
     }
 }
