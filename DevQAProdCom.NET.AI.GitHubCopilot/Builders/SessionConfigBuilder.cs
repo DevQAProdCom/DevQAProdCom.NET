@@ -87,7 +87,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgent(string agentIdentifier)
         {
-            _logger.Info("Loading {TypeName} '{PropertyName}' from agent identifier '{AgentIdentifier}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), agentIdentifier);
+            _logger.Info("[{TypeName}] Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", nameof(SessionConfigBuilder), nameof(_sessionConfig.CustomAgents), agentIdentifier);
             var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             SessionAgentsCollection.AddEntityData(entityData);
             var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
@@ -151,7 +151,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstruction(string instructionIdentifier)
         {
-            _logger.Info($"Loading {nameof(SessionConfig)} instruction with identifier '{instructionIdentifier}' from all instructions collection");
+            _logger.Info("[{TypeName}] Loading instruction with identifier '{InstructionIdentifier}' from all instructions collection.", nameof(SessionConfigBuilder), instructionIdentifier);
             var entityData = AllInstructionsCollection.GetEntityDataByIdentifier(instructionIdentifier);
             SessionInstructionsCollection.AddEntityData(entityData);
 
@@ -170,7 +170,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstruction(string instructionIdentifier, string prompt)
         {
-            _logger.Info("Adding {TypeName} instruction '{InstructionIdentifier}' with custom prompt", nameof(SessionConfig), instructionIdentifier);
+            _logger.Info("[{TypeName}] Adding instruction '{InstructionIdentifier}' with custom prompt.", nameof(SessionConfigBuilder), instructionIdentifier);
 
             var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiInstructionYamlConfigurationModel>
             {
@@ -272,7 +272,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if (config == null)
             {
-                _logger.Error("Attempted to add null {PropertyName} to {TypeName}", nameof(_sessionConfig.CustomAgents), nameof(SessionConfig));
+                _logger.Error("[{TypeName}] Attempted to add null {PropertyName}.", nameof(_sessionConfig.CustomAgents), nameof(SessionConfigBuilder));
                 throw new ArgumentNullException(nameof(config), $"Custom agent configuration cannot be null when adding to {nameof(_sessionConfig.CustomAgents)}.");
             }
 
@@ -284,7 +284,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 throw new InvalidOperationException($"Agent with name '{config.Name}' already exists in CustomAgentConfig list. Use {nameof(WithCustomAgentConfig)} to add a new agent config with a different name.");
             }
 
-            _logger.Info("Adding {TypeName} '{PropertyName}' parameter as agent '{AgentName}'", nameof(SessionConfig), nameof(_sessionConfig.CustomAgents), config.Name);
+            _logger.Info("[{TypeName}] Adding '{PropertyName}' parameter as agent '{AgentName}'.", nameof(SessionConfigBuilder), nameof(_sessionConfig.CustomAgents), config.Name);
             _sessionConfig.CustomAgents.Add(config);
 
             return this;
@@ -292,7 +292,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
         {
-            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter for server '{ServerName}'", nameof(SessionConfig), nameof(_sessionConfig.McpServers), name);
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter for server '{ServerName}'", nameof(SessionConfigBuilder), nameof(_sessionConfig.McpServers), name);
             _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
             _sessionConfig.McpServers[name] = config;
             return this;
@@ -373,7 +373,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithFullIsolation()
         {
-            _logger.Info("Applying Full Isolation configuration to {TypeName}", nameof(SessionConfig));
+            _logger.Info("[{TypeName}] Applying Full Isolation configuration.", nameof(SessionConfigBuilder));
             return WithSkipCustomInstructions(true)
                 .WithCustomAgentsLocalOnly(true)
                 .WithEnableSkills(false)
@@ -384,7 +384,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithSelectiveIsolation() //WithEnhancedIsolation//WithReinforcedIsolation
         {
-            _logger.Info("Applying Selective Isolation configuration to {TypeName}", nameof(SessionConfig));
+            _logger.Info("[{TypeName}] Applying Selective Isolation configuration.", nameof(SessionConfigBuilder));
             return WithSkipCustomInstructions(false)
                 .WithEnableOnDemandInstructionDiscovery(true)
                 .WithCustomAgentsLocalOnly(true)
@@ -398,7 +398,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(identifier);
             ArgumentNullException.ThrowIfNull(permissionFunc);
 
-            _logger.Info("[{TypeName}] Setting permission decision for '{Identifier}'", nameof(SessionConfig), identifier);
+            _logger.Info("[{TypeName}] Setting permission decision for '{Identifier}'.", nameof(SessionConfigBuilder), identifier);
             _permissionDecisions[identifier] = async (request, invocation) =>
             {
                 var decision = await permissionFunc(request, invocation);
@@ -413,7 +413,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             ArgumentNullException.ThrowIfNull(identifier);
 
-            _logger.Info("[{TypeName}] Setting permission '{Identifier}' from collection", nameof(SessionConfig), identifier);
+            _logger.Info("[{TypeName}] Setting permission '{Identifier}' from collection.", nameof(SessionConfigBuilder), identifier);
             var permissionDecision = PermissionDecisionsCollection.GetByIdentifier(identifier);
             _permissionDecisions[identifier] = permissionDecision;
             return this;
@@ -434,7 +434,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             ArgumentNullException.ThrowIfNull(updateSessionConfig);
 
-            _logger.Info("Applying custom {TypeName} update", nameof(SessionConfig));
+            _logger.Info("[{TypeName}] Applying custom {TypeName} update.", nameof(SessionConfigBuilder));
             updateSessionConfig.Invoke(_sessionConfig);
             return this;
         }
@@ -448,11 +448,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfig Build()
         {
-            _logger.Info("Building {TypeName} Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+            _logger.Info("[{TypeName}] Building Agent: {Agent}, (Model: {Model}).", nameof(SessionConfigBuilder), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             CreateFolderWithInteractionConfigurationData();
             SetUpOnPermissionRequest();
             SetUpInstructionDirectories();
-            _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+            _logger.Info("[{TypeName}] Built successfully Agent: {Agent}, (Model: {Model}).", nameof(SessionConfigBuilder), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
 
@@ -499,7 +499,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 if (Directory.Exists(instructionsDirectory))
                 {
                     _sessionConfig.InstructionDirectories = new List<string>() { instructionsDirectory };
-                    _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
+                    _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'.", nameof(SessionConfigBuilder), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
                 }
             }
 
@@ -638,17 +638,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void LogSetting(string propertyName, object value)
         {
-            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '{Value}'", nameof(SessionConfig), propertyName, value);
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '{Value}'.", nameof(SessionConfigBuilder), propertyName, value);
         }
 
         private void LogCollectionSetting(string propertyName, IEnumerable<string> values)
         {
-            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), propertyName, string.Join(", ", values));
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'.", nameof(SessionConfigBuilder), propertyName, string.Join(", ", values));
         }
 
         private void LogSystemMessage(SystemMessageMode mode, string? content)
         {
-            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'", nameof(SessionConfig), nameof(_sessionConfig.SystemMessage), mode, content?.TruncateWithCount(50) ?? "null");
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'.", nameof(SessionConfigBuilder), nameof(_sessionConfig.SystemMessage), mode, content?.TruncateWithCount(50) ?? "null");
         }
     }
 }
