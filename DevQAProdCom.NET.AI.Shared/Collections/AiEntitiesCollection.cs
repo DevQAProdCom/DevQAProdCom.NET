@@ -10,12 +10,15 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
         where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
     {
+        public string? CollectionIdentifier { get; }
         public string? BaseDirectory { get; set; }
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
         protected ILogger Log;
 
-        public AiEntitiesCollection(ILogger logger, bool initializeWithDefaultLocations = true)
+        public AiEntitiesCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
         {
+            collectionIdentifier ??= Guid.NewGuid().ToString();
+            CollectionIdentifier = collectionIdentifier;
             ArgumentNullException.ThrowIfNull(logger);
             Log = logger;
 
@@ -25,7 +28,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             }
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true) : this(logger, initializeWithDefaultLocations)
+        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null) : this(logger, initializeWithDefaultLocations, collectionIdentifier)
         {
             BaseDirectory = baseFolder;
         }

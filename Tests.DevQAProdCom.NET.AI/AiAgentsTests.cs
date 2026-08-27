@@ -11,7 +11,7 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task ReadWriteAgentTest()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory();
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ReadWriteAgentTest));
             var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) =
                 await PrepareReadWriteAgentTestFilesAsync(workingDirectory);
 
@@ -29,7 +29,7 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task ReadWriteAgentWithInstructionsTest()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory();
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ReadWriteAgentWithInstructionsTest));
             var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) =
                 await PrepareReadWriteAgentTestFilesAsync(workingDirectory);
 
@@ -42,9 +42,6 @@ namespace Tests.DevQAProdCom.NET.AI
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
-
-
-
 
             //await using (var agent = AiAgentsLibrary
             //    .GetReadWriteAgentWithResponseValidator(workingDirectory, inputFilePath, outputFolderPath, expectedOutputFilePath, inputContent)
@@ -61,7 +58,7 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task ShowSessionInstructionsAgentsTest()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory();
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ShowSessionInstructionsAgentsTest));
 
             await using (var agent = AiAgentsLibrary
               .GetBaseShowInstructionsAgent(workingDirectory)
@@ -80,7 +77,7 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task ShowCustomConfiguredSessionInstructionsAgentsTest()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory();
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ShowCustomConfiguredSessionInstructionsAgentsTest));
 
             await using (var agent = GetGitHubCopilotAiAgentInteractor()
                 .WithPrimaryAgentFromFile("C:\\Files\\Dev\\DevQAProdCom.NET\\.github\\agents\\show-instructions.agent.md")
@@ -123,6 +120,5 @@ namespace Tests.DevQAProdCom.NET.AI
             }
             GlobalIoUtils.DeleteDirectory(workingDirectory);
         }
-
     }
 }

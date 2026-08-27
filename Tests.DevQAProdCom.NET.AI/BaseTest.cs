@@ -15,7 +15,7 @@ namespace Tests.DevQAProdCom.NET.AI
         protected IMicrosoftAgentFrameworkAiAgentInteractorsFactory AiAgentsInteractorsFactory => DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory;
         protected GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor() => AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor();
 
-        protected string PrepareTempTestWorkingDirectory(string? testName = null)
+        protected string PrepareTempTestWorkingDirectory(string? testName)
         {
             testName ??= TestContext.CurrentContext.Test.MethodName;
 
