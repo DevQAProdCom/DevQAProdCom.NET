@@ -12,8 +12,6 @@ using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
