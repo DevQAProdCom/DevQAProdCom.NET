@@ -80,7 +80,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             IoUtils.CheckFileMustExist(filePath);
             var entityData = AllAgentsCollection.AddEntityDataFromFile(filePath);
-            SessionAgentsCollection.AddEntityData(entityData);
             WithPrimaryAgent(entityData.ConfigurationData.Name);
 
             return this;
