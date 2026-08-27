@@ -7,6 +7,7 @@
             internal static class Names
             {
                 internal const string READ_WRITE_AGENT = "Read Write Agent";
+                internal const string SHOW_INSTRUCTIONS_AGENT = "Show Instructions Agent";
             }
 
             internal static class Prompts

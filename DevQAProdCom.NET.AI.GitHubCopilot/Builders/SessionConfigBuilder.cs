@@ -36,8 +36,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeWithDefaultLocations: false);
 
-        private readonly List<IAiEntityWithTYamlConfigurationType<GitHubCopilotAiInstructionYamlConfigurationModel>> _sessionInstructionEntities = new();
-
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
 
@@ -146,7 +144,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstruction(string instructionIdentifier)
         {
-            _logger.Info("Loading {TypeName} instruction '{InstructionIdentifier}' from all instructions collection", nameof(SessionConfig), instructionIdentifier);
+            _logger.Info($"Loading {nameof(SessionConfig)} instruction with identifier '{instructionIdentifier}' from all instructions collection");
             var entityData = AllInstructionsCollection.GetEntityDataByIdentifier(instructionIdentifier);
             SessionInstructionsCollection.AddEntityData(entityData);
 
@@ -480,6 +478,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return;
 
             _sessionConfig.InstructionDirectories = new List<string>() { Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS) };
+            _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
         }
 
         private void CreateFolderWithInteractionConfigurationData()
@@ -496,17 +495,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiAgents(string rootDirectory)
         {
             var agentsDirectory = Path.Combine(rootDirectory, Const.Directories.AGENTS);
-            var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
-            var subAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.SUB_AGENTS);
-
-            IoUtils.CreateDirectory(primaryAgentsDirectory);
-            IoUtils.CreateDirectory(subAgentsDirectory);
-
             var primaryAgentName = _sessionConfig.Agent;
 
             // Save Primary Agent
             if (!string.IsNullOrEmpty(primaryAgentName))
             {
+                var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
+
                 var primaryAgent = SessionAgentsCollection.GetEntityDataByIdentifier(primaryAgentName);
                 SaveAgentFile(primaryAgent, primaryAgentsDirectory);
             }
@@ -514,6 +509,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             // Save Sub-Agents
             foreach (var agent in SessionAgentsCollection)
             {
+                var subAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.SUB_AGENTS);
+
                 if (agent.ConfigurationData.Name == primaryAgentName)
                 {
                     continue;
@@ -526,14 +523,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiInstructions(string rootDirectory)
         {
             var instructionsDirectory = Path.Combine(rootDirectory, Const.Directories.INSTRUCTIONS);
-            IoUtils.CreateDirectory(instructionsDirectory);
 
-            foreach (var instruction in _sessionInstructionEntities)
+            foreach (var instruction in SessionInstructionsCollection)
             {
                 if (!string.IsNullOrEmpty(instruction.FilePath))
                 {
-                    var destinationFile = GetUniqueFilePathOrDefault(instructionsDirectory, Path.GetFileNameWithoutExtension(instruction.FilePath), Path.GetExtension(instruction.FilePath));
-                    File.Copy(instruction.FilePath, destinationFile);
+                    var destinationFilePath = GetUniqueFilePathOrDefault(instructionsDirectory, Path.GetFileNameWithoutExtension(instruction.FilePath), Path.GetExtension(instruction.FilePath));
+                    IoUtils.FileCopy(instruction.FilePath, destinationFilePath);
                 }
                 else
                 {
@@ -555,7 +551,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent, string destinationDirectory)
         {
             if (!string.IsNullOrEmpty(aiAgent.FilePath))
-                IoUtils.FileCopy(aiAgent.FilePath, destinationDirectory);
+            {
+                var destinationFilePath = GetUniqueFilePathOrDefault(destinationDirectory, Path.GetFileNameWithoutExtension(aiAgent.FilePath), Path.GetExtension(aiAgent.FilePath));
+                IoUtils.FileCopy(aiAgent.FilePath, destinationFilePath);
+            }
             else
             {
                 if (string.IsNullOrEmpty(aiAgent.ConfigurationData?.Name))

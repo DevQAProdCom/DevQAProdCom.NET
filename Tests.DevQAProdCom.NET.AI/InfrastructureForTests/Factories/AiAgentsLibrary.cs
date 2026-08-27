@@ -27,5 +27,18 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
 
             return baseReadWriteAgent.WithResponseValidator(responseValidator);
         }
+
+        public GitHubCopilotAiAgentInteractor GetBaseShowInstructionsAgent(string workingDirectory)
+        {
+            return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
+                .GetGitHubCopilotAiAgentInteractor()
+                .WithPrimaryAgent(Const.AiAgents.Names.SHOW_INSTRUCTIONS_AGENT)
+                .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
+                .WithIsolation()
+                .WithWorkingDirectory(workingDirectory)
+                .WithDefaultContentHandlers()
+                .WithPrompt($"Execute agent.");
+                //.WithPrompt($"Execute '{Const.AiAgents.Names.SHOW_INSTRUCTIONS_AGENT}'. Describe the name of the agent that is executed. Its description. And what agent must do. Execute what agent must do.");
+        }
     }
 }

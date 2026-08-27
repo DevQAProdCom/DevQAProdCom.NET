@@ -36,12 +36,39 @@ namespace Tests.DevQAProdCom.NET.AI
             inputContent += $" {Const.AiRules.CUSTOM_INSTRUCTION_CHECK}";
 
             await using (var agent = AiAgentsLibrary
-                .GetReadWriteAgentWithResponseValidator(testDirectory, inputFilePath, outputFolderPath, expectedOutputFilePath, inputContent)
-                .WithSessionConfig(config => config.WithInstruction(Const.AiRules.Names.APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY))
-                .WithMaxAttempts(3))
+              .GetReadWriteAgentWithResponseValidator(testDirectory, inputFilePath, outputFolderPath, expectedOutputFilePath, inputContent)
+              .WithSessionConfig(config => config.WithInstruction(Const.AiRules.Names.APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY))
+              .WithMaxAttempts(1))
             {
-                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
-                await act.Should().NotThrowAsync();
+                 await agent.InvokeAiAgentWithStreamingAsync();
+            }
+
+
+
+
+            //await using (var agent = AiAgentsLibrary
+            //    .GetReadWriteAgentWithResponseValidator(testDirectory, inputFilePath, outputFolderPath, expectedOutputFilePath, inputContent)
+            //    .WithSessionConfig(config => config.WithInstruction(Const.AiRules.Names.APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY))
+            //    .WithMaxAttempts(3))
+            //{
+            //    var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+            //    await act.Should().NotThrowAsync();
+            //}
+
+            GlobalIoUtils.DeleteDirectory(testDirectory);
+        }
+
+        [Test]
+        public async Task ShowSessionInstructionsAgentsTest()
+        {
+            var testDirectory = PrepareTempTestWorkingDirectory();
+
+            await using (var agent = AiAgentsLibrary
+              .GetBaseShowInstructionsAgent(testDirectory)
+              .WithSessionConfig(config => config.WithInstruction(Const.AiRules.Names.APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY))
+              .WithMaxAttempts(1))
+            {
+                await agent.InvokeAiAgentWithStreamingAsync();
             }
 
             GlobalIoUtils.DeleteDirectory(testDirectory);

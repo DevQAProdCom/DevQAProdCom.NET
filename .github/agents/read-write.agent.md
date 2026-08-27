@@ -32,6 +32,7 @@ All other tools and MCP servers are not allowed. Strictly forbidden to use shell
 
 ## Actions
 
+0. Describe all instructions that you must follow.
 1. Read the file from `file_path_to_read` using **only** the `view` tool.
 2. Log what file was read by displaying its path.
 3. Compute the new file name by inserting `_copilot` before the file extension.
