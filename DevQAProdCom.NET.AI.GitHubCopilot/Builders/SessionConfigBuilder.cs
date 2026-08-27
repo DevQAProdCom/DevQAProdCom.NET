@@ -148,14 +148,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("Loading {TypeName} instruction '{InstructionIdentifier}' from all instructions collection", nameof(SessionConfig), instructionIdentifier);
             var entityData = AllInstructionsCollection.GetEntityDataByIdentifier(instructionIdentifier);
-
-            if (SessionInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _))
-            {
-                throw new InvalidOperationException($"Instruction with identifier '{instructionIdentifier}' already exists in the session instructions collection.");
-            }
-
             SessionInstructionsCollection.AddEntityData(entityData);
-            TrackSessionInstruction(entityData);
 
             return this;
         }
@@ -174,12 +167,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("Adding {TypeName} instruction '{InstructionIdentifier}' with custom prompt", nameof(SessionConfig), instructionIdentifier);
 
-            if (AllInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _) ||
-                SessionInstructionsCollection.TryGetEntityDataByIdentifier(instructionIdentifier, out _))
-            {
-                throw new InvalidOperationException($"Instruction with identifier '{instructionIdentifier}' already exists in the instructions collection. Use a different instruction identifier.");
-            }
-
             var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiInstructionYamlConfigurationModel>
             {
                 ConfigurationData = new GitHubCopilotAiInstructionYamlConfigurationModel { Name = instructionIdentifier },
@@ -188,7 +175,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             AllInstructionsCollection.AddEntityData(entityData);
             SessionInstructionsCollection.AddEntityData(entityData);
-            TrackSessionInstruction(entityData);
 
             return this;
         }
@@ -198,7 +184,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IoUtils.CheckFileMustExist(filePath);
             var entityData = AllInstructionsCollection.AddEntityDataFromFile(filePath);
             SessionInstructionsCollection.AddEntityData(entityData);
-            TrackSessionInstruction(entityData);
             return this;
         }
 
@@ -214,14 +199,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstructionsFromDirectory(string directoryPath)
         {
-            AllInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
-            var sessionEntities = SessionInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
-
-            foreach (var entity in sessionEntities)
-            {
-                TrackSessionInstruction(entity);
-            }
-
+            var entities = AllInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
+            SessionInstructionsCollection.AddEntitiesData(entities.ToArray());
             return this;
         }
 
@@ -454,7 +433,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfig Build()
         {
             _logger.Info("Building {TypeName} Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+            CreateFolderWithInteractionConfigurationData();
+            SetUpOnPermissionRequest();
+            SetUpInstructionDirectories();
+            _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+            return _sessionConfig;
+        }
 
+        private void SetUpOnPermissionRequest()
+        {
             _sessionConfig.OnPermissionRequest = async (request, invocation) =>
             {
                 _logger.Info($"Permission Request:\nType= {request.ToString()}\nBody = {request.ToJson()}");
@@ -485,24 +472,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
             };
-
-            SaveInteractionConfigurationData();
-
-            if (_sessionInstructionEntities.Any())
-            {
-                foreach (var entity in _sessionInstructionEntities)
-                {
-                    //TODO IF Instruction is file 
-                    var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory!, Const.Directories.INSTRUCTIONS);
-                    _sessionConfig.InstructionDirectories = new List<string> { instructionsDirectory };
-                }
-            }
-
-            _logger.Info("{TypeName} built successfully Agent: {Agent}, (Model: {Model})", nameof(SessionConfig), _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-            return _sessionConfig;
         }
 
-        private void SaveInteractionConfigurationData()
+        private void SetUpInstructionDirectories()
+        {
+            if (_sessionConfig.InstructionDirectories?.Count > 0)
+                return;
+
+            _sessionConfig.InstructionDirectories = new List<string>() { Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS) };
+        }
+
+        private void CreateFolderWithInteractionConfigurationData()
         {
             if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
                 _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
@@ -585,18 +565,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                 var destinationPath = GetUniqueFilePathOrDefault(destinationDirectory, aiAgent.ConfigurationData.Name, FileExtension.Md.GetDescriptionAttributeValue());
                 IoUtils.WriteAllText(destinationPath, aiAgent.ToMdFileContent());
-            }
-        }
-
-        private void TrackSessionInstruction(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiInstructionYamlConfigurationModel> instruction)
-        {
-            var existing = _sessionInstructionEntities.FirstOrDefault(x =>
-                (!string.IsNullOrEmpty(x.FilePath) && !string.IsNullOrEmpty(instruction.FilePath) && IoUtils.NormalizeFilePath(x.FilePath) == IoUtils.NormalizeFilePath(instruction.FilePath)) ||
-                (string.IsNullOrEmpty(x.FilePath) && string.IsNullOrEmpty(instruction.FilePath) && x.ConfigurationData.Name == instruction.ConfigurationData.Name));
-
-            if (existing == null)
-            {
-                _sessionInstructionEntities.Add(instruction);
             }
         }
 
