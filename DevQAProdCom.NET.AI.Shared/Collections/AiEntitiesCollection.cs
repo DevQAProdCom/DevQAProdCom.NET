@@ -10,7 +10,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
         where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
     {
-        public string? CollectionIdentifier { get; }
+        public string CollectionIdentifier { get; }
         public string? BaseDirectory { get; set; }
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
         protected ILogger Log;
@@ -55,7 +55,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
 
                 if (existingEntityByFilePath != null)
                 {
-                    Log.Warning($"[{CollectionIdentifier}] Entity with file path '{addedEntityFilePath}' already exists in the collection and will be replaced with the new one.");
+                    Log.Warning("[{CollectionIdentifier}] Entity with file path '{addedEntityFilePath}' already exists in the collection and will be replaced with the new one.", CollectionIdentifier, addedEntityFilePath!);
                     Entities.Remove(existingEntityByFilePath);
                 }
 
@@ -81,13 +81,14 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
                         .ToList();
 
                     Log.Warning(
-                        $"[{CollectionIdentifier}] Entity with name '{entityName}' is already present in the collection " +
-                        $"under different file path(s): {string.Join(", ", duplicateFilePaths)}. " +
-                        $"Adding another entity with the same name from file path '{addedEntityFilePath}'.");
+                        "[{CollectionIdentifier}] Entity with name '{entityName}' is already present in the collection " +
+                        "under different file path(s): {duplicateFilePaths}. " +
+                        "Adding another entity with the same name from file path '{addedEntityFilePath}'.",
+                        CollectionIdentifier, entityName, string.Join(", ", duplicateFilePaths), addedEntityFilePath!);
                 }
 
                 Entities.Add(entity);
-                Log.Info($"[{CollectionIdentifier}] Successfully added entity with name '{entityName}' from file: {addedEntityFilePath}");
+                Log.Info("[{CollectionIdentifier}] Successfully added entity with name '{entityName}' from file: {addedEntityFilePath}", CollectionIdentifier, entityName, addedEntityFilePath!);
                 return entity;
             }
 
@@ -100,7 +101,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             }
 
             Entities.Add(entity);
-            Log.Info($"[{CollectionIdentifier}] Successfully added dynamic entity with name '{entityName}' without a file path.");
+            Log.Info("[{CollectionIdentifier}] Successfully added dynamic entity with name '{entityName}' without a file path.", CollectionIdentifier, entityName);
             return entity;
         }
 
@@ -125,7 +126,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             IoUtils.CheckFileMustExist(filePath);
 
-            Log.Info($"[{CollectionIdentifier}] Adding entity data from file: {filePath}");
+            Log.Info("[{CollectionIdentifier}] Adding entity data from file: {filePath}", CollectionIdentifier, filePath);
             var entityData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTYamlConfigurationTypeModel<TAiEntityYamlConfiguration>, TAiEntityYamlConfiguration>(filePath);
             entityData.FilePath = filePath;
 
@@ -249,41 +250,41 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             var entitiesLocations = new List<string>();
 
-            Log.Info($"[{CollectionIdentifier}] Starting to gather entity locations.");
+            Log.Info("[{CollectionIdentifier}] Starting to gather entity locations.", CollectionIdentifier);
 
             if (!string.IsNullOrEmpty(BaseDirectory))
             {
-                Log.Info($"[{CollectionIdentifier}] Using specified BaseDirectory: {BaseDirectory}");
+                Log.Info("[{CollectionIdentifier}] Using specified BaseDirectory: {baseDirectory}", CollectionIdentifier, BaseDirectory);
                 var entities = FindEntitiesInDirectory(BaseDirectory);
                 entitiesLocations.AddRange(entities);
-                Log.Info($"[{CollectionIdentifier}] Found {entities.Count} entities in BaseDirectory.");
+                Log.Info("[{CollectionIdentifier}] Found {entitiesCount} entities in BaseDirectory.", CollectionIdentifier, entities.Count);
             }
             else
             {
-                Log.Info($"[{CollectionIdentifier}] BaseDirectory not specified, searching in current directory and solution folder.");
+                Log.Info("[{CollectionIdentifier}] BaseDirectory not specified, searching in current directory and solution folder.", CollectionIdentifier);
                 var currentDirectory = Directory.GetCurrentDirectory();
-                Log.Info($"[{CollectionIdentifier}] Current directory: {currentDirectory}");
+                Log.Info("[{CollectionIdentifier}] Current directory: {currentDirectory}", CollectionIdentifier, currentDirectory);
                 var entities = FindEntitiesInDirectory(currentDirectory);
                 entitiesLocations.AddRange(entities);
-                Log.Info($"[{CollectionIdentifier}] Found {entities.Count} entities in current directory.");
+                Log.Info("[{CollectionIdentifier}] Found {entitiesCount} entities in current directory.", CollectionIdentifier, entities.Count);
 
                 if (IoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && solutionDirectory != currentDirectory)
                 {
-                    Log.Info($"[{CollectionIdentifier}] Solution folder: {solutionDirectory}");
-                    entities = FindEntitiesInDirectory(solutionDirectory);
+                    Log.Info("[{CollectionIdentifier}] Solution folder: {solutionDirectory}", CollectionIdentifier, solutionDirectory!);
+                    entities = FindEntitiesInDirectory(solutionDirectory!);
                     entitiesLocations.AddRange(entities);
-                    Log.Info($"[{CollectionIdentifier}] Found {entities.Count} entities in solution folder.");
+                    Log.Info("[{CollectionIdentifier}] Found {entitiesCount} entities in solution folder.", CollectionIdentifier, entities.Count);
                 }
             }
 
-            Log.Info($"[{CollectionIdentifier}] Total entity locations found: {entitiesLocations.Count}");
+            Log.Info("[{CollectionIdentifier}] Total entity locations found: {entitiesLocationsCount}", CollectionIdentifier, entitiesLocations.Count);
             if (entitiesLocations.Any())
             {
-                Log.Info($"[{CollectionIdentifier}] Entity locations: {string.Join(", ", entitiesLocations)}");
+                Log.Info("[{CollectionIdentifier}] Entity locations: {entityLocations}", CollectionIdentifier, string.Join(", ", entitiesLocations));
             }
             else
             {
-                Log.Warning($"[{CollectionIdentifier}] No entity locations were found.");
+                Log.Warning("[{CollectionIdentifier}] No entity locations were found.", CollectionIdentifier);
             }
 
             return entitiesLocations;
