@@ -292,7 +292,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
         {
-            _logger.Info("Setting {TypeName} '{PropertyName}' parameter for server '{ServerName}'", nameof(SessionConfig), nameof(_sessionConfig.McpServers), name);
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter for server '{ServerName}'", nameof(SessionConfig), nameof(_sessionConfig.McpServers), name);
             _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
             _sessionConfig.McpServers[name] = config;
             return this;
@@ -398,7 +398,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(identifier);
             ArgumentNullException.ThrowIfNull(permissionFunc);
 
-            _logger.Info("Setting {TypeName} permission decision for '{Identifier}'", nameof(SessionConfig), identifier);
+            _logger.Info("[{TypeName}] Setting permission decision for '{Identifier}'", nameof(SessionConfig), identifier);
             _permissionDecisions[identifier] = async (request, invocation) =>
             {
                 var decision = await permissionFunc(request, invocation);
@@ -413,7 +413,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             ArgumentNullException.ThrowIfNull(identifier);
 
-            _logger.Info("Setting {TypeName} permission '{Identifier}' from collection", nameof(SessionConfig), identifier);
+            _logger.Info("[{TypeName}] Setting permission '{Identifier}' from collection", nameof(SessionConfig), identifier);
             var permissionDecision = PermissionDecisionsCollection.GetByIdentifier(identifier);
             _permissionDecisions[identifier] = permissionDecision;
             return this;
@@ -499,7 +499,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 if (Directory.Exists(instructionsDirectory))
                 {
                     _sessionConfig.InstructionDirectories = new List<string>() { instructionsDirectory };
-                    _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
+                    _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
                 }
             }
 
@@ -638,22 +638,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void LogSetting(string propertyName, object value)
         {
-            _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '{Value}'", nameof(SessionConfig), propertyName, value);
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '{Value}'", nameof(SessionConfig), propertyName, value);
         }
 
         private void LogCollectionSetting(string propertyName, IEnumerable<string> values)
         {
-            _logger.Info("Setting {TypeName} '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), propertyName, string.Join(", ", values));
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to '[{Value}]'", nameof(SessionConfig), propertyName, string.Join(", ", values));
         }
 
         private void LogSystemMessage(SystemMessageMode mode, string? content)
         {
-            _logger.Info(
-                "Setting {TypeName} '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'",
-                nameof(SessionConfig),
-                nameof(_sessionConfig.SystemMessage),
-                mode,
-                content?.TruncateWithCount(50) ?? "null");
+            _logger.Info("[{TypeName}] Setting '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'", nameof(SessionConfig), nameof(_sessionConfig.SystemMessage), mode, content?.TruncateWithCount(50) ?? "null");
         }
     }
 }
