@@ -7,6 +7,7 @@ using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
@@ -546,14 +547,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SaveAiInstructions(string rootDirectory)
         {
-            var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory, Const.Directories.INSTRUCTIONS);
+            var instructionsDirectory = Path.Combine(rootDirectory, Const.Directories.INSTRUCTIONS);
             IoUtils.CreateDirectory(instructionsDirectory);
 
             foreach (var instruction in _sessionInstructionEntities)
             {
                 if (!string.IsNullOrEmpty(instruction.FilePath))
                 {
-                    var destinationFile = GetUniqueFilePath(instructionsDirectory, Path.GetFileName(instruction.FilePath));
+                    var destinationFile = GetUniqueFilePathOrDefault(instructionsDirectory, Path.GetFileNameWithoutExtension(instruction.FilePath), Path.GetExtension(instruction.FilePath));
                     File.Copy(instruction.FilePath, destinationFile);
                 }
                 else
@@ -573,60 +574,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private CustomAgentConfig? GetAgentConfigByName(string agentName)
-        {
-            if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentName, out var sessionAgent))
-            {
-                return GitHubCopilotMappers.ToCustomAgentConfig(sessionAgent!);
-            }
-
-            return _sessionConfig.CustomAgents?.FirstOrDefault(a => a.Name == agentName);
-        }
-
         private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent, string destinationDirectory)
         {
             if (!string.IsNullOrEmpty(aiAgent.FilePath))
-                IoUtils.CopyFile(aiAgent.FilePath, destinationDirectory);
+                IoUtils.FileCopy(aiAgent.FilePath, destinationDirectory);
             else
             {
-                //var fileName = $"{agentConfig.Name}.agent.md";
+                if (string.IsNullOrEmpty(aiAgent.ConfigurationData?.Name))
+                {
+                    throw new ArgumentException("Agent configuration name is null or empty, but must have a valid name to save the agent file.");
+                }
 
-                //IoUtils.WriteToFile();
-                //var destinationPath = GetUniqueFilePath(destinationDirectory, fileName);
-                //File.WriteAllText(destinationPath, SerializeAgentConfig(agentConfig));
+                var destinationPath = GetUniqueFilePathOrDefault(destinationDirectory, aiAgent.ConfigurationData.Name, FileExtension.Md.GetDescriptionAttributeValue());
+                IoUtils.WriteAllText(destinationPath, aiAgent.ToMdFileContent());
             }
-
-            //if (SessionAgentsCollection.TryGetEntityDataByIdentifier(agentConfig.Name, out var sessionAgent) && !string.IsNullOrEmpty(sessionAgent!.FilePath))
-            //{
-            //    var sourceFile = sessionAgent.FilePath;
-            //    var destinationFile = GetUniqueFilePath(destinationDirectory, Path.GetFileName(sourceFile!));
-            //    File.Copy(sourceFile!, destinationFile);
-            //    return;
-            //}
-        }
-
-        private string SerializeAgentConfig(CustomAgentConfig agentConfig)
-        {
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .Build();
-
-            var frontmatterData = new
-            {
-                agentConfig.Name,
-                agentConfig.DisplayName,
-                agentConfig.Description,
-                agentConfig.Tools,
-                agentConfig.Skills,
-                agentConfig.Model,
-                agentConfig.McpServers,
-                agentConfig.Infer
-            };
-
-            var yaml = serializer.Serialize(frontmatterData);
-            var prompt = agentConfig.Prompt ?? string.Empty;
-
-            return $"---\n{yaml}---\n\n{prompt}";
         }
 
         private void TrackSessionInstruction(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiInstructionYamlConfigurationModel> instruction)
@@ -641,30 +602,31 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-
-
-        private string GetUniqueFilePath(string directory, string fileName)
+        private string GetUniqueFilePathOrDefault(string directory, string fileNameWithoutExtension, string extension)
         {
-            var destinationFile = Path.Combine(directory, fileName);
+            var filePath = fileNameWithoutExtension.ToFilePathWithFileNameTruncationWithExtensionOrDefault(extension: extension, directoryPath: directory, minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation: 10);
 
-            if (!IoUtils.FileExists(destinationFile))
+            if (!IoUtils.FileExists(filePath))
             {
-                return destinationFile;
+                return filePath;
             }
 
-            var nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-            var extension = Path.GetExtension(fileName);
             var counter = 1;
 
             while (true)
             {
-                var newFileName = $"{counter}_{nameWithoutExtension}{extension}";
-                var newDestinationFile = Path.Combine(directory, newFileName);
+                var fileNameWithouExtensionAfterTruncationOrDefault = Path.GetFileNameWithoutExtension(filePath);
+                extension = Path.GetExtension(filePath);
 
-                if (!IoUtils.FileExists(newDestinationFile))
+                var duplicationSuffix = $"({counter})";
+                var newFileNameWithoutExtension = fileNameWithouExtensionAfterTruncationOrDefault.Substring(0, Math.Max(0, fileNameWithouExtensionAfterTruncationOrDefault.Length - duplicationSuffix.Length)) + duplicationSuffix;
+
+                var newFilePath = Path.Combine(directory, newFileNameWithoutExtension + extension);
+
+                if (!IoUtils.FileExists(newFilePath))
                 {
-                    _logger.Warning("Two files with the same name '{FileName}' were found; renaming to '{NewFileName}'", fileName, newFileName);
-                    return newDestinationFile;
+                    _logger.Warning($"Two files with the same name '{filePath}' were found; renaming to '{newFilePath}'");
+                    return newFilePath;
                 }
 
                 counter++;

@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations;
@@ -25,7 +25,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithShortNameAndExtension_ReturnsFullName()
         {
-            var result = "report".ToTruncatedFileNameOrDefault("pdf");
+            var result = "report".ToTruncatedFileNameWithExtensionOrDefault("pdf");
 
             result.Should().Be("report.pdf");
         }
@@ -33,7 +33,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithNullExtension_ReturnsFullNameWithoutExtension()
         {
-            var result = "report".ToTruncatedFileNameOrDefault();
+            var result = "report".ToTruncatedFileNameWithExtensionOrDefault();
 
             result.Should().Be("report");
         }
@@ -41,7 +41,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithExtensionStartingWithDot_ReturnsNormalizedExtension()
         {
-            var result = "report".ToTruncatedFileNameOrDefault(".pdf");
+            var result = "report".ToTruncatedFileNameWithExtensionOrDefault(".pdf");
 
             result.Should().Be("report.pdf");
         }
@@ -49,7 +49,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithInvalidChars_ReplacesInvalidChars()
         {
-            var result = "re:port".ToTruncatedFileNameOrDefault("pdf");
+            var result = "re:port".ToTruncatedFileNameWithExtensionOrDefault("pdf");
 
             result.Should().Be("re_port.pdf");
         }
@@ -57,7 +57,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WhenNameFitsWithinLimit_ReturnsFullName()
         {
-            var result = "short".ToTruncatedFileNameOrDefault("txt", 10);
+            var result = "short".ToTruncatedFileNameWithExtensionOrDefault("txt", 10);
 
             result.Should().Be("short.txt");
         }
@@ -65,7 +65,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WhenNameExceedsLimit_TruncatesName()
         {
-            var result = "thisisaverylongfilename".ToTruncatedFileNameOrDefault("txt", 10);
+            var result = "thisisaverylongfilename".ToTruncatedFileNameWithExtensionOrDefault("txt", 10);
 
             result.Should().Be("thisisaxxx.txt");
             result.Length.Should().Be(14);
@@ -74,7 +74,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithLargeMaxAmountOfChars_ThrowsArgumentException()
         {
-            Action act = () => "short".ToTruncatedFileNameOrDefault("txt", int.MaxValue);
+            Action act = () => "short".ToTruncatedFileNameWithExtensionOrDefault("txt", int.MaxValue);
 
             act.Should().Throw<ArgumentException>();
         }
@@ -82,7 +82,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithZeroMaxAmountOfChars_ThrowsArgumentException()
         {
-            Action act = () => "report".ToTruncatedFileNameOrDefault("txt", 0);
+            Action act = () => "report".ToTruncatedFileNameWithExtensionOrDefault("txt", 0);
 
             act.Should().Throw<ArgumentException>();
         }
@@ -90,7 +90,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToTruncatedFileNameOrDefault_WithMaxAmountOfCharsAboveLimit_ThrowsArgumentException()
         {
-            Action act = () => "report".ToTruncatedFileNameOrDefault("txt", 256);
+            Action act = () => "report".ToTruncatedFileNameWithExtensionOrDefault("txt", 256);
 
             act.Should().Throw<ArgumentException>();
         }
@@ -100,7 +100,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         {
             string? input = null;
 
-            Action act = () => input!.ToTruncatedFileNameOrDefault();
+            Action act = () => input!.ToTruncatedFileNameWithExtensionOrDefault();
 
             act.Should().Throw<ArgumentNullException>();
         }
@@ -152,7 +152,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToFilePathWithFileNameTruncationOrDefault_WithValidInputs_ReturnsCombinedPath()
         {
-            var result = "report".ToFilePathWithFileNameTruncationOrDefault("pdf", "C:\\temp");
+            var result = "report".ToFilePathWithFileNameTruncationWithExtensionOrDefault("pdf", "C:\\temp");
 
             result.Should().Be("C:\\temp\\report.pdf");
         }
@@ -160,7 +160,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToFilePathWithFileNameTruncationOrDefault_WithEmptyDirectory_ThrowsArgumentException()
         {
-            Action act = () => "report".ToFilePathWithFileNameTruncationOrDefault("pdf", "");
+            Action act = () => "report".ToFilePathWithFileNameTruncationWithExtensionOrDefault("pdf", "");
 
             act.Should().Throw<ArgumentException>();
         }
@@ -170,7 +170,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         {
             var longDirectory = "C:\\" + new string('a', 300);
 
-            Action act = () => "report".ToFilePathWithFileNameTruncationOrDefault("pdf", longDirectory);
+            Action act = () => "report".ToFilePathWithFileNameTruncationWithExtensionOrDefault("pdf", longDirectory);
 
             act.Should().Throw<Exception>();
         }
@@ -178,7 +178,7 @@ namespace Tests.DevQAProdCom.NET.Global.Tests
         [Test]
         public void ToFilePathWithFileNameTruncationOrDefault_WithLargeMaxAmountOfChars_ThrowsArgumentException()
         {
-            Action act = () => "report".ToFilePathWithFileNameTruncationOrDefault("pdf", "C:\\temp", int.MaxValue);
+            Action act = () => "report".ToFilePathWithFileNameTruncationWithExtensionOrDefault("pdf", "C:\\temp", int.MaxValue);
 
             act.Should().Throw<ArgumentException>();
         }

@@ -15,22 +15,35 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             return new MemoryStream(byteArray);
         }
 
-        public static string ToTruncatedFileNameOrDefault(this string @string, string? extension = null,
+        public static string ToTruncatedFileNameWithExtensionOrDefault(this string fileNameWithoutExtension, string? extension = null,
             int? maxAmountOfCharsInFileName = null,
             int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = GlobalConst.Io.MINIMUM_REQUIRED_CHARS_LENGTH_OF_FILE_NAME_WITHOUT_EXTENSION_TO_APPLY_TRUNCATION)
         {
-            return IoUtils.ToTruncatedFileNameOrDefault(@string, extension,
+            return IoUtils.ToTruncatedFileNameWithExtensionOrDefault(fileNameWithoutExtension, extension,
                 maxAmountOfCharsInFileName: maxAmountOfCharsInFileName,
                 minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation: minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation);
         }
 
-        public static string ToFilePathWithFileNameTruncationOrDefault(this string fileName, string extension, string directoryPath,
+        public static string ToFilePathWithFileNameTruncationWithExtensionOrDefault(this string fileNameWithoutExtension, string extension, string directoryPath,
             int? maxAmountOfCharsInFileName = null,
             int minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation = GlobalConst.Io.MINIMUM_REQUIRED_CHARS_LENGTH_OF_FILE_NAME_WITHOUT_EXTENSION_TO_APPLY_TRUNCATION)
         {
-            return IoUtils.ToFilePathWithFileNameTruncationOrDefault(fileName, extension, directoryPath,
+            return IoUtils.ToFilePathWithFileNameTruncationWithExtensionOrDefault(fileNameWithoutExtension, extension, directoryPath,
                 maxAmountOfCharsInFileName: maxAmountOfCharsInFileName,
                 minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation: minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation);
+        }
+
+        public static string WithoutInvalidFileNameChars(this string @string)
+        {
+            return IoUtils.WithoutInvalidFileNameChars(@string);
+        }
+
+        public static string NormalizeExtension(this string? extension)
+        {
+            if (string.IsNullOrEmpty(extension))
+                return string.Empty;
+
+            return extension.StartsWith(".") ? extension : $".{extension}";
         }
     }
 }

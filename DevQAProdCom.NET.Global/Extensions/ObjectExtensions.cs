@@ -59,18 +59,25 @@ namespace DevQAProdCom.NET.Global.Extensions
             if (@object == null)
                 return string.Empty;
 
-            var builder = new SerializerBuilder();
-
-            if (configure != null)
-                configure(builder);
-            else
+            try
             {
-                builder
-                    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitEmptyCollections);
-            }
+                var builder = new SerializerBuilder();
 
-            return builder.Build().Serialize(@object);
+                if (configure != null)
+                    configure(builder);
+                else
+                {
+                    builder
+                        .WithNamingConvention(CamelCaseNamingConvention.Instance)
+                        .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull | DefaultValuesHandling.OmitEmptyCollections);
+                }
+
+                return builder.Build().Serialize(@object);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to serialize object of type '{@object.GetType().FullName}' to YAML.", ex);
+            }
         }
     }
 }
