@@ -28,5 +28,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 
             return GlobalIoUtils.GetMarkdownFiles(instructionsDirectory);
         }
+
+        public static List<string> GetCopilotSkills(string directory)
+        {
+            var skillsDirectory = Path.Combine(directory, Const.Directories.GetGitHubSkillsDirectory());
+
+            if (!Directory.Exists(skillsDirectory))
+            {
+                return new List<string>();
+            }
+
+            return GlobalIoUtils.GetMarkdownFiles(skillsDirectory);
+        }
     }
 }

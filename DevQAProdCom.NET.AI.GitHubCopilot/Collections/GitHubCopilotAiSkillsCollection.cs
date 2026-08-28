@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
-    public class GitHubCopilotAiSkillsCollection : AiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>
+    public class GitHubCopilotAiSkillsCollection : AiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>
     {
         public GitHubCopilotAiSkillsCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
             : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
@@ -14,7 +14,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
         protected override List<string> FindEntitiesInDirectory(string directory)
         {
-            return IoUtils.GetCopilotInstructions(directory);
+            return IoUtils.GetCopilotSkills(directory);
         }
     }
 }

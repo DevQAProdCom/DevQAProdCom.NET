@@ -36,6 +36,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionInstructionsCollection));
 
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _allSkillsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(AllSkillsCollection));
+
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
+
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
 
@@ -62,6 +68,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionConfig.Model = model;
             return this;
         }
+
+
+        #region Agents
 
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         {
@@ -149,6 +158,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
+        #endregion Agents
+
+        #region Instructions
+
         public SessionConfigBuilder WithInstruction(string instructionIdentifier)
         {
             _logger.Info("{TypeName} Loading instruction with identifier '{InstructionIdentifier}' from all instructions collection.", $"[{nameof(SessionConfigBuilder)}]", instructionIdentifier);
@@ -226,6 +239,83 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionConfig.InstructionDirectories = directoryList;
             return this;
         }
+
+        #endregion Instructions
+
+        #region Skills
+
+        public SessionConfigBuilder WithSkill(string skillIdentifier)
+        {
+            _logger.Info("{TypeName} Loading skill with identifier '{SkillIdentifier}' from all skills collection.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
+            var entityData = AllSkillsCollection.GetEntityDataByIdentifier(skillIdentifier);
+            SessionSkillsCollection.AddEntityData(entityData);
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkills(params string[] skillsIdentifiers)
+        {
+            foreach (var skillIdentifier in skillsIdentifiers)
+            {
+                WithSkill(skillIdentifier);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkill(string skillIdentifier, string prompt)
+        {
+            _logger.Info("{TypeName} Adding skill '{SkillIdentifier}' with custom prompt.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
+
+            var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiSkillYamlConfigurationModel>
+            {
+                ConfigurationData = new GitHubCopilotAiSkillYamlConfigurationModel { Name = skillIdentifier },
+                Prompt = prompt
+            };
+
+            AllSkillsCollection.AddEntityData(entityData);
+            SessionSkillsCollection.AddEntityData(entityData);
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkillFromFile(string filePath)
+        {
+            IoUtils.CheckFileMustExist(filePath);
+            var entityData = AllSkillsCollection.AddEntityDataFromFile(filePath);
+            SessionSkillsCollection.AddEntityData(entityData);
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkillsFromFiles(params string[] filePaths)
+        {
+            foreach (var filePath in filePaths)
+            {
+                WithSkillFromFile(filePath);
+            }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkillsFromDirectory(string directoryPath)
+        {
+            var entities = AllSkillsCollection.AddEntitiesDataFromDirectory(directoryPath);
+            SessionSkillsCollection.AddEntitiesData(entities.ToArray());
+            return this;
+        }
+
+        public SessionConfigBuilder WithSkillsFromDirectories(params string[] directoryPaths)
+        {
+            foreach (var directoryPath in directoryPaths)
+            {
+                WithSkillsFromDirectory(directoryPath);
+            }
+
+            return this;
+        }
+
+
+        #endregion Skills
 
         public SessionConfigBuilder WithWorkingDirectory(string workingDirectory)
         {
@@ -320,9 +410,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithEnableSkills(bool? enableSkills)
+        public SessionConfigBuilder WithEnableSkills(bool enableSkills)
         {
-            LogSetting(nameof(_sessionConfig.EnableSkills), enableSkills?.ToString() ?? "null");
+            LogSetting(nameof(_sessionConfig.EnableSkills), enableSkills);
             _sessionConfig.EnableSkills = enableSkills;
             return this;
         }
@@ -452,6 +542,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             CreateFolderWithInteractionConfigurationData();
             SetUpOnPermissionRequest();
             SetUpInstructionDirectories();
+            SetUpSkillsDirectories();
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
@@ -511,6 +602,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             //    }
         }
 
+        private void SetUpSkillsDirectories()
+        {
+            if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            {
+                var skillsDirectory = Path.Combine(_interactionConfigurationDirectory);
+
+                if (Directory.Exists(skillsDirectory))
+                {
+                    _sessionConfig.SkillDirectories = new List<string>() { skillsDirectory };
+                    _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                }
+            }
+        }
+
         private void CreateFolderWithInteractionConfigurationData()
         {
             if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
@@ -520,39 +625,45 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             SaveAiAgents(_interactionConfigurationDirectory);
             SaveAiInstructions(_interactionConfigurationDirectory);
+            SaveAiSkills(_interactionConfigurationDirectory);
         }
 
         private void SaveAiAgents(string rootDirectory)
         {
-            var agentsDirectory = Path.Combine(rootDirectory, Const.Directories.AGENTS);
-            var primaryAgentName = _sessionConfig.Agent;
+            var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
 
-            // Save Primary Agent
-            if (!string.IsNullOrEmpty(primaryAgentName))
-            {
-                var primaryAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.PRIMARY);
-
-                var primaryAgent = SessionAgentsCollection.GetEntityDataByIdentifier(primaryAgentName);
-                SaveAgentFile(primaryAgent, primaryAgentsDirectory);
-            }
-
-            // Save Sub-Agents
             foreach (var agent in SessionAgentsCollection)
             {
-                var subAgentsDirectory = Path.Combine(agentsDirectory, Const.Directories.SUB_AGENTS);
-
-                if (agent.ConfigurationData.Name == primaryAgentName)
+                if (!string.IsNullOrEmpty(agent.FilePath))
                 {
-                    continue;
+                    var destinationFilePath = GetUniqueFilePathOrDefault(agentsDirectory, Path.GetFileNameWithoutExtension(agent.FilePath), Path.GetExtension(agent.FilePath));
+                    IoUtils.FileCopy(agent.FilePath, destinationFilePath);
                 }
+                else
+                {
+                    if (string.IsNullOrEmpty(agent.ConfigurationData?.Name))
+                    {
+                        throw new ArgumentException("Agent configuration name is null or empty, but must have a valid name to save the agent file.");
+                    }
 
-                SaveAgentFile(agent, subAgentsDirectory);
+                    var fileName = $"{agent.ConfigurationData.Name}.agent.md";
+                    var destinationFilePath = Path.Combine(agentsDirectory, fileName);
+
+                    if (IoUtils.FileExists(destinationFilePath))
+                    {
+                        throw new InvalidOperationException(
+                            $"Agent with name '{agent.ConfigurationData.Name}' already exists in '{agentsDirectory}'. " +
+                            $"Use {nameof(WithAgent)}(string agentIdentifier, string prompt) to add an agent with a different name.");
+                    }
+
+                    IoUtils.WriteAllText(destinationFilePath, agent.ToMdFileContent());
+                }
             }
         }
 
         private void SaveAiInstructions(string rootDirectory)
         {
-            var instructionsDirectory = Path.Combine(rootDirectory, ".github", Const.Directories.INSTRUCTIONS);
+            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
 
             foreach (var instruction in SessionInstructionsCollection)
             {
@@ -563,6 +674,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 }
                 else
                 {
+                    if (string.IsNullOrEmpty(instruction.ConfigurationData?.Name))
+                    {
+                        throw new ArgumentException("Instruction configuration name is null or empty, but must have a valid name to save the instruction file.");
+                    }
+
                     var fileName = $"{instruction.ConfigurationData.Name}.instructions.md";
                     var destinationFile = Path.Combine(instructionsDirectory, fileName);
 
@@ -573,27 +689,32 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                             $"Use {nameof(WithInstruction)}(string instructionIdentifier, string prompt) to add an instruction with a different name.");
                     }
 
-                    File.WriteAllText(destinationFile, instruction.Prompt);
+                    IoUtils.WriteAllText(destinationFile, instruction.ToMdFileContent());
                 }
             }
         }
 
-        private void SaveAgentFile(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent, string destinationDirectory)
+        private void SaveAiSkills(string rootDirectory)
         {
-            if (!string.IsNullOrEmpty(aiAgent.FilePath))
-            {
-                var destinationFilePath = GetUniqueFilePathOrDefault(destinationDirectory, Path.GetFileNameWithoutExtension(aiAgent.FilePath), Path.GetExtension(aiAgent.FilePath));
-                IoUtils.FileCopy(aiAgent.FilePath, destinationFilePath);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(aiAgent.ConfigurationData?.Name))
-                {
-                    throw new ArgumentException("Agent configuration name is null or empty, but must have a valid name to save the agent file.");
-                }
+            var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
 
-                var destinationPath = GetUniqueFilePathOrDefault(destinationDirectory, aiAgent.ConfigurationData.Name, FileExtension.Md.GetDescriptionAttributeValue());
-                IoUtils.WriteAllText(destinationPath, aiAgent.ToMdFileContent());
+            foreach (var skill in SessionSkillsCollection)
+            {
+                if (!string.IsNullOrEmpty(skill.FilePath))
+                {
+                    var destinationFilePath = GetUniqueFilePathOrDefault(skillsDirectory, Path.GetFileNameWithoutExtension(skill.FilePath), Path.GetExtension(skill.FilePath));
+                    IoUtils.FileCopy(skill.FilePath, destinationFilePath);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(skill.ConfigurationData?.Name))
+                    {
+                        throw new ArgumentException("Skill configuration name is null or empty, but must have a valid name to save the skill file.");
+                    }
+
+                    var destinationPath = GetUniqueFilePathOrDefault(skillsDirectory, skill.ConfigurationData.Name, FileExtension.Md.GetDescriptionAttributeValue());
+                    IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
+                }
             }
         }
 
