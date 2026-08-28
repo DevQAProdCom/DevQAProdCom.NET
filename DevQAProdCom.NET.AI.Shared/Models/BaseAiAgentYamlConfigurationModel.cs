@@ -2,14 +2,8 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class BaseAiAgentYamlConfigurationModel
+    public class BaseAiAgentYamlConfigurationModel: BaseAiEntityYamlConfigurationModel
     {
-        [YamlMember(Alias = "name")]
-        public string Name { get; set; }
-
-        [YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
         [YamlMember(Alias = "tools")]
         public IList<string>? Tools { get; set; }
 

@@ -1,16 +1,11 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Models;
 using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 {
-    public class GitHubCopilotAiInstructionYamlConfigurationModel : IGitHubCopilotAiInstructionYamlConfiguration
+    public class GitHubCopilotAiInstructionYamlConfigurationModel : BaseAiEntityYamlConfigurationModel, IGitHubCopilotAiInstructionYamlConfiguration
     {
-        [YamlMember(Alias = "name")]
-        public string Name { get; set; } = string.Empty;
-
-        [YamlMember(Alias = "description")]
-        public string? Description { get; set; }
-
         [YamlMember(Alias = "applyTo")]
         public List<string>? ApplyTo { get; set; }
     }

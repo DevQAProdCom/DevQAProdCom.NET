@@ -43,18 +43,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private string? _interactionConfigurationDirectory = null;
 
-        private string? _baseDirectory = null;
+        //private string? _baseDirectory = null;
 
         public SessionConfigBuilder(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public SessionConfigBuilder WithBaseDirectory(string baseDirectory)
-        {
-            _baseDirectory = baseDirectory;
-            return this;
-        }
+        //public SessionConfigBuilder WithBaseDirectory(string baseDirectory)
+        //{
+        //    _baseDirectory = baseDirectory;
+        //    return this;
+        //}
 
         public SessionConfigBuilder WithModel(string model)
         {
