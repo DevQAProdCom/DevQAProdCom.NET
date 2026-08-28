@@ -5,16 +5,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 {
     public interface IoUtils
     {
-        public static List<string> GetCopilotAgents(string directory)
+        public static List<string> GetCopilotAgents(string rootDirectory)
         {
-            var agentsDirectory = Path.Combine(directory, Const.Directories.GetGitHubAgentsDirectory());
+            var gitHubAgentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
 
-            if (!Directory.Exists(agentsDirectory))
+            if (!Directory.Exists(gitHubAgentsDirectory))
             {
                 return new List<string>();
             }
 
-            return GlobalIoUtils.GetMarkdownFiles(agentsDirectory);
+            return GlobalIoUtils.GetMarkdownFiles(gitHubAgentsDirectory);
         }
 
         public static List<string> GetCopilotInstructions(string directory)
@@ -29,16 +29,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             return GlobalIoUtils.GetMarkdownFiles(instructionsDirectory);
         }
 
-        public static List<string> GetCopilotSkills(string directory)
+        public static List<string> GetCopilotSkills(string rootDirectory)
         {
-            var skillsDirectory = Path.Combine(directory, Const.Directories.GetGitHubSkillsDirectory());
-
-            if (!Directory.Exists(skillsDirectory))
+            if (!Directory.Exists(rootDirectory))
             {
                 return new List<string>();
             }
 
-            return GlobalIoUtils.GetMarkdownFiles(skillsDirectory);
+            return GlobalIoUtils.GetFilesInDirectory(rootDirectory, "SKILL.md", SearchOption.AllDirectories)
+                .Select(x => x.FullName)
+                .ToList();
         }
     }
 }
