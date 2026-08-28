@@ -1,4 +1,4 @@
-using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
@@ -10,5 +10,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 
         [YamlMember(Alias = "description")]
         public string? Description { get; set; }
+
+        [YamlMember(Alias = "applyTo")]
+        public List<string>? ApplyTo { get; set; }
     }
 }
