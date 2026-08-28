@@ -8,25 +8,37 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
         public static List<string> GetCopilotAgents(string rootDirectory)
         {
             var gitHubAgentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
+            var agentFiles = new List<string>();
 
-            if (!Directory.Exists(gitHubAgentsDirectory))
+            if (Directory.Exists(gitHubAgentsDirectory))
             {
-                return new List<string>();
+                agentFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(gitHubAgentsDirectory).Select(x => x.FullName));
             }
 
-            return GlobalIoUtils.GetMarkdownFiles(gitHubAgentsDirectory);
+            if (Directory.Exists(rootDirectory))
+            {
+                agentFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, $"*{FilesConstants.AGENT_MD}", SearchOption.AllDirectories).Select(x => x.FullName));
+            }
+
+            return agentFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         public static List<string> GetCopilotInstructions(string directory)
         {
-            var instructionsDirectory = Path.Combine(directory, Const.Directories.GetGitHubInstructionsDirectory());
+            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(directory);
+            var instructionFiles = new List<string>();
 
-            if (!Directory.Exists(instructionsDirectory))
+            if (Directory.Exists(instructionsDirectory))
             {
-                return new List<string>();
+                instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(instructionsDirectory).Select(x => x.FullName));
             }
 
-            return GlobalIoUtils.GetMarkdownFiles(instructionsDirectory);
+            if (Directory.Exists(directory))
+            {
+                instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(directory, $"*{FilesConstants.INSTRUCTIONS_MD}", SearchOption.AllDirectories).Select(x => x.FullName));
+            }
+
+            return instructionFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         public static List<string> GetCopilotSkills(string rootDirectory)
