@@ -12,6 +12,7 @@ using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
@@ -643,19 +644,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 {
                     if (string.IsNullOrEmpty(agent.ConfigurationData?.Name))
                     {
-                        throw new ArgumentException("Agent configuration name is null or empty, but must have a valid name to save the agent file.");
+                        throw new ArgumentException("Agent configuration name is either null or empty, but must have a valid name to save the agent file.");
                     }
 
-                    var fileName = $"{agent.ConfigurationData.Name}.agent.md";
-                    var destinationFilePath = Path.Combine(agentsDirectory, fileName);
-
-                    if (IoUtils.FileExists(destinationFilePath))
-                    {
-                        throw new InvalidOperationException(
-                            $"Agent with name '{agent.ConfigurationData.Name}' already exists in '{agentsDirectory}'. " +
-                            $"Use {nameof(WithAgent)}(string agentIdentifier, string prompt) to add an agent with a different name.");
-                    }
-
+                    var destinationFilePath = GetUniqueFilePathOrDefault(agentsDirectory, agent.ConfigurationData.Name, FilesConstants.AGENT_MD);
                     IoUtils.WriteAllText(destinationFilePath, agent.ToMdFileContent());
                 }
             }
@@ -676,20 +668,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 {
                     if (string.IsNullOrEmpty(instruction.ConfigurationData?.Name))
                     {
-                        throw new ArgumentException("Instruction configuration name is null or empty, but must have a valid name to save the instruction file.");
+                        throw new ArgumentException("Instruction configuration name is either null or empty, but must have a valid name to save the instruction file.");
                     }
 
-                    var fileName = $"{instruction.ConfigurationData.Name}.instructions.md";
-                    var destinationFile = Path.Combine(instructionsDirectory, fileName);
-
-                    if (IoUtils.FileExists(destinationFile))
-                    {
-                        throw new InvalidOperationException(
-                            $"Instruction with name '{instruction.ConfigurationData.Name}' already exists in '{instructionsDirectory}'. " +
-                            $"Use {nameof(WithInstruction)}(string instructionIdentifier, string prompt) to add an instruction with a different name.");
-                    }
-
-                    IoUtils.WriteAllText(destinationFile, instruction.ToMdFileContent());
+                    var destinationFilePath = GetUniqueFilePathOrDefault(instructionsDirectory, instruction.ConfigurationData.Name, FilesConstants.INSTRUCTIONS_MD);
+                    IoUtils.WriteAllText(destinationFilePath, instruction.ToMdFileContent());
                 }
             }
         }
@@ -702,17 +685,23 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             {
                 if (!string.IsNullOrEmpty(skill.FilePath))
                 {
-                    var destinationFilePath = GetUniqueFilePathOrDefault(skillsDirectory, Path.GetFileNameWithoutExtension(skill.FilePath), Path.GetExtension(skill.FilePath));
-                    IoUtils.FileCopy(skill.FilePath, destinationFilePath);
+                    var skillDirectory = Path.GetDirectoryName(skill.FilePath);
+                    var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory);
+
+                    if(Directory.Exists(destinationDirectoryPath))
+                        throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
+                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILLS_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
+
+                    IoUtils.DirectoryCopy(skillDirectory, destinationDirectoryPath);
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(skill.ConfigurationData?.Name))
                     {
-                        throw new ArgumentException("Skill configuration name is null or empty, but must have a valid name to save the skill file.");
+                        throw new ArgumentException("Skill configuration name is either null or empty, but must have a valid name to save the skill file.");
                     }
 
-                    var destinationPath = GetUniqueFilePathOrDefault(skillsDirectory, skill.ConfigurationData.Name, FileExtension.Md.GetDescriptionAttributeValue());
+                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILLS_MD);
                     IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
                 }
             }
@@ -728,6 +717,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
 
             var counter = 1;
+
+
+           //TODO refactor in another way - it should first find if not such file already exists with the same name but with suffix
+           //cause now i suppose it will add suffix (1)(1) etc, but i need it to be 2,3,4
 
             while (true)
             {
