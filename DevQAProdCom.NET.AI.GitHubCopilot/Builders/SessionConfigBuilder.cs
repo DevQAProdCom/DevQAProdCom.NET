@@ -688,13 +688,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                         "Initial file paths: {InitialFilePaths}.", $"[{nameof(SessionConfigBuilder)}]", entityTypeName, group.Key, directory, string.Join(", ", initialFilePaths));
                 }
 
-                foreach (var item in items)
+                for (var i = 0; i < items.Count; i++)
                 {
-                    var destinationFilePath = GetUniqueFilePathOrDefault(directory, item.FileNameWithoutExtension, item.Extension, 1);
+                    var index = items.Count > 1 ? i + 1 : 0;
+                    var item = items[i];
+                    var destinationFilePath = GetUniqueFilePathOrDefault(directory, item.FileNameWithoutExtension, item.Extension, index);
+                    var entityFilePath = item.Entity.FilePath;
 
-                    if (!string.IsNullOrEmpty(item.Entity.FilePath))
+                    if (!string.IsNullOrEmpty(entityFilePath))
                     {
-                        IoUtils.FileCopy(item.Entity.FilePath, destinationFilePath);
+                        IoUtils.FileCopy(entityFilePath, destinationFilePath);
                     }
                     else
                     {
@@ -738,25 +741,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             var normalizedExtension = IoUtils.NormalizeExtension(extension);
             var safeFileNameWithoutExtension = IoUtils.WithoutInvalidFileNameChars(fileNameWithoutExtension);
-            var filePath = Path.Combine(directory, safeFileNameWithoutExtension + normalizedExtension);
+            var fileName = index > 0 ? $"{safeFileNameWithoutExtension}({index})" : safeFileNameWithoutExtension;
+            var filePath = Path.Combine(directory, fileName + normalizedExtension);
 
-            if (!IoUtils.FileExists(filePath))
+            if (IoUtils.FileExists(filePath))
             {
-                return filePath;
+                throw new InvalidOperationException($"Destination file '{filePath}' already exists. The provided index '{index}' cannot be used because the target path is already occupied.");
             }
 
-            while (true)
-            {
-                var newFileName = $"{safeFileNameWithoutExtension}({index})";
-                var newFilePath = Path.Combine(directory, newFileName + normalizedExtension);
-
-                if (!IoUtils.FileExists(newFilePath))
-                {
-                    return newFilePath;
-                }
-
-                index++;
-            }
+            return filePath;
         }
 
         public void Dispose()
