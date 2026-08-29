@@ -632,47 +632,74 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiAgents(string rootDirectory)
         {
             var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
-
-            foreach (var agent in SessionAgentsCollection)
-            {
-                if (!string.IsNullOrEmpty(agent.FilePath))
-                {
-                    var destinationFilePath = GetUniqueFilePathOrDefault(agentsDirectory, Path.GetFileNameWithoutExtension(agent.FilePath), Path.GetExtension(agent.FilePath));
-                    IoUtils.FileCopy(agent.FilePath, destinationFilePath);
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(agent.ConfigurationData?.Name))
-                    {
-                        throw new ArgumentException("Agent configuration name is either null or empty, but must have a valid name to save the agent file.");
-                    }
-
-                    var destinationFilePath = GetUniqueFilePathOrDefault(agentsDirectory, agent.ConfigurationData.Name, FilesConstants.AGENT_MD);
-                    IoUtils.WriteAllText(destinationFilePath, agent.ToMdFileContent());
-                }
-            }
+            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
         }
 
         private void SaveAiInstructions(string rootDirectory)
         {
             var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
+            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
+        }
 
-            foreach (var instruction in SessionInstructionsCollection)
+        private void SaveAiEntities<TConfiguration>(
+            IEnumerable<IAiEntityWithTYamlConfigurationType<TConfiguration>> entities,
+            string directory,
+            string defaultExtension,
+            string entityTypeName)
+            where TConfiguration : IAiEntityYamlConfiguration, new()
+        {
+            var entityInfos = entities.Select(entity =>
             {
-                if (!string.IsNullOrEmpty(instruction.FilePath))
+                if (!string.IsNullOrEmpty(entity.FilePath))
                 {
-                    var destinationFilePath = GetUniqueFilePathOrDefault(instructionsDirectory, Path.GetFileNameWithoutExtension(instruction.FilePath), Path.GetExtension(instruction.FilePath));
-                    IoUtils.FileCopy(instruction.FilePath, destinationFilePath);
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(instruction.ConfigurationData?.Name))
+                    return new
                     {
-                        throw new ArgumentException("Instruction configuration name is either null or empty, but must have a valid name to save the instruction file.");
-                    }
+                        Entity = entity,
+                        FileNameWithoutExtension = Path.GetFileNameWithoutExtension(entity.FilePath),
+                        Extension = Path.GetExtension(entity.FilePath),
+                        InitialFilePath = (string?)entity.FilePath
+                    };
+                }
 
-                    var destinationFilePath = GetUniqueFilePathOrDefault(instructionsDirectory, instruction.ConfigurationData.Name, FilesConstants.INSTRUCTIONS_MD);
-                    IoUtils.WriteAllText(destinationFilePath, instruction.ToMdFileContent());
+                if (string.IsNullOrEmpty(entity.ConfigurationData?.Name))
+                {
+                    throw new ArgumentException($"{entityTypeName} configuration name is either null or empty, but must have a valid name to save the {entityTypeName.ToLowerInvariant()} file.");
+                }
+
+                return new
+                {
+                    Entity = entity,
+                    FileNameWithoutExtension = entity.ConfigurationData.Name,
+                    Extension = defaultExtension,
+                    InitialFilePath = (string?)null
+                };
+            });
+
+            var groups = entityInfos.GroupBy(info => IoUtils.WithoutInvalidFileNameChars(info.FileNameWithoutExtension) + IoUtils.NormalizeExtension(info.Extension));
+
+            foreach (var group in groups)
+            {
+                var items = group.ToList();
+
+                if (items.Count > 1)
+                {
+                    var initialFilePaths = items.Select(item => item.InitialFilePath ?? $"The entity of '{entityTypeName}' kind was created dynamically via code and has no initial file path. By default its name is used as eventual file name '{item.FileNameWithoutExtension}'");
+                    _logger.Warning("{TypeName} Several {EntityType} entities could have the same eventual name '{EventualName}' inside directory '{Directory}' after copy. Additional numerical index will be applied to file name of each entity to avoid naming duplication. " +
+                        "Initial file paths: {InitialFilePaths}.", $"[{nameof(SessionConfigBuilder)}]", entityTypeName, group.Key, directory, string.Join(", ", initialFilePaths));
+                }
+
+                foreach (var item in items)
+                {
+                    var destinationFilePath = GetUniqueFilePathOrDefault(directory, item.FileNameWithoutExtension, item.Extension, 1);
+
+                    if (!string.IsNullOrEmpty(item.Entity.FilePath))
+                    {
+                        IoUtils.FileCopy(item.Entity.FilePath, destinationFilePath);
+                    }
+                    else
+                    {
+                        IoUtils.WriteAllText(destinationFilePath, item.Entity.ToMdFileContent());
+                    }
                 }
             }
         }
@@ -707,38 +734,28 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private string GetUniqueFilePathOrDefault(string directory, string fileNameWithoutExtension, string extension)
+        private string GetUniqueFilePathOrDefault(string directory, string fileNameWithoutExtension, string extension, int index)
         {
-            var filePath = fileNameWithoutExtension.ToFilePathWithFileNameTruncationWithExtensionOrDefault(extension: extension, directoryPath: directory, minimumRequiredCharsLengthOfFileNameWithoutExtensionToApplyTruncation: 10);
+            var normalizedExtension = IoUtils.NormalizeExtension(extension);
+            var safeFileNameWithoutExtension = IoUtils.WithoutInvalidFileNameChars(fileNameWithoutExtension);
+            var filePath = Path.Combine(directory, safeFileNameWithoutExtension + normalizedExtension);
 
             if (!IoUtils.FileExists(filePath))
             {
                 return filePath;
             }
 
-            var counter = 1;
-
-
-           //TODO refactor in another way - it should first find if not such file already exists with the same name but with suffix
-           //cause now i suppose it will add suffix (1)(1) etc, but i need it to be 2,3,4
-
             while (true)
             {
-                var fileNameWithouExtensionAfterTruncationOrDefault = Path.GetFileNameWithoutExtension(filePath);
-                extension = Path.GetExtension(filePath);
-
-                var duplicationSuffix = $"({counter})";
-                var newFileNameWithoutExtension = fileNameWithouExtensionAfterTruncationOrDefault.Substring(0, Math.Max(0, fileNameWithouExtensionAfterTruncationOrDefault.Length - duplicationSuffix.Length)) + duplicationSuffix;
-
-                var newFilePath = Path.Combine(directory, newFileNameWithoutExtension + extension);
+                var newFileName = $"{safeFileNameWithoutExtension}({index})";
+                var newFilePath = Path.Combine(directory, newFileName + normalizedExtension);
 
                 if (!IoUtils.FileExists(newFilePath))
                 {
-                    _logger.Warning($"Two files with the same name '{filePath}' were found; renaming to '{newFilePath}'");
                     return newFilePath;
                 }
 
-                counter++;
+                index++;
             }
         }
 
