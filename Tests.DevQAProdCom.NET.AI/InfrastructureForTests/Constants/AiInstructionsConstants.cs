@@ -7,7 +7,7 @@
             internal static class Names
             {
                 internal const string APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY = "Append CUSTOM INSTRUCTION CHECK to Read Write Agent content property";
-                internal const string INSTRUCTION_ANSWER_QUESTIONS_SET_1 = "answer-questions-set-1-instructions";
+                internal const string ANSWER_QUESTIONS_SET_1_INSTRUCTIONS = "answer-questions-set-1-instructions";
             }
         }
     }

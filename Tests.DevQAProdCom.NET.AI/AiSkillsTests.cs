@@ -10,19 +10,32 @@ namespace Tests.DevQAProdCom.NET.AI
     internal class AiSkillsTests : BaseTest
     {
         [Test]
+        public async Task Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier()
+        {
+            //GIVEN
+            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier));
+
+            //WHEN
+            await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
+                .WithSessionConfig(config => config
+                .WithSkill(Const.AiSkills.Names.SKILL_ANSWER_QUESTIONS_SET_1)))
+            {
+                await agent.InvokeAiAgentWithStreamingAsync();
+            }
+
+            //THEN
+            var actualResponse = new AnswerQuestionsAgentReponseModel(requestModel.FilePathToWriteResponseTo);
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
+
+            //TEAR DOWN
+            IoUtils.DeleteDirectory(tempWorkingDirectory);
+        }
+
+        [Test]
         public async Task Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier()
         {
             //GIVEN
-            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier));
-
-            var requestModel = GetAnswerQuestionsAgentRequestModel(tempWorkingDirectory, new List<string> { ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL });
-            var expectedResponse = new AnswerQuestionsAgentReponseModel()
-            {
-                QuestionsAndAnswers = new List<QuestionAnswersModel> {
-                    new QuestionAnswersModel {
-                        Question = ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL,
-                        Answers = new(){ ExpectedValues.GetMyFavoriteAnimalIsLion (Const.AiSkills.Names.SKILL_ANSWER_QUESTIONS_SET_1)} } }
-            };
+            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier));
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel))
@@ -36,6 +49,24 @@ namespace Tests.DevQAProdCom.NET.AI
 
             //TEAR DOWN
             IoUtils.DeleteDirectory(tempWorkingDirectory);
+        }
+
+        private (string tempWorkingDirectory, AnswerQuestionsAgentRequestModel requestModel, AnswerQuestionsAgentReponseModel expectedResponse) PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(string testMethodName)
+        {
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(testMethodName);
+            var requestModel = GetAnswerQuestionsAgentRequestModel(tempWorkingDirectory, new List<string> { ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL });
+            var expectedResponse = new AnswerQuestionsAgentReponseModel()
+            {
+                QuestionsAndAnswers = new List<QuestionAnswersModel>
+                {
+                    new QuestionAnswersModel
+                    {
+                        Question = ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL,
+                        Answers = new() { ExpectedValues.GetMyFavoriteAnimalIsLion(Const.AiSkills.Names.SKILL_ANSWER_QUESTIONS_SET_1) }
+                    }
+                }
+            };
+            return (tempWorkingDirectory, requestModel, expectedResponse);
         }
     }
 }

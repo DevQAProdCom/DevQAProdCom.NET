@@ -641,6 +641,27 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     }
                 }
             }
+
+            //This setup is required because it is not enough to just set SkillsDirectories of the SessionConfig, but names of skills should be added to the CustomAgentConfig.
+            if (!string.IsNullOrEmpty(_sessionConfig.Agent) && _sessionConfig.SkillDirectories?.Count() > 0)
+            {
+                //Add directly to the CustomAgentConfig of the SessionConfig
+                var primaryAgentFromSessionConfig = _sessionConfig.CustomAgents?.SingleOrDefault(x => x.Name == _sessionConfig.Agent);
+                if (primaryAgentFromSessionConfig != null)
+                    primaryAgentFromSessionConfig.Skills = new List<string>();
+
+                //Add through the SessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
+                //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
+                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
+                if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
+                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomSkills = new List<string>();
+
+                foreach (var directory in _sessionConfig.SkillDirectories.Select(x => new DirectoryInfo(x)))
+                {
+                    primaryAgentFromSessionConfig?.Skills?.Add(directory.Name);
+                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomSkills?.Add(directory.Name);
+                }
+            }
         }
 
         private void CreateFolderWithInteractionConfigurationData()
