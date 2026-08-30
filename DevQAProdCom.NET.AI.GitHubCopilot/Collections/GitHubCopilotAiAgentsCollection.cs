@@ -7,15 +7,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
     public class GitHubCopilotAiAgentsCollection : AiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>
     {
-        public GitHubCopilotAiAgentsCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
-            : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
+        public GitHubCopilotAiAgentsCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+            : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
 
-        public GitHubCopilotAiAgentsCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
-            : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
+        public GitHubCopilotAiAgentsCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+            : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
 
-        protected override List<string> FindEntitiesInDirectory(string directory)
+        protected override List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false)
         {
-            return IoUtils.GetCopilotAgents(directory);
+            return IoUtils.GetCopilotAgents(directory, useExtendedSearch);
         }
     }
 }

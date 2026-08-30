@@ -7,14 +7,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
     public class GitHubCopilotAiSkillsCollection : AiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>
     {
-        public GitHubCopilotAiSkillsCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
-            : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
 
-        public GitHubCopilotAiSkillsCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
-            : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier) { }
-        protected override List<string> FindEntitiesInDirectory(string directory)
+        public GitHubCopilotAiSkillsCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+            : base(logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
+     
+
+        public GitHubCopilotAiSkillsCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+            : base(baseFolder, logger, initializeWithDefaultLocations: initializeWithDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
+
+        protected override List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false)
         {
-            return IoUtils.GetCopilotSkills(directory);
+            return IoUtils.GetCopilotSkills(directory, useExtendedSearch);
         }
     }
 }

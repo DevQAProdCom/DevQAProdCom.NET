@@ -15,12 +15,15 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
         protected ILogger Log;
 
-        public AiEntitiesCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null)
+        protected readonly bool UseExtendedSearch = false;
+
+        public AiEntitiesCollection(ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
         {
             collectionIdentifier ??= Guid.NewGuid().ToString();
             CollectionIdentifier = collectionIdentifier;
             ArgumentNullException.ThrowIfNull(logger);
             Log = logger;
+            UseExtendedSearch = useExtendedSearch;
 
             if (initializeWithDefaultLocations)
             {
@@ -28,7 +31,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             }
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null) : this(logger, initializeWithDefaultLocations, collectionIdentifier)
+        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeWithDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false) : this(logger, initializeWithDefaultLocations, collectionIdentifier, useExtendedSearch)
         {
             BaseDirectory = baseFolder;
         }
@@ -253,7 +256,7 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             if (!string.IsNullOrEmpty(BaseDirectory))
             {
                 Log.Info("{CollectionIdentifier} Using specified BaseDirectory: {baseDirectory}", $"[{CollectionIdentifier}]", BaseDirectory);
-                var entities = FindEntitiesInDirectory(BaseDirectory);
+                var entities = FindEntitiesInDirectory(BaseDirectory, UseExtendedSearch);
                 entitiesLocations.AddRange(entities);
                 Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in BaseDirectory.", $"[{CollectionIdentifier}]", entities.Count);
             }
@@ -262,14 +265,14 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
                 Log.Info("{CollectionIdentifier} BaseDirectory not specified, searching in current directory and solution folder.", $"[{CollectionIdentifier}]");
                 var currentDirectory = Directory.GetCurrentDirectory();
                 Log.Info("{CollectionIdentifier} Current directory: {currentDirectory}", $"[{CollectionIdentifier}]", currentDirectory);
-                var entities = FindEntitiesInDirectory(currentDirectory);
+                var entities = FindEntitiesInDirectory(currentDirectory, UseExtendedSearch);
                 entitiesLocations.AddRange(entities);
                 Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in current directory.", $"[{CollectionIdentifier}]", entities.Count);
 
                 if (IoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && solutionDirectory != currentDirectory)
                 {
                     Log.Info("{CollectionIdentifier} Solution folder: {solutionDirectory}", $"[{CollectionIdentifier}]", solutionDirectory!);
-                    entities = FindEntitiesInDirectory(solutionDirectory!);
+                    entities = FindEntitiesInDirectory(solutionDirectory, UseExtendedSearch);
                     entitiesLocations.AddRange(entities);
                     Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in solution folder.", $"[{CollectionIdentifier}]", entities.Count);
                 }
@@ -288,6 +291,6 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
             return entitiesLocations;
         }
 
-        protected virtual List<string> FindEntitiesInDirectory(string directory) => new List<string>();
+        protected virtual List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false) => new List<string>();
     }
 }

@@ -23,20 +23,27 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private PermissionDecisionsCollection? _permissionDecisionsCollection;
         private PermissionDecisionsCollection PermissionDecisionsCollection => _permissionDecisionsCollection ??= new();
 
+        private bool _useAgentsExtendedSearch = false;
+
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _allAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(AllAgentsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _sessionAgentsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionAgentsCollection));
 
+
+        private bool _useInstructionsExtendedSearch = false;
+
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _allInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(AllInstructionsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionInstructionsCollection));
 
+        private bool _useSkillsExtendedSearch = false;
+
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _allSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(AllSkillsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
@@ -155,6 +162,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 WithAgentsFromDirectory(directoryPath);
             }
 
+            return this;
+        }
+
+        public SessionConfigBuilder WithAgentsExtendedSearch(bool useExtendedSearch)
+        {
+            _logger.Info("{TypeName} Enabling extended search for agents.", $"[{nameof(SessionConfigBuilder)}]");
+            _useAgentsExtendedSearch = useExtendedSearch;
             return this;
         }
 
@@ -726,7 +740,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                     if (Directory.Exists(destinationDirectoryPath))
                         throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
-                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILLS_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
+                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILL_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
 
                     IoUtils.DirectoryCopy(skillDirectory.FullName, destinationDirectoryPath);
                 }
@@ -737,7 +751,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                         throw new ArgumentException("Skill configuration name is either null or empty, but must have a valid name to save the skill file.");
                     }
 
-                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILLS_MD);
+                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILL_MD);
                     IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
                 }
             }
