@@ -7,7 +7,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Constants
     {
         public static readonly string AGENT_MD = $"agent.{FileExtension.Md.GetDescriptionAttributeValue()}";
         public static readonly string INSTRUCTIONS_MD = $"instructions.{FileExtension.Md.GetDescriptionAttributeValue()}";
-        public static readonly string SKILLS_MD = $"SKILL.{FileExtension.Md.GetDescriptionAttributeValue()}";
+        public static readonly string SKILLS_MD = $"SKILL{FileExtension.Md.GetDescriptionAttributeValue()}";
 
         public static string GetGitHubAgentFileName(string agentName, string? directory = null)
         {

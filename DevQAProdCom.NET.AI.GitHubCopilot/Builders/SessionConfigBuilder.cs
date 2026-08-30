@@ -479,7 +479,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return WithSkipCustomInstructions(false)
                 .WithEnableOnDemandInstructionDiscovery(true)
                 .WithCustomAgentsLocalOnly(true)
-                .WithEnableSkills(false)
+                .WithEnableSkills(true)
                 .WithEnableConfigDiscovery(false)
                 .WithIncludeSubAgentStreamingEvents(false);
         }
@@ -715,14 +715,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             {
                 if (!string.IsNullOrEmpty(skill.FilePath))
                 {
-                    var skillDirectory = Path.GetDirectoryName(skill.FilePath);
-                    var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory);
+                    var skillDirectory = new DirectoryInfo(Path.GetDirectoryName(skill.FilePath));
+                    var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory.Name);
 
                     if (Directory.Exists(destinationDirectoryPath))
                         throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
                             $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILLS_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
 
-                    IoUtils.DirectoryCopy(skillDirectory, destinationDirectoryPath);
+                    IoUtils.DirectoryCopy(skillDirectory.FullName, destinationDirectoryPath);
                 }
                 else
                 {

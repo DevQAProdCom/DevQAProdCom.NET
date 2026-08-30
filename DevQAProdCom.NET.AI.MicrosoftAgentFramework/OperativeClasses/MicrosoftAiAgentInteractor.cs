@@ -229,7 +229,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
             if (responseValidationFunc != null && responseValidationModel?.IsSuccessful != true)
             {
-                throw new Exception($"🔴 Agent Workflow failed validation checks after {maxAttempts} attempts.");
+                throw new Exception($"🔴 Agent Workflow failed validation checks after {maxAttempts} attempts.\n{responseValidationModel?.Error ?? string.Empty}".TrimEnd('\n'));
             }
 
             return interactionDataBank;

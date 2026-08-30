@@ -1,6 +1,7 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using Tests.DevQAProdCom.NET.AI.DependencyInjection;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Validators;
 
 namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
@@ -48,12 +49,15 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
                 .WithDefaultContentHandlers();
         }
 
-        public GitHubCopilotAiAgentInteractor GetBaseAnswerQuestionAgent(string workingDirectory, string filePathToWrite, string questionsPrompt)
+        public GitHubCopilotAiAgentInteractor GetBaseAnswerQuestionAgent(string workingDirectory, string filePathToWrite, AnswerQuestionsAgentRequestModel requestModel)
         {
+            var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
+
             return GetBaseAgent(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
-                .WithPrompt(Const.AiAgents.Prompts.GetAnswerQuestionAgentPrompt(filePathToWrite, questionsPrompt))
+                .WithPromptInJsonFormat(requestModel, "USE Appropriate SKILLS TO ANSWER THE QUESTIONS")
+                .WithResponseValidator(validator)
                 .WithMaxAttempts(1);
         }
     }

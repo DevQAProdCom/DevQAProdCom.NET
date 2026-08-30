@@ -7,6 +7,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.DependencyInjection;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -61,6 +62,15 @@ namespace Tests.DevQAProdCom.NET.AI
             var timestamp = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
             var fileName = $"temp_file_{timestamp}_copilot{extension.GetDescriptionAttributeValue()}";
             return Path.Combine(workingDirectory, fileName);
+        }
+
+        protected AnswerQuestionsAgentRequestModel GetAnswerQuestionsAgentRequestModel(string workingDirectory, List<string> questions)
+        {
+            return new AnswerQuestionsAgentRequestModel
+            {
+                FilePathToWriteResponseTo = GetTempFilePath(workingDirectory),
+                Questions = questions
+            };
         }
     }
 }

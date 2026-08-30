@@ -10,6 +10,10 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Validators
 {
     public class AnswerQuestionsAgentReponseValidator(string expectedOutputFilePath, IEnumerable<string> expectedQuestions) : IAiInteractionResultValidator
     {
+        public AnswerQuestionsAgentReponseValidator(AnswerQuestionsAgentRequestModel requestModel) : this(requestModel.FilePathToWriteResponseTo, requestModel.Questions)
+        {
+        }
+
         public IValidate Validate(IAiInteractionDataBank? interactionDataBank = null)
         {
             var error = GetValidationErrors(expectedOutputFilePath, expectedQuestions);

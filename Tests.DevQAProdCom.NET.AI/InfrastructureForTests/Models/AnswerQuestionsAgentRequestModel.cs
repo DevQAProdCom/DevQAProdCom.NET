@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models
+﻿namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models
 {
-    internal class AnswerQuestionsAgentRequestModel
+    public class AnswerQuestionsAgentRequestModel
     {
+        public List<string> Questions { get; set; } = new List<string>();
+        public string FilePathToWriteResponseTo { get; set; }
     }
 }
