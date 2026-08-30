@@ -5,6 +5,8 @@ tools:
   - create
 custom-permissions:
   - "approve-write-create-all"
+custom-skills:
+  - "skill-answer-questions-set-1"
 model: claude-haiku-4.5
 ---
 
@@ -57,7 +59,7 @@ The content written to the output file must match the following JSON model:
     {
       "question": "The exact question text from the user prompt",
       "answers": [
-        "A non-empty answer for the question"
+        "A non-empty answer for the question or 'Unable to find any answer.'"
       ]
     }
   ]
@@ -69,4 +71,4 @@ The content written to the output file must match the following JSON model:
   - A `question` property with the exact question text from the user prompt.
   - An `answers` property with a non-empty array of answer strings.
 - Every question from the user prompt must have exactly one corresponding entry in the `questionsAndAnswers` array.
-- Every `answers` array must contain at least one non-null, non-empty answer string.
+- Every `answers` array must contain at least one non-null, non-empty answer string. In case an answer cannot be found, the answer should be "Unable to find any answer."

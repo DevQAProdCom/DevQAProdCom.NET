@@ -607,12 +607,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
             {
-                var skillsDirectory = Path.Combine(_interactionConfigurationDirectory);
+                var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(_interactionConfigurationDirectory);
+                var specificDirectoriesOfSkills = Directory.GetDirectories(rootDirectoryWithSkills);
 
-                if (Directory.Exists(skillsDirectory))
+                if (specificDirectoriesOfSkills.Count() > 0)
                 {
-                    _sessionConfig.SkillDirectories = new List<string>() { skillsDirectory };
-                    _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                    _sessionConfig.SkillDirectories ??= new List<string>();
+
+                    foreach (var skillDirectory in specificDirectoriesOfSkills)
+                    {
+                        _sessionConfig.SkillDirectories.Add(skillDirectory);
+                        _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                    }
                 }
             }
         }

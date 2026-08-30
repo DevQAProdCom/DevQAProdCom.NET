@@ -56,7 +56,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
             return GetBaseAgent(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
-                .WithPromptInJsonFormat(requestModel, "USE Appropriate SKILLS TO ANSWER THE QUESTIONS")
+                .WithPromptInJsonFormat(requestModel)
                 .WithResponseValidator(validator)
                 .WithMaxAttempts(1);
         }

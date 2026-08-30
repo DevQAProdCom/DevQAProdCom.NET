@@ -23,9 +23,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             return agentFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
-        public static List<string> GetCopilotInstructions(string directory)
+        public static List<string> GetCopilotInstructions(string rootDirectory)
         {
-            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(directory);
+            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
             var instructionFiles = new List<string>();
 
             if (Directory.Exists(instructionsDirectory))
@@ -33,9 +33,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
                 instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(instructionsDirectory).Select(x => x.FullName));
             }
 
-            if (Directory.Exists(directory))
+            if (Directory.Exists(rootDirectory))
             {
-                instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(directory, $"*{FilesConstants.INSTRUCTIONS_MD}", SearchOption.AllDirectories).Select(x => x.FullName));
+                instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, $"*{FilesConstants.INSTRUCTIONS_MD}", SearchOption.AllDirectories).Select(x => x.FullName));
             }
 
             return instructionFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
