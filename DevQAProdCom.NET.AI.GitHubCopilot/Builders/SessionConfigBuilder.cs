@@ -85,9 +85,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
             WithModel(entityData.ConfigurationData.Model!);
-            WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray()!);
+            WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray());
             WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
             WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
+            WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
 
             return this;
         }
@@ -268,12 +269,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithSkills(params string[] skillsIdentifiers)
+        public SessionConfigBuilder WithSkills(params string[]? skillsIdentifiers)
         {
-            foreach (var skillIdentifier in skillsIdentifiers)
-            {
-                WithSkill(skillIdentifier);
-            }
+            if (skillsIdentifiers?.Count() > 0)
+                foreach (var skillIdentifier in skillsIdentifiers)
+                {
+                    WithSkill(skillIdentifier);
+                }
 
             return this;
         }
@@ -346,9 +348,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAvailableTools(params string[] tools)
+        public SessionConfigBuilder WithAvailableTools(params string[]? tools)
         {
-            if (tools?.Length > 0)
+            if (tools?.Count() > 0)
             {
                 var toolList = tools.ToList();
                 LogCollectionSetting(nameof(_sessionConfig.AvailableTools), toolList);
@@ -622,16 +624,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
             {
                 var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(_interactionConfigurationDirectory);
-                var specificDirectoriesOfSkills = Directory.GetDirectories(rootDirectoryWithSkills);
 
-                if (specificDirectoriesOfSkills.Count() > 0)
+                if (Directory.Exists(rootDirectoryWithSkills))
                 {
-                    _sessionConfig.SkillDirectories ??= new List<string>();
+                    var specificDirectoriesOfSkills = Directory.GetDirectories(rootDirectoryWithSkills);
 
-                    foreach (var skillDirectory in specificDirectoriesOfSkills)
+                    if (specificDirectoriesOfSkills.Count() > 0)
                     {
-                        _sessionConfig.SkillDirectories.Add(skillDirectory);
-                        _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                        _sessionConfig.SkillDirectories ??= new List<string>();
+
+                        foreach (var skillDirectory in specificDirectoriesOfSkills)
+                        {
+                            _sessionConfig.SkillDirectories.Add(skillDirectory);
+                            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                        }
                     }
                 }
             }

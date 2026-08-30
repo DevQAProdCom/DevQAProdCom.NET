@@ -1,52 +1,74 @@
 ﻿using DevQAProdCom.NET.Global.Utils;
+using FluentAssertions;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
+using Tests.DevQAProdCom.NET.AI.TestData;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
     internal class AiInstructionsTests : BaseTest
     {
         [Test]
-        public async Task ShowSessionInstructionsAgentsTest()
+        public async Task Should_Instruction_Be_Used_Using_SDK_Configuration_By_Identifier()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ShowSessionInstructionsAgentsTest));
+            //GIVEN
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Instruction_Be_Used_Using_SDK_Configuration_By_Identifier));
 
-            await using (var agent = AiAgentsLibrary
-              .GetBaseShowInstructionsAgent(workingDirectory)
-              .WithFullIsolation()
-              .WithSessionConfig(config => config
-              .WithInstruction(Const.AiInstructions.Names.APPEND_CUSTOM_INSTRUCTION_CHECK_TO_READ_WRITE_AGENT_CONTENT_PROPERTY))
-              .WithPrompt("Use 'Append CUSTOM INSTRUCTION CHECK to Read Write Agent content property' instruction to answer question 'What is my favorite animal?'")
-              .WithMaxAttempts(1))
+            var requestModel = GetAnswerQuestionsAgentRequestModel(tempWorkingDirectory, new List<string> { ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL });
+            var expectedResponse = new AnswerQuestionsAgentReponseModel()
+            {
+                QuestionsAndAnswers = new List<QuestionAnswersModel> {
+                    new QuestionAnswersModel {
+                        Question = ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL,
+                        Answers = new(){ ExpectedValues.GetMyFavoriteAnimalIsWolf(Const.AiInstructions.Names.INSTRUCTION_ANSWER_QUESTIONS_SET_1) } } }
+            };
+
+            //WHEN
+            await using (var agent = AiAgentsLibrary.GetBaseAnswerQuestionAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
+                .WithSessionConfig(config => config
+                .WithInstruction(Const.AiInstructions.Names.INSTRUCTION_ANSWER_QUESTIONS_SET_1)))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //THEN
+            var actualResponse = new AnswerQuestionsAgentReponseModel(requestModel.FilePathToWriteResponseTo);
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
+
+            //TEAR DOWN
+            IoUtils.DeleteDirectory(tempWorkingDirectory);
         }
 
         [Test]
-        public async Task ShowCustomConfiguredSessionInstructionsAgentsTest()
+        public async Task Should_Instruction_Be_Used_Using_Agent_Custom_Instructions_Field_By_Identifier()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(ShowCustomConfiguredSessionInstructionsAgentsTest));
+            //GIVEN
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Instruction_Be_Used_Using_Agent_Custom_Instructions_Field_By_Identifier));
 
-            await using (var agent = GetGitHubCopilotAiAgentInteractor()
-                .WithPrimaryAgentFromFile("C:\\Files\\Dev\\DevQAProdCom.NET\\.github\\agents\\show-instructions.agent.md")
-                .WithSessionConfig(config => config.WithModel("claude-haiku-4.5"))
-                .WithWorkingDirectory(workingDirectory)
-                .WithDefaultContentHandlers()
-                .WithSelectiveIsolation()
+            var requestModel = GetAnswerQuestionsAgentRequestModel(tempWorkingDirectory, new List<string> { ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL });
+            var expectedResponse = new AnswerQuestionsAgentReponseModel()
+            {
+                QuestionsAndAnswers = new List<QuestionAnswersModel> {
+                    new QuestionAnswersModel {
+                        Question = ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL,
+                        Answers = new(){ ExpectedValues.GetMyFavoriteAnimalIsWolf(Const.AiInstructions.Names.INSTRUCTION_ANSWER_QUESTIONS_SET_1) } } }
+            };
+
+            //WHEN
+            await using (var agent = AiAgentsLibrary.GetCheckCustomInstructionsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
                 .WithSessionConfig(config => config
-                .WithInstructionFromFile("C:\\Files\\Dev\\DevQAProdCom.NET\\.github\\instructions\\generate-random-data.instructions.md")
-                .WithInstructionFromFile("C:\\Files\\Dev\\DevQAProdCom.NET\\.github\\instructions\\answer-questions.instructions.md"))
-                //.WithPrompt("Use github instruction 'Append CUSTOM INSTRUCTION CHECK to Read Write Agent content property' to answer question 'What is my favorite animal?'. This instruction should have been added to the session.")
-                .WithPrompt("Answer question 'What is my favorite animal?'. If several answers appear to be applicable then show array of answers.")
-                .WithMaxAttempts(1))
+                .WithInstruction(Const.AiInstructions.Names.INSTRUCTION_ANSWER_QUESTIONS_SET_1)))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //THEN
+            var actualResponse = new AnswerQuestionsAgentReponseModel(requestModel.FilePathToWriteResponseTo);
+            actualResponse.Should().BeEquivalentTo(expectedResponse);
+
+            //TEAR DOWN
+            IoUtils.DeleteDirectory(tempWorkingDirectory);
         }
     }
 }

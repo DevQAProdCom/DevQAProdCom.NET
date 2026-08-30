@@ -71,4 +71,7 @@ The content written to the output file must match the following JSON model:
   - A `question` property with the exact question text from the user prompt.
   - An `answers` property with a non-empty array of answer strings.
 - Every question from the user prompt must have exactly one corresponding entry in the `questionsAndAnswers` array.
-- Every `answers` array must contain at least one non-null, non-empty answer string. In case an answer cannot be found, the answer should be "Unable to find any answer."
+- Every `answers` array must contain at least one non-null, non-empty answer string. 
+  - In case an answer cannot be found, the answer should be "Unable to find any answer." 
+  - If several answers appear to be applicable, then add several answers to the array. 
+  - Make sure that answers are grouped by question.

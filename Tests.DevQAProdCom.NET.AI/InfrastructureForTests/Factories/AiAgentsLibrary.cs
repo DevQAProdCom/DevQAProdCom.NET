@@ -28,18 +28,6 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
             return baseReadWriteAgent.WithResponseValidator(responseValidator);
         }
 
-        public GitHubCopilotAiAgentInteractor GetBaseShowInstructionsAgent(string workingDirectory)
-        {
-            return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
-                .GetGitHubCopilotAiAgentInteractor()
-                .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
-                .WithSessionConfig(config => config.WithModel(Const.ProviderModel.CLAUDE_HAIKU_4_5))
-                .WithWorkingDirectory(workingDirectory)
-                .WithDefaultContentHandlers()
-                .WithPrompt($"Execute agent 'Show Instructions Agent'. And answer 'What is My favorite animal?");
-            //.WithPrompt($"Execute '{Const.AiAgents.Names.SHOW_INSTRUCTIONS_AGENT}'. Describe the name of the agent that is executed. Its description. And what agent must do. Execute what agent must do.");
-        }
-
         public GitHubCopilotAiAgentInteractor GetBaseAgent(string workingDirectory)
         {
             return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
@@ -56,6 +44,30 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
             return GetBaseAgent(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
+                .WithPromptInJsonFormat(requestModel)
+                .WithResponseValidator(validator)
+                .WithMaxAttempts(1);
+        }
+
+        public GitHubCopilotAiAgentInteractor GetCheckCustomSkillsFieldAnswerQuestionsAgent(string workingDirectory, string filePathToWrite, AnswerQuestionsAgentRequestModel requestModel)
+        {
+            var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
+
+            return GetBaseAgent(workingDirectory)
+                .WithSelectiveIsolation()
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_SKILLS_FIELD_ANSWER_QUESTIONS_AGENT)
+                .WithPromptInJsonFormat(requestModel)
+                .WithResponseValidator(validator)
+                .WithMaxAttempts(1);
+        }
+
+        public GitHubCopilotAiAgentInteractor GetCheckCustomInstructionsFieldAnswerQuestionsAgent(string workingDirectory, string filePathToWrite, AnswerQuestionsAgentRequestModel requestModel)
+        {
+            var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
+
+            return GetBaseAgent(workingDirectory)
+                .WithSelectiveIsolation()
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_INSTRUCTIONS_FIELD_ANSWER_QUESTIONS_AGENT)
                 .WithPromptInJsonFormat(requestModel)
                 .WithResponseValidator(validator)
                 .WithMaxAttempts(1);

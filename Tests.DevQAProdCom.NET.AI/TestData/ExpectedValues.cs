@@ -15,5 +15,10 @@
         {
             return GetMyFavoriteAnimalIs(entity, "LION");
         }
+
+        public static string GetMyFavoriteAnimalIsWolf(string entity)
+        {
+            return GetMyFavoriteAnimalIs(entity, "WOLF");
+        }
     }
 }

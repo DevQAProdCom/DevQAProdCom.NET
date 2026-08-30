@@ -10,10 +10,10 @@ namespace Tests.DevQAProdCom.NET.AI
     internal class AiSkillsTests : BaseTest
     {
         [Test]
-        public async Task Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier()
+        public async Task Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier()
         {
             //GIVEN
-            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier));
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier));
 
             var requestModel = GetAnswerQuestionsAgentRequestModel(tempWorkingDirectory, new List<string> { ExpectedValues.WHAT_IS_MY_FAVORITE_ANIMAL });
             var expectedResponse = new AnswerQuestionsAgentReponseModel()
@@ -25,9 +25,7 @@ namespace Tests.DevQAProdCom.NET.AI
             };
 
             //WHEN
-            await using (var agent = AiAgentsLibrary.GetBaseAnswerQuestionAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
-                .WithSessionConfig(config => config
-                .WithSkill(Const.AiSkills.Names.SKILL_ANSWER_QUESTIONS_SET_1)))
+            await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
