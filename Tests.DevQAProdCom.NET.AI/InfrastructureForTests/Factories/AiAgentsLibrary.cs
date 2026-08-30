@@ -47,5 +47,14 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
                 .WithWorkingDirectory(workingDirectory)
                 .WithDefaultContentHandlers();
         }
+
+        public GitHubCopilotAiAgentInteractor GetBaseAnswerQuestionAgent(string workingDirectory, string filePathToWrite, string questionsPrompt)
+        {
+            return GetBaseAgent(workingDirectory)
+                .WithSelectiveIsolation()
+                .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
+                .WithPrompt(Const.AiAgents.Prompts.GetAnswerQuestionAgentPrompt(filePathToWrite, questionsPrompt))
+                .WithMaxAttempts(1);
+        }
     }
 }

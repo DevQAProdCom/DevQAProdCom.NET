@@ -43,7 +43,12 @@ The content written to the output file must match the following JSON model:
 
 ```json
 {
+ [
+  {
+    "question": 
     "answers": []
+  }
+ ]
 }
 ```
 

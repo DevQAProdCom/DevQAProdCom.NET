@@ -19,6 +19,11 @@
                     return $"Execute '{Names.READ_WRITE_AGENT}' with next parameters: file_path_to_read = {filePathToRead} and output_folder_to_write = {outputFolderToWrite}";
                 }
 
+                internal static string GetAnswerQuestionAgentPrompt(string filePathToWrite, string questionsPrompt)
+                {
+                    return $"Execute '{Names.ANSWER_QUESTIONS_AGENT}' with next parameters: file_path_to_write = {filePathToWrite}. Questions Prompt: {questionsPrompt}";
+                }
+
                 internal const string ANSWER_QUESTION_WHAT_IS_MY_FAVORITE_ANIMAL = "Answer question 'What is my favorite animal?'";
             }
         }

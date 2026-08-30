@@ -56,10 +56,10 @@ namespace Tests.DevQAProdCom.NET.AI
             return (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath);
         }
 
-        protected string GetTemptFilePath(string workingDirectory, FileExtension extension = FileExtension.Json)
+        protected string GetTempFilePath(string workingDirectory, FileExtension extension = FileExtension.Json)
         {
             var timestamp = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
-            var fileName = $"temp_file_{timestamp}{extension.GetDescriptionAttributeValue()}";
+            var fileName = $"temp_file_{timestamp}_copilot{extension.GetDescriptionAttributeValue()}";
             return Path.Combine(workingDirectory, fileName);
         }
     }
