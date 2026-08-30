@@ -7,12 +7,10 @@ using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
@@ -81,7 +79,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
             WithModel(entityData.ConfigurationData.Model!);
             WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray()!);
-            WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray()!);
+            WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
+            WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
 
             return this;
         }
@@ -172,12 +171,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithInstructions(params string[] instructionsIdentifiers)
+        public SessionConfigBuilder WithInstructions(params string[]? instructionsIdentifiers)
         {
-            foreach (var instructionIdentifier in instructionsIdentifiers)
-            {
-                WithInstruction(instructionIdentifier);
-            }
+            if (instructionsIdentifiers?.Count() > 0)
+                foreach (var instructionIdentifier in instructionsIdentifiers)
+                {
+                    WithInstruction(instructionIdentifier);
+                }
 
             return this;
         }
@@ -510,7 +510,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithPermissions(params string[] identifiers)
+        public SessionConfigBuilder WithPermissions(params string[]? identifiers)
         {
             if (identifiers?.Count() > 0)
                 foreach (var identifier in identifiers)
@@ -718,7 +718,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     var skillDirectory = Path.GetDirectoryName(skill.FilePath);
                     var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory);
 
-                    if(Directory.Exists(destinationDirectoryPath))
+                    if (Directory.Exists(destinationDirectoryPath))
                         throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
                             $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILLS_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
 
@@ -741,7 +741,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             var normalizedExtension = IoUtils.NormalizeExtension(extension);
             var safeFileNameWithoutExtension = IoUtils.WithoutInvalidFileNameChars(fileNameWithoutExtension);
-            var fileName = index > 0 ? $"{safeFileNameWithoutExtension}({index})" : safeFileNameWithoutExtension;
+            var fileName = index > 0 ? $"{safeFileNameWithoutExtension}_{index}" : safeFileNameWithoutExtension;
             var filePath = Path.Combine(directory, fileName + normalizedExtension);
 
             if (IoUtils.FileExists(filePath))

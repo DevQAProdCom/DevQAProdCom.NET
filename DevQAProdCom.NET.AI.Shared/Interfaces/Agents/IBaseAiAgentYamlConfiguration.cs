@@ -3,7 +3,6 @@
     public interface IBaseAiAgentYamlConfiguration : IAiEntityYamlConfiguration
     {
         public IList<string>? Tools { get; set; }
-        public IList<string>? Skills { get; set; }
         public string? Model { get; set; }
     }
 }

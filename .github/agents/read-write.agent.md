@@ -1,5 +1,5 @@
 ---
-name: Read Write Agent
+name: read-write-agent
 description: Reads a file using only the view tool and writes a copy with `_copilot` appended before the extension using only the create tool.
 tools:
   - view

@@ -107,14 +107,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6B4E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BCC3-2229-49E7-B94C-1FB185A45AE8}"
 	ProjectSection(SolutionItems) = preProject
+		.github\agents\answer-questions.agent.md = .github\agents\answer-questions.agent.md
+		.github\agents\check-custom-instructions-field-answer-questions.agent.md = .github\agents\check-custom-instructions-field-answer-questions.agent.md
+		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
-		.github\agents\show-instructions.agent.md = .github\agents\show-instructions.agent.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instructions", "instructions", "{FB627170-D56E-4BE1-8D1C-CEFBF6AB1F7D}"
 	ProjectSection(SolutionItems) = preProject
-		.github\instructions\answer-questions.instructions.md = .github\instructions\answer-questions.instructions.md
-		.github\instructions\generate-random-data.instructions.md = .github\instructions\generate-random-data.instructions.md
+		.github\instructions\answer-questions-set-1.instructions.md = .github\instructions\answer-questions-set-1.instructions.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "skills", "skills", "{FA3783CD-B460-4057-945D-8A18A2BCE63A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "skill-answer-questions-set-1", "skill-answer-questions-set-1", "{AEBA9038-D7F9-42F1-A11B-A6EE16725527}"
+	ProjectSection(SolutionItems) = preProject
+		.github\skills\skill-answer-questions-set-1\SKILL.md = .github\skills\skill-answer-questions-set-1\SKILL.md
 	EndProjectSection
 EndProject
 Global
@@ -299,6 +307,8 @@ Global
 		{6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915} = {1A002A56-75E7-42A1-8CAF-AB3E8E6CF2ED}
 		{8353BCC3-2229-49E7-B94C-1FB185A45AE8} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
 		{FB627170-D56E-4BE1-8D1C-CEFBF6AB1F7D} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
+		{FA3783CD-B460-4057-945D-8A18A2BCE63A} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
+		{AEBA9038-D7F9-42F1-A11B-A6EE16725527} = {FA3783CD-B460-4057-945D-8A18A2BCE63A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {072B6B76-6C41-4BA2-8622-3960BE210481}

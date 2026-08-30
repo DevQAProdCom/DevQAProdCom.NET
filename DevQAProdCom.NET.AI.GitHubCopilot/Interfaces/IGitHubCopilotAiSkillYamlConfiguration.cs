@@ -4,5 +4,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
     public interface IGitHubCopilotAiSkillYamlConfiguration : IAiEntityYamlConfiguration
     {
+        public IList<string>? AllowedTools { get; set; }
     }
 }

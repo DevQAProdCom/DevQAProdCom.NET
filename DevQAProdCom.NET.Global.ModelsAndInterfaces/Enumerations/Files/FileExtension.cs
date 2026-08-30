@@ -14,6 +14,8 @@ namespace DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files
         Md,
         [Description(".sln")]
         Sln,
+        [Description(".txt")]
+        Txt,
         [Description(".xls")]
         Xls,
         [Description(".xlsx")]

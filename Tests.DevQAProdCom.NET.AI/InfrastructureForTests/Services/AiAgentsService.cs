@@ -1,6 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
-using Tests.DevQAProdCom.NET.AI.Constants;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Interfaces;
 

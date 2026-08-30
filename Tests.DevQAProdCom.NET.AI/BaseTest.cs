@@ -1,5 +1,7 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
+using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using NUnit.Framework;
@@ -37,7 +39,7 @@ namespace Tests.DevQAProdCom.NET.AI
         protected async Task<(string inputFilePath, string inputContent, string outputFolderPath, string expectedOutputFilePath)>
             PrepareReadWriteAgentTestFilesAsync(string testDirectory)
         {
-            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss");
+            var timestamp = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
 
             var inputFileName = $"file_to_read_{timestamp}.txt";
             var inputFilePath = Path.Combine(testDirectory, inputFileName);
@@ -52,6 +54,13 @@ namespace Tests.DevQAProdCom.NET.AI
             var expectedOutputFilePath = Path.Combine(outputFolderPath, expectedOutputFileName);
 
             return (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath);
+        }
+
+        protected string GetTemptFilePath(string workingDirectory, FileExtension extension = FileExtension.Json)
+        {
+            var timestamp = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
+            var fileName = $"temp_file_{timestamp}{extension.GetDescriptionAttributeValue()}";
+            return Path.Combine(workingDirectory, fileName);
         }
     }
 }

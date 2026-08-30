@@ -8,5 +8,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
     {
         [YamlMember(Alias = "custom-permissions")]
         public List<string>? CustomPermissions { get; set; }
+
+        [YamlMember(Alias = "custom-instructions")]
+        public List<string>? CustomInstructions { get; set; }
+
+        [YamlMember(Alias = "custom-skills")]
+        public List<string>? CustomSkills { get; set; }
     }
 }
