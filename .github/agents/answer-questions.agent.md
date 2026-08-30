@@ -39,13 +39,20 @@ The content written to the output file must match the following JSON model:
 
 ```json
 {
- [
-  {
-    "question": 
-    "answers": []
-  }
- ]
+  "questionsAndAnswers": [
+    {
+      "question": "The exact question text from the user prompt",
+      "answers": [
+        "A non-empty answer for the question"
+      ]
+    }
+  ]
 }
 ```
 
-The `answers` property must contain an array of answer strings, one for each question from the user prompt.
+- The root object must contain a single `questionsAndAnswers` property with an array value.
+- Each entry in `questionsAndAnswers` must contain:
+  - A `question` property with the exact question text from the user prompt.
+  - An `answers` property with a non-empty array of answer strings.
+- Every question from the user prompt must have exactly one corresponding entry in the `questionsAndAnswers` array.
+- Every `answers` array must contain at least one non-null, non-empty answer string.

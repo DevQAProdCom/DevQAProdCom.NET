@@ -1,6 +1,7 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Builders;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
+using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Agents.AI;
@@ -60,6 +61,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         public T WithPrompt(string prompt)
         {
             MicrosoftAiAgentInteractor.WithPrompt(prompt);
+            return this as T;
+        }
+
+        public T WithPromptInJsonFormat<TPromptInJsonFormat>(TPromptInJsonFormat promptData, string? promptPrefix = Const.Prompts.USE_THE_FOLLOWING_DATA_PROVIDED_IN_JSON_FORMAT)
+        {
+            MicrosoftAiAgentInteractor.WithPromptInJsonFormat(promptData, promptPrefix);
             return this as T;
         }
 

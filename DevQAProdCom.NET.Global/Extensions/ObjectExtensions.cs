@@ -46,7 +46,7 @@ namespace DevQAProdCom.NET.Global.Extensions
             throw new InvalidCastException($"Unable to cast object of type '{@object.GetType().FullName}' to type '{typeof(T).FullName}'.");
         }
 
-        public static string ToJson(this object @object, JsonSerializerOptions? options = null)
+        public static string ToJson(this object? @object, JsonSerializerOptions? options = null)
         {
             if (@object == null)
                 return string.Empty;
