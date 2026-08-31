@@ -5,8 +5,6 @@ tools:
   - create
 custom-permissions:
   - "approve-write-create-all"
-custom-skills:
-  - "skill-answer-questions-set-1"
 model: claude-haiku-4.5
 ---
 
