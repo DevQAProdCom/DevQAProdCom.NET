@@ -688,6 +688,37 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
         }
 
+        private void SaveAiSkills(string rootDirectory)
+        {
+            var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
+
+            foreach (var skill in SessionSkillsCollection)
+            {
+                if (!string.IsNullOrEmpty(skill.FilePath))
+                {
+                    var skillDirectory = new DirectoryInfo(Path.GetDirectoryName(skill.FilePath));
+                    var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory.Name);
+
+                    if (Directory.Exists(destinationDirectoryPath))
+                        throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
+                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILL_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
+
+                    IoUtils.DirectoryCopy(skillDirectory.FullName, destinationDirectoryPath);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(skill.ConfigurationData?.Name))
+                    {
+                        throw new ArgumentException("Skill configuration name is either null or empty, but must have a valid name to save the skill file.");
+                    }
+
+                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILL_MD);
+                    IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
+                }
+            }
+        }
+
+
         private void SaveAiEntities<TConfiguration>(
             IEnumerable<IAiEntityWithTYamlConfigurationType<TConfiguration>> entities,
             string directory,
@@ -710,7 +741,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                 if (string.IsNullOrEmpty(entity.ConfigurationData?.Name))
                 {
-                    throw new ArgumentException($"{entityTypeName} configuration name is either null or empty, but must have a valid name to save the {entityTypeName.ToLowerInvariant()} file.");
+                    throw new ArgumentException($"'{entityTypeName}' configuration name is either null or empty, but must have a valid name to save the '{entityTypeName}' file.");
                 }
 
                 return new
@@ -750,36 +781,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     {
                         IoUtils.WriteAllText(destinationFilePath, item.Entity.ToMdFileContent());
                     }
-                }
-            }
-        }
-
-        private void SaveAiSkills(string rootDirectory)
-        {
-            var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
-
-            foreach (var skill in SessionSkillsCollection)
-            {
-                if (!string.IsNullOrEmpty(skill.FilePath))
-                {
-                    var skillDirectory = new DirectoryInfo(Path.GetDirectoryName(skill.FilePath));
-                    var destinationDirectoryPath = Path.Combine(skillsDirectory, skillDirectory.Name);
-
-                    if (Directory.Exists(destinationDirectoryPath))
-                        throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
-                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILL_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
-
-                    IoUtils.DirectoryCopy(skillDirectory.FullName, destinationDirectoryPath);
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(skill.ConfigurationData?.Name))
-                    {
-                        throw new ArgumentException("Skill configuration name is either null or empty, but must have a valid name to save the skill file.");
-                    }
-
-                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILL_MD);
-                    IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
                 }
             }
         }
