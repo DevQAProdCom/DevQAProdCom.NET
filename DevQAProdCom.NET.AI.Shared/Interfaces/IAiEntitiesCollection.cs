@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace DevQAProdCom.NET.AI.Shared.Interfaces
+﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
     public interface IAiEntitiesCollection<TAiEntityYamlConfiguration> : IEnumerable<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
     {
-        public string CollectionIdentifier { get;}
+        public string CollectionIdentifier { get; }
 
         public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddEntityData(IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> entity);
         public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddEntitiesData(params IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] entities);
