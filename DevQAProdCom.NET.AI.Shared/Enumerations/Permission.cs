@@ -10,6 +10,12 @@ namespace DevQAProdCom.NET.AI.Shared.Enumerations
         [Description("deny-write-create-all")]
         DenyWriteCreateAll,
 
+        [Description("approve-write-edit-all")]
+        ApproveWriteEditAll,
+
+        [Description("deny-write-edit-all")]
+        DenyWriteEditAll,
+
         [Description("approve-read-view-all")]
         ApproveReadViewAll,
 

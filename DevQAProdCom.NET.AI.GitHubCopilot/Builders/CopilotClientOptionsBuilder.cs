@@ -29,7 +29,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public CopilotClientOptionsBuilder WithBaseDirectory(string? baseDirectory = null)
         {
-            baseDirectory ??= Path.Combine(Path.GetTempPath(), $"COPILOT_SESSSION_BASE_DIR_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}");
+            baseDirectory ??= Path.Combine(Path.GetTempPath(), $"COPILOT_SESSION_BASE_DIR_{DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds()}");
             _options.BaseDirectory = baseDirectory;
             return this;
         }

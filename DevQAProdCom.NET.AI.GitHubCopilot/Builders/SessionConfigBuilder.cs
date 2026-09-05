@@ -8,6 +8,7 @@ using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
+using DevQAProdCom.NET.Logging.Shared.Constans;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
@@ -718,7 +719,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-
         private void SaveAiEntities<TConfiguration>(
             IEnumerable<IAiEntityWithTYamlConfigurationType<TConfiguration>> entities,
             string directory,
@@ -810,17 +810,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void LogSetting(string propertyName, object value)
         {
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '{Value}'.", $"[{nameof(SessionConfigBuilder)}]", propertyName, value);
+            _logger.Info("🛠️ {LogArea} ⚙️ {TypeName} Setting 🔧 '{PropertyName}' parameter to '{Value}'.", $"[{SharedLoggingConstants.Area.Config}]", $"[{nameof(SessionConfigBuilder)}]", propertyName, value);
         }
 
         private void LogCollectionSetting(string propertyName, IEnumerable<string> values)
         {
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", propertyName, string.Join(", ", values));
+            _logger.Info("🛠️ {LogArea} ⚙️ {TypeName} Setting 🔧 '{PropertyName}' parameter to '[{Value}]'.", $"[{SharedLoggingConstants.Area.Config}]", $"[{nameof(SessionConfigBuilder)}]", propertyName, string.Join(", ", values));
         }
 
         private void LogSystemMessage(SystemMessageMode mode, string? content)
         {
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SystemMessage), mode, content?.TruncateWithCount(50) ?? "null");
+            _logger.Info("🛠️ {LogArea} ⚙️ {TypeName} Setting 🔧 '{PropertyName}' parameter to 'Mode={Mode}, Content={Content}'.", $"[{SharedLoggingConstants.Area.Config}]", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SystemMessage), mode, content?.TruncateWithCount(50) ?? "null");
         }
     }
 }

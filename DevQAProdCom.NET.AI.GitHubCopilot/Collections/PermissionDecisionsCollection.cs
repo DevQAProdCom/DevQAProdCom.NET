@@ -13,6 +13,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             _decisions = new Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>>();
             AddReadViewPermissionDecisions();
             AddWriteCreatePermissionDecisions();
+            AddWriteEditPermissionDecisions();
         }
 
         public Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>> GetByIdentifier(string identifier)
@@ -45,6 +46,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 
             var denyWriteCreateAll = writeCreatePermissionDecisions.GetDenyWriteCreateAllPermission();
             _decisions.Add(denyWriteCreateAll.Key, denyWriteCreateAll.Value);
+        }
+
+        private void AddWriteEditPermissionDecisions()
+        {
+            var writeEditPermissionDecisions = new WriteEditPermissionDecisions();
+
+            var approveWriteEditAll = writeEditPermissionDecisions.GetApproveWriteEditAllPermission();
+            _decisions.Add(approveWriteEditAll.Key, approveWriteEditAll.Value);
+
+            var denyWriteEditAll = writeEditPermissionDecisions.GetDenyWriteEditAllPermission();
+            _decisions.Add(denyWriteEditAll.Key, denyWriteEditAll.Value);
         }
     }
 }

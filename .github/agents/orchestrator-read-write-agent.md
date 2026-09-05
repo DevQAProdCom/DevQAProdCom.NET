@@ -4,11 +4,13 @@ description: Orchestrates read-agent and write-agent subagents to read multiple 
 tools:
   - view
   - create
+  - edit
   - read-agent
   - write-agent
 custom-permissions:
   - "approve-read-view-all"
   - "approve-write-create-all"
+  - "approve-write-edit-all"
 model: claude-haiku-4.5
 ---
 

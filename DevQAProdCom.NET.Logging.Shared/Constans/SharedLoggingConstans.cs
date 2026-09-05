@@ -20,14 +20,18 @@
         public const string TestsInfrastructure = "TestsInfrastructure";
         public const string Tests = "Tests";
 
-        public const string API = "API";
-        public const string Database = "Database";
-        public const string Kafka = "Kafka";
-        public const string UI = "UI";
-
         public const string UiElementsSearch = "UiElementsSearch";
         public const string SearchStarted = "SearchStarted";
         public const string SearchEnded = "SearchEnded";
         public const string SearchResult = "SearchResult";
+
+        public static class Area
+        {
+            public const string API = "API";
+            public const string Database = "Database";
+            public const string Kafka = "Kafka";
+            public const string UI = "UI";
+            public const string Config = "Config";
+        }
     }
 }
