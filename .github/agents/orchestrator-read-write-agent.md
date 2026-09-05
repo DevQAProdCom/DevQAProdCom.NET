@@ -2,9 +2,6 @@
 name: orchestrator-read-write-agent
 description: Orchestrates read-agent and write-agent subagents to read multiple files and aggregate their contents into a single JSON output file.
 tools:
-  - view
-  - create
-  - edit
   - read-agent
   - write-agent
 custom-permissions:

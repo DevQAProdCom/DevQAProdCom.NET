@@ -38,6 +38,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
+        public GitHubCopilotAiAgentInteractor WithCopilotClientBaseDirectory(string baseDirectory)
+        {
+            _gitHubCopilotClientService.WithCopilotClientOptions(builder => builder.WithBaseDirectory(baseDirectory));
+            return this;
+        }
+
         public GitHubCopilotAiAgentInteractor WithSessionWorkingDirectory(string workingDirectory)
         {
             _sessionConfigBuilder.WithWorkingDirectory(workingDirectory);

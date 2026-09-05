@@ -3,8 +3,10 @@ name: write-agent
 description: Creates a JSON file at the specified path with a data array using only the create tool.
 tools:
   - create
+  - edit
 custom-permissions:
   - "approve-write-create-all"
+  - "approve-write-edit-all"
 model: claude-haiku-4.5
 ---
 
