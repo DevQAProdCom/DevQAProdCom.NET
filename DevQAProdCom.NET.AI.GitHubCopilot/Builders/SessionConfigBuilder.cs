@@ -565,11 +565,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return _sessionConfig;
         }
 
+
+        private string _permissionRequestLogFile;
+
+        public SessionConfigBuilder WithPermissionRequestLogFile(string filePath)
+        {
+            _permissionRequestLogFile = filePath;
+            return this;
+        }
+
+
         private void SetUpOnPermissionRequest()
         {
             _sessionConfig.OnPermissionRequest = async (request, invocation) =>
             {
-                _logger.Info($"Permission Request:\nType= {request.ToString()}\nBody = {request.ToJson()}");
+                var message = $"Permission Request:\nType= {request.ToString()}\nBody = {request.ToJson()}";
+                _logger.Info(message);
+
+                if (!string.IsNullOrEmpty(_permissionRequestLogFile))
+                    IoUtils.AppendAllText(_permissionRequestLogFile, message);
 
                 if (_permissionDecisions?.Count > 0)
                 {

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Text;
 using DevQAProdCom.NET.Global.Constants;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations;
@@ -222,6 +223,24 @@ namespace DevQAProdCom.NET.Global.Utils
             }
 
             File.WriteAllText(filePath, content);
+        }
+
+        private static readonly ConcurrentDictionary<string, object> FileLocks = new();
+
+        public static void AppendAllText(string filePath, string content)
+        {
+            var directory = Path.GetDirectoryName(filePath);
+
+            if (!string.IsNullOrEmpty(directory))
+            {
+                CreateDirectory(directory);
+            }
+
+            var fileLock = FileLocks.GetOrAdd(filePath, _ => new object());
+            lock (fileLock)
+            {
+                File.AppendAllText(filePath, content);
+            }
         }
 
         public static void DirectoryCopy(string sourceDirectory, string destinationDirectory, bool overwrite = true)

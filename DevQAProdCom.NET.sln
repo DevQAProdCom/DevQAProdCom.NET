@@ -110,10 +110,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BC
 		.github\agents\answer-questions.agent.md = .github\agents\answer-questions.agent.md
 		.github\agents\check-custom-instructions-field-answer-questions.agent.md = .github\agents\check-custom-instructions-field-answer-questions.agent.md
 		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
-		.github\agents\orchestrator-read-write-agent.md = .github\agents\orchestrator-read-write-agent.md
-		.github\agents\read-agent.md = .github\agents\read-agent.md
+		.github\agents\orchestrator-read-write-agent.agent.md = .github\agents\orchestrator-read-write-agent.agent.md
+		.github\agents\read-agent.agent.md = .github\agents\read-agent.agent.md
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
-		.github\agents\write-agent.md = .github\agents\write-agent.md
+		.github\agents\write-agent.agent.md = .github\agents\write-agent.agent.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instructions", "instructions", "{FB627170-D56E-4BE1-8D1C-CEFBF6AB1F7D}"

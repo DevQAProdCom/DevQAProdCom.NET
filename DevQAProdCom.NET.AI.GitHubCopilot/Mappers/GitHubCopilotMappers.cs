@@ -17,6 +17,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             config.Tools = aiAgent.ConfigurationData.Tools;
             config.Skills = aiAgent.ConfigurationData.CustomSkills;
             config.Model = aiAgent.ConfigurationData.Model;
+            config.Infer = true;
 
             return config;
         }

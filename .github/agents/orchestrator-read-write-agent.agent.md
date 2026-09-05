@@ -2,8 +2,9 @@
 name: orchestrator-read-write-agent
 description: Orchestrates read-agent and write-agent subagents to read multiple files and aggregate their contents into a single JSON output file.
 tools:
-  - read-agent
-  - write-agent
+    - view
+    - list_agents
+    - read_agent
 custom-permissions:
   - "approve-read-view-all"
   - "approve-write-create-all"
@@ -36,27 +37,28 @@ The user prompt contains a JSON object with the following properties:
 
 ## Allowed Tools
 
-No direct tools. You must delegate all file reads to `@read-agent` and all file writes to `@write-agent`.
+No direct tools. You **must** delegate all file reads to **sub-agents** `read-agent` and all file writes to `write-agent`.
 
 ## Denied Tools
 
-All other tools and MCP servers are not allowed. Strictly forbidden to use shell tools. You must delegate file reads to `@read-agent` and file writes to `@write-agent`.
+All other tools and MCP servers are not allowed. Strictly forbidden to use shell tools. You must delegate file reads to `read-agent` and file writes to `write-agent`.
 
 ## Actions
 
+0. **MUST** Use `list_agents` tool to list all avaialble subagent for current session.  **MUST: IF NO SUBAGENTS AVAILABLE WRITE THE REASON AND STOP EXECUTION. DO NOT PROCEED.**
 1. Extract the JSON payload from the user prompt.
 2. Read the `filePathsToRead` array and the `outputFilePathToWrite` path.
-3. For each file path in `filePathsToRead`, invoke the `@read-agent` subagent by sending the file path. Example message: `@read-agent file_path_to_read = /absolute/path/to/file1.txt`
-4. Collect the raw content returned by each `@read-agent` invocation. Preserve the order matching the order of `filePathsToRead`.
-5. Build a JSON payload for the `@write-agent` subagent containing:
+3. For each file path in `filePathsToRead`, invoke the `read-agent` subagent by sending the file path. Example message: `read-agent file_path_to_read = /absolute/path/to/file1.txt`.
+4. Collect the raw content returned by each `read-agent` invocation. Preserve the order matching the order of `filePathsToRead`.
+5. Build a JSON payload for the `write-agent` subagent containing:
    - `outputFilePathToWrite`: the value from the input prompt
-   - `data`: an array of strings where each string is the raw content collected from `@read-agent`
-6. Invoke the `@write-agent` subagent by sending the JSON payload. Example message: `@write-agent {"outputFilePathToWrite":"/absolute/path/to/output.json","data":["content1","content2"]}`
+   - `data`: an array of strings where each string is the raw content collected from `read-agent`
+6. Invoke the `write-agent` subagent by sending the JSON payload. Example message: `write-agent {"outputFilePathToWrite":"/absolute/path/to/output.json","data":["content1","content2"]}`
 7. Confirm that the output file was created by displaying its full output path.
 
 ## Output JSON Model
 
-The final output file created by `@write-agent` must match the following JSON model:
+The final output file created by `write-agent` must match the following JSON model:
 
 ```json
 {

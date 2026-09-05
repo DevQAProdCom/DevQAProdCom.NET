@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 
@@ -11,7 +12,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 
         public override void HandleEvent(string @event, IAiInteractionDataBank interactionDataBank)
         {
-            var assistantMessageEvent = GetEvent<AssistantMessageEvent>(@event);
+            var assistantMessageEvent = GetEvent<AssistantMessageEvent>(@event, Const.SessionEvents.ASSISTANT_MESSAGE);
 
             if (assistantMessageEvent != null)
             {

@@ -1,8 +1,6 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
-using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 {
@@ -18,22 +16,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
             Logger = logger;
         }
 
-        protected T? GetEvent<T>(string @event) where T : class
+        protected T? GetEvent<T>(string @event, string type) where T : class
         {
             var normalizedEvent = @event.Replace("\"$type\":", "\"type\":"); //To avoid deserialization issues with the $type property in the event JSON
-            var sessionEvent = normalizedEvent.FromJson<SessionEvent>()!;
 
-            switch (sessionEvent.Type)
+            if (normalizedEvent.Contains($"\"type\":\"{type}\""))
             {
-                case Const.SessionEvents.ASSISTANT_MESSAGE when typeof(T) == typeof(AssistantMessageEvent):
-                    {
-                        var assistantMessageEvent = normalizedEvent.FromJson<AssistantMessageEvent>();
-                        return assistantMessageEvent as T;
-                    }
-
-                default:
-                    return null;
+                return normalizedEvent.FromJson<T>();
             }
+
+            return null;
         }
     }
 }
