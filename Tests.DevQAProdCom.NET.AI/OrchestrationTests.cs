@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using DevQAProdCom.NET.Global.Utils;
+using FluentAssertions;
+using NUnit.Framework;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -7,25 +9,19 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task Should_Check_Streaming_From_Subagents()
         {
-            //GIVEN
             var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Check_Streaming_From_Subagents));
+            var (requestModel, expectedData) = await PrepareOrchestratorReadWriteAgentTestFilesAsync(workingDirectory);
 
-            //WHEN
-            await using (var agent = AiAgentsLibrary.GetBaseAgent(workingDirectory)
+            await using (var agent = AiAgentsLibrary
+                .GetOrchestratorReadWriteAgentWithResponseValidator(workingDirectory, requestModel, expectedData)
+                .WithMaxAttempts(3)
                 .WithSessionConfig(config => config.WithIncludeSubAgentStreamingEvents(true)))
             {
-                {
-                    await agent.InvokeAiAgentWithStreamingAsync();
-                }
-
-                //THEN
-
-
-
-
-
-                //TEAR DOWN
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+                await act.Should().NotThrowAsync();
             }
+
+            IoUtils.DeleteDirectory(workingDirectory);
         }
     }
 }

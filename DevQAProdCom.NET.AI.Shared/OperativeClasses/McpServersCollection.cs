@@ -2,18 +2,11 @@
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public class McpServersCollection
-    {
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetEntityDataByIdentifier(string entityIdentifier)
-        {
-
-
-
-
-
-
-
-
-        }
-    }
+    //public class McpServersCollection<TYamlConfigurationType>
+    //{
+    //    public IAiEntityWithTYamlConfigurationType<TYamlConfigurationType> GetEntityDataByIdentifier(string entityIdentifier)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
 }

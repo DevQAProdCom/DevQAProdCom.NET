@@ -72,5 +72,33 @@ namespace Tests.DevQAProdCom.NET.AI
                 Questions = questions
             };
         }
+
+        protected async Task<(OrchestratorReadWriteAgentRequestModel requestModel, List<string> fileContents)> PrepareOrchestratorReadWriteAgentTestFilesAsync(
+            string testDirectory,
+            int fileCount = 3)
+        {
+            var filePathsToRead = new List<string>();
+            var fileContents = new List<string>();
+
+            for (int i = 0; i < fileCount; i++)
+            {
+                var timestamp = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
+                var inputFileName = $"file_to_read_{i}_{timestamp}.txt";
+                var inputFilePath = Path.Combine(testDirectory, inputFileName);
+                var inputContent = $"Random content for {timestamp} - index {i} - {Guid.NewGuid()}";
+                await File.WriteAllTextAsync(inputFilePath, inputContent);
+
+                filePathsToRead.Add(inputFilePath);
+                fileContents.Add(inputContent);
+            }
+
+            var requestModel = new OrchestratorReadWriteAgentRequestModel
+            {
+                FilePathsToRead = filePathsToRead,
+                OutputFilePathToWrite = GetTempFilePath(testDirectory)
+            };
+
+            return (requestModel, fileContents);
+        }
     }
 }

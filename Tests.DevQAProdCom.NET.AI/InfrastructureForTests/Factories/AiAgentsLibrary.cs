@@ -8,6 +8,23 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
 {
     internal class AiAgentsLibrary
     {
+        public GitHubCopilotAiAgentInteractor GetBaseOrchestratorReadWriteAgent(string workingDirectory, OrchestratorReadWriteAgentRequestModel requestModel)
+        {
+            return GetBaseAgent(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.ORCHESTRATOR_READ_WRITE_AGENT)
+                .WithSessionConfig(config => config
+                    .WithAgents(Const.AiAgents.Names.READ_AGENT, Const.AiAgents.Names.WRITE_AGENT))
+                .WithPromptInJsonFormat(requestModel);
+        }
+
+        public GitHubCopilotAiAgentInteractor GetOrchestratorReadWriteAgentWithResponseValidator(string workingDirectory, OrchestratorReadWriteAgentRequestModel requestModel, IEnumerable<string> expectedData)
+        {
+            var responseValidator = new OrchestratorReadWriteAgentResponseValidator(requestModel, expectedData);
+            var baseOrchestratorAgent = GetBaseOrchestratorReadWriteAgent(workingDirectory, requestModel);
+
+            return baseOrchestratorAgent.WithResponseValidator(responseValidator);
+        }
+
         public GitHubCopilotAiAgentInteractor GetBaseReadWriteAgent(string workingDirectory, string inputFilePath, string outputFolderPath)
         {
             return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
