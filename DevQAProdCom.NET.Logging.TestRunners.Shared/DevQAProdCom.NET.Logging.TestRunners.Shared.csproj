@@ -16,12 +16,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
-    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations\DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft" />
     <PackageReference Include="DevQAProdCom.NET.Logging.Shared" />

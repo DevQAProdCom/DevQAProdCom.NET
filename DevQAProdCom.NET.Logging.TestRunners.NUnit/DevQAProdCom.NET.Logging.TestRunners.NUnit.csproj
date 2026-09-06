@@ -33,14 +33,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.TestRunners.NUnit.Models\DevQAProdCom.NET.TestRunners.NUnit.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
-    <ProjectReference Include="..\DevQAProdCom.NET.Configurations\DevQAProdCom.NET.Configurations.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.Logging.TestRunners.Shared\DevQAProdCom.NET.Logging.TestRunners.Shared.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.TestRunners.NUnit.Models\DevQAProdCom.NET.TestRunners.NUnit.Models.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="DevQAProdCom.NET.Configurations" />
     <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft" />

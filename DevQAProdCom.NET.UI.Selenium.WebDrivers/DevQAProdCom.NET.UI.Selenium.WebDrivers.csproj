@@ -20,10 +20,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
-    <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="DevQAProdCom.NET.UI.Shared" />
   </ItemGroup>

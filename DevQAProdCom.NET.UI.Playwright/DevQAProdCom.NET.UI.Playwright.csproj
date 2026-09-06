@@ -17,13 +17,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.UI.UiElements\DevQAProdCom.NET.UI.UiElements.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
-    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.UI.Playwright.Browsers\DevQAProdCom.NET.UI.Playwright.Browsers.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
-    <ProjectReference Include="..\DevQAProdCom.NET.UI.UiElements\DevQAProdCom.NET.UI.UiElements.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft.Shared" />
     <PackageReference Include="DevQAProdCom.NET.UI.Playwright.Browsers" />

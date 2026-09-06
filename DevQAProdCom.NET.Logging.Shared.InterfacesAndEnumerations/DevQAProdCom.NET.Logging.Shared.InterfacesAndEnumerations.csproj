@@ -18,10 +18,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
-    <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="DevQAProdCom.NET.Global.ModelsAndInterfaces" />
   </ItemGroup>
