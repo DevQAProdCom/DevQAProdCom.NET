@@ -4,9 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
-    <IsTestProject Condition="'$(AsApp)' == 'true'">false</IsTestProject>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'DebugAsApp'">
+    <AsApp>true</AsApp>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <IsTestProject Condition="'$(AsApp)' != 'true'">true</IsTestProject>
     <OutputType Condition="'$(AsApp)' == 'true'">Exe</OutputType>
   </PropertyGroup>
@@ -28,6 +35,6 @@
     <ProjectReference Include="..\DevQAProdCom.NET.Logging.Shared\DevQAProdCom.NET.Logging.Shared.csproj" />
   </ItemGroup>
 
-  <Import Project="BuildTargets\RenameMainMethod.targets" Condition="'$(AsApp)' == 'true'" />
+  <Import Project="BuildTargets\RenameMainMethod.targets" Condition="'$(AsApp)' != 'true'" />
 
 </Project>

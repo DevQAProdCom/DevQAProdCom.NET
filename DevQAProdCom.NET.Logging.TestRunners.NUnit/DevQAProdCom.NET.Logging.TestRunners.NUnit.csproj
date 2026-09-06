@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NUnit"/>
-    <PackageReference Include="NUnit.Engine"/>
-    <PackageReference Include="NUnit3TestAdapter"/>
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit.Engine" />
+    <PackageReference Include="NUnit3TestAdapter" />
     <PackageReference Include="NUnit.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -33,12 +34,20 @@
     <ProjectReference Include="..\DevQAProdCom.NET.TestRunners.NUnit.Models\DevQAProdCom.NET.TestRunners.NUnit.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Configurations\DevQAProdCom.NET.Configurations.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft\DevQAProdCom.NET.DependencyInjection.Microsoft.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Shared\DevQAProdCom.NET.DependencyInjection.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.Logging.TestRunners.Shared\DevQAProdCom.NET.Logging.TestRunners.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.TestRunners.NUnit.Models\DevQAProdCom.NET.TestRunners.NUnit.Models.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="DevQAProdCom.NET.Configurations"/>
-    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft"/>
-    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Shared"/>
-    <PackageReference Include="DevQAProdCom.NET.Logging.TestRunners.Shared"/>
-    <PackageReference Include="DevQAProdCom.NET.TestRunners.NUnit.Models"/>
+    <PackageReference Include="DevQAProdCom.NET.Configurations" />
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Microsoft" />
+    <PackageReference Include="DevQAProdCom.NET.DependencyInjection.Shared" />
+    <PackageReference Include="DevQAProdCom.NET.Logging.TestRunners.Shared" />
+    <PackageReference Include="DevQAProdCom.NET.TestRunners.NUnit.Models" />
   </ItemGroup>
 
   <ItemGroup>

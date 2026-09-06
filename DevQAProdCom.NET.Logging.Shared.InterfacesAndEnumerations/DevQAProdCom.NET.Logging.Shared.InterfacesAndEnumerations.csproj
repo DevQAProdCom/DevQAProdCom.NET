@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
     <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
   </ItemGroup>
 

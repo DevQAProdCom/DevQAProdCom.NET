@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,15 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SecretsManager"/>
-    <PackageReference Include="AWSSDK.SecurityToken"/>
+    <PackageReference Include="AWSSDK.SecretsManager" />
+    <PackageReference Include="AWSSDK.SecurityToken" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json"/>
+    <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
     <ProjectReference Include="..\DevQAProdCom.NET.Global.ModelsAndInterfaces\DevQAProdCom.NET.Global.ModelsAndInterfaces.csproj" />
   </ItemGroup>
 

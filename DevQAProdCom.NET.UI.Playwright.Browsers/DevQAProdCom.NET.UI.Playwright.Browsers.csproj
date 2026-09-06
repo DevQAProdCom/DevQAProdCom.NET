@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,15 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Playwright.NUnit"/>
+    <PackageReference Include="Microsoft.Playwright.NUnit" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="DevQAProdCom.NET.UI.Shared"/>
+    <PackageReference Include="DevQAProdCom.NET.UI.Shared" />
   </ItemGroup>
 
 </Project>

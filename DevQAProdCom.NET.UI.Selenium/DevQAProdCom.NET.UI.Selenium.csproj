@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -11,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.Selenium.WebDrivers\DevQAProdCom.NET.UI.Selenium.WebDrivers.csproj" />
+    <ProjectReference Include="..\DevQAProdCom.NET.UI.UiElements\DevQAProdCom.NET.UI.UiElements.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
     <ProjectReference Include="..\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared\DevQAProdCom.NET.DependencyInjection.Microsoft.Shared.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Shared\DevQAProdCom.NET.UI.Shared.csproj" />
     <ProjectReference Include="..\DevQAProdCom.NET.UI.Selenium.WebDrivers\DevQAProdCom.NET.UI.Selenium.WebDrivers.csproj" />

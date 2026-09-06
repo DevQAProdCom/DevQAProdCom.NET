@@ -4,13 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities"/>
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\DevQAProdCom.NET.Global\DevQAProdCom.NET.Global.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DebugAsApp'">
     <ProjectReference Include="..\DevQAProdCom.NET.Global\DevQAProdCom.NET.Global.csproj" />
   </ItemGroup>
 

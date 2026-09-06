@@ -1,30 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <!-- 
-    This target enables dual-mode project behavior:
-    - Test Mode (default): Method named 'Main_NotUsed' is not an entry point
-    - App Mode (AsApp=true): Renames 'Main_NotUsed' to 'Main' to create entry point
-  -->
-  <Target Name="RenameMainMethod" BeforeTargets="CoreCompile" Condition="'$(AsApp)' == 'true'">
+  <Target Name="RenameMainMethod" BeforeTargets="CoreCompile" Condition="'$(AsApp)' != 'true'">
     <PropertyGroup>
       <ProgramCsPath>$(MSBuildProjectDirectory)\Program.cs</ProgramCsPath>
       <ProgramCsTempPath>$(IntermediateOutputPath)Program.temp.cs</ProgramCsTempPath>
     </PropertyGroup>
 
-    <!-- Read original Program.cs -->
     <ReadLinesFromFile File="$(ProgramCsPath)">
       <Output TaskParameter="Lines" ItemName="OriginalProgramLines" />
     </ReadLinesFromFile>
 
-    <!-- Replace method name -->
     <ItemGroup>
-      <ModifiedProgramLines Include="@(OriginalProgramLines->Replace('Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp', 'Main'))" />
+      <ModifiedProgramLines Include="@(OriginalProgramLines->Replace('static async Task Main(string[] args)', 'static async Task Main_Not_As_App(string[] args)'))" />
     </ItemGroup>
 
-    <!-- Write modified version to intermediate output -->
     <WriteLinesToFile File="$(ProgramCsTempPath)" Lines="@(ModifiedProgramLines)" Overwrite="true" />
 
-    <!-- Replace original with modified version in compilation -->
     <ItemGroup>
       <Compile Remove="Program.cs" />
       <Compile Include="$(ProgramCsTempPath)">

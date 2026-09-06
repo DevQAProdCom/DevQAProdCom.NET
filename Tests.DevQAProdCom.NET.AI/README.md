@@ -13,8 +13,8 @@ This project works as both an **NUnit Test Suite** and a **Console Application**
 ### The Solution
 We use a **long method name** that MSBuild renames during app builds:
 
-- **Test Mode (default):** Method is named `Main_ForApp_With_This_Long_Name_Is_Changed_To_Just_Main_During_Build_AsApp` → not recognized as entry point → tests run normally
-- **App Mode (`AsApp=true`):** MSBuild target renames it to `Main` → becomes entry point → executable created
+- **App Mode (`AsApp=true`, DebugAsApp configuration):** Method is named `Main` → recognized as entry point → executable created
+- **Test Mode (default, AsApp != true):** MSBuild target renames `Main` to `Main_Not_As_App` → not recognized as entry point → tests run normally
 
 ---
 
