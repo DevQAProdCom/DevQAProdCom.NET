@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
-    <Configurations>Debug;Release;DebugAsApp</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
