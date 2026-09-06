@@ -70,9 +70,10 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
                 {
                     Log.Warning("{CollectionIdentifier} Entity with file path '{addedEntityFilePath}' already exists in the collection and will be replaced with the new one.", $"[{CollectionIdentifier}]", addedEntityFilePath);
                     Entities.Remove(existingEntityByFilePath);
-                    Entities.Add(entity);
-                    Log.Info("{CollectionIdentifier} Successfully added entity with name '{entityName}' from file: {addedEntityFilePath}", $"[{CollectionIdentifier}]", entityName, addedEntityFilePath);
                 }
+
+                Entities.Add(entity);
+                Log.Info("{CollectionIdentifier} Successfully added entity with name '{entityName}' from file: {addedEntityFilePath}", $"[{CollectionIdentifier}]", entityName, addedEntityFilePath);
 
                 // Add warning if collection contains entities with the same name but different file paths
                 var enitiesWithSameNameButDifferentFilePaths = Entities

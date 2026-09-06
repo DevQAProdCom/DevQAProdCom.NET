@@ -169,12 +169,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgents(params string[] agentsIdentifiers)
+        public SessionConfigBuilder WithAgents(params string[]? agentsIdentifiers)
         {
-            foreach (var agentIdentifier in agentsIdentifiers)
-            {
-                WithAgent(agentIdentifier);
-            }
+            if (agentsIdentifiers?.Count() > 0)
+                foreach (var agentIdentifier in agentsIdentifiers)
+                {
+                    WithAgent(agentIdentifier);
+                }
 
             return this;
         }
@@ -189,12 +190,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgentsFromFiles(params string[] filePaths)
+        public SessionConfigBuilder WithAgentsFromFiles(params string[]? filePaths)
         {
-            foreach (var filePath in filePaths)
-            {
-                WithAgentFromFile(filePath);
-            }
+            if (filePaths?.Count() > 0)
+                foreach (var filePath in filePaths)
+                {
+                    WithAgentFromFile(filePath);
+                }
 
             return this;
         }
@@ -212,12 +214,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgentsFromDirectories(params string[] directoriesPaths)
+        public SessionConfigBuilder WithAgentsFromDirectories(params string[]? directoriesPaths)
         {
-            foreach (var directoryPath in directoriesPaths)
-            {
-                WithAgentsFromDirectory(directoryPath);
-            }
+            if (directoriesPaths?.Count() > 0)
+                foreach (var directoryPath in directoriesPaths)
+                {
+                    WithAgentsFromDirectory(directoryPath);
+                }
 
             return this;
         }
@@ -277,12 +280,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithInstructionsFromFiles(params string[] filePaths)
+        public SessionConfigBuilder WithInstructionsFromFiles(params string[]? filePaths)
         {
-            foreach (var filePath in filePaths)
-            {
-                WithInstructionFromFile(filePath);
-            }
+            if (filePaths?.Count() > 0)
+                foreach (var filePath in filePaths)
+                {
+                    WithInstructionFromFile(filePath);
+                }
 
             return this;
         }
@@ -294,21 +298,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithInstructionsFromDirectories(params string[] directoryPaths)
+        public SessionConfigBuilder WithInstructionsFromDirectories(params string[]? directoryPaths)
         {
-            foreach (var directoryPath in directoryPaths)
-            {
-                WithInstructionsFromDirectory(directoryPath);
-            }
+            if (directoryPaths?.Count() > 0)
+                foreach (var directoryPath in directoryPaths)
+                {
+                    WithInstructionsFromDirectory(directoryPath);
+                }
 
             return this;
         }
 
-        public SessionConfigBuilder WithInstructionDirectories(params string[] instructionDirectories)
+        public SessionConfigBuilder WithInstructionDirectories(params string[]? instructionDirectories)
         {
-            var directoryList = instructionDirectories.ToList();
-            LogCollectionSetting(nameof(_sessionConfig.InstructionDirectories), directoryList);
-            _sessionConfig.InstructionDirectories = directoryList;
+            if (instructionDirectories?.Count() > 0)
+            {
+                LogCollectionSetting(nameof(_sessionConfig.InstructionDirectories), instructionDirectories);
+                _sessionConfig.InstructionDirectories = instructionDirectories;
+            }
+
             return this;
         }
 

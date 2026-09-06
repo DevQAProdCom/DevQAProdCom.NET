@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Run Tests Suite": {
+      "commandName": "Project",
+      "commandLineArgs": "TestsSuite TestName",
+      "workingDirectory": "."
+    }
+  }
+}
