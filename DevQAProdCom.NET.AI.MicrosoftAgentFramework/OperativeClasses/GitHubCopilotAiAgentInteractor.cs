@@ -116,7 +116,6 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             {
                 var copilotClient = _gitHubCopilotClientService.GetGitHubCopilotClient();
                 await copilotClient.StartAsync(cancellationToken);
-
                 _sessionConfig = _sessionConfigBuilder.Build();
                 AiAgent = copilotClient.AsAIAgent(_sessionConfig, ownsClient: true);
             }

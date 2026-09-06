@@ -36,6 +36,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
                 _copilotClientOptions = GetCopilotClientOptions();
                 _copilotClient = new CopilotClient(_copilotClientOptions);
             }
+
             return _copilotClient;
         }
 
