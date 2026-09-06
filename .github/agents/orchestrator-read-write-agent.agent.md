@@ -31,9 +31,9 @@ The user prompt contains a JSON object with the following properties:
 1. `filePathsToRead` - An array of absolute file paths to read. The number of paths determines the number of subagents to invoke.
 2. `outputFilePathToWrite` - The absolute path where the aggregated JSON file must be created.
 
-# Tools Usage
+# Instruments Usage
 
-## Allowed Tools
+## Allowed Subagents
 Use next subagents:
 - `read-agent`
 - `write-agent`
@@ -44,7 +44,6 @@ All other tools and MCP servers are not allowed. Strictly forbidden to use shell
 
 ## Actions
 
-0. Assume `read-agent` and `write-agent` are already configured for the current session through custom agent configuration.
 1. Extract the JSON payload from the user prompt.
 2. Read the `filePathsToRead` array and the `outputFilePathToWrite` path.
 3. For each file path in `filePathsToRead`, invoke the `read-agent` subagent by sending the file path. Example message: `read-agent file_path_to_read = /absolute/path/to/file1.txt`.
