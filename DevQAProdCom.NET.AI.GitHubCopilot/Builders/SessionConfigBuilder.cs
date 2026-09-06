@@ -59,19 +59,26 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private CopilotClientMode _copilotClientMode = CopilotClientMode.Empty;
 
-        //private string? _baseDirectory = null;
-
         public SessionConfigBuilder(ILogger logger, CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             WithClientMode(copilotClientMode);
         }
 
+        //private string? _baseDirectory = null;
+
         //public SessionConfigBuilder WithBaseDirectory(string baseDirectory)
         //{
         //    _baseDirectory = baseDirectory;
         //    return this;
         //}
+
+        private string _permissionRequestLogFile;
+        public SessionConfigBuilder WithPermissionRequestLogFile(string filePath)
+        {
+            _permissionRequestLogFile = filePath;
+            return this;
+        }
 
         public SessionConfigBuilder WithModel(string model)
         {
@@ -109,8 +116,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         //    return this;
         //}
 
-
-
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         {
             WithAgent(agentIdentifier);
@@ -130,8 +135,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             //    entityData.ConfigurationData.Tools = toolSet;
             //}
 
-
-
             return this;
         }
 
@@ -140,67 +143,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _copilotClientMode = copilotClientMode;
             LogSetting(nameof(_copilotClientMode), _copilotClientMode);
             return this;
-        }
-
-        public SessionConfig Build(CopilotClientMode? copilotClientMode = null)
-        {
-            _logger.Info("{TypeName} Building Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-
-            if (copilotClientMode != null)
-                WithClientMode(copilotClientMode.Value);
-
-            SetupModel();
-            SetupTools();
-            CreateFolderWithInteractionConfigurationData();
-            SetupOnPermissionRequest();
-            SetupInstructionDirectories();
-            SetupSkillsDirectories();
-
-            _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-            return _sessionConfig;
-        }
-
-        private void SetupModel()
-        {
-            if (!string.IsNullOrEmpty(_sessionConfig.Agent))
-            {
-                var primaryAgentEntityData = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
-                WithModel(primaryAgentEntityData.ConfigurationData.Model!);
-            }
-
-            if (string.IsNullOrEmpty(_sessionConfig.Model))
-                throw new InvalidOperationException("The session configuration does not have a model specified. Please ensure that the configuration includes a valid model.");
-        }
-
-        /// <remarks>
-        /// One of the modes is <see cref="CopilotClientMode.Cli"/>. 
-        /// When set to <see cref="CopilotClientMode.Empty"/>, the SDK validates that the app has supplied the required configuration (<see cref="BaseDirectory"/> or <see cref="SessionFs"/>, plus <see cref="SessionConfigBase.AvailableTools"/> on each session).
-        /// Null or empty <see cref="SessionConfigBase.AvailableTools"/> are not allowed. So default toolset is created with <see cref="BuiltInTools.Isolated"/> entries.
-        /// </remarks>
-        private void SetupTools(CopilotClientMode? copilotClientMode = null)
-        {
-            //Session is setup with all tools available from all agents in the session. This is required because some agents may require tools that are not available in other agents, so the session must have all tools available to be able to run all agents in the session.
-            var tools = SessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
-                .SelectMany(agent => agent.ConfigurationData.Tools)
-                .Distinct()
-                .ToList();
-
-            _sessionConfig.AvailableTools = tools;
-
-            if (copilotClientMode == CopilotClientMode.Empty)
-            {
-                if (tools.Count() == 0)
-                {
-                    var toolSet = new ToolSet().AddBuiltIn(BuiltInTools.Isolated);
-                    _sessionConfig.AvailableTools = toolSet;
-                }
-            }
-
-            //If call of subagents is required then session must have the "agent" tool available. This is required for the session to be able to call subagents.
-            if (SessionAgentsCollection.Count() > 1 && !_sessionConfig.AvailableTools.Contains(Const.Tools.AGENT))
-            {
-                _sessionConfig.AvailableTools.Add(Const.Tools.AGENT);
-            }
         }
 
         public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath)
@@ -222,6 +164,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
             WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
             WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
+            WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
 
             return this;
         }
@@ -679,13 +622,69 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         //    return _sessionConfig;
         //}
 
-        private string _permissionRequestLogFile;
-
-        public SessionConfigBuilder WithPermissionRequestLogFile(string filePath)
+        public SessionConfig Build(CopilotClientMode? copilotClientMode = null)
         {
-            _permissionRequestLogFile = filePath;
-            return this;
+            _logger.Info("{TypeName} Building Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+
+            if (copilotClientMode != null)
+                WithClientMode(copilotClientMode.Value);
+
+            SetupModel();
+            SetupTools();
+            CreateFolderWithInteractionConfigurationData();
+            SetupInstructionDirectories();
+            SetupSkillsDirectories();
+
+            SetupOnPermissionRequest();
+
+            _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
+            return _sessionConfig;
         }
+
+        private void SetupModel()
+        {
+            if (!string.IsNullOrEmpty(_sessionConfig.Agent))
+            {
+                var primaryAgentEntityData = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
+                WithModel(primaryAgentEntityData.ConfigurationData.Model!);
+            }
+
+            if (string.IsNullOrEmpty(_sessionConfig.Model))
+                throw new InvalidOperationException("The session configuration does not have a model specified. Please ensure that the configuration includes a valid model.");
+        }
+
+        /// <remarks>
+        /// One of the modes is <see cref="CopilotClientMode.Cli"/>. 
+        /// When set to <see cref="CopilotClientMode.Empty"/>, the SDK validates that the app has supplied the required configuration (<see cref="BaseDirectory"/> or <see cref="SessionFs"/>, plus <see cref="SessionConfigBase.AvailableTools"/> on each session).
+        /// Null or empty <see cref="SessionConfigBase.AvailableTools"/> are not allowed. So default toolset is created with <see cref="BuiltInTools.Isolated"/> entries.
+        /// </remarks>
+        private void SetupTools(CopilotClientMode? copilotClientMode = null)
+        {
+            //Session is setup with all tools available from all agents in the session. This is required because some agents may require tools that are not available in other agents, so the session must have all tools available to be able to run all agents in the session.
+            var tools = SessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
+                .SelectMany(agent => agent.ConfigurationData.Tools)
+                .Distinct()
+                .ToList();
+
+            _sessionConfig.AvailableTools = tools;
+
+            if (copilotClientMode == CopilotClientMode.Empty)
+            {
+                if (tools.Count() == 0)
+                {
+                    var toolSet = new ToolSet().AddBuiltIn(BuiltInTools.Isolated);
+                    _sessionConfig.AvailableTools = toolSet;
+                }
+            }
+
+            //If call of subagents is required then session must have the "agent" tool available. This is required for the session to be able to call subagents.
+            if (SessionAgentsCollection.Count() > 1 && !_sessionConfig.AvailableTools.Contains(Const.Tools.AGENT))
+            {
+                _sessionConfig.AvailableTools.Add(Const.Tools.AGENT);
+            }
+        }
+
+
 
         //private void SetupOnPermissionRequest()
         //{
@@ -742,7 +741,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
             {
-                var instructionsDirectory = Path.Combine(_interactionConfigurationDirectory);
+                var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(_interactionConfigurationDirectory);
 
                 if (Directory.Exists(instructionsDirectory))
                 {
@@ -750,6 +749,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
                 }
             }
+            else
+                throw new Exception();
 
             //if (_sessionConfig.InstructionDirectories?.Count > 0)
             //    foreach (var directory in _sessionConfig.InstructionDirectories)

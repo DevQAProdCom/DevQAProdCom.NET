@@ -14,5 +14,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 
         [YamlMember(Alias = "custom-skills")]
         public List<string>? CustomSkills { get; set; }
+
+        [YamlMember(Alias = "custom-subagents")]
+        public List<string>? CustomSubagents { get; set; }
     }
 }

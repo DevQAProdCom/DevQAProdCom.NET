@@ -7,5 +7,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
         public List<string>? CustomPermissions { get; set; }
         public List<string>? CustomInstructions { get; set; }
         public List<string>? CustomSkills { get; set; }
+        public List<string>? CustomSubagents { get; set; }
+
     }
 }

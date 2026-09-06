@@ -7,6 +7,9 @@ custom-permissions:
   - "approve-read-view-all"
   - "approve-write-create-all"
   - "approve-write-edit-all"
+custom-subagents:
+    - read-agent
+    - write-agent
 model: claude-haiku-4.5
 ---
 
