@@ -40,7 +40,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
             return _copilotClient;
         }
 
-        private CopilotClientOptions GetCopilotClientOptions()
+        private CopilotClientOptions? GetCopilotClientOptions()
         {
             if (_copilotClientOptions != null)
             {
@@ -51,7 +51,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
                 _copilotClientOptions = _copilotClientOptionsBuilder.Build();
                 return _copilotClientOptions;
             }
-            throw new InvalidOperationException("Copilot client options have not been set. Please configure the options before getting the client.");
+
+            return null;
+
+            ////TODO Return Null or throw an exception if options are not set
+            //throw new InvalidOperationException("Copilot client options have not been set. Please configure the options before getting the client.");
         }
 
         public async ValueTask DisposeAsync()

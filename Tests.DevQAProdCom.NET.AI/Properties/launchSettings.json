@@ -4,6 +4,11 @@
       "commandName": "Project",
       "commandLineArgs": "OrchestrationTests Should_Check_Streaming_From_Subagents",
       "workingDirectory": "."
+    },
+    "Run Agent by Name": {
+      "commandName": "Project",
+      "commandLineArgs": "agent check-custom-instructions-field-answer-questions-agent 'What is my favorite animal?'",
+      "workingDirectory": "."
     }
   }
 }

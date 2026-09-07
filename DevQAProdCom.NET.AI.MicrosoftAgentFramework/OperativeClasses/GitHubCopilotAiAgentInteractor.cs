@@ -93,7 +93,10 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 .WithBaseDirectory(baseDirectory)
                 .WithMode(CopilotClientMode.Empty));
 
-            _sessionConfigBuilder.WithFullIsolation();
+            _sessionConfigBuilder
+                .WithFullIsolation()
+                .WithClientMode(CopilotClientMode.Empty);
+
             return this;
         }
 
@@ -106,7 +109,10 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 .WithBaseDirectory(baseDirectory)
                 .WithMode(CopilotClientMode.Empty));
 
-            _sessionConfigBuilder.WithSelectiveIsolation();
+            _sessionConfigBuilder
+                .WithSelectiveIsolation()
+                .WithClientMode(CopilotClientMode.Empty);
+
             return this;
         }
 

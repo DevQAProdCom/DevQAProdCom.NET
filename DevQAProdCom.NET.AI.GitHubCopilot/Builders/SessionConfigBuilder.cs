@@ -639,11 +639,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             ConfigureModel();
             ConfigureAgents(configurationDirectory);
-            ConfigureTools();
+            ConfigureTools(_copilotClientMode);
             ConfigureInstructions(configurationDirectory);
             ConfigureSkills(configurationDirectory);
-            ConfigurePermissions(configurationDirectory);
 
+            ConfigurePermissions(configurationDirectory);
             ConfigureOnPermissionRequest();
 
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
@@ -694,20 +694,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             if (copilotClientMode == CopilotClientMode.Empty)
             {
-                if (tools.Count() == 0)
-                {
-                    var toolSet = new ToolSet().AddBuiltIn(BuiltInTools.Isolated);
-                    _sessionConfig.AvailableTools = toolSet;
-                }
+                var toolSet = new ToolSet().AddBuiltIn(BuiltInTools.Isolated);
+                _logger.Info("{TypeName} Adding default BuiltInTools.Isolated toolset '{ToolSet}' to '{PropertyName}' because the session is in '{Mode}' mode.", $"[{nameof(SessionConfigBuilder)}]", string.Join(", ", toolSet.ToArray()), nameof(_sessionConfig.AvailableTools), copilotClientMode);
+                WithAvailableTools(toolSet.ToArray());
             }
 
             //If call of subagents is required then session must have the "agent" tool available. This is required for the session to be able to call subagents.
             if (SessionAgentsCollection.Count() > 1 && !_sessionConfig.AvailableTools.Contains(Const.Tools.AGENT))
             {
-                _sessionConfig.AvailableTools.Add(Const.Tools.AGENT);
+                _logger.Info("{TypeName} Adding '{Tool}' to '{PropertyName}' because multiple agents are configured in the session, but it was not already available.", $"[{nameof(SessionConfigBuilder)}]", Const.Tools.AGENT, nameof(_sessionConfig.AvailableTools));
+                WithAvailableTools(Const.Tools.AGENT);
             }
-
-            LogCollectionSetting(nameof(_sessionConfig.AvailableTools), _sessionConfig.AvailableTools);
         }
 
         private void ConfigureInstructions(string configurationDirectory)
@@ -800,10 +797,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _interactionConfigurationDirectory = _sessionConfig.WorkingDirectory;
 
-            if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
-                _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
-            else
-                IoUtils.CleanDirectory(_interactionConfigurationDirectory);
+            //TODO when working directory is set to a specific path and is used unable to clean it so possibly clean particular directories for agents. instructions etc before save
+
+            //if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            //    _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
+            //else
+            //    IoUtils.CleanDirectory(_interactionConfigurationDirectory);
 
             //SaveAiAgents(_interactionConfigurationDirectory);
             //SaveAiInstructions(_interactionConfigurationDirectory);

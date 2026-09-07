@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Utils;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers;
+﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers;
 using DevQAProdCom.NET.Global.Extensions;
 using FluentAssertions;
 using NUnit.Framework;

@@ -48,5 +48,23 @@ namespace Tests.DevQAProdCom.NET.AI
 
             IoUtils.DeleteDirectory(workingDirectory);
         }
+
+        [TestCase("some-agent", "some-prompt")]
+        public async Task InvokeAgentByNameTest(string agentIdentifier, string prompt)
+        {
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(InvokeAgentByNameTest));
+
+            await using (var agent = GetGitHubCopilotAiAgentInteractor()
+                .WithDefaultContentHandlers()
+                .WithPrimaryAgent(agentIdentifier)
+                .WithPrompt(prompt)
+                .WithMaxAttempts(3))
+            {
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+                await act.Should().NotThrowAsync();
+            }
+
+            IoUtils.DeleteDirectory(workingDirectory);
+        }
     }
 }
