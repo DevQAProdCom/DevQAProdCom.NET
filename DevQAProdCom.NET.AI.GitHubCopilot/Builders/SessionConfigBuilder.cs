@@ -635,15 +635,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             if (copilotClientMode != null)
                 WithClientMode(copilotClientMode.Value);
 
-
-            SetupDirectoryForInteractionConfigurationData();
-
+            var configurationDirectory = SetupDirectoryForInteractionConfigurationData();
 
             ConfigureModel();
+            ConfigureAgents(configurationDirectory);
             ConfigureTools();
-            ConfigureAgents(_interactionConfigurationDirectory);
-            ConfigureInstructionDirectories();
-            ConfigureSkillsDirectories();
+            ConfigureInstructions(configurationDirectory);
+            ConfigureSkills(configurationDirectory);
 
             ConfigureOnPermissionRequest();
 
@@ -663,56 +661,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 throw new InvalidOperationException("The session configuration does not have a model specified. Please ensure that the configuration includes a valid model.");
         }
 
-        private void ConfigureAgents(string saveDirectory)
+        private void ConfigureAgents(string configurationDirectory)
         {
-            SaveAiAgents(saveDirectory);
-
-            //Aggregate data on subagents
-            foreach (var entityData in SessionAgentsCollection)
-            {
-                WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
-            }
+            //Aggregate data on subagents for all agents added to the session. This is required because some agents may require subagents that are not available in other agents, so the session must have all subagents available to be able to run all agents in the session.
+            var sessionSubagents = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomSubagents?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomSubagents!).Distinct().ToArray();
+            WithAgents(sessionSubagents);
 
             foreach (var entityData in SessionAgentsCollection)
             {
                 var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
-                WithCustomAgentConfig(customAgentConfig);
+                WithCustomAgentConfig(customAgentConfig); //TODO Make sure that all CustomAgentConfig entries are logged, for use case, when those where added manuall, not through SessionAgentsCollection, so that they are not logged in the WithAgent method.
             }
 
-
-            //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
-            //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
-            //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
-            
+            SaveAiAgents(configurationDirectory);
         }
-
-        private void SetupDirectoryForInteractionConfigurationData()
-        {
-            _interactionConfigurationDirectory = _sessionConfig.WorkingDirectory;
-
-            //if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
-            //    _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
-            //else
-            //    IoUtils.CleanDirectory(_interactionConfigurationDirectory);
-
-            //SaveAiAgents(_interactionConfigurationDirectory);
-            //SaveAiInstructions(_interactionConfigurationDirectory);
-            //SaveAiSkills(_interactionConfigurationDirectory);
-        }
-
-        private void SaveAiAgents(string rootDirectory)
-        {
-            var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
-            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
-        }
-
-        private void SaveAiInstructions(string rootDirectory)
-        {
-            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
-            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
-        }
-
-
 
         /// <remarks>
         /// One of the modes is <see cref="CopilotClientMode.Cli"/>. 
@@ -723,7 +685,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             //Session is setup with all tools available from all agents in the session. This is required because some agents may require tools that are not available in other agents, so the session must have all tools available to be able to run all agents in the session.
             var tools = SessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
-                .SelectMany(agent => agent.ConfigurationData.Tools)
+                .SelectMany(agent => agent.ConfigurationData.Tools!)
                 .Distinct()
                 .ToList();
 
@@ -745,7 +707,118 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
+        private void ConfigureInstructions(string configurationDirectory)
+        {
+            // Aggregate data on instructions from all agents in the session
+            var sessionInstructions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomInstructions?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomInstructions!).Distinct().ToArray();
+            WithInstructions(sessionInstructions);
+            SaveAiInstructions(configurationDirectory);
 
+            if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(configurationDirectory))
+            {
+                var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(configurationDirectory);
+
+                if (Directory.Exists(instructionsDirectory))
+                {
+                    _sessionConfig.InstructionDirectories = new List<string>() { instructionsDirectory };
+                    _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
+                }
+            }
+            else
+                throw new Exception();
+
+            //if (_sessionConfig.InstructionDirectories?.Count > 0)
+            //    foreach (var directory in _sessionConfig.InstructionDirectories)
+            //    {
+            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
+            //    }
+        }
+
+        private void ConfigureSkills(string configurationDirectory)
+        {
+            // Aggregate data on skills from all agents in the session
+            var sessionSkills = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomSkills?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomSkills!).Distinct().ToArray();
+            WithSkills(sessionSkills);
+            SaveAiSkills(configurationDirectory);
+
+            if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(configurationDirectory))
+            {
+                var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(configurationDirectory);
+
+                if (Directory.Exists(rootDirectoryWithSkills))
+                {
+                    var specificDirectoriesOfSkills = Directory.GetDirectories(rootDirectoryWithSkills);
+
+                    if (specificDirectoriesOfSkills.Count() > 0)
+                    {
+                        _sessionConfig.SkillDirectories ??= new List<string>();
+
+                        foreach (var skillDirectory in specificDirectoriesOfSkills)
+                        {
+                            _sessionConfig.SkillDirectories.Add(skillDirectory);
+                            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
+                        }
+                    }
+                }
+            }
+
+            //This setup is required because it is not enough to just set SkillsDirectories of the SessionConfig, but names of skills should be added to the CustomAgentConfig.
+            if (!string.IsNullOrEmpty(_sessionConfig.Agent) && _sessionConfig.SkillDirectories?.Count() > 0)
+            {
+                //Add directly to the CustomAgentConfig of the SessionConfig
+                var primaryAgentFromSessionConfig = _sessionConfig.CustomAgents?.SingleOrDefault(x => x.Name == _sessionConfig.Agent);
+                if (primaryAgentFromSessionConfig != null)
+                    primaryAgentFromSessionConfig.Skills = new List<string>();
+
+                //Add through the SessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
+                //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
+                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
+                if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
+                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomSkills = new List<string>();
+
+                foreach (var directory in _sessionConfig.SkillDirectories.Select(x => new DirectoryInfo(x)))
+                {
+                    primaryAgentFromSessionConfig?.Skills?.Add(directory.Name);
+                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomSkills?.Add(directory.Name);
+                }
+            }
+        }
+
+        public void ConfigurePermissions(string configurationDirectory)
+        {
+            // Aggregate data on skills from all agents in the session
+            var sessionPermissions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomPermissions?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomPermissions!).Distinct().ToArray();
+            WithPermissions(sessionPermissions);
+        }
+
+        private string SetupDirectoryForInteractionConfigurationData()
+        {
+            _interactionConfigurationDirectory = _sessionConfig.WorkingDirectory;
+
+            if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+                _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
+            else
+                IoUtils.CleanDirectory(_interactionConfigurationDirectory);
+
+            //SaveAiAgents(_interactionConfigurationDirectory);
+            //SaveAiInstructions(_interactionConfigurationDirectory);
+            //SaveAiSkills(_interactionConfigurationDirectory);
+
+            return _interactionConfigurationDirectory;
+        }
+
+        private void SaveAiAgents(string rootDirectory)
+        {
+            var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
+            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
+        }
+
+        private void SaveAiInstructions(string rootDirectory)
+        {
+            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
+            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
+        }
 
         //private void SetupOnPermissionRequest()
         //{
@@ -798,87 +871,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             };
         }
 
-        private void ConfigureInstructions(string saveDirectory)
-        {
-            foreach (var item in SessionAgentsCollection.Select(x => x.ConfigurationData.CustomInstructions))
-            {
-
-            }
-
-
-            SaveAiInstructions(saveDirectory);
-
-            if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(saveDirectory))
-            {
-                var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(saveDirectory);
-
-                if (Directory.Exists(instructionsDirectory))
-                {
-                    _sessionConfig.InstructionDirectories = new List<string>() { instructionsDirectory };
-                    _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.InstructionDirectories), string.Join(", ", _sessionConfig.InstructionDirectories));
-                }
-            }
-            else
-                throw new Exception();
-
-            //if (_sessionConfig.InstructionDirectories?.Count > 0)
-            //    foreach (var directory in _sessionConfig.InstructionDirectories)
-            //    {
-            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-            //    }
-        }
-
-        private void ConfigureSkills(string saveDirectory)
-        {
-
-
-
-
-            SaveAiSkills(saveDirectory);
-
-            if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(saveDirectory))
-            {
-                var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(saveDirectory);
-
-                if (Directory.Exists(rootDirectoryWithSkills))
-                {
-                    var specificDirectoriesOfSkills = Directory.GetDirectories(rootDirectoryWithSkills);
-
-                    if (specificDirectoriesOfSkills.Count() > 0)
-                    {
-                        _sessionConfig.SkillDirectories ??= new List<string>();
-
-                        foreach (var skillDirectory in specificDirectoriesOfSkills)
-                        {
-                            _sessionConfig.SkillDirectories.Add(skillDirectory);
-                            _logger.Info("{TypeName} Setting '{PropertyName}' parameter to '[{Value}]'.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.SkillDirectories), string.Join(", ", _sessionConfig.SkillDirectories));
-                        }
-                    }
-                }
-            }
-
-            //This setup is required because it is not enough to just set SkillsDirectories of the SessionConfig, but names of skills should be added to the CustomAgentConfig.
-            if (!string.IsNullOrEmpty(_sessionConfig.Agent) && _sessionConfig.SkillDirectories?.Count() > 0)
-            {
-                //Add directly to the CustomAgentConfig of the SessionConfig
-                var primaryAgentFromSessionConfig = _sessionConfig.CustomAgents?.SingleOrDefault(x => x.Name == _sessionConfig.Agent);
-                if (primaryAgentFromSessionConfig != null)
-                    primaryAgentFromSessionConfig.Skills = new List<string>();
-
-                //Add through the SessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
-                //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
-                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
-                if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
-                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomSkills = new List<string>();
-
-                foreach (var directory in _sessionConfig.SkillDirectories.Select(x => new DirectoryInfo(x)))
-                {
-                    primaryAgentFromSessionConfig?.Skills?.Add(directory.Name);
-                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomSkills?.Add(directory.Name);
-                }
-            }
-        }
 
 
 

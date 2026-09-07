@@ -40,65 +40,74 @@ namespace DevQAProdCom.NET.AI.Shared.Collections
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            //Normalize the entity name to lower case for consistent comparison
             var addedEntityName = entity.ConfigurationData?.Name?.ToLower();
 
-            // Validate that the entity has a valid name in its YAML configuration
             if (string.IsNullOrEmpty(addedEntityName))
             {
                 throw new InvalidOperationException($"[{CollectionIdentifier}] Entity must have a valid name in its YAML configuration. The provided entity has an empty or null name.");
             }
 
-            if (!string.IsNullOrEmpty(entity.FilePath))
-            {
-                entity.FilePath = IoUtils.NormalizeFilePath(entity.FilePath);
-            }
+            entity.FilePath = string.IsNullOrWhiteSpace(entity.FilePath) ? null : IoUtils.NormalizeFilePath(entity.FilePath);
             var addedEntityFilePath = entity.FilePath;
 
-            //Same Name and Same File Path (File Path can be both either set or not set) - Replace
-            var existingEntityWithTheSameNameAndSameFilePath = Entities.SingleOrDefault(existingEntityInCollection => existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName && existingEntityInCollection.FilePath == addedEntityFilePath);
+            var existingEntityWithTheSameNameAndSameFilePath = Entities.SingleOrDefault(existingEntityInCollection =>
+                existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName &&
+                NormalizeFilePath(existingEntityInCollection.FilePath) == addedEntityFilePath);
 
             if (existingEntityWithTheSameNameAndSameFilePath != null)
             {
                 Entities.Remove(existingEntityWithTheSameNameAndSameFilePath);
                 Entities.Add(entity);
-                Log.Debug("[{CollectionIdentifier}] Entity with name '{entityName}' and file path '{filePath}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityName, entity.FilePath ?? "null");
-                return existingEntityWithTheSameNameAndSameFilePath;
+                Log.Debug("[{CollectionIdentifier}] Entity with name '{entityName}' and file path '{filePath}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityName, addedEntityFilePath ?? "null");
+                return entity;
             }
 
-            //Different Name and Same File Path - Replace
-            var existingEntityWithTheDifferentNameAndSameFilePath = Entities.SingleOrDefault(existingEntityInCollection => existingEntityInCollection.FilePath == addedEntityFilePath && existingEntityInCollection.ConfigurationData.Name.ToLower() != addedEntityName);
-            if (existingEntityWithTheDifferentNameAndSameFilePath != null)
+            IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityWithDifferentNameAndSameFilePath = null;
+            if (!string.IsNullOrEmpty(addedEntityFilePath))
             {
-                Entities.Remove(existingEntityWithTheDifferentNameAndSameFilePath);
-                Entities.Add(entity);
-                Log.Debug("[{CollectionIdentifier}] Entity with the same file path '{filePath}', but different name '{entityName}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", entity.FilePath ?? "null", addedEntityName);
-                return existingEntityWithTheDifferentNameAndSameFilePath;
+                entityWithDifferentNameAndSameFilePath = Entities.SingleOrDefault(existingEntityInCollection =>
+                    NormalizeFilePath(existingEntityInCollection.FilePath) == addedEntityFilePath &&
+                    existingEntityInCollection.ConfigurationData.Name.ToLower() != addedEntityName);
             }
 
-            //Same Name and Different Set File Paths - Add and Log Warning
-            var existingEntitiesWithTheSameNameAndDifferentSetFilePaths = Entities.Where(existingEntityInCollection => existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName &&
-            (!string.IsNullOrEmpty(existingEntityInCollection.FilePath) && !string.IsNullOrEmpty(addedEntityFilePath) && existingEntityInCollection.FilePath != addedEntityFilePath)).ToList();
+            var existingEntitiesWithTheSameName = Entities.Where(existingEntityInCollection =>
+                existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName).ToList();
 
-            if (existingEntitiesWithTheSameNameAndDifferentSetFilePaths.Count() > 0)
+            var allSameNameEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>(existingEntitiesWithTheSameName);
+            allSameNameEntities.Add(entity);
+
+            if (allSameNameEntities.Any(e => !string.IsNullOrEmpty(e.FilePath)) && allSameNameEntities.Any(e => string.IsNullOrEmpty(e.FilePath)))
+            {
+                throw new InvalidOperationException($"[{CollectionIdentifier}] There are entities with the same name '{addedEntityName}' in the collection, some with file paths and some without. This is not allowed. Please ensure that all entities with the same name have file paths set.");
+            }
+
+            var existingEntitiesWithTheSameNameAndDifferentSetFilePaths = existingEntitiesWithTheSameName
+                .Where(existingEntityInCollection =>
+                    !string.IsNullOrEmpty(existingEntityInCollection.FilePath) &&
+                    NormalizeFilePath(existingEntityInCollection.FilePath) != addedEntityFilePath)
+                .ToList();
+
+            if (entityWithDifferentNameAndSameFilePath != null)
+            {
+                Entities.Remove(entityWithDifferentNameAndSameFilePath);
+                Log.Debug("[{CollectionIdentifier}] Entity with the same file path '{filePath}', but different name '{oldEntityName}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityFilePath ?? "null", entityWithDifferentNameAndSameFilePath.ConfigurationData.Name);
+            }
+
+            if (existingEntitiesWithTheSameNameAndDifferentSetFilePaths.Count > 0)
             {
                 Entities.Add(entity);
-
                 Log.Warning(
                     "{CollectionIdentifier} Entity with name '{entityName}' is already present in the collection under different file path(s): {existingFilePaths}. " +
                     "Adding another entity with the same name from file path '{addedEntityFilePath}'.",
                     $"[{CollectionIdentifier}]", addedEntityName, string.Join(", ", existingEntitiesWithTheSameNameAndDifferentSetFilePaths.Select(x => x.FilePath)), addedEntityFilePath ?? "null");
+                return entity;
             }
 
-            //Same Name and Some with File Path, Some without - Throw Exception
-            var existingEntitiesWithTheSameNameAndNotSetFilePath = Entities.Where(existingEntityInCollection => existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName && string.IsNullOrEmpty(existingEntityInCollection.FilePath)).ToList();
-            var existingEntitiesWithTheSameNameAndSetFilePath = Entities.Where(existingEntityInCollection => existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName && !string.IsNullOrEmpty(existingEntityInCollection.FilePath)).ToList();
-
-            if (existingEntitiesWithTheSameNameAndNotSetFilePath.Any() && existingEntitiesWithTheSameNameAndSetFilePath.Any())
-                throw new InvalidOperationException($"[{CollectionIdentifier}] There are entities with the same name '{addedEntityName}' in the collection, some with file paths and some without. This is not allowed. Please ensure that all entities with the same name have file paths set.");
-
+            Entities.Add(entity);
             return entity;
         }
+
+        private static string? NormalizeFilePath(string? filePath) => string.IsNullOrWhiteSpace(filePath) ? null : IoUtils.NormalizeFilePath(filePath);
 
         public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddEntitiesData(params IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] entities)
         {
