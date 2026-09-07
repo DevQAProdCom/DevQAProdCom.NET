@@ -121,7 +121,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             WithAgent(agentIdentifier);
             var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
-            LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
+            LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
 
             //if (entityData.ConfigurationData?.Tools?.ToArray()?.Count() > 0)
             //{
@@ -159,12 +159,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
             var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
             SessionAgentsCollection.AddEntityData(entityData);
-            var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
-            WithCustomAgentConfig(customAgentConfig);
-            WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
-            WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
-            WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
-            WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
+            //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
+            //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
+            //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
+            //WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
 
             return this;
         }
@@ -637,19 +635,23 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             if (copilotClientMode != null)
                 WithClientMode(copilotClientMode.Value);
 
-            SetupModel();
-            SetupTools();
-            CreateFolderWithInteractionConfigurationData();
-            SetupInstructionDirectories();
-            SetupSkillsDirectories();
 
-            SetupOnPermissionRequest();
+            SetupDirectoryForInteractionConfigurationData();
+
+
+            ConfigureModel();
+            ConfigureTools();
+            ConfigureAgents(_interactionConfigurationDirectory);
+            ConfigureInstructionDirectories();
+            ConfigureSkillsDirectories();
+
+            ConfigureOnPermissionRequest();
 
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
         }
 
-        private void SetupModel()
+        private void ConfigureModel()
         {
             if (!string.IsNullOrEmpty(_sessionConfig.Agent))
             {
@@ -661,12 +663,63 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 throw new InvalidOperationException("The session configuration does not have a model specified. Please ensure that the configuration includes a valid model.");
         }
 
+        private void ConfigureAgents(string saveDirectory)
+        {
+            SaveAiAgents(saveDirectory);
+
+            //Aggregate data on subagents
+            foreach (var entityData in SessionAgentsCollection)
+            {
+                WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
+            }
+
+            foreach (var entityData in SessionAgentsCollection)
+            {
+                var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
+                WithCustomAgentConfig(customAgentConfig);
+            }
+
+
+            //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
+            //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
+            //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
+            
+        }
+
+        private void SetupDirectoryForInteractionConfigurationData()
+        {
+            _interactionConfigurationDirectory = _sessionConfig.WorkingDirectory;
+
+            //if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            //    _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
+            //else
+            //    IoUtils.CleanDirectory(_interactionConfigurationDirectory);
+
+            //SaveAiAgents(_interactionConfigurationDirectory);
+            //SaveAiInstructions(_interactionConfigurationDirectory);
+            //SaveAiSkills(_interactionConfigurationDirectory);
+        }
+
+        private void SaveAiAgents(string rootDirectory)
+        {
+            var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
+            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
+        }
+
+        private void SaveAiInstructions(string rootDirectory)
+        {
+            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
+            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
+        }
+
+
+
         /// <remarks>
         /// One of the modes is <see cref="CopilotClientMode.Cli"/>. 
         /// When set to <see cref="CopilotClientMode.Empty"/>, the SDK validates that the app has supplied the required configuration (<see cref="BaseDirectory"/> or <see cref="SessionFs"/>, plus <see cref="SessionConfigBase.AvailableTools"/> on each session).
         /// Null or empty <see cref="SessionConfigBase.AvailableTools"/> are not allowed. So default toolset is created with <see cref="BuiltInTools.Isolated"/> entries.
         /// </remarks>
-        private void SetupTools(CopilotClientMode? copilotClientMode = null)
+        private void ConfigureTools(CopilotClientMode? copilotClientMode = null)
         {
             //Session is setup with all tools available from all agents in the session. This is required because some agents may require tools that are not available in other agents, so the session must have all tools available to be able to run all agents in the session.
             var tools = SessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
@@ -708,7 +761,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         //    };
         //}
 
-        private void SetupOnPermissionRequest()
+        private void ConfigureOnPermissionRequest()
         {
             _sessionConfig.OnPermissionRequest = async (request, invocation) =>
             {
@@ -745,11 +798,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             };
         }
 
-        private void SetupInstructionDirectories()
+        private void ConfigureInstructions(string saveDirectory)
         {
-            if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
+            foreach (var item in SessionAgentsCollection.Select(x => x.ConfigurationData.CustomInstructions))
             {
-                var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(_interactionConfigurationDirectory);
+
+            }
+
+
+            SaveAiInstructions(saveDirectory);
+
+            if ((_sessionConfig.InstructionDirectories == null || _sessionConfig.InstructionDirectories.Count <= 0) && !string.IsNullOrEmpty(saveDirectory))
+            {
+                var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(saveDirectory);
 
                 if (Directory.Exists(instructionsDirectory))
                 {
@@ -768,11 +829,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             //    }
         }
 
-        private void SetupSkillsDirectories()
+        private void ConfigureSkills(string saveDirectory)
         {
-            if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(_interactionConfigurationDirectory))
+
+
+
+
+            SaveAiSkills(saveDirectory);
+
+            if ((_sessionConfig.SkillDirectories == null || _sessionConfig.SkillDirectories.Count <= 0) && !string.IsNullOrEmpty(saveDirectory))
             {
-                var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(_interactionConfigurationDirectory);
+                var rootDirectoryWithSkills = Const.Directories.GetGitHubSkillsDirectory(saveDirectory);
 
                 if (Directory.Exists(rootDirectoryWithSkills))
                 {
@@ -813,31 +880,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private void CreateFolderWithInteractionConfigurationData()
-        {
-            _interactionConfigurationDirectory = _sessionConfig.WorkingDirectory;
 
-            //if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
-            //    _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
-            //else
-            //    IoUtils.CleanDirectory(_interactionConfigurationDirectory);
-
-            SaveAiAgents(_interactionConfigurationDirectory);
-            SaveAiInstructions(_interactionConfigurationDirectory);
-            SaveAiSkills(_interactionConfigurationDirectory);
-        }
-
-        private void SaveAiAgents(string rootDirectory)
-        {
-            var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
-            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
-        }
-
-        private void SaveAiInstructions(string rootDirectory)
-        {
-            var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
-            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
-        }
 
         private void SaveAiSkills(string rootDirectory)
         {
