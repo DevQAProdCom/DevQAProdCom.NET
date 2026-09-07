@@ -642,6 +642,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ConfigureTools();
             ConfigureInstructions(configurationDirectory);
             ConfigureSkills(configurationDirectory);
+            ConfigurePermissions(configurationDirectory);
 
             ConfigureOnPermissionRequest();
 
@@ -705,6 +706,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             {
                 _sessionConfig.AvailableTools.Add(Const.Tools.AGENT);
             }
+
+            LogCollectionSetting(nameof(_sessionConfig.AvailableTools), _sessionConfig.AvailableTools);
         }
 
         private void ConfigureInstructions(string configurationDirectory)
@@ -790,6 +793,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             // Aggregate data on skills from all agents in the session
             var sessionPermissions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomPermissions?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomPermissions!).Distinct().ToArray();
             WithPermissions(sessionPermissions);
+            //TODO Save Permissions Configuration to configurationDirectory if needed, similar to how agents, instructions, and skills are saved.
         }
 
         private string SetupDirectoryForInteractionConfigurationData()
