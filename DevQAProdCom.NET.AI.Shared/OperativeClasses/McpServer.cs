@@ -26,7 +26,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             where TMcpServer : class
         {
             if (list != null)
-                if (typeof(TMcpServer) == typeof(T) || typeof(TMcpServer).IsAssignableTo(typeof(T)))
+                if (typeof(TMcpServer) == typeof(T) || typeof(TMcpServer).IsAssignableFrom(typeof(T)))
                 {
                     var mcpServer = McpServerConfiguration as TMcpServer;
                     if (mcpServer != null)
