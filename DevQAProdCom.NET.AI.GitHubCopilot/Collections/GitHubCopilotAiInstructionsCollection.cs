@@ -1,6 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.GitHubCopilot.Utils;
-using DevQAProdCom.NET.AI.Shared.Collections;
+using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections

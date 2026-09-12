@@ -5,7 +5,7 @@ using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
-namespace DevQAProdCom.NET.AI.Shared.Collections
+namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
         where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
