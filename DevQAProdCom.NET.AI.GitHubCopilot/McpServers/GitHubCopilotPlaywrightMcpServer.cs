@@ -16,6 +16,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.McpServers
             McpServerConfiguration = new McpStdioServerConfigBuilder(logger)
                 .WithCommand("npx")
                 .WithArgs(new string[] { "@playwright/mcp@latest" })
+                .WithTools("*")
                 .Build();
         }
     }

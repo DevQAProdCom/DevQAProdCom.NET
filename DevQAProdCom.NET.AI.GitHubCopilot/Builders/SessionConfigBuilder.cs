@@ -33,7 +33,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _sessionAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionAgentsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionAgentsCollection));
 
 
         private bool _useInstructionsExtendedSearch = false;
@@ -42,7 +42,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionInstructionsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionInstructionsCollection));
 
         private bool _useSkillsExtendedSearch = false;
 
@@ -50,22 +50,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
 
         private IMcpServersCollection? _allMcpServersCollection;
-        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new McpServersCollection();
+        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(AllMcpServersCollection));
 
         private IMcpServersCollection? _sessionMcpServersCollection;
-        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new McpServersCollection();
+        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionMcpServersCollection));
 
         public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
         {
-            var mcpServer = AllMcpServersCollection.GetByIdentifierOrDefault(mcpServerIdentifier);
+            var mcpServer = AllMcpServersCollection.GetByIdentifier(mcpServerIdentifier);
             SessionMcpServersCollection.AddByIdentifier(mcpServer);
 
             return this;
         }
-
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
         {
@@ -86,7 +85,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     _sessionConfig.McpServers.Add(mcpServer.Identifier, mcpServerConfig);
                 }
                 else
-                    _logger.Warning()
+                    _logger.Warning("[{TypeName}] MCP Server '{ServerIdentifier}' does not have a valid configuration type {McpServerConfigTypeName}.", nameof(SessionConfigBuilder), mcpServer.Identifier, typeof(McpServerConfig).FullName);
             }
         }
 
@@ -676,6 +675,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ConfigureTools(_copilotClientMode);
             ConfigureInstructions(configurationDirectory);
             ConfigureSkills(configurationDirectory);
+            ConfigureMcpServers();
 
             ConfigurePermissions(configurationDirectory);
             ConfigureOnPermissionRequest();
