@@ -2,7 +2,7 @@
   "profiles": {
     "Run Tests Suite": {
       "commandName": "Project",
-      "commandLineArgs": "OrchestrationTests Should_Check_Streaming_From_Subagents",
+      "commandLineArgs": "McpServersTests Should_McpServer_Be_Used_Using_SDK_Configuration_By_Identifier",
       "workingDirectory": "."
     },
     "Run Agent by Name": {

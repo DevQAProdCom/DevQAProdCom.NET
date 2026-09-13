@@ -38,7 +38,7 @@ namespace DevQAProdCom.NET.Global.Utils
             }
         }
 
-        public static void PopulateConfigurationProperties(this object target, string sourceJsonModel)
+        public static void PopulateConfigurationProperties(object target, string sourceJsonModel)
         {
             if (string.IsNullOrWhiteSpace(sourceJsonModel))
             {

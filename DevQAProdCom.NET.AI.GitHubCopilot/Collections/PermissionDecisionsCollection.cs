@@ -14,6 +14,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             AddReadViewPermissionDecisions();
             AddWriteCreatePermissionDecisions();
             AddWriteEditPermissionDecisions();
+            AddPlaywrightMcpPermissionDecisions();
         }
 
         public Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>> GetByIdentifier(string identifier)
@@ -57,6 +58,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 
             var denyWriteEditAll = writeEditPermissionDecisions.GetDenyWriteEditAllPermission();
             _decisions.Add(denyWriteEditAll.Key, denyWriteEditAll.Value);
+        }
+
+        private void AddPlaywrightMcpPermissionDecisions()
+        {
+            var playwrightMcpPermissionDecisions = new PlaywrightMcpPermissionDecisions();
+
+            var approvePlaywrightMcpAll = playwrightMcpPermissionDecisions.GetApprovePlaywrightMcpAllPermission();
+            _decisions.Add(approvePlaywrightMcpAll.Key, approvePlaywrightMcpAll.Value);
+
+            //var denyPlaywrightMcpAll = playwrightMcpPermissionDecisions.GetDenyPlaywrightMcpAllPermission();
+            //_decisions.Add(denyPlaywrightMcpAll.Key, denyPlaywrightMcpAll.Value);
         }
     }
 }

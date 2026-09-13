@@ -53,7 +53,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
 
         private IMcpServersCollection? _allMcpServersCollection;
-        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(AllMcpServersCollection));
+        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: true,  collectionIdentifier: nameof(AllMcpServersCollection));
 
         private IMcpServersCollection? _sessionMcpServersCollection;
         private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionMcpServersCollection));
@@ -61,7 +61,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
         {
             var mcpServer = AllMcpServersCollection.GetByIdentifier(mcpServerIdentifier);
-            SessionMcpServersCollection.AddByIdentifier(mcpServer);
+            SessionMcpServersCollection.Add(mcpServer);
 
             return this;
         }

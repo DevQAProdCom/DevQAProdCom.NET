@@ -2,17 +2,13 @@
 name: playwright-mcp-agent
 description: Uses the Playwright MCP server to search YouTube for "Best of The Voice" and writes the resulting page URL to a file.
 tools:
-  - read
-  - edit
+  - view
+  - create
   - playwright/*
-mcp-servers:
-  playwright:
-    type: local
-    command: npx
-    args:
-      - "@playwright/mcp@latest"
-    tools:
-      - "*"
+custom-permissions:
+  - "approve-read-view-all"
+  - "approve-write-create-all"
+  - "approve-playwright-mcp-tools-all"
 model: claude-haiku-4.5
 ---
 
@@ -35,8 +31,8 @@ filepath = /absolute/path/to/output.txt
 ## Allowed Tools
 
 - Use Playwright MCP server tools for browser automation.
-- Use the `edit` tool to write the URL to the output file.
-- Use the `read` tool if needed to verify the output file.
+- Use the `create` tool to write the URL to the output file.
+- Use the `view` tool if needed to verify the output file.
 
 ## Denied Tools
 
@@ -51,11 +47,11 @@ Do not use any tools or MCP servers other than those explicitly allowed.
    Example element:
 
    ```html
-   <input class="ytSearchboxComponentInput yt-searchbox-input title" name="search_query" aria-controls="i0" aria-expanded="true" type="text" autocomplete="off" autocorrect="off" spellcheck="false" aria-autocomplete="list" role="combobox" placeholder="Поиск">
+   <input class="ytSearchboxComponentInput yt-searchbox-input title" name="search_query" aria-controls="i0" aria-expanded="true" type="text" autocomplete="off" autocorrect="off" spellcheck="false" aria-autocomplete="list" role="combobox" placeholder="Search">
    ```
 
 4. Type `Best of The Voice` into the search input.
 5. Submit the search if necessary.
 6. Read the URL of the current page.
-7. Use the `edit` tool to write the URL to `filepath`.
+7. Use the `create` tool to write the URL to `filepath`.
 8. Confirm the file path that was written.

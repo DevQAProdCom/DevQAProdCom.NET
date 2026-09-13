@@ -21,5 +21,11 @@ namespace DevQAProdCom.NET.AI.Shared.Enumerations
 
         [Description("deny-read-view-all")]
         DenyReadViewAll,
+
+        [Description("approve-playwright-mcp-tools-all")]
+        ApprovePlaywrightMcpToolsAll,
+
+        [Description("deny-playwright-mcp-tools-all")]
+        DenyPlaywrightMcpToolsAll,
     }
 }

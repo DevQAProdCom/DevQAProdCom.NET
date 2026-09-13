@@ -40,13 +40,8 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return mcpServer != null;
         }
 
-        public virtual IMcpServer AddByIdentifier(IMcpServer mcpServer)
+        public virtual IMcpServer Add(IMcpServer mcpServer)
         {
-            var existingServer = GetByIdentifier(mcpServer.Identifier);
-
-            if (existingServer != null)
-                return existingServer;
-
             McpServers.Add(mcpServer);
             return mcpServer;
         }

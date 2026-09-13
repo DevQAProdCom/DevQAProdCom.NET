@@ -13,6 +13,7 @@
                 internal const string ANSWER_QUESTIONS_AGENT = "answer-questions-agent";
                 internal const string CHECK_CUSTOM_INSTRUCTIONS_FIELD_ANSWER_QUESTIONS_AGENT = "check-custom-instructions-field-answer-questions-agent";
                 internal const string CHECK_CUSTOM_SKILLS_FIELD_ANSWER_QUESTIONS_AGENT = "check-custom-skills-field-answer-questions-agent";
+                internal const string PLAYWRIGHT_MCP_AGENT = "playwright-mcp-agent";
             }
 
             internal static class Prompts
