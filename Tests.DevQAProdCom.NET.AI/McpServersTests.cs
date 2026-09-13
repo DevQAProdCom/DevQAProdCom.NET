@@ -1,7 +1,7 @@
 ﻿using DevQAProdCom.NET.Global.Utils;
 using FluentAssertions;
 using NUnit.Framework;
-using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -13,12 +13,13 @@ namespace Tests.DevQAProdCom.NET.AI
             //GIVEN
             var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_McpServer_Be_Used_Using_SDK_Configuration_By_Identifier));
             var filePath = Path.Combine(tempWorkingDirectory, "youtube_url.txt");
+            var requestModel = new PlaywrightMcpAgentRequestModel
+            {
+                FilePath = filePath
+            };
 
             //WHEN
-            await using (var agent = AiAgentsLibrary.GetBaseAgent(tempWorkingDirectory)
-                .WithPrimaryAgent(Const.AiAgents.Names.PLAYWRIGHT_MCP_AGENT)
-                .WithPrompt($"filepath = {filePath}")
-                .WithSessionConfig(config => config.WithMcpServer("playwright")))
+            await using (var agent = AiAgentsLibrary.GetPlaywrightMcpAgentWithResponseValidator(tempWorkingDirectory, requestModel))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }

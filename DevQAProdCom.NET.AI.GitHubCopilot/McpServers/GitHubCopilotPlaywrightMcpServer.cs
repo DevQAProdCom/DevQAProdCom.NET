@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
+using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.Global.Attributes;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
@@ -9,7 +10,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.McpServers
         public override string? Class { get; } = typeof(GitHubCopilotPlaywrightMcpServer).FullName;
 
         [ConfigurationPropertyIgnore]
-        public override string Identifier { get; set; } = "playwright";
+        public override string Identifier { get; set; } = SharedAiConstants.McpServers.Identifiers.PLAYWRIGHT;
 
         public GitHubCopilotPlaywrightMcpServer(ILogger logger)
         {

@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
+using DevQAProdCom.NET.AI.Shared.Constants;
 using Tests.DevQAProdCom.NET.AI.DependencyInjection;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
@@ -10,7 +11,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
     {
         public GitHubCopilotAiAgentInteractor GetBaseOrchestratorReadWriteAgent(string workingDirectory, OrchestratorReadWriteAgentRequestModel requestModel)
         {
-            return GetBaseAgent(workingDirectory)
+            return GetBaseAgentConfiguration(workingDirectory)
                 .WithPrimaryAgent(Const.AiAgents.Names.ORCHESTRATOR_READ_WRITE_AGENT)
                 .WithSessionConfig(config => config
                     .WithAgents(Const.AiAgents.Names.READ_AGENT, Const.AiAgents.Names.WRITE_AGENT))
@@ -45,7 +46,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
             return baseReadWriteAgent.WithResponseValidator(responseValidator);
         }
 
-        public GitHubCopilotAiAgentInteractor GetBaseAgent(string workingDirectory)
+        public GitHubCopilotAiAgentInteractor GetBaseAgentConfiguration(string workingDirectory)
         {
             return DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
                 .GetGitHubCopilotAiAgentInteractor()
@@ -54,11 +55,24 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
                 .WithDefaultContentHandlers();
         }
 
+        public GitHubCopilotAiAgentInteractor GetPlaywrightMcpAgentWithResponseValidator(string workingDirectory, PlaywrightMcpAgentRequestModel requestModel)
+        {
+            var responseValidator = new PlaywrightMcpAgentResponseValidator(requestModel);
+
+            return GetBaseAgentConfiguration(workingDirectory)
+                .WithSelectiveIsolation()
+                .WithPrimaryAgent(Const.AiAgents.Names.PLAYWRIGHT_MCP_AGENT)
+                .WithSessionConfig(config => config.WithMcpServer(SharedAiConstants.McpServers.Identifiers.PLAYWRIGHT))
+                .WithPromptInJsonFormat(requestModel)
+                .WithResponseValidator(responseValidator)
+                .WithMaxAttempts(3);
+        }
+
         public GitHubCopilotAiAgentInteractor GetBaseAnswerQuestionAgent(string workingDirectory, string filePathToWrite, AnswerQuestionsAgentRequestModel requestModel)
         {
             var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
 
-            return GetBaseAgent(workingDirectory)
+            return GetBaseAgentConfiguration(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.ANSWER_QUESTIONS_AGENT)
                 .WithPromptInJsonFormat(requestModel)
@@ -70,7 +84,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
         {
             var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
 
-            return GetBaseAgent(workingDirectory)
+            return GetBaseAgentConfiguration(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_SKILLS_FIELD_ANSWER_QUESTIONS_AGENT)
                 .WithPromptInJsonFormat(requestModel)
@@ -82,7 +96,7 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories
         {
             var validator = new AnswerQuestionsAgentReponseValidator(filePathToWrite, requestModel.Questions);
 
-            return GetBaseAgent(workingDirectory)
+            return GetBaseAgentConfiguration(workingDirectory)
                 .WithSelectiveIsolation()
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_INSTRUCTIONS_FIELD_ANSWER_QUESTIONS_AGENT)
                 .WithPromptInJsonFormat(requestModel)
