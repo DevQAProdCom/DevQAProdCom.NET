@@ -3,7 +3,9 @@ using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.AI.Shared.Models;
+using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
@@ -49,6 +51,44 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeWithDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
+
+        private IMcpServersCollection? _allMcpServersCollection;
+        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new McpServersCollection();
+
+        private IMcpServersCollection? _sessionMcpServersCollection;
+        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new McpServersCollection();
+
+        public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
+        {
+            var mcpServer = AllMcpServersCollection.GetByIdentifierOrDefault(mcpServerIdentifier);
+            SessionMcpServersCollection.AddByIdentifier(mcpServer);
+
+            return this;
+        }
+
+
+        public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
+        {
+            _logger.Info("{TypeName} Setting '{PropertyName}' parameter for server '{ServerName}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.McpServers), name);
+            _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
+            _sessionConfig.McpServers[name] = config;
+            return this;
+        }
+
+        public void ConfigureMcpServers()
+        {
+            _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
+
+            foreach (var mcpServer in SessionMcpServersCollection)
+            {
+                if (mcpServer.TryGet<McpServerConfig>(out var mcpServerConfig))
+                {
+                    _sessionConfig.McpServers.Add(mcpServer.Identifier, mcpServerConfig);
+                }
+                else
+                    _logger.Warning()
+            }
+        }
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -458,13 +498,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
-        {
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter for server '{ServerName}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.McpServers), name);
-            _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
-            _sessionConfig.McpServers[name] = config;
-            return this;
-        }
+
 
         public SessionConfigBuilder WithSkipCustomInstructions(bool? skipCustomInstructions)
         {

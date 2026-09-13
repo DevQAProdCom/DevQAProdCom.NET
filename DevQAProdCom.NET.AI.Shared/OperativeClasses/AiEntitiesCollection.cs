@@ -12,6 +12,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
     {
         public string CollectionIdentifier { get; }
         public string? BaseDirectory { get; set; }
+
         protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
         protected ILogger Log;
 
@@ -227,16 +228,6 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return entityData != null;
         }
 
-        public IEnumerator<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> GetEnumerator()
-        {
-            return Entities.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         private void InitializeCollectionFromDefaultLocations()
         {
             var baseEntitiesLocations = GetEntitiesLocations();
@@ -293,5 +284,15 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
         }
 
         protected virtual List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false) => new List<string>();
+
+        public IEnumerator<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> GetEnumerator()
+        {
+            return Entities.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
