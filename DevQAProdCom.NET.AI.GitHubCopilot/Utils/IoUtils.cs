@@ -64,5 +64,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 
             return skillFiles;
         }
+
+        public static List<string> GetCopilotHooks(string rootDirectory, bool useExtendedSearch = false)
+        {
+            GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
+            var hooksFiles = new List<string>();
+
+            var gitHubHooksDirectory = Const.Directories.GetGitHubHooksDirectory(rootDirectory);
+
+            if (Directory.Exists(gitHubHooksDirectory))
+            {
+                hooksFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(gitHubHooksDirectory).Select(x => x.FullName));
+            }
+
+            if (useExtendedSearch)
+            {
+                hooksFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, $"*{FilesConstants.HOOKS_JSON}", SearchOption.AllDirectories).Select(x => x.FullName));
+            }
+
+            return hooksFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
     }
 }

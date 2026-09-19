@@ -5,7 +5,6 @@ using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.AI.Shared.Models;
-using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
@@ -53,7 +52,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
 
         private IMcpServersCollection? _allMcpServersCollection;
-        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: true,  collectionIdentifier: nameof(AllMcpServersCollection));
+        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllMcpServersCollection));
 
         private IMcpServersCollection? _sessionMcpServersCollection;
         private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionMcpServersCollection));

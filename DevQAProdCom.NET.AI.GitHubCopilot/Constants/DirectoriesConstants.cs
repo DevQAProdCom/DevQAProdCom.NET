@@ -8,26 +8,34 @@
             public const string AGENTS = "agents";
             public const string INSTRUCTIONS = "instructions";
             public const string SKILLS = "skills";
+            public const string HOOKS = "hooks";
 
-            public static string GetGitHubAgentsDirectory(string? directory = null)
+            public static string GetGitHubAgentsDirectory(string? rootDirectory = null)
             {
-                return string.IsNullOrEmpty(directory)
+                return string.IsNullOrEmpty(rootDirectory)
                     ? Path.Combine(GITHUB, AGENTS)
-                    : Path.Combine(directory, GITHUB, AGENTS);
+                    : Path.Combine(rootDirectory, GITHUB, AGENTS);
             }
 
-            public static string GetGitHubInstructionsDirectory(string? directory = null)
+            public static string GetGitHubInstructionsDirectory(string? rootDirectory = null)
             {
-                return string.IsNullOrEmpty(directory)
+                return string.IsNullOrEmpty(rootDirectory)
                     ? Path.Combine(GITHUB, INSTRUCTIONS)
-                    : Path.Combine(directory, GITHUB, INSTRUCTIONS);
+                    : Path.Combine(rootDirectory, GITHUB, INSTRUCTIONS);
             }
 
-            public static string GetGitHubSkillsDirectory(string? directory = null)
+            public static string GetGitHubSkillsDirectory(string? rootDirectory = null)
             {
-                return string.IsNullOrEmpty(directory)
+                return string.IsNullOrEmpty(rootDirectory)
                     ? Path.Combine(GITHUB, SKILLS)
-                    : Path.Combine(directory, GITHUB, SKILLS);
+                    : Path.Combine(rootDirectory, GITHUB, SKILLS);
+            }
+
+            public static string GetGitHubHooksDirectory(string? rootDirectory = null)
+            {
+                return string.IsNullOrEmpty(rootDirectory)
+                    ? Path.Combine(GITHUB, HOOKS)
+                    : Path.Combine(rootDirectory, GITHUB, HOOKS);
             }
         }
     }

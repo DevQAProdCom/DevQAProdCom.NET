@@ -380,3 +380,5 @@ local*
 AGENTS.md
 
 Reserve.bat
+
+.github/hooks/logs/
