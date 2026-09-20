@@ -3,8 +3,10 @@ using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.AI.Shared.Models;
+using System.Text.Json;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
@@ -57,6 +59,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IMcpServersCollection? _sessionMcpServersCollection;
         private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionMcpServersCollection));
 
+        private IHooksCollection? _allFileHooksCollection;
+        private IHooksCollection AllFileHooksCollection => _allFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(AllFileHooksCollection));
+
+        private IHooksCollection? _sessionFileHooksCollection;
+        private IHooksCollection SessionFileHooksCollection => _sessionFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(SessionFileHooksCollection), initializeFromDefaultLocations: false);
+
         public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
         {
             var mcpServer = AllMcpServersCollection.GetByIdentifier(mcpServerIdentifier);
@@ -96,6 +104,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private string? _interactionConfigurationDirectory = null;
 
         private CopilotClientMode _copilotClientMode = CopilotClientMode.Empty;
+
+        private bool _gitHubDirectoryExistedAtStart;
+        private bool _gitHubInitialDirectoryExistedAtStart;
+        private bool _gitHubDirectoryRenamed;
 
         public SessionConfigBuilder(ILogger logger, CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
@@ -436,8 +448,106 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #region Hooks
 
+        public SessionConfigBuilder WithEnableFileHooks(bool enableFileHooks)
+        {
+            LogSetting(nameof(_sessionConfig.EnableFileHooks), enableFileHooks);
+            _sessionConfig.EnableFileHooks = enableFileHooks;
+            return this;
+        }
 
+        public SessionConfigBuilder WithSessionHooks(SessionHooksBuilder sessionHooksBuilder)
+        {
+            ArgumentNullException.ThrowIfNull(sessionHooksBuilder);
+            _sessionConfig.Hooks = sessionHooksBuilder.Build();
+            _logger.Info("{TypeName} Setting '{PropertyName}' parameter.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.Hooks));
+            return this;
+        }
 
+        public SessionConfigBuilder WithHook(string hookIdentifier)
+        {
+            _logger.Info("{TypeName} Loading hook with identifier '{HookIdentifier}' from all hooks collection.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
+            var hookData = AllFileHooksCollection.GetHookDataByIdentifier(hookIdentifier);
+            SessionFileHooksCollection.AddHookData(hookData);
+            return this;
+        }
+
+        public SessionConfigBuilder WithHooks(params string[]? hooksIdentifiers)
+        {
+            if (hooksIdentifiers?.Count() > 0)
+                foreach (var hookIdentifier in hooksIdentifiers)
+                {
+                    WithHook(hookIdentifier);
+                }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithHook(string hookIdentifier, string hookInJsonFormat)
+        {
+            _logger.Info("{TypeName} Adding hook '{HookIdentifier}' from JSON string.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
+
+            var hookData = new HookModel
+            {
+                Identifier = hookIdentifier,
+                Hook = hookInJsonFormat
+            };
+
+            AllFileHooksCollection.AddHookData(hookData);
+            SessionFileHooksCollection.AddHookData(hookData);
+            return this;
+        }
+
+        public SessionConfigBuilder WithHook<T>(string hookIdentifier, T hook)
+        {
+            _logger.Info("{TypeName} Adding hook '{HookIdentifier}' from typed object.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
+
+            var hookData = new HookModel
+            {
+                Identifier = hookIdentifier,
+                Hook = hook?.ToJson()
+            };
+
+            AllFileHooksCollection.AddHookData(hookData);
+            SessionFileHooksCollection.AddHookData(hookData);
+            return this;
+        }
+
+        public SessionConfigBuilder WithHooksFromFile(string filePath)
+        {
+            IoUtils.CheckFileMustExist(filePath);
+            var hooks = AllFileHooksCollection.AddHooksDataFromFile(filePath);
+            SessionFileHooksCollection.AddHookData(hooks.ToArray());
+            return this;
+        }
+
+        public SessionConfigBuilder WithHooksFromFiles(params string[]? filePaths)
+        {
+            if (filePaths?.Count() > 0)
+                foreach (var filePath in filePaths)
+                {
+                    WithHooksFromFile(filePath);
+                }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithHooksFromDirectory(string directoryPath)
+        {
+            var hooks = AllFileHooksCollection.AddHooksDataFromDirectory(directoryPath);
+            SessionFileHooksCollection.AddHookData(hooks.ToArray());
+            return this;
+        }
+
+        public SessionConfigBuilder WithHooksFromDirectories(params string[]? directoriesPaths)
+        {
+            if (directoriesPaths?.Count() > 0)
+                foreach (var directoryPath in directoriesPaths)
+                {
+                    WithHooksFromDirectory(directoryPath);
+                }
+
+            return this;
+        }
 
         #endregion Hooks
 
@@ -685,6 +795,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             ConfigurePermissions(configurationDirectory);
             ConfigureOnPermissionRequest();
+            ConfigureHooks(configurationDirectory);
 
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
             return _sessionConfig;
@@ -914,6 +1025,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             };
         }
 
+        private void ConfigureHooks(string configurationDirectory)
+        {
+            if (!SessionFileHooksCollection.Any())
+            {
+                return;
+            }
+
+            SaveFileBasedHooks();
+            ConfigureDataInGitHubDirectory();
+        }
+
         private void SaveAiSkills(string rootDirectory)
         {
             var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
@@ -1025,8 +1147,271 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return filePath;
         }
 
+        private void EnsureWorkingDirectoryIsSet()
+        {
+            if (string.IsNullOrEmpty(_sessionConfig.WorkingDirectory))
+            {
+                throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Working directory is not set. Please ensure that the working directory is configured before performing file system operations.");
+            }
+        }
+
+        private void CheckWorkingDirectoryIsSet()
+        {
+            EnsureWorkingDirectoryIsSet();
+        }
+
+        private void SetUpGitHubDirectory()
+        {
+            CheckWorkingDirectoryIsSet();
+
+            var workingDirectory = _sessionConfig.WorkingDirectory!;
+            var gitHubDirectory = Path.Combine(workingDirectory, Const.Directories.GITHUB);
+            var gitHubInitialDirectory = Path.Combine(workingDirectory, $"{Const.Directories.GITHUB}-initial");
+
+            _gitHubDirectoryExistedAtStart = IoUtils.DirectoryExists(gitHubDirectory);
+            _gitHubInitialDirectoryExistedAtStart = IoUtils.DirectoryExists(gitHubInitialDirectory);
+            _gitHubDirectoryRenamed = _gitHubDirectoryExistedAtStart && !_gitHubInitialDirectoryExistedAtStart;
+
+            if (_gitHubDirectoryExistedAtStart && _gitHubInitialDirectoryExistedAtStart)
+            {
+                _logger.Warning("[{TypeName}] Both '{GitHubDirectory}' and '{GitHubInitialDirectory}' directories exist in working directory '{WorkingDirectory}'. The '{GitHubDirectory}' directory will be removed and '{GitHubInitialDirectory}' will be left as is.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, $"{Const.Directories.GITHUB}-initial", workingDirectory);
+                IoUtils.DeleteDirectory(gitHubDirectory);
+            }
+            else if (_gitHubDirectoryExistedAtStart)
+            {
+                _logger.Warning("[{TypeName}] Only '{GitHubDirectory}' directory exists in working directory '{WorkingDirectory}'. It will be renamed to '{GitHubInitialDirectory}' and a new empty '{GitHubDirectory}' directory will be created.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, workingDirectory, $"{Const.Directories.GITHUB}-initial");
+                Directory.Move(gitHubDirectory, gitHubInitialDirectory);
+                IoUtils.CreateDirectory(gitHubDirectory);
+            }
+            else
+            {
+                IoUtils.CreateDirectory(gitHubDirectory);
+            }
+        }
+
+        private void RestoreGitHubDirectory()
+        {
+            if (string.IsNullOrEmpty(_sessionConfig.WorkingDirectory))
+            {
+                return;
+            }
+
+            var workingDirectory = _sessionConfig.WorkingDirectory;
+            var gitHubDirectory = Path.Combine(workingDirectory, Const.Directories.GITHUB);
+            var gitHubInitialDirectory = Path.Combine(workingDirectory, $"{Const.Directories.GITHUB}-initial");
+
+            if (IoUtils.DirectoryExists(gitHubInitialDirectory))
+            {
+                if (IoUtils.DirectoryExists(gitHubDirectory))
+                {
+                    IoUtils.DeleteDirectory(gitHubDirectory);
+                }
+
+                if (_gitHubDirectoryRenamed)
+                {
+                    Directory.Move(gitHubInitialDirectory, gitHubDirectory);
+                }
+            }
+            else if (!_gitHubDirectoryExistedAtStart && IoUtils.DirectoryExists(gitHubDirectory))
+            {
+                IoUtils.DeleteDirectory(gitHubDirectory);
+            }
+        }
+
+        private void SaveFileBasedHooks()
+        {
+            if (_sessionFileHooksCollection == null || !SessionFileHooksCollection.Any())
+            {
+                return;
+            }
+
+            SaveHooks(_interactionConfigurationDirectory ?? _sessionConfig.WorkingDirectory ?? string.Empty);
+        }
+
+        private void SaveHooks(string rootDirectory)
+        {
+            if (string.IsNullOrEmpty(rootDirectory))
+            {
+                throw new ArgumentException("Root directory cannot be null or empty.", nameof(rootDirectory));
+            }
+
+            var hooksDirectory = Const.Directories.GetGitHubHooksDirectory(rootDirectory);
+            var hooksWithFilePath = SessionFileHooksCollection.Where(h => !string.IsNullOrEmpty(h.FilePath)).ToList();
+            var hooksWithoutFilePath = SessionFileHooksCollection.Where(h => string.IsNullOrEmpty(h.FilePath)).ToList();
+            var writtenFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var group in hooksWithFilePath.GroupBy(h => IoUtils.NormalizeFilePath(h.FilePath!)))
+            {
+                var sourceFilePath = group.Key;
+                var fileName = IoUtils.GetFileName(sourceFilePath);
+
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    fileName = $"{Guid.NewGuid()}.hooks.json";
+                }
+
+                if (writtenFileNames.Contains(fileName))
+                {
+                    throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Multiple hook files would have the same file name '{fileName}' in directory '{hooksDirectory}'. Please ensure that hook file names are unique.");
+                }
+
+                writtenFileNames.Add(fileName);
+                var destinationFilePath = Path.Combine(hooksDirectory, fileName);
+                var hooksByEvent = group.GroupBy(h => h.EventTriggerName).ToDictionary(g => g.Key ?? "unknown", g => g.Select(h => h.Hook).Where(hook => !string.IsNullOrEmpty(hook)).ToList());
+                WriteHooksFile(destinationFilePath, hooksByEvent);
+                CopyHookDataDirectories(group, hooksDirectory);
+            }
+
+            foreach (var hook in hooksWithoutFilePath)
+            {
+                if (string.IsNullOrEmpty(hook.Identifier))
+                {
+                    throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Programmatically added hook must have an identifier. The provided hook does not have an identifier.");
+                }
+
+                var fileName = $"{hook.Identifier}.hooks.json";
+
+                if (writtenFileNames.Contains(fileName))
+                {
+                    throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Multiple programmatic hooks would have the same file name '{fileName}' in directory '{hooksDirectory}'. Please ensure that hook identifiers are unique.");
+                }
+
+                writtenFileNames.Add(fileName);
+                var destinationFilePath = Path.Combine(hooksDirectory, fileName);
+                var hooksByEvent = new Dictionary<string, List<string?>>
+                {
+                    { hook.EventTriggerName ?? "unknown", new List<string?> { hook.Hook } }
+                };
+                WriteHooksFile(destinationFilePath, hooksByEvent);
+                CopyHookDataDirectories(new[] { hook }, hooksDirectory);
+            }
+        }
+
+        private static void WriteHooksFile(string filePath, Dictionary<string, List<string?>> hooksByEvent)
+        {
+            var hooksObject = new Dictionary<string, List<object?>>();
+
+            foreach (var eventEntry in hooksByEvent)
+            {
+                var hookObjects = new List<object?>();
+
+                foreach (var hookJson in eventEntry.Value)
+                {
+                    if (string.IsNullOrWhiteSpace(hookJson))
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        var hookObject = JsonSerializer.Deserialize<object>(hookJson);
+                        hookObjects.Add(hookObject);
+                    }
+                    catch (JsonException)
+                    {
+                        hookObjects.Add(hookJson);
+                    }
+                }
+
+                hooksObject[eventEntry.Key] = hookObjects;
+            }
+
+            var output = new Dictionary<string, object> { { "hooks", hooksObject } };
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+
+            IoUtils.WriteAllText(filePath, JsonSerializer.Serialize(output, options));
+        }
+
+        private static void CopyHookDataDirectories(IEnumerable<IHook> hooks, string hooksDirectory)
+        {
+            foreach (var hook in hooks)
+            {
+                if (hook.Data == null)
+                {
+                    continue;
+                }
+
+                foreach (var directoryFilesData in hook.Data)
+                {
+                    if (string.IsNullOrEmpty(directoryFilesData.Directory) || directoryFilesData.Files == null)
+                    {
+                        continue;
+                    }
+
+                    var destinationDirectory = Path.Combine(hooksDirectory, directoryFilesData.Directory);
+                    IoUtils.CreateDirectory(destinationDirectory);
+                    var copiedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                    foreach (var file in directoryFilesData.Files)
+                    {
+                        var fileName = IoUtils.GetFileName(file);
+
+                        if (string.IsNullOrEmpty(fileName))
+                        {
+                            continue;
+                        }
+
+                        if (copiedFileNames.Contains(fileName))
+                        {
+                            throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Duplicate file name '{fileName}' detected in directory '{destinationDirectory}'. Hook data files must have unique names within each directory.");
+                        }
+
+                        copiedFileNames.Add(fileName);
+                        var destinationFilePath = Path.Combine(destinationDirectory, fileName);
+                        IoUtils.FileCopy(file, destinationFilePath);
+                    }
+                }
+            }
+        }
+
+        private void ConfigureFileBasedHooks(string configurationDirectory)
+        {
+            var sourceHooksDirectory = Const.Directories.GetGitHubHooksDirectory(configurationDirectory);
+
+            if (!IoUtils.DirectoryExists(sourceHooksDirectory))
+            {
+                var fallbackSourceHooksDirectory = Path.Combine(configurationDirectory, $"{Const.Directories.GITHUB}-initial", Const.Directories.HOOKS);
+
+                if (IoUtils.DirectoryExists(fallbackSourceHooksDirectory))
+                {
+                    sourceHooksDirectory = fallbackSourceHooksDirectory;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (SessionFileHooksCollection.Any() && _sessionConfig.EnableFileHooks != true)
+            {
+                _logger.Info("[{TypeName}] EnableFileHooks was not set via {WithEnableFileHooksMethod}, but file-based hooks were added to the session. EnableFileHooks will be set to true automatically.", nameof(SessionConfigBuilder), nameof(WithEnableFileHooks));
+                _sessionConfig.EnableFileHooks = true;
+            }
+
+            var destinationHooksDirectory = Const.Directories.GetGitHubHooksDirectory(_sessionConfig.WorkingDirectory);
+
+            if (IoUtils.NormalizeFilePath(sourceHooksDirectory).Equals(IoUtils.NormalizeFilePath(destinationHooksDirectory), StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            IoUtils.DirectoryCopy(sourceHooksDirectory, destinationHooksDirectory);
+        }
+
+        private void ConfigureDataInGitHubDirectory()
+        {
+            SetUpGitHubDirectory();
+            ConfigureFileBasedHooks(_interactionConfigurationDirectory ?? _sessionConfig.WorkingDirectory ?? string.Empty);
+        }
+
         public void Dispose()
         {
+            RestoreGitHubDirectory();
+
             if (!string.IsNullOrEmpty(_interactionConfigurationDirectory) && IoUtils.DirectoryExists(_interactionConfigurationDirectory))
             {
                 IoUtils.DeleteDirectory(_interactionConfigurationDirectory);

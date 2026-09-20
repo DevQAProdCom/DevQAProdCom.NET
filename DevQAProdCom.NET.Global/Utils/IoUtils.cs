@@ -200,6 +200,16 @@ namespace DevQAProdCom.NET.Global.Utils
             return Path.GetFullPath(filePath).TrimEnd('\\', '/');
         }
 
+        public static string? GetFileName(string? filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                return null;
+            }
+
+            return Path.GetFileName(filePath);
+        }
+
         public static void FileCopy(string sourceFilePath, string destinationFilePath, bool overwrite = true)
         {
             CheckFileMustExist(sourceFilePath);
