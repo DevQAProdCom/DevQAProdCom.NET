@@ -1,9 +1,6 @@
 ﻿using System.Collections;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses;
-using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
-using DevQAProdCom.NET.AI.Shared.Models;
-using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace DevQAProdCom.NET.AI.Shared.Interfaces.Hooks
+﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.Hooks
 {
     public interface IHooksCollection : IEnumerable<IHook>
     {
