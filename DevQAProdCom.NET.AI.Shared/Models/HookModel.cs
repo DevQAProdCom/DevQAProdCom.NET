@@ -1,5 +1,5 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
@@ -10,7 +10,7 @@ namespace DevQAProdCom.NET.AI.Shared.Models
         public string? Identifier { get; set; }
         public string? Description { get; set; }
         public string? EventTriggerName { get; set; }
-        public List<IKeyValuesData>? Data { get; set; }
+        public List<IDirectoryFilesData>? Data { get; set; }
         public string? FilePath { get; set; }
         public string? FileName { get; }
         public string? NameFromFile { get; }

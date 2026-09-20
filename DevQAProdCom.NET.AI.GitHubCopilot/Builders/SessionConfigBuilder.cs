@@ -433,6 +433,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #endregion Skills
 
+
+        #region Hooks
+
+
+
+
+        #endregion Hooks
+
+
         public SessionConfigBuilder WithWorkingDirectory(string workingDirectory)
         {
             LogSetting(nameof(_sessionConfig.WorkingDirectory), workingDirectory);
@@ -495,8 +504,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             return this;
         }
-
-
 
         public SessionConfigBuilder WithSkipCustomInstructions(bool? skipCustomInstructions)
         {
@@ -906,9 +913,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
             };
         }
-
-
-
 
         private void SaveAiSkills(string rootDirectory)
         {

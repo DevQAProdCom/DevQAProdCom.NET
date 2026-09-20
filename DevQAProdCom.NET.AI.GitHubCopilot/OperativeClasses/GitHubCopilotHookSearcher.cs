@@ -20,7 +20,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
 
         public virtual List<IHook> Search(string path, bool userExtendedSearch = true)
         {
-
+            return null;
         }
     }
 }
