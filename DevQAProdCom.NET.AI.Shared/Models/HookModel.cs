@@ -1,5 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
+using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
@@ -19,23 +20,18 @@ namespace DevQAProdCom.NET.AI.Shared.Models
             get
             {
                 var fileName = FileName;
+
                 if (string.IsNullOrEmpty(fileName))
                 {
                     return null;
                 }
 
                 var nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-                if (nameWithoutExtension.EndsWith(".hooks", StringComparison.OrdinalIgnoreCase))
-                {
-                    return nameWithoutExtension.Substring(0, nameWithoutExtension.Length - ".hooks".Length).Trim();
-                }
 
-                if (nameWithoutExtension.EndsWith(".hook", StringComparison.OrdinalIgnoreCase))
-                {
-                    return nameWithoutExtension.Substring(0, nameWithoutExtension.Length - ".hook".Length).Trim();
-                }
-
-                return nameWithoutExtension.Trim();
+                return nameWithoutExtension
+                    .TrimEnd(".hooks", StringComparison.OrdinalIgnoreCase)
+                    .TrimEnd(".hook", StringComparison.OrdinalIgnoreCase)
+                    .Trim();
             }
         }
 

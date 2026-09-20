@@ -21,7 +21,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
         {
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _hookSearcher = new GitHubCopilotHookSearcher(new List<string>());
+            _hookSearcher = new GitHubCopilotHookSearcher(new List<string>(), _logger);
 
             if (initializeFromDefaultLocations)
             {

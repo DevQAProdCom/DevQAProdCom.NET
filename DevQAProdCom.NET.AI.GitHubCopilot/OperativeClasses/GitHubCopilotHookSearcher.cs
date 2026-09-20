@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Nodes;
+using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.AI.Shared.Models;
-using DevQAProdCom.NET.Global.Extensions;
-using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using CopilotIoUtils = DevQAProdCom.NET.AI.GitHubCopilot.Utils.IoUtils;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
@@ -12,9 +13,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
     {
         public List<string>? Locations { get; set; }
 
-        public GitHubCopilotHookSearcher(List<string> locations)
+        private readonly ILogger _logger;
+
+        public GitHubCopilotHookSearcher(List<string> locations, ILogger logger)
         {
             Locations = locations ?? new List<string>();
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public virtual List<IHook> SearchInDefaultLocations(bool useExtendedSearch = true)
@@ -41,17 +45,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
 
             if (GlobalIoUtils.FileExists(path))
             {
-                hooks.AddRange(SearchInFile(path));
+                var hooksFromFile = SearchInFile(path);
+                hooks.AddRange(hooksFromFile);
                 return hooks;
             }
 
             if (GlobalIoUtils.DirectoryExists(path))
             {
-                var files = GlobalIoUtils.GetFilesInDirectory(path, $"*{FileExtension.Json.GetDescriptionAttributeValue()}", SearchOption.TopDirectoryOnly);
+                var files = GlobalIoUtils.GetJsonFilesInDirectory(path);
 
                 foreach (var file in files)
                 {
-                    hooks.AddRange(SearchInFile(file.FullName));
+                    hooks.AddRange(SearchInFile(file));
                 }
 
                 return hooks;
@@ -100,11 +105,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                     }
                 }
             }
-            catch (JsonException)
+            catch (Exception exception)
             {
-            }
-            catch (IOException)
-            {
+                _logger.Error("[{TypeName}] Error processing hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHookSearcher), filePath, exception.Message);
             }
 
             return hooks;
@@ -118,82 +121,45 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                 FilePath = filePath
             };
 
-            var customMetadata = new Dictionary<string, string>();
-            var hookProperties = new Dictionary<string, JsonElement>();
+            string? identifier = null;
+            string? description = null;
+            List<IDirectoryFilesData>? data = null;
 
-            foreach (var property in hookEntry.EnumerateObject())
+            var hookObject = JsonNode.Parse(hookEntry.GetRawText())!.AsObject();
+
+            if (hookObject.TryGetPropertyValue("custom-metadata", out var customMetadataNode) && customMetadataNode is JsonObject customMetadataObject)
             {
-                if (property.NameEquals("custom-metadata"))
+                if (customMetadataObject.TryGetPropertyValue(nameof(HookModel.Identifier).ToLower(), out var identifierNode))
                 {
-                    if (property.Value.ValueKind == JsonValueKind.Object)
+                    identifier = identifierNode?.GetValue<string?>();
+                }
+
+                if (customMetadataObject.TryGetPropertyValue(nameof(HookModel.Description).ToLower(), out var descriptionNode))
+                {
+                    description = descriptionNode?.GetValue<string?>();
+                }
+
+                if (customMetadataObject.TryGetPropertyValue("data", out var dataNode))
+                {
+                    try
                     {
-                        foreach (var metadataProperty in property.Value.EnumerateObject())
-                        {
-                            customMetadata[metadataProperty.Name] = metadataProperty.Value.ValueKind == JsonValueKind.String
-                                ? metadataProperty.Value.GetString() ?? metadataProperty.Value.ToString()
-                                : metadataProperty.Value.ToString();
-                        }
+                        data = dataNode?.Deserialize<List<DirectoryFilesDataModel>>()?.Cast<IDirectoryFilesData>().ToList();
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger.Error("[{TypeName}] Error deserializing hook data in hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHookSearcher), filePath, exception.Message);
                     }
                 }
-                else
-                {
-                    hookProperties[property.Name] = property.Value;
-                }
+
+                hookObject.Remove("custom-metadata");
             }
 
-            if (customMetadata.TryGetValue("identifier", out var identifier) && !string.IsNullOrEmpty(identifier))
-            {
-                hookModel.Identifier = identifier;
-            }
-            else
-            {
-                hookModel.Identifier = $"{eventTriggerName}.{hookModel.NameFromFile ?? Guid.NewGuid().ToString()}";
-            }
-
-            if (customMetadata.TryGetValue("description", out var description) && !string.IsNullOrEmpty(description))
-            {
-                hookModel.Description = description;
-            }
-
-            hookModel.Hook = SerializeHookProperties(hookProperties);
+            hookModel.Identifier = identifier;
+            hookModel.Description = description;
+            hookModel.Data = data;
+            hookModel.Hook = hookObject.ToJsonString();
 
             return hookModel;
-        }
-
-        private static List<string> ExtractStringValues(JsonElement element)
-        {
-            var values = new List<string>();
-
-            if (element.ValueKind == JsonValueKind.Array)
-            {
-                foreach (var item in element.EnumerateArray())
-                {
-                    values.Add(item.ToString());
-                }
-            }
-            else
-            {
-                values.Add(element.ToString());
-            }
-
-            return values;
-        }
-
-        private static string SerializeHookProperties(Dictionary<string, JsonElement> hookProperties)
-        {
-            if (hookProperties.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
-
-            var dictionary = hookProperties.ToDictionary(p => p.Key, p => JsonSerializer.Deserialize<object>(p.Value.GetRawText()));
-            return JsonSerializer.Serialize(dictionary, options);
         }
     }
 }

@@ -113,5 +113,16 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
             var remaining = @string.Length - maxSymbols;
             return $"{@string.Substring(0, maxSymbols)}...[{remaining} symbols]";
         }
+
+        public static string TrimEnd(this string @string, string suffix, StringComparison comparisonType)
+        {
+            if (string.IsNullOrEmpty(@string) || string.IsNullOrEmpty(suffix))
+                return @string;
+
+            if (@string.EndsWith(suffix, comparisonType))
+                return @string.Substring(0, @string.Length - suffix.Length);
+
+            return @string;
+        }
     }
 }

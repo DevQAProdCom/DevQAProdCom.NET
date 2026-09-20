@@ -15,6 +15,12 @@ namespace DevQAProdCom.NET.Global.Utils
             return Directory.GetFiles(directoryPath, searchPattern, searchOption).Select(x => new FileInfo(x)).ToList();
         }
 
+        public static List<string> GetJsonFilesInDirectory(string directoryPath, SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            CheckDirectoryMustExist(directoryPath);
+            return Directory.GetFiles(directoryPath, $"*{FileExtension.Json.GetDescriptionAttributeValue()}", searchOption).ToList();
+        }
+
         public static void CleanDirectory(string? directoryPath, string searchPattern = "*.*", SearchOption searchOption = SearchOption.AllDirectories)
         {
             if (string.IsNullOrEmpty(directoryPath) || !DirectoryExists(directoryPath))
