@@ -7,10 +7,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
     public class GitHubCopilotAiInstructionsCollection : AiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>
     {
-        public GitHubCopilotAiInstructionsCollection(ILogger logger, bool initializeFromDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+        public GitHubCopilotAiInstructionsCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)
             : base(logger, initializeFromDefaultLocations: initializeFromDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
 
-        public GitHubCopilotAiInstructionsCollection(string baseFolder, ILogger logger, bool initializeFromDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+        public GitHubCopilotAiInstructionsCollection(string baseFolder, ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)
             : base(baseFolder, logger, initializeFromDefaultLocations: initializeFromDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
         protected override List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false)
         {

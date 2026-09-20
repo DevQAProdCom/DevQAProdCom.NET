@@ -14,7 +14,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
         private readonly ILogger _logger;
         private readonly IHookSearcher _hookSearcher;
 
-        public GitHubCopilotHooksCollection(ILogger logger, string? collectionIdentifier = null, bool initializeFromDefaultLocations = true)
+        public GitHubCopilotHooksCollection(ILogger logger, string? collectionIdentifier = null, bool initializeFromDefaultLocations = false)
         {
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -26,7 +26,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             }
         }
 
-        public GitHubCopilotHooksCollection(ILogger logger, IHookSearcher hookSearcher, string? collectionIdentifier = null, bool initializeFromDefaultLocations = true)
+        public GitHubCopilotHooksCollection(ILogger logger, IHookSearcher hookSearcher, string? collectionIdentifier = null, bool initializeFromDefaultLocations = false)
         {
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -18,7 +18,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         protected readonly bool UseExtendedSearch = false;
 
-        public AiEntitiesCollection(ILogger logger, bool initializeFromDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+        public AiEntitiesCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)
         {
             collectionIdentifier ??= Guid.NewGuid().ToString();
             CollectionIdentifier = collectionIdentifier;
@@ -32,7 +32,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             }
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeFromDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false) : this(logger, initializeFromDefaultLocations, collectionIdentifier, useExtendedSearch)
+        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false) : this(logger, initializeFromDefaultLocations, collectionIdentifier, useExtendedSearch)
         {
             BaseDirectory = baseFolder;
         }

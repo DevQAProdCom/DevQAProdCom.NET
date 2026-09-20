@@ -11,7 +11,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         protected ILogger Logger;
 
-        public McpServersCollection(ILogger logger, bool initializeFromDefaultLocations = true, string? collectionIdentifier = null, bool useExtendedSearch = false)
+        public McpServersCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)
         {
             Logger = logger;
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();

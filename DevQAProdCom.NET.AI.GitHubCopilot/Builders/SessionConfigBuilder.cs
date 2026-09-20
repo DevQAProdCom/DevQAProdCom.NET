@@ -31,39 +31,39 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private bool _useAgentsExtendedSearch = false;
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _allAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _sessionAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionAgentsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(SessionAgentsCollection));
 
 
         private bool _useInstructionsExtendedSearch = false;
 
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _allInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionInstructionsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(SessionInstructionsCollection));
 
         private bool _useSkillsExtendedSearch = false;
 
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _allSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
 
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionSkillsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(SessionSkillsCollection));
 
         private IMcpServersCollection? _allMcpServersCollection;
         private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllMcpServersCollection));
 
         private IMcpServersCollection? _sessionMcpServersCollection;
-        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: false, collectionIdentifier: nameof(SessionMcpServersCollection));
+        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(SessionMcpServersCollection));
 
         private IHooksCollection? _allFileHooksCollection;
-        private IHooksCollection AllFileHooksCollection => _allFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(AllFileHooksCollection));
+        private IHooksCollection AllFileHooksCollection => _allFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(AllFileHooksCollection), initializeFromDefaultLocations: true);
 
         private IHooksCollection? _sessionFileHooksCollection;
-        private IHooksCollection SessionFileHooksCollection => _sessionFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(SessionFileHooksCollection), initializeFromDefaultLocations: false);
+        private IHooksCollection SessionFileHooksCollection => _sessionFileHooksCollection ??= new GitHubCopilotHooksCollection(_logger, collectionIdentifier: nameof(SessionFileHooksCollection));
 
         public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
         {
