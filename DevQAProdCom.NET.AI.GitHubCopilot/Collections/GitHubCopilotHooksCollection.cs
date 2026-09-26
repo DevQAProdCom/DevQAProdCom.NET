@@ -42,57 +42,35 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
         {
             ArgumentNullException.ThrowIfNull(hook);
 
-            var addedIdentifier = hook.Identifier;
-            var addedFilePath = NormalizeFilePath(hook.FilePath);
+            var addedHookNormalizedFilePath = IoUtils.NormalizeFilePath(hook.FilePath);
 
-            if (string.IsNullOrEmpty(addedFilePath) && string.IsNullOrEmpty(addedIdentifier))
+            if (!string.IsNullOrEmpty(hook.Identifier))
             {
-                throw new InvalidOperationException($"[{CollectionIdentifier}] Hook must have either a valid identifier or a file path. The provided hook has neither.");
-            }
+                var existingHookWithTheSameIdentifier = _hooks.SingleOrDefault(existingHookInCollection => existingHookInCollection.Identifier == hook.Identifier);
 
-            var existingHookWithTheSameIdentifierAndSameFilePath = _hooks.SingleOrDefault(existingHookInCollection =>
-                existingHookInCollection.Identifier == addedIdentifier &&
-                !string.IsNullOrEmpty(addedIdentifier) &&
-                NormalizeFilePath(existingHookInCollection.FilePath) == addedFilePath);
-
-            if (existingHookWithTheSameIdentifierAndSameFilePath != null)
-            {
-                _hooks.Remove(existingHookWithTheSameIdentifierAndSameFilePath);
-                _hooks.Add(hook);
-                _logger.Debug("[{CollectionIdentifier}] Hook with identifier '{Identifier}' and file path '{FilePath}' already exists in the collection. It has been replaced with the new one.", $"[{CollectionIdentifier}]", addedIdentifier ?? "null", addedFilePath ?? "null");
-                return hook;
-            }
-
-            if (!string.IsNullOrEmpty(addedFilePath))
-            {
-                var existingHookWithSameFilePath = _hooks.SingleOrDefault(existingHookInCollection =>
-                    NormalizeFilePath(existingHookInCollection.FilePath) == addedFilePath);
-
-                if (existingHookWithSameFilePath != null)
+                if (existingHookWithTheSameIdentifier != null)
                 {
-                    _hooks.Remove(existingHookWithSameFilePath);
-                    _logger.Debug("[{CollectionIdentifier}] Hook with file path '{FilePath}' already exists in the collection. It has been replaced with the new one.", $"[{CollectionIdentifier}]", addedFilePath);
+                    throw new Exception($"[{CollectionIdentifier}] Hook from file with the same identifier '{hook.Identifier}' already exists in collection. " +
+                        $"FilePath: '{existingHookWithTheSameIdentifier.FilePath ?? "no filepath - added via code"}'. FilePath : '{addedHookNormalizedFilePath ?? "no filepath - added via code"}'.");
                 }
             }
 
-            if (!string.IsNullOrEmpty(addedIdentifier))
+            if (string.IsNullOrEmpty(hook.EventTriggerName))
+                throw new Exception($"[{CollectionIdentifier}] Hook with identifier '{hook.Identifier}' and filepath '{GetFilePathOrDefault(hook.FilePath)}' has no '{nameof(hook.EventTriggerName)}' set.");
+
+            if (string.IsNullOrEmpty(addedHookNormalizedFilePath) && string.IsNullOrEmpty(hook.Identifier))
+                throw new InvalidOperationException($"[{CollectionIdentifier}] Hook without file path (added programatically) must have '{nameof(hook.Identifier)}' set.");
+
+            if (!string.IsNullOrEmpty(addedHookNormalizedFilePath) && !string.IsNullOrEmpty(hook.EventTriggerName))
             {
-                var existingHooksWithTheSameIdentifier = _hooks.Where(existingHookInCollection =>
-                    existingHookInCollection.Identifier == addedIdentifier).ToList();
+                var existingHookWithTheSameFilePathAndEventTriggerName = _hooks.SingleOrDefault(existingHookInCollection =>
+                    IoUtils.NormalizeFilePath(existingHookInCollection.FilePath) == addedHookNormalizedFilePath &&
+                    existingHookInCollection.EventTriggerName == hook.EventTriggerName);
 
-                if (existingHooksWithTheSameIdentifier.Count > 0)
+                if (existingHookWithTheSameFilePathAndEventTriggerName != null)
                 {
-                    var existingFilePaths = existingHooksWithTheSameIdentifier
-                        .Select(x => x.FilePath)
-                        .Where(x => !string.IsNullOrEmpty(x))
-                        .ToList();
-
-                    if (existingFilePaths.Count > 0)
-                    {
-                        _logger.Warning(
-                            "{CollectionIdentifier} Hook with identifier '{Identifier}' is already present in the collection under file path(s): {ExistingFilePaths}. Adding another hook with the same identifier from file path '{AddedFilePath}'.",
-                            $"[{CollectionIdentifier}]", addedIdentifier, string.Join(", ", existingFilePaths), addedFilePath ?? "null");
-                    }
+                    throw new Exception($"[{CollectionIdentifier}] Hook from file with the same file path '{addedHookNormalizedFilePath}' and event trigger name '{hook.EventTriggerName}' already exists in collection. " +
+                        $"FilePath: '{GetFilePathOrDefault(existingHookWithTheSameFilePathAndEventTriggerName.FilePath)}'.");
                 }
             }
 
@@ -102,11 +80,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 
         public List<IHook> AddHookData(params IHook[] hooks)
         {
-            if (hooks == null || hooks.Length == 0)
-            {
-                throw new ArgumentException("At least one hook must be provided.", nameof(hooks));
-            }
-
             return hooks.Select(AddHookData).ToList();
         }
 
@@ -173,13 +146,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 
             if (matchingHooks.Count > 1)
             {
-                var filePaths = matchingHooks
-                    .Select(x => x.FilePath)
-                    .Where(x => !string.IsNullOrEmpty(x))
-                    .ToList();
-
-                throw new InvalidOperationException($"[{CollectionIdentifier}] There are several hooks with the same identifier '{identifier}' under several file paths: {string.Join(", ", filePaths)}. " +
-                    $"Please get the hook by file path instead of by identifier.");
+                throw new InvalidOperationException($"[{CollectionIdentifier}] There are several hooks with the same identifier '{identifier}'. " +
+                    $"File paths: {string.Join(", ", matchingHooks.Select(x => x.FilePath).Select(GetFilePathOrDefault))}. ");
             }
 
             if (matchingHooks.Count == 1)
@@ -196,39 +164,26 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
         {
             if (TryGetHooksDataByFileLocator(fileLocator, out var hooks))
             {
-                return hooks!;
+                return hooks;
             }
 
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by file locator '{fileLocator}'.");
         }
 
-        public bool TryGetHooksDataByFileLocator(string fileLocator, out List<IHook>? hooks)
+        public bool TryGetHooksDataByFileLocator(string fileLocator, out List<IHook> hooks)
         {
             hooks = new List<IHook>();
 
-            hooks.AddRange(_hooks.Where(h =>
-                !string.IsNullOrEmpty(h.FilePath) &&
-                IoUtils.NormalizeFilePath(h.FilePath).Equals(IoUtils.NormalizeFilePath(fileLocator), StringComparison.OrdinalIgnoreCase)).ToList());
+            var hooksByFilePath = _hooks.Where(h => !string.IsNullOrEmpty(h.FilePath) && IoUtils.NormalizeFilePath(h.FilePath).Equals(IoUtils.NormalizeFilePath(fileLocator), StringComparison.OrdinalIgnoreCase)).ToList();
+            if (hooks.Count == 0)
+                hooks.AddRange(_hooks.Where(h => !string.IsNullOrEmpty(h.FileName) && h.FileName.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList());
+
+            var hooksByNameFromFile = _hooks.Where(h => !string.IsNullOrEmpty(h.NameFromFile) && h.NameFromFile.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (hooks.Count == 0)
+                hooks.AddRange(hooksByNameFromFile);
 
             if (hooks.Count == 0)
-            {
-                hooks.AddRange(_hooks.Where(h =>
-                    !string.IsNullOrEmpty(h.FileName) &&
-                    h.FileName.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList());
-            }
-
-            if (hooks.Count == 0)
-            {
-                hooks.AddRange(_hooks.Where(h =>
-                    !string.IsNullOrEmpty(h.NameFromFile) &&
-                    h.NameFromFile.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList());
-            }
-
-            if (hooks.Count == 0)
-            {
-                hooks = null;
                 return false;
-            }
 
             return true;
         }
@@ -243,15 +198,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by event trigger name '{eventTriggerName}'.");
         }
 
-        public bool TryGetHooksDataByEventTriggerName(string eventTriggerName, out List<IHook>? hooks)
+        public bool TryGetHooksDataByEventTriggerName(string eventTriggerName, out List<IHook> hooks)
         {
-            hooks = _hooks.Where(h =>
-                !string.IsNullOrEmpty(h.EventTriggerName) &&
-                h.EventTriggerName.Equals(eventTriggerName, StringComparison.OrdinalIgnoreCase)).ToList();
+            hooks = _hooks.Where(h => !string.IsNullOrEmpty(h.EventTriggerName) && h.EventTriggerName.Equals(eventTriggerName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (hooks.Count == 0)
             {
-                hooks = null;
+                hooks = new List<IHook>();
                 return false;
             }
 
@@ -268,37 +221,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by file locator '{fileLocator}' and event trigger name '{eventTriggerName}'.");
         }
 
-        public bool TryGetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName, out List<IHook>? hooks)
+        public bool TryGetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName, out List<IHook> hooks)
         {
-            var hooksByLocator = new List<IHook>();
+            hooks = new();
 
-            hooksByLocator.AddRange(_hooks.Where(h =>
-                !string.IsNullOrEmpty(h.FilePath) &&
-                IoUtils.NormalizeFilePath(h.FilePath).Equals(IoUtils.NormalizeFilePath(fileLocator), StringComparison.OrdinalIgnoreCase)).ToList());
-
-            if (hooksByLocator.Count == 0)
-            {
-                hooksByLocator.AddRange(_hooks.Where(h =>
-                    !string.IsNullOrEmpty(h.FileName) &&
-                    h.FileName.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList());
-            }
-
-            if (hooksByLocator.Count == 0)
-            {
-                hooksByLocator.AddRange(_hooks.Where(h =>
-                    !string.IsNullOrEmpty(h.NameFromFile) &&
-                    h.NameFromFile.Equals(fileLocator, StringComparison.OrdinalIgnoreCase)).ToList());
-            }
-
-            hooks = hooksByLocator.Where(h =>
-                !string.IsNullOrEmpty(h.EventTriggerName) &&
-                h.EventTriggerName.Equals(eventTriggerName, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (TryGetHooksDataByFileLocator(fileLocator, out var hooksByLocator))
+                hooks = hooksByLocator.Where(h => !string.IsNullOrEmpty(h.EventTriggerName) && h.EventTriggerName.Equals(eventTriggerName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (hooks.Count == 0)
-            {
-                hooks = null;
                 return false;
-            }
 
             return true;
         }
@@ -309,8 +240,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             AddHookData(hooks.ToArray());
         }
 
-        private static string? NormalizeFilePath(string? filePath) => string.IsNullOrWhiteSpace(filePath) ? null : IoUtils.NormalizeFilePath(filePath);
-
         public IEnumerator<IHook> GetEnumerator()
         {
             return _hooks.GetEnumerator();
@@ -319,6 +248,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        private string GetFilePathOrDefault(string? filePath)
+        {
+            return string.IsNullOrEmpty(filePath) ? "No filepath  (added via code or else)" : filePath;
         }
     }
 }
