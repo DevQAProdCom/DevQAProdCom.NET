@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "sessionStart": [
+      {
+        "identifier": "session-start-hook-1",
+        "type": "command",
+        "powershell": "YOUR_POWERSHELL_COMMAND",
+        "timeoutSec": 30
+      }
+    ]
+  }
+}

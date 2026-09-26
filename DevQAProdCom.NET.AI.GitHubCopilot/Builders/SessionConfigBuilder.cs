@@ -818,7 +818,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureAgents(string configurationDirectory)
         {
             //Aggregate data on subagents for all agents added to the session. This is required because some agents may require subagents that are not available in other agents, so the session must have all subagents available to be able to run all agents in the session.
-            var sessionSubagents = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomSubagents?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomSubagents!).Distinct().ToArray();
+            var sessionSubagents = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Subagents?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Subagents!).Distinct().ToArray();
             WithAgents(sessionSubagents);
 
             foreach (var entityData in SessionAgentsCollection)
@@ -863,7 +863,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureInstructions(string configurationDirectory)
         {
             // Aggregate data on instructions from all agents in the session
-            var sessionInstructions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomInstructions?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomInstructions!).Distinct().ToArray();
+            var sessionInstructions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Instructions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Instructions!).Distinct().ToArray();
             WithInstructions(sessionInstructions);
             SaveAiInstructions(configurationDirectory);
 
@@ -891,7 +891,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureSkills(string configurationDirectory)
         {
             // Aggregate data on skills from all agents in the session
-            var sessionSkills = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomSkills?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomSkills!).Distinct().ToArray();
+            var sessionSkills = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Skills?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Skills!).Distinct().ToArray();
             WithSkills(sessionSkills);
             SaveAiSkills(configurationDirectory);
 
@@ -928,12 +928,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
                 var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
                 if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
-                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomSkills = new List<string>();
+                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomMetadata!.Skills = new List<string>();
 
                 foreach (var directory in _sessionConfig.SkillDirectories.Select(x => new DirectoryInfo(x)))
                 {
                     primaryAgentFromSessionConfig?.Skills?.Add(directory.Name);
-                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomSkills?.Add(directory.Name);
+                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomMetadata?.Skills?.Add(directory.Name);
                 }
             }
         }
@@ -941,7 +941,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public void ConfigurePermissions(string configurationDirectory)
         {
             // Aggregate data on skills from all agents in the session
-            var sessionPermissions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomPermissions?.Count() > 0).SelectMany(x => x.ConfigurationData.CustomPermissions!).Distinct().ToArray();
+            var sessionPermissions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Permissions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Permissions!).Distinct().ToArray();
             WithPermissions(sessionPermissions);
             //TODO Save Permissions Configuration to configurationDirectory if needed, similar to how agents, instructions, and skills are saved.
         }
@@ -1187,12 +1187,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             if (_gitHubDirectoryExistedAtStart && _gitHubInitialDirectoryExistedAtStart)
             {
-                _logger.Warning("[{TypeName}] Both '{GitHubDirectory}' and '{GitHubInitialDirectory}' directories exist in working directory '{WorkingDirectory}'. The '{GitHubDirectory}' directory will be removed and '{GitHubInitialDirectory}' will be left as is.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, $"{Const.Directories.GITHUB}-initial", workingDirectory);
+                _logger.Warning("[{TypeName}] Both '{GitHubDirectory}' and '{GitHubInitialDirectory}' directories exist in working directory '{WorkingDirectory}'. The '{GitHubDirectory}' directory will be removed and '{GitHubInitialDirectory}' will be left as is.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, $"{Const.Directories.GITHUB}-initial", _sessionConfig.WorkingDirectory!);
                 IoUtils.DeleteDirectory(gitHubDirectory);
             }
             else if (_gitHubDirectoryExistedAtStart)
             {
-                _logger.Warning("[{TypeName}] Only '{GitHubDirectory}' directory exists in working directory '{WorkingDirectory}'. It will be renamed to '{GitHubInitialDirectory}' and a new empty '{GitHubDirectory}' directory will be created.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, workingDirectory, $"{Const.Directories.GITHUB}-initial");
+                _logger.Warning("[{TypeName}] Only '{GitHubDirectory}' directory exists in working directory '{WorkingDirectory}'. It will be renamed to '{GitHubInitialDirectory}' and a new empty '{GitHubDirectory}' directory will be created.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, _sessionConfig.WorkingDirectory!, $"{Const.Directories.GITHUB}-initial");
                 Directory.Move(gitHubDirectory, gitHubInitialDirectory);
                 _isGitHubDirectoryInitialReserveCopyCreated = true;
 
