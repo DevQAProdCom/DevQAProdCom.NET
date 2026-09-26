@@ -32,10 +32,10 @@ namespace Tests.DevQAProdCom.NET.AI
         }
 
         [Test]
-        public async Task Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier()
+        public async Task Should_Skill_Be_Used_Using_Agent_Custom_Metadata_Skills_Field_By_Identifier()
         {
             //GIVEN
-            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Skills_Field_By_Identifier));
+            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Metadata_Skills_Field_By_Identifier));
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel))

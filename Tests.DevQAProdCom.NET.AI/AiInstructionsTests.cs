@@ -32,10 +32,10 @@ namespace Tests.DevQAProdCom.NET.AI
         }
 
         [Test]
-        public async Task Should_Instruction_Be_Used_Using_Agent_Custom_Instructions_Field_By_Identifier()
+        public async Task Should_Instruction_Be_Used_Using_Agent_Custom_Medatadata_Instructions_Field_By_Identifier()
         {
             //GIVEN
-            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForAnswerQuestionsSet1Instructions(nameof(Should_Instruction_Be_Used_Using_Agent_Custom_Instructions_Field_By_Identifier));
+            var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForAnswerQuestionsSet1Instructions(nameof(Should_Instruction_Be_Used_Using_Agent_Custom_Medatadata_Instructions_Field_By_Identifier));
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetCheckCustomInstructionsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
