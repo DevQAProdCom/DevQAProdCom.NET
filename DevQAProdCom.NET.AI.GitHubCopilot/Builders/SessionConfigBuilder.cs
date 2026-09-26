@@ -1027,6 +1027,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void ConfigureHooks(string configurationDirectory)
         {
+            var sessionHooks = SessionAgentsCollection
+                .Where(x => x.ConfigurationData?.CustomMetadata?.Hooks?.Count > 0)
+                .SelectMany(x => x.ConfigurationData!.CustomMetadata!.Hooks!)
+                .Distinct()
+                .ToArray();
+
+            WithFileBasedHooks(sessionHooks);
+
             if (SessionFileHooksCollection.Any())
             {
                 SaveFileBasedHooks();
@@ -1349,6 +1357,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     continue;
                 }
 
+                var hookFileDirectory = string.IsNullOrEmpty(hook.FilePath) ? null : Path.GetDirectoryName(hook.FilePath);
+
                 foreach (var directoryFilesData in hook.Data)
                 {
                     if (string.IsNullOrEmpty(directoryFilesData.Directory) || directoryFilesData.Files == null)
@@ -1362,7 +1372,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                     foreach (var file in directoryFilesData.Files)
                     {
-                        var fileName = IoUtils.GetFileName(file);
+                        var sourceFilePath = file;
+
+                        if (!Path.IsPathRooted(sourceFilePath) && !string.IsNullOrEmpty(hookFileDirectory))
+                        {
+                            sourceFilePath = Path.Combine(hookFileDirectory, sourceFilePath);
+                        }
+
+                        var fileName = IoUtils.GetFileName(sourceFilePath);
 
                         if (string.IsNullOrEmpty(fileName))
                         {
@@ -1376,7 +1393,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                         copiedFileNames.Add(fileName);
                         var destinationFilePath = Path.Combine(destinationDirectory, fileName);
-                        IoUtils.FileCopy(file, destinationFilePath);
+                        IoUtils.FileCopy(sourceFilePath, destinationFilePath);
                     }
                 }
             }

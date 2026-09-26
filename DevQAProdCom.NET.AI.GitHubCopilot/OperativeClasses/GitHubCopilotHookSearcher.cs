@@ -27,8 +27,17 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
 
             if (Locations == null || Locations.Count == 0)
             {
-                var defaultLocations = CopilotIoUtils.GetCopilotHooks(Directory.GetCurrentDirectory(), useExtendedSearch);
-                Locations = new List<string>(defaultLocations);
+                var currentDirectory = Directory.GetCurrentDirectory();
+                var defaultLocations = CopilotIoUtils.GetCopilotHooks(currentDirectory, useExtendedSearch);
+
+                if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
+                    && !string.IsNullOrEmpty(solutionDirectory)
+                    && solutionDirectory != currentDirectory)
+                {
+                    defaultLocations.AddRange(CopilotIoUtils.GetCopilotHooks(solutionDirectory, useExtendedSearch));
+                }
+
+                Locations = new List<string>(defaultLocations.Distinct(StringComparer.OrdinalIgnoreCase));
             }
 
             foreach (var location in Locations)
@@ -143,7 +152,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                 {
                     try
                     {
-                        data = dataNode?.Deserialize<List<DirectoryFilesDataModel>>()?.Cast<IDirectoryFilesData>().ToList();
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                        data = dataNode?.Deserialize<List<DirectoryFilesDataModel>>(options)?.Cast<IDirectoryFilesData>().ToList();
                     }
                     catch (Exception exception)
                     {

@@ -2,9 +2,19 @@
   "hooks": {
     "sessionStart": [
       {
-        "identifier": "session-start-hook-1",
+        "custom-metadata": {
+          "identifier": "session-start-hook-1",
+          "data": [
+            {
+              "directory": "scripts",
+              "files": [
+                "scripts/session-start-hook-1.ps1"
+              ]
+            }
+          ]
+        },
         "type": "command",
-        "powershell": "YOUR_POWERSHELL_COMMAND",
+        "powershell": ".github/hooks/scripts/session-start-hook-1.ps1",
         "timeoutSec": 30
       }
     ]

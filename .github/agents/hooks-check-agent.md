@@ -1,6 +1,6 @@
 ---
 name: hooks-check-agent
-description: Checks hooks.
+description: Checks hooks. The custom-metadata.hooks field lists hook identifiers such as session-start-hook-1, which runs a PowerShell script at session start.
 tools:
   - view
   - create
