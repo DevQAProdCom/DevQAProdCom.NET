@@ -1,4 +1,6 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
+﻿using System.Globalization;
+using System.Text.Json;
+using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
 using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
@@ -6,7 +8,6 @@ using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.AI.Shared.Models;
-using System.Text.Json;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.Utils;
@@ -107,7 +108,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private bool _gitHubDirectoryExistedAtStart;
         private bool _gitHubInitialDirectoryExistedAtStart;
-        private bool _gitHubDirectoryRenamed;
+        private bool _isGitHubDirectoryInitialReserveCopyCreated;
 
         public SessionConfigBuilder(ILogger logger, CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
@@ -463,7 +464,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithHook(string hookIdentifier)
+        public SessionConfigBuilder WithFileBasedHook(string hookIdentifier)
         {
             _logger.Info("{TypeName} Loading hook with identifier '{HookIdentifier}' from all hooks collection.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
             var hookData = AllFileHooksCollection.GetHookDataByIdentifier(hookIdentifier);
@@ -471,25 +472,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithHooks(params string[]? hooksIdentifiers)
+        public SessionConfigBuilder WithFileBasedHooks(params string[]? hooksIdentifiers)
         {
             if (hooksIdentifiers?.Count() > 0)
                 foreach (var hookIdentifier in hooksIdentifiers)
                 {
-                    WithHook(hookIdentifier);
+                    WithFileBasedHook(hookIdentifier);
                 }
 
             return this;
         }
 
-        public SessionConfigBuilder WithHook(string hookIdentifier, string hookInJsonFormat)
+        public SessionConfigBuilder WithFileBasedHook(string hookIdentifier, string hookInJsonFormat)
         {
             _logger.Info("{TypeName} Adding hook '{HookIdentifier}' from JSON string.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
 
             var hookData = new HookModel
             {
                 Identifier = hookIdentifier,
-                Hook = hookInJsonFormat
+                ContentValue = hookInJsonFormat
             };
 
             AllFileHooksCollection.AddHookData(hookData);
@@ -497,18 +498,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithHook<T>(string hookIdentifier, T hook)
+        public SessionConfigBuilder WithFileBasedHook<T>(string hookIdentifier, T hook) where T : class
         {
             _logger.Info("{TypeName} Adding hook '{HookIdentifier}' from typed object.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
 
             var hookData = new HookModel
             {
                 Identifier = hookIdentifier,
-                Hook = hook?.ToJson()
+                ContentValue = hook?.ToJson()
             };
 
             AllFileHooksCollection.AddHookData(hookData);
             SessionFileHooksCollection.AddHookData(hookData);
+
             return this;
         }
 
@@ -950,14 +952,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             //TODO when working directory is set to a specific path and is used unable to clean it so possibly clean particular directories for agents. instructions etc before save
 
-            //if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
-            //    _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
-            //else
-            //    IoUtils.CleanDirectory(_interactionConfigurationDirectory);
+            if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+                _interactionConfigurationDirectory = Path.Combine(Path.GetTempPath(), "AiInterationSession" + DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss.fffffff", CultureInfo.InvariantCulture));
 
-            //SaveAiAgents(_interactionConfigurationDirectory);
-            //SaveAiInstructions(_interactionConfigurationDirectory);
-            //SaveAiSkills(_interactionConfigurationDirectory);
+            SaveAiAgents(_interactionConfigurationDirectory);
+            SaveAiInstructions(_interactionConfigurationDirectory);
+            SaveAiSkills(_interactionConfigurationDirectory);
 
             return _interactionConfigurationDirectory;
         }
@@ -1027,13 +1027,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void ConfigureHooks(string configurationDirectory)
         {
-            if (!SessionFileHooksCollection.Any())
+            if (SessionFileHooksCollection.Any())
             {
-                return;
+                SaveFileBasedHooks();
+                ConfigureDataInGitHubDirectory();
             }
-
-            SaveFileBasedHooks();
-            ConfigureDataInGitHubDirectory();
         }
 
         private void SaveAiSkills(string rootDirectory)
@@ -1073,6 +1071,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             string entityTypeName)
             where TConfiguration : IAiEntityYamlConfiguration, new()
         {
+            IoUtils.CleanDirectory(directory);
+
             var entityInfos = entities.Select(entity =>
             {
                 if (!string.IsNullOrEmpty(entity.FilePath))
@@ -1147,30 +1147,43 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return filePath;
         }
 
-        private void EnsureWorkingDirectoryIsSet()
+        private void CheckWorkingDirectoryMustExist()
         {
             if (string.IsNullOrEmpty(_sessionConfig.WorkingDirectory))
             {
                 throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Working directory is not set. Please ensure that the working directory is configured before performing file system operations.");
             }
+
+            if (!IoUtils.DirectoryExists(_sessionConfig.WorkingDirectory))
+            {
+                throw new DirectoryNotFoundException($"[{nameof(SessionConfigBuilder)}] Working directory '{_sessionConfig.WorkingDirectory}' does not exist. Please ensure that the specified working directory is valid and accessible.");
+            }
         }
 
-        private void CheckWorkingDirectoryIsSet()
-        {
-            EnsureWorkingDirectoryIsSet();
-        }
+        //private void CheckInteractionConfigurationDirectoryMustExist()
+        //{
+        //    if (string.IsNullOrEmpty(_interactionConfigurationDirectory))
+        //    {
+        //        var message = $"[{nameof(SessionConfigBuilder)}] Interaction configuration directory is not set.";
+        //        throw new InvalidOperationException(message);
+        //    }
+
+        //    if (!IoUtils.DirectoryExists(_interactionConfigurationDirectory))
+        //    {
+        //        var message = $"[{nameof(SessionConfigBuilder)}] Interaction configuration directory '{_interactionConfigurationDirectory}' does not exist.";
+        //        throw new DirectoryNotFoundException(message);
+        //    }
+        //}
 
         private void SetUpGitHubDirectory()
         {
-            CheckWorkingDirectoryIsSet();
+            CheckWorkingDirectoryMustExist();
 
-            var workingDirectory = _sessionConfig.WorkingDirectory!;
-            var gitHubDirectory = Path.Combine(workingDirectory, Const.Directories.GITHUB);
-            var gitHubInitialDirectory = Path.Combine(workingDirectory, $"{Const.Directories.GITHUB}-initial");
+            var gitHubDirectory = Path.Combine(_sessionConfig.WorkingDirectory!, Const.Directories.GITHUB);
+            var gitHubInitialDirectory = Path.Combine(_sessionConfig.WorkingDirectory!, $"{Const.Directories.GITHUB}-initial");
 
             _gitHubDirectoryExistedAtStart = IoUtils.DirectoryExists(gitHubDirectory);
             _gitHubInitialDirectoryExistedAtStart = IoUtils.DirectoryExists(gitHubInitialDirectory);
-            _gitHubDirectoryRenamed = _gitHubDirectoryExistedAtStart && !_gitHubInitialDirectoryExistedAtStart;
 
             if (_gitHubDirectoryExistedAtStart && _gitHubInitialDirectoryExistedAtStart)
             {
@@ -1181,6 +1194,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             {
                 _logger.Warning("[{TypeName}] Only '{GitHubDirectory}' directory exists in working directory '{WorkingDirectory}'. It will be renamed to '{GitHubInitialDirectory}' and a new empty '{GitHubDirectory}' directory will be created.", nameof(SessionConfigBuilder), Const.Directories.GITHUB, workingDirectory, $"{Const.Directories.GITHUB}-initial");
                 Directory.Move(gitHubDirectory, gitHubInitialDirectory);
+                _isGitHubDirectoryInitialReserveCopyCreated = true;
+
                 IoUtils.CreateDirectory(gitHubDirectory);
             }
             else
@@ -1196,9 +1211,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return;
             }
 
-            var workingDirectory = _sessionConfig.WorkingDirectory;
-            var gitHubDirectory = Path.Combine(workingDirectory, Const.Directories.GITHUB);
-            var gitHubInitialDirectory = Path.Combine(workingDirectory, $"{Const.Directories.GITHUB}-initial");
+            var gitHubDirectory = Path.Combine(_sessionConfig.WorkingDirectory, Const.Directories.GITHUB);
+            var gitHubInitialDirectory = Path.Combine(_sessionConfig.WorkingDirectory, $"{Const.Directories.GITHUB}-initial");
 
             if (IoUtils.DirectoryExists(gitHubInitialDirectory))
             {
@@ -1207,7 +1221,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     IoUtils.DeleteDirectory(gitHubDirectory);
                 }
 
-                if (_gitHubDirectoryRenamed)
+                if (_isGitHubDirectoryInitialReserveCopyCreated)
                 {
                     Directory.Move(gitHubInitialDirectory, gitHubDirectory);
                 }
@@ -1225,10 +1239,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 return;
             }
 
-            SaveHooks(_interactionConfigurationDirectory ?? _sessionConfig.WorkingDirectory ?? string.Empty);
+            SaveHooks(_interactionConfigurationDirectory);
         }
 
-        private void SaveHooks(string rootDirectory)
+        private void SaveHooks(string? rootDirectory)
         {
             if (string.IsNullOrEmpty(rootDirectory))
             {
@@ -1257,7 +1271,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                 writtenFileNames.Add(fileName);
                 var destinationFilePath = Path.Combine(hooksDirectory, fileName);
-                var hooksByEvent = group.GroupBy(h => h.EventTriggerName).ToDictionary(g => g.Key ?? "unknown", g => g.Select(h => h.Hook).Where(hook => !string.IsNullOrEmpty(hook)).ToList());
+                var hooksByEvent = group.GroupBy(h => h.EventTriggerName).ToDictionary(g => g.Key ?? "unknown", g => g.Select(h => h.ContentValue).Where(hook => !string.IsNullOrEmpty(hook)).ToList());
                 WriteHooksFile(destinationFilePath, hooksByEvent);
                 CopyHookDataDirectories(group, hooksDirectory);
             }
@@ -1280,7 +1294,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 var destinationFilePath = Path.Combine(hooksDirectory, fileName);
                 var hooksByEvent = new Dictionary<string, List<string?>>
                 {
-                    { hook.EventTriggerName ?? "unknown", new List<string?> { hook.Hook } }
+                    { hook.EventTriggerName ?? "unknown", new List<string?> { hook.ContentValue } }
                 };
                 WriteHooksFile(destinationFilePath, hooksByEvent);
                 CopyHookDataDirectories(new[] { hook }, hooksDirectory);
@@ -1368,13 +1382,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private void ConfigureFileBasedHooks(string configurationDirectory)
+        private void ConfigureFileBasedHooks(string interactionConfigurationDirectory)
         {
-            var sourceHooksDirectory = Const.Directories.GetGitHubHooksDirectory(configurationDirectory);
+            var sourceHooksDirectory = Const.Directories.GetGitHubHooksDirectory(interactionConfigurationDirectory);
 
             if (!IoUtils.DirectoryExists(sourceHooksDirectory))
             {
-                var fallbackSourceHooksDirectory = Path.Combine(configurationDirectory, $"{Const.Directories.GITHUB}-initial", Const.Directories.HOOKS);
+                var fallbackSourceHooksDirectory = Path.Combine(interactionConfigurationDirectory, $"{Const.Directories.GITHUB}-initial", Const.Directories.HOOKS);
 
                 if (IoUtils.DirectoryExists(fallbackSourceHooksDirectory))
                 {
@@ -1405,7 +1419,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureDataInGitHubDirectory()
         {
             SetUpGitHubDirectory();
-            ConfigureFileBasedHooks(_interactionConfigurationDirectory ?? _sessionConfig.WorkingDirectory ?? string.Empty);
+            ConfigureFileBasedHooks(_interactionConfigurationDirectory);
         }
 
         public void Dispose()

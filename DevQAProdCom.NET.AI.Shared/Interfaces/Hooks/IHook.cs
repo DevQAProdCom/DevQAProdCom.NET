@@ -9,6 +9,6 @@
         public string? FilePath { get; set; }
         public string? FileName { get; }
         public string? NameFromFile { get; }
-        public string? Hook { get; set; }
+        public string? ContentValue { get; set; }
     }
 }

@@ -74,6 +74,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
                 }
             }
 
+            if (string.IsNullOrEmpty(hook.ContentValue))
+                throw new InvalidOperationException($"[{CollectionIdentifier}] Hook with identifier '{hook.Identifier}' and filepath '{GetFilePathOrDefault(hook.FilePath)}' has no '{nameof(hook.ContentValue)}' set.");
+
             _hooks.Add(hook);
             return hook;
         }

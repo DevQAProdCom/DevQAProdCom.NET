@@ -38,7 +38,7 @@ namespace DevQAProdCom.NET.AI.Shared.Models
         #endregion Hook Custom Metadata
 
         #region Provider Specific Hook Content
-        public string? Hook { get; set; }
+        public string? ContentValue { get; set; }
         #endregion Provider Specific Hook Content
     }
 }

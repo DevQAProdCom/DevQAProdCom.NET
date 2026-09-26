@@ -157,7 +157,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             hookModel.Identifier = identifier;
             hookModel.Description = description;
             hookModel.Data = data;
-            hookModel.Hook = hookObject.ToJsonString();
+            hookModel.ContentValue = hookObject.ToJsonString();
 
             return hookModel;
         }
