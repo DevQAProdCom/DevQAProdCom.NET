@@ -5,10 +5,11 @@ tools:
   - view
   - create
   - playwright/*
-custom-permissions:
-  - "approve-read-view-all"
-  - "approve-write-create-all"
-  - "approve-playwright-mcp-tools-all"
+custom-metadata:
+  permissions:
+    - "approve-read-view-all"
+    - "approve-write-create-all"
+    - "approve-playwright-mcp-tools-all"
 model: claude-haiku-4.5
 ---
 

@@ -1,11 +1,12 @@
 ---
 name: orchestrator-read-write-agent
 description: Orchestrates read-agent and write-agent subagents to read multiple files and aggregate their contents into a single JSON output file.
-custom-permissions:
-  - "approve-read-view-all"
-  - "approve-write-create-all"
-  - "approve-write-edit-all"
-custom-subagents:
+custom-metadata:
+  permissions:
+    - "approve-read-view-all"
+    - "approve-write-create-all"
+    - "approve-write-edit-all"
+  subagents:
     - read-agent
     - write-agent
 model: claude-haiku-4.5

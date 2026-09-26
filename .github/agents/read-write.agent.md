@@ -4,9 +4,10 @@ description: Reads a file using only the view tool and writes a copy with `_copi
 tools:
   - view
   - create
-custom-permissions:
-  - "approve-read-view-all"
-  - "approve-write-create-all"
+custom-metadata:
+  permissions:
+    - "approve-read-view-all"
+    - "approve-write-create-all"
 model: claude-haiku-4.5
 ---
 
