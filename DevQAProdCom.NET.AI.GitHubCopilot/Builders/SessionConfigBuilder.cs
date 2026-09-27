@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using System.Text.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 using DevQAProdCom.NET.AI.GitHubCopilot.Collections;
 using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
@@ -24,8 +24,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private readonly SessionConfig _sessionConfig = new();
 
 
-        private PermissionDecisionsCollection? _allPermissionDecisionsCollection;
-        private PermissionDecisionsCollection AllPermissionDecisionsCollection => _allPermissionDecisionsCollection ??= new();
+        private GitHubCopilotPermissionDecisionsCollection? _allPermissionDecisionsCollection;
+        private GitHubCopilotPermissionDecisionsCollection AllPermissionDecisionsCollection => _allPermissionDecisionsCollection ??= new();
 
         private readonly Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>> _sessionPermissionDecisions = new();
 
@@ -1273,7 +1273,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                     writtenFileNames.Add(fileName);
                     var destinationFilePath = Path.Combine(hooksDirectory, fileName);
-                    var hooksByEvent = group.GroupBy(h => h.EventTriggerName).ToDictionary(g => g.Key ?? "unknown", g => g.Select(h => h.ContentValue).Where(hook => !string.IsNullOrEmpty(hook)).ToList());
+                    var hooksByEvent = group.GroupBy(h => h.EventTriggerName).ToDictionary(g => g.Key ?? throw new Exception($"{nameof(HookModel.EventTriggerName)} of hook is not set."), g => g.Select(h => h.ContentValue).Where(hook => !string.IsNullOrEmpty(hook)).ToList());
                     WriteHooksFile(destinationFilePath, hooksByEvent);
                     CopyHookDataDirectories(group, hooksDirectory);
                 }
@@ -1296,7 +1296,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     var destinationFilePath = Path.Combine(hooksDirectory, fileName);
                     var hooksByEvent = new Dictionary<string, List<string?>>
                     {
-                        { hook.EventTriggerName ?? "unknown", new List<string?> { hook.ContentValue } }
+                        { hook.EventTriggerName ?? throw new Exception($"{nameof(HookModel.EventTriggerName)} of hook is not set."), new List<string?> { hook.ContentValue } }
                     };
 
                     WriteHooksFile(destinationFilePath, hooksByEvent);
@@ -1305,13 +1305,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private static void WriteHooksFile(string filePath, Dictionary<string, List<string?>> hooksByEvent)
+        private void WriteHooksFile(string filePath, Dictionary<string, List<string?>> hooksByEvent)
         {
-            var hooksObject = new Dictionary<string, List<object?>>();
+            var hooksObject = new JsonObject();
 
             foreach (var eventEntry in hooksByEvent)
             {
-                var hookObjects = new List<object?>();
+                var hookArray = new JsonArray();
 
                 foreach (var hookJson in eventEntry.Value)
                 {
@@ -1320,31 +1320,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                         continue;
                     }
 
-                    try
-                    {
-                        var hookObject = JsonSerializer.Deserialize<object>(hookJson);
-                        hookObjects.Add(hookObject);
-                    }
-                    catch (JsonException)
-                    {
-                        hookObjects.Add(hookJson);
-                    }
+                    hookArray.Add(JsonNode.Parse(hookJson));
                 }
 
-                hooksObject[eventEntry.Key] = hookObjects;
+                hooksObject[eventEntry.Key] = hookArray;
             }
 
-            var output = new Dictionary<string, object> { { "hooks", hooksObject } };
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
+            var output = new JsonObject { ["hooks"] = hooksObject };
+            var options = new JsonSerializerOptions { WriteIndented = true };
 
-            IoUtils.WriteAllText(filePath, JsonSerializer.Serialize(output, options));
+            IoUtils.WriteAllText(filePath, output.ToJsonString(options));
         }
 
-        private static void CopyHookDataDirectories(IEnumerable<IHook> hooks, string hooksDirectory)
+        private  void CopyHookDataDirectories(IEnumerable<IHook> hooks, string hooksDirectory)
         {
             foreach (var hook in hooks)
             {
@@ -1379,7 +1367,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                         if (string.IsNullOrEmpty(fileName))
                         {
-                            continue;
+                            throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Unable to extract file name from source file path '{sourceFilePath}'. Hook data file path must be a valid file with a name.");
                         }
 
                         if (copiedFileNames.Contains(fileName))

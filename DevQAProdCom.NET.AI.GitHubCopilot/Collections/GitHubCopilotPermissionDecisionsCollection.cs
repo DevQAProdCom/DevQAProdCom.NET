@@ -4,11 +4,11 @@ using GitHub.Copilot.Rpc;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
 {
-    public class PermissionDecisionsCollection
+    public class GitHubCopilotPermissionDecisionsCollection
     {
         private readonly Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>> _decisions;
 
-        public PermissionDecisionsCollection()
+        public GitHubCopilotPermissionDecisionsCollection()
         {
             _decisions = new Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>>();
             AddReadViewPermissionDecisions();
@@ -24,7 +24,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
                 return permissionFunc;
             }
 
-            throw new KeyNotFoundException($"Permission decision with identifier '{identifier}' is not found in {nameof(PermissionDecisionsCollection)}.");
+            throw new KeyNotFoundException($"Permission decision with identifier '{identifier}' is not found in {nameof(GitHubCopilotPermissionDecisionsCollection)}.");
         }
 
         private void AddReadViewPermissionDecisions()

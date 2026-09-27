@@ -1,4 +1,4 @@
-using GitHub.Copilot;
+﻿using GitHub.Copilot;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.Constans;
 
