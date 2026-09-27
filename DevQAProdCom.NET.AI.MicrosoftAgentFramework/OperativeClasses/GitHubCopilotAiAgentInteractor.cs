@@ -2,6 +2,7 @@
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
+using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using Microsoft.Agents.AI;
@@ -120,9 +121,21 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         {
             if (AiAgent == null)
             {
+                var directoryForInteractionConfigurationData = SetupDirectoryForInteractionConfigurationData();
+
                 var copilotClient = _gitHubCopilotClientService.GetGitHubCopilotClient();
                 await copilotClient.StartAsync(cancellationToken);
-                _sessionConfig = _sessionConfigBuilder.Build();
+
+                _sessionConfig = _sessionConfigBuilder
+                    .WithDirectoryForInteractionConfigurationData(directoryForInteractionConfigurationData)
+                    .Build();
+
+                var copilotClientOptions = _gitHubCopilotClientService.GetCopilotClientOptions();
+                copilotClientOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(CopilotClientOptions)}.json"));
+
+                var agentRunOptions = MicrosoftAiAgentInteractor.GetAgentRunOptions();
+                agentRunOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(AgentRunOptions)}.json"));
+
                 AiAgent = copilotClient.AsAIAgent(_sessionConfig, ownsClient: true);
             }
 
@@ -133,6 +146,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         {
             await base.DisposeAsync();
             await _gitHubCopilotClientService.DisposeAsync();
+            _sessionConfigBuilder?.Dispose();
         }
 
         private void AddDefaultContentHandlers()

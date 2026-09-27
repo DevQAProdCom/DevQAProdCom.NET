@@ -7,6 +7,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
     public interface IGitHubCopilotClientService : IAsyncDisposable
     {
         public GitHubCopilotClientService WithCopilotClientOptions(Func<CopilotClientOptionsBuilder, CopilotClientOptionsBuilder> updateCopilotClientOptionsFunc);
-        public CopilotClient GetGitHubCopilotClient();
+        public CopilotClient GetGitHubCopilotClient(CopilotClientOptions? copilotClientOptions = null);
+        public CopilotClientOptions GetCopilotClientOptions();
     }
 }

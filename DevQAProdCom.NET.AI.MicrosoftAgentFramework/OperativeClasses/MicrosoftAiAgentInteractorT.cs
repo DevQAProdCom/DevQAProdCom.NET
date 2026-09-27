@@ -2,7 +2,9 @@
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Constants;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
+using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Agents.AI;
 
@@ -18,6 +20,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         protected Func<IAiInteractionDataBank, IValidate>? ResponseValidationFunc = null;
 
         protected IMicrosoftAiAgentInteractor MicrosoftAiAgentInteractor;
+
+        protected string DirectoryForInteractionConfigurationData;
 
         public MicrosoftAiAgentInteractorT(IMicrosoftAiAgentInteractor microsoftAiAgentInteractor, ILogger logger)
         {
@@ -88,6 +92,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this as T;
         }
 
+        public T WithDirectoryForInteractionConfigurationData(string directoryPath)
+        {
+            DirectoryForInteractionConfigurationData = directoryPath;
+            return this as T;
+        }
+
         public virtual async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(IAiInteractionRequest request,
             Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
             int maxAttempts = 1,
@@ -107,8 +117,22 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
         public abstract Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default);
 
+        protected string SetupDirectoryForInteractionConfigurationData()
+        {
+            if (string.IsNullOrEmpty(DirectoryForInteractionConfigurationData))
+                DirectoryForInteractionConfigurationData = SharedAiIoUtils.GetTempAiInterationSessionFolder();
+
+            IoUtils.CreateDirectory(DirectoryForInteractionConfigurationData);
+            return DirectoryForInteractionConfigurationData;
+        }
+
         public virtual ValueTask DisposeAsync()
         {
+            if (!string.IsNullOrEmpty(DirectoryForInteractionConfigurationData) && IoUtils.DirectoryExists(DirectoryForInteractionConfigurationData))
+            {
+                IoUtils.DeleteDirectory(DirectoryForInteractionConfigurationData);
+            }
+
             return ValueTask.CompletedTask;
         }
     }

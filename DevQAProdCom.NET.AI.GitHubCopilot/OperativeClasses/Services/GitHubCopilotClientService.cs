@@ -29,33 +29,35 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
             return this;
         }
 
-        public CopilotClient GetGitHubCopilotClient()
+        public CopilotClient GetGitHubCopilotClient(CopilotClientOptions? copilotClientOptions = null)
         {
             if (_copilotClient == null)
             {
-                _copilotClientOptions = GetCopilotClientOptions();
+                if (copilotClientOptions != null)
+                    _copilotClientOptions = copilotClientOptions;
+                else
+                    _copilotClientOptions = GetCopilotClientOptions();
+
                 _copilotClient = new CopilotClient(_copilotClientOptions);
             }
 
             return _copilotClient;
         }
 
-        private CopilotClientOptions? GetCopilotClientOptions()
+        public CopilotClientOptions GetCopilotClientOptions()
         {
+            //Set directly without Builder
             if (_copilotClientOptions != null)
-            {
                 return _copilotClientOptions;
-            }
+
+            //Set using Builder
             if (_copilotClientOptionsBuilder != null)
             {
-                _copilotClientOptions = _copilotClientOptionsBuilder.Build();
-                return _copilotClientOptions;
+                return _copilotClientOptionsBuilder.Build();
             }
 
-            return null;
-
-            ////TODO Return Null or throw an exception if options are not set
-            //throw new InvalidOperationException("Copilot client options have not been set. Please configure the options before getting the client.");
+            //Default
+            return new CopilotClientOptions();
         }
 
         public async ValueTask DisposeAsync()
@@ -66,10 +68,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services
                 _copilotClient = null;
             }
 
-            //if (_copilotClientOptions?.BaseDirectory != null)
-            //{
-            //    Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
-            //}
+            if (!string.IsNullOrEmpty(_copilotClientOptions?.BaseDirectory))
+            {
+                Directory.Delete(_copilotClientOptions.BaseDirectory, recursive: true);
+            }
         }
     }
 }

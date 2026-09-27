@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DevQAProdCom.NET.Global.Attributes;
+using DevQAProdCom.NET.Global.Utils;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -54,6 +55,15 @@ namespace DevQAProdCom.NET.Global.Extensions
                 return string.Empty;
 
             return JsonSerializer.Serialize(@object, options ?? new JsonSerializerOptions());
+        }
+
+        public static void ToJsonFile(this object? @object, string filePath, JsonSerializerOptions? options = null)
+        {
+            if (@object == null)
+                return;
+
+            var json = @object.ToJson(options);
+            IoUtils.WriteAllText(filePath, json);
         }
 
         public static string ToYaml(this object @object, Action<SerializerBuilder>? configure = null)

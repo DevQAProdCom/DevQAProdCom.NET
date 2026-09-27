@@ -15,8 +15,10 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
     public class MicrosoftAiAgentInteractor : IMicrosoftAiAgentInteractor
     {
         protected AIAgent? AiAgent { get; set; }
-        private AgentRunOptionsBuilder? _agentRunOptionsBuilder;
+
         private AgentRunOptions? _agentRunOptions;
+        private AgentRunOptionsBuilder? _agentRunOptionsBuilder;
+
         private List<IAiContentHandler> _aiContentHandlers = new();
         private AgentSession? _session;
         private int _maxAttempts = 1;
@@ -101,6 +103,22 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
+        public AgentRunOptions GetAgentRunOptions()
+        {
+            //Set directly without Builder
+            if (_agentRunOptions != null)
+                return _agentRunOptions;
+
+            //Set using Builder
+            if (_agentRunOptionsBuilder != null)
+            {
+                return _agentRunOptionsBuilder.Build();
+            }
+
+            //Default
+            return new AgentRunOptions();
+        }
+
         public virtual async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(IAiInteractionRequest request,
             Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
             int maxAttempts = 1,
@@ -130,11 +148,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
             var currentPropmt = request.Prompt;
 
-            if (_agentRunOptionsBuilder != null)
-            {
-                _agentRunOptions = _agentRunOptionsBuilder.Build();
-            }
-
+            _agentRunOptions = GetAgentRunOptions();
 
             try
             {
