@@ -1,4 +1,6 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
@@ -14,6 +16,13 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         private readonly SessionConfigBuilder _sessionConfigBuilder;
         private SessionConfig _sessionConfig;
         private IGitHubCopilotClientService _gitHubCopilotClientService;
+
+        private JsonSerializerOptions _jsonSerializationOptions => new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
 
         public GitHubCopilotAiAgentInteractor(IGitHubCopilotClientService gitHubCopilotClientService, IMicrosoftAiAgentInteractor microsoftAiAgentInteractor, ILogger logger) : base(microsoftAiAgentInteractor, logger)
         {
@@ -131,10 +140,10 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                     .Build();
 
                 var copilotClientOptions = _gitHubCopilotClientService.GetCopilotClientOptions();
-                copilotClientOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(CopilotClientOptions)}.json"));
+                copilotClientOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(CopilotClientOptions)}.json"), _jsonSerializationOptions);
 
                 var agentRunOptions = MicrosoftAiAgentInteractor.GetAgentRunOptions();
-                agentRunOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(AgentRunOptions)}.json"));
+                agentRunOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(AgentRunOptions)}.json"), _jsonSerializationOptions);
 
                 AiAgent = copilotClient.AsAIAgent(_sessionConfig, ownsClient: true);
             }
