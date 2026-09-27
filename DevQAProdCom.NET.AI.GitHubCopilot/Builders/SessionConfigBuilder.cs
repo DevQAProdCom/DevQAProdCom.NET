@@ -796,8 +796,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ConfigureHooks(directoryForInteractionConfigurationData);
 
             ConfigureDataInGitHubDirectory(directoryForInteractionConfigurationData);
-            _sessionConfig.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(SessionConfig)}.json"));
-
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", agent, model);
 
             return _sessionConfig;
