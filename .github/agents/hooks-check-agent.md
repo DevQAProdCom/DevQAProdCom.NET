@@ -10,6 +10,7 @@ custom-metadata:
     - approve-write-create-all
   hooks:
     - on-session-start-hook-1
+    - OnSessionStartHook1
 model: claude-haiku-4.5
 ---
 

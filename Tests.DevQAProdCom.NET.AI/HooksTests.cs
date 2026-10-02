@@ -9,10 +9,10 @@ namespace Tests.DevQAProdCom.NET.AI
     internal class HooksTests : BaseTest
     {
         [Test]
-        public async Task Should_FileHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier()
+        public async Task Should_FileBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier()
         {
             var testStartTime = DateTime.UtcNow;
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
+            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
             var expectedFilePath = Path.Combine(workingDirectory, "on-session-start-hook-1.txt");
 
             await using (var agent = GetGitHubCopilotAiAgentInteractor()
@@ -35,6 +35,13 @@ namespace Tests.DevQAProdCom.NET.AI
             parsedDateTime.Should().BeAfter(testStartTime);
 
             IoUtils.DeleteDirectory(workingDirectory);
+        }
+
+        [Test]
+        public async Task Should_SdkBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier()
+        { 
+        
+        
         }
     }
 }

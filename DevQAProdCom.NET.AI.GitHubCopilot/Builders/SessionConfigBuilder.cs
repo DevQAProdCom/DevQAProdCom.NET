@@ -886,7 +886,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             ConfigurePermissions(directoryForInteractionConfigurationData);
             ConfigureOnPermissionRequest();
-            ConfigureFileBasedHooks(directoryForInteractionConfigurationData);
+            ConfigureHooks(directoryForInteractionConfigurationData);
             ConfigureSdkBasedHooks();
 
 
@@ -1046,7 +1046,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private void ConfigureFileBasedHooks(string directoryForInteractionConfigurationData)
+        private void ConfigureHooks(string directoryForInteractionConfigurationData)
         {
             var sessionHooks = SessionAgentsCollection
                 .Where(x => x.ConfigurationData?.CustomMetadata?.Hooks?.Count > 0)
@@ -1054,12 +1054,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 .Distinct()
                 .ToArray();
 
-            WithFileBasedHooks(sessionHooks);
-            SaveHooks(directoryForInteractionConfigurationData);
-        }
+            WithHooks(sessionHooks); // this overload configures both file-based and SDK-based hooks based on the identifiers found in the agents' metadata.
 
-        private void ConfigureSdkBasedHooks()
-        {
+            //Required configuration for File Based Hooks
+            SaveHooks(directoryForInteractionConfigurationData);
+
+            //Required configuration for SDK Based Hooks
             // If the session configuration does not already have hooks set, build them from the builder if available
             if (_sessionConfig.Hooks == null)
             {

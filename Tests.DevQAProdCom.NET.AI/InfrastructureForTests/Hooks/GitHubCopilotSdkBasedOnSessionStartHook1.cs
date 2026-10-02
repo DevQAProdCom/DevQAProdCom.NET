@@ -13,8 +13,8 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Hooks
             return async (input, invocation) =>
             {
                 var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
-                var content = $"on-session-start-hook-1 {timestamp}";
-                IoUtils.WriteAllText("on-session-start-hook-1.txt", content);
+                var content = $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)} {timestamp}";
+                IoUtils.WriteAllText($"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt", content);
                 return await Task.FromResult<SessionStartHookOutput?>(null);
             };
         }
