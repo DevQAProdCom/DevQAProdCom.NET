@@ -9,7 +9,7 @@ custom-metadata:
     - approve-read-view-all
     - approve-write-create-all
   hooks:
-    - session-start-hook-1
+    - on-session-start-hook-1
 model: claude-haiku-4.5
 ---
 

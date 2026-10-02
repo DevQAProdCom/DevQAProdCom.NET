@@ -13,7 +13,7 @@ namespace Tests.DevQAProdCom.NET.AI
         {
             var testStartTime = DateTime.UtcNow;
             var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
-            var expectedFilePath = Path.Combine(workingDirectory, "session-start-hook-1.txt");
+            var expectedFilePath = Path.Combine(workingDirectory, "on-session-start-hook-1.txt");
 
             await using (var agent = GetGitHubCopilotAiAgentInteractor()
                 .WithDefaultContentHandlers()
@@ -28,7 +28,7 @@ namespace Tests.DevQAProdCom.NET.AI
             IoUtils.CheckFileMustExist(expectedFilePath);
 
             var content = (await File.ReadAllTextAsync(expectedFilePath)).Trim();
-            var match = Regex.Match(content, @"^session-start-hook-1 (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6})$");
+            var match = Regex.Match(content, @"^on-session-start-hook-1 (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6})$");
             match.Success.Should().BeTrue();
 
             var parsedDateTime = DateTime.ParseExact(match.Groups[1].Value, "yyyy-MM-dd HH:mm:ss.ffffff", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
