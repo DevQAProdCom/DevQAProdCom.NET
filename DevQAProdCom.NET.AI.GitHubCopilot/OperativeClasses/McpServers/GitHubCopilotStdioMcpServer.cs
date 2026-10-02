@@ -1,7 +1,7 @@
 ﻿using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using GitHub.Copilot;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.McpServers
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 {
     public abstract class GitHubCopilotStdioMcpServer : McpServer<McpStdioServerConfig>
     {

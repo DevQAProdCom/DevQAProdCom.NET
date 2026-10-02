@@ -4,26 +4,21 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 {
-    public class GitHubCopilotSessionHooksCollection : IGitHubCopilotSessionHooksCollection
+    public class GitHubCopilotSdkBasedSessionHooksCollection : IGitHubCopilotSdkBasedSessionHooksCollection
     {
         public string CollectionIdentifier { get; }
 
-        protected List<IGitHubCopilotSessionHook> SessionHooks { get; set; } = new List<IGitHubCopilotSessionHook>();
+        protected List<IGitHubCopilotSdkBasedSessionHook> SessionHooks { get; set; } = new List<IGitHubCopilotSdkBasedSessionHook>();
 
         protected ILogger Logger;
 
-        public GitHubCopilotSessionHooksCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null)
+        public GitHubCopilotSdkBasedSessionHooksCollection(ILogger logger, string? collectionIdentifier = null)
         {
             Logger = logger;
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
-
-            if (initializeFromDefaultLocations)
-            {
-                InitializeCollectionFromDefaultLocations();
-            }
         }
 
-        public virtual IGitHubCopilotSessionHook GetByIdentifier(string identifier)
+        public virtual IGitHubCopilotSdkBasedSessionHook GetByIdentifier(string identifier)
         {
             if (TryGetByIdentifierOrDefault(identifier, out var sessionHook))
             {
@@ -35,21 +30,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
             }
         }
 
-        public virtual bool TryGetByIdentifierOrDefault(string identifier, out IGitHubCopilotSessionHook? sessionHook)
+        public virtual bool TryGetByIdentifierOrDefault(string identifier, out IGitHubCopilotSdkBasedSessionHook? sessionHook)
         {
             sessionHook = SessionHooks.SingleOrDefault(x => x.Identifier == identifier);
             return sessionHook != null;
         }
 
-        public virtual IGitHubCopilotSessionHook Add(IGitHubCopilotSessionHook sessionHook)
+        public virtual IGitHubCopilotSdkBasedSessionHook Add(IGitHubCopilotSdkBasedSessionHook sessionHook)
         {
             SessionHooks.Add(sessionHook);
             return sessionHook;
         }
 
-        protected virtual void InitializeCollectionFromDefaultLocations() { }
-
-        public IEnumerator<IGitHubCopilotSessionHook> GetEnumerator()
+        public IEnumerator<IGitHubCopilotSdkBasedSessionHook> GetEnumerator()
         {
             return SessionHooks.GetEnumerator();
         }

@@ -62,8 +62,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IMcpServersCollection? _sessionMcpServersCollection;
         private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(SessionMcpServersCollection));
 
-        private IHooksCollection _allFileHooksCollection;
-        private IHooksCollection _sessionFileHooksCollection;
+        private IFileBasedHooksCollection _allFileHooksCollection;
+        private IFileBasedHooksCollection _sessionFileHooksCollection;
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -85,7 +85,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         }
 
         public SessionConfigBuilder(ILogger logger,
-            IHooksSearcher hooksSearcher,
+            IFileBasedHooksSearcher hooksSearcher,
             ILocationsProvider? defaultLocationsProvider = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
@@ -94,8 +94,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         }
 
         public SessionConfigBuilder(ILogger logger,
-            IHooksCollection allHooksCollection,
-            IHooksCollection sessionHooksCollection,
+            IFileBasedHooksCollection allHooksCollection,
+            IFileBasedHooksCollection sessionHooksCollection,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
             ArgumentNullException.ThrowIfNull(_allFileHooksCollection);
@@ -1351,7 +1351,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IoUtils.WriteAllText(filePath, output.ToJsonString(options));
         }
 
-        private void CopyHookDataDirectories(IEnumerable<IHook> hooks, string hooksDirectory)
+        private void CopyHookDataDirectories(IEnumerable<IFileBasedHook> hooks, string hooksDirectory)
         {
             foreach (var hook in hooks)
             {

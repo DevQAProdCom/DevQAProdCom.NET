@@ -9,11 +9,11 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor();
 
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
-            IHooksSearcher hookSearcher,
+            IFileBasedHooksSearcher hookSearcher,
             ILocationsProvider? hooksDefaultLocationsProvider = null);
 
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
-            IHooksCollection allHooksCollection,
-            IHooksCollection sessionHooksCollection);
+            IFileBasedHooksCollection allHooksCollection,
+            IFileBasedHooksCollection sessionHooksCollection);
     }
 }

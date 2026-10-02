@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.McpServers;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers;
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 

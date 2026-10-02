@@ -1,4 +1,4 @@
-﻿namespace DevQAProdCom.NET.AI.GitHubCopilot.PermissionDecisions
+﻿namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.PermissionDecisions
 {
     public class BasePermissionDecisions
     {

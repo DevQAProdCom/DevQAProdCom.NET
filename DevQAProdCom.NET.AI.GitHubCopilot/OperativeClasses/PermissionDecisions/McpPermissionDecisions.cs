@@ -1,7 +1,7 @@
 ﻿using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.PermissionDecisions
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.PermissionDecisions
 {
     public class McpPermissionDecisions : BasePermissionDecisions
     {

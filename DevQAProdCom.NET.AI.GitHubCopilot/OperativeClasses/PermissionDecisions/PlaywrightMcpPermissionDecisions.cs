@@ -3,7 +3,7 @@ using DevQAProdCom.NET.Global.Extensions;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.PermissionDecisions
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.PermissionDecisions
 {
     public class PlaywrightMcpPermissionDecisions : McpPermissionDecisions
     {

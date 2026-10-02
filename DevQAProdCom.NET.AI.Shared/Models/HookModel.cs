@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Global.Utils;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class HookModel : IHook
+    public class HookModel : IFileBasedHook
     {
         #region Hook Custom Metadata
 

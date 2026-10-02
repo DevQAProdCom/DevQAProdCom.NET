@@ -1,5 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
-using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses;
+using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
@@ -16,8 +16,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
             var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
             var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();
             var logger = serviceProvider.GetRequiredService<ILogger>();
-            var hookSearcher = new GitHubCopilotHooksSearcher(logger);
-            var hooksDefaultLocationsProvider = new GitHubCopilotHooksDefaultLocationsProvider(useExtendedSearch: true);
+            var hookSearcher = new GitHubCopilotFileBasedHooksSearcher(logger);
+            var hooksDefaultLocationsProvider = new GitHubCopilotFileBasedHooksDefaultLocationsProvider(useExtendedSearch: true);
 
             return new GitHubCopilotAiAgentInteractor(
                 gitHubCopilotClientService,
@@ -28,7 +28,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
         }
 
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
-            IHooksSearcher hookSearcher,
+            IFileBasedHooksSearcher hookSearcher,
             ILocationsProvider? hooksDefaultLocationsProvider = null)
         {
             var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
@@ -44,8 +44,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
         }
 
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
-            IHooksCollection allHooksCollection,
-            IHooksCollection sessionHooksCollection)
+            IFileBasedHooksCollection allHooksCollection,
+            IFileBasedHooksCollection sessionHooksCollection)
         {
             var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
             var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();

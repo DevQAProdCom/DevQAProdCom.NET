@@ -2,11 +2,11 @@
 using CopilotIoUtils = DevQAProdCom.NET.AI.GitHubCopilot.Utils.IoUtils;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
 {
-    public class GitHubCopilotHooksDefaultLocationsProvider : BaseLocationsProvider
+    public class GitHubCopilotFileBasedHooksDefaultLocationsProvider : BaseLocationsProvider
     {
-        public GitHubCopilotHooksDefaultLocationsProvider(bool useExtendedSearch = true)
+        public GitHubCopilotFileBasedHooksDefaultLocationsProvider(bool useExtendedSearch = true)
         {
             var defaultLocations = GetDefaultLocations(useExtendedSearch);
             Locations.AddRange(defaultLocations);

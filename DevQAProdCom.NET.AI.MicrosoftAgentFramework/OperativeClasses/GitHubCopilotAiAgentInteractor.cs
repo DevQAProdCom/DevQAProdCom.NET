@@ -31,7 +31,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IGitHubCopilotClientService gitHubCopilotClientService,
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
-            IHooksSearcher hookSearcher,
+            IFileBasedHooksSearcher hookSearcher,
             ILocationsProvider? hooksDefaultLocationsProvider = null) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(logger, hookSearcher, hooksDefaultLocationsProvider);
@@ -42,8 +42,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IGitHubCopilotClientService gitHubCopilotClientService,
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
-            IHooksCollection allHooksCollection,
-            IHooksCollection sessionHooksCollection
+            IFileBasedHooksCollection allHooksCollection,
+            IFileBasedHooksCollection sessionHooksCollection
             ) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(logger, allHooksCollection, sessionHooksCollection);

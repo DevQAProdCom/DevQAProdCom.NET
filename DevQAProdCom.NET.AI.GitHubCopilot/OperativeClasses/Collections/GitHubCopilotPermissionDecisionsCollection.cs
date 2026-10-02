@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.PermissionDecisions;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.PermissionDecisions;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
 

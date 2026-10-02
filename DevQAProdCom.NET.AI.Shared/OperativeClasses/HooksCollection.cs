@@ -6,37 +6,37 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public class HooksCollection : IHooksCollection, IEnumerable<IHook>
+    public class HooksCollection : IFileBasedHooksCollection, IEnumerable<IFileBasedHook>
     {
         public string CollectionIdentifier { get; }
 
-        private readonly List<IHook> _hooks = new();
+        private readonly List<IFileBasedHook> _hooks = new();
         private readonly ILogger _logger;
-        private readonly IHooksSearcher _hookSearcher;
+        private readonly IFileBasedHooksSearcher _hookSearcher;
 
-        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher)
+        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher)
         {
             CollectionIdentifier = Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hookSearcher = hookSearcher ?? throw new ArgumentNullException(nameof(hookSearcher));
         }
 
-        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, string collectionIdentifier) : this(logger, hookSearcher)
+        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, string collectionIdentifier) : this(logger, hookSearcher)
         {
             CollectionIdentifier = collectionIdentifier;
         }
 
-        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider) : this(logger, hookSearcher)
+        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider) : this(logger, hookSearcher)
         {
             InitializeCollectionFromDefaultLocations(defaultLocationsProvider);
         }
 
-        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider, string collectionIdentifier) : this(logger, hookSearcher, defaultLocationsProvider)
+        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider, string collectionIdentifier) : this(logger, hookSearcher, defaultLocationsProvider)
         {
             CollectionIdentifier = collectionIdentifier;
         }
 
-        public IHook AddHookData(IHook hook)
+        public IFileBasedHook AddHookData(IFileBasedHook hook)
         {
             ArgumentNullException.ThrowIfNull(hook);
 
@@ -79,12 +79,12 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return hook;
         }
 
-        public List<IHook> AddHookData(params IHook[] hooks)
+        public List<IFileBasedHook> AddHookData(params IFileBasedHook[] hooks)
         {
             return hooks.Select(AddHookData).ToList();
         }
 
-        public List<IHook> AddHooksDataFromFile(string filePath)
+        public List<IFileBasedHook> AddHooksDataFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
 
@@ -100,9 +100,9 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return hooks;
         }
 
-        public List<IHook> AddHooksDataFromFiles(params string[] filesPaths)
+        public List<IFileBasedHook> AddHooksDataFromFiles(params string[] filesPaths)
         {
-            var addedHooks = new List<IHook>();
+            var addedHooks = new List<IFileBasedHook>();
 
             foreach (var filePath in filesPaths)
             {
@@ -112,16 +112,16 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedHooks;
         }
 
-        public List<IHook> AddHooksDataFromDirectory(string directoryPath)
+        public List<IFileBasedHook> AddHooksDataFromDirectory(string directoryPath)
         {
             IoUtils.CheckDirectoryMustExist(directoryPath);
             var hooks = _hookSearcher.Search(directoryPath);
             return AddHookData(hooks.ToArray());
         }
 
-        public List<IHook> AddHooksDataFromDirectories(params string[] directoriesPaths)
+        public List<IFileBasedHook> AddHooksDataFromDirectories(params string[] directoriesPaths)
         {
-            var addedHooks = new List<IHook>();
+            var addedHooks = new List<IFileBasedHook>();
 
             foreach (var directoryPath in directoriesPaths)
             {
@@ -131,7 +131,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedHooks;
         }
 
-        public IHook GetHookDataByIdentifier(string identifier)
+        public IFileBasedHook GetHookDataByIdentifier(string identifier)
         {
             if (TryGetHookDataByIdentifier(identifier, out var hook))
             {
@@ -141,7 +141,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] Hook with identifier '{identifier}' is not found in the collection.");
         }
 
-        public bool TryGetHookDataByIdentifier(string identifier, out IHook? hook)
+        public bool TryGetHookDataByIdentifier(string identifier, out IFileBasedHook? hook)
         {
             var matchingHooks = _hooks.Where(x => x.Identifier == identifier).ToList();
 
@@ -161,7 +161,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return false;
         }
 
-        public List<IHook> GetHooksDataByFileLocator(string fileLocator)
+        public List<IFileBasedHook> GetHooksDataByFileLocator(string fileLocator)
         {
             if (TryGetHooksDataByFileLocator(fileLocator, out var hooks))
             {
@@ -171,9 +171,9 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by file locator '{fileLocator}'.");
         }
 
-        public bool TryGetHooksDataByFileLocator(string fileLocator, out List<IHook> hooks)
+        public bool TryGetHooksDataByFileLocator(string fileLocator, out List<IFileBasedHook> hooks)
         {
-            hooks = new List<IHook>();
+            hooks = new List<IFileBasedHook>();
 
             var hooksByFilePath = _hooks.Where(h => !string.IsNullOrEmpty(h.FilePath) && IoUtils.NormalizeFilePath(h.FilePath).Equals(IoUtils.NormalizeFilePath(fileLocator), StringComparison.OrdinalIgnoreCase)).ToList();
             if (hooks.Count == 0)
@@ -189,7 +189,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return true;
         }
 
-        public List<IHook> GetHooksDataByEventTriggerName(string eventTriggerName)
+        public List<IFileBasedHook> GetHooksDataByEventTriggerName(string eventTriggerName)
         {
             if (TryGetHooksDataByEventTriggerName(eventTriggerName, out var hooks))
             {
@@ -199,20 +199,20 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by event trigger name '{eventTriggerName}'.");
         }
 
-        public bool TryGetHooksDataByEventTriggerName(string eventTriggerName, out List<IHook> hooks)
+        public bool TryGetHooksDataByEventTriggerName(string eventTriggerName, out List<IFileBasedHook> hooks)
         {
             hooks = _hooks.Where(h => !string.IsNullOrEmpty(h.EventTriggerName) && h.EventTriggerName.Equals(eventTriggerName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (hooks.Count == 0)
             {
-                hooks = new List<IHook>();
+                hooks = new List<IFileBasedHook>();
                 return false;
             }
 
             return true;
         }
 
-        public List<IHook> GetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName)
+        public List<IFileBasedHook> GetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName)
         {
             if (TryGetHooksDataByFileLocatorAndEventTriggerName(fileLocator, eventTriggerName, out var hooks))
             {
@@ -222,7 +222,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] No hooks found by file locator '{fileLocator}' and event trigger name '{eventTriggerName}'.");
         }
 
-        public bool TryGetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName, out List<IHook> hooks)
+        public bool TryGetHooksDataByFileLocatorAndEventTriggerName(string fileLocator, string eventTriggerName, out List<IFileBasedHook> hooks)
         {
             hooks = new();
 
@@ -247,7 +247,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             }
         }
 
-        public IEnumerator<IHook> GetEnumerator()
+        public IEnumerator<IFileBasedHook> GetEnumerator()
         {
             return _hooks.GetEnumerator();
         }

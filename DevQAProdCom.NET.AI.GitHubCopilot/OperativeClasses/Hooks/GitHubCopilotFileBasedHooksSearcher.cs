@@ -6,20 +6,20 @@ using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
 {
-    public class GitHubCopilotHooksSearcher : IHooksSearcher
+    public class GitHubCopilotFileBasedHooksSearcher : IFileBasedHooksSearcher
     {
         private readonly ILogger _logger;
 
-        public GitHubCopilotHooksSearcher(ILogger logger)
+        public GitHubCopilotFileBasedHooksSearcher(ILogger logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual List<IHook> Search(string path, bool useExtendedSearch = true)
+        public virtual List<IFileBasedHook> Search(string path, bool useExtendedSearch = true)
         {
-            var hooks = new List<IHook>();
+            var hooks = new List<IFileBasedHook>();
 
             if (IoUtils.FileExists(path))
             {
@@ -43,9 +43,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             return hooks;
         }
 
-        private List<IHook> SearchInFile(string filePath)
+        private List<IFileBasedHook> SearchInFile(string filePath)
         {
-            var hooks = new List<IHook>();
+            var hooks = new List<IFileBasedHook>();
 
             try
             {
@@ -85,13 +85,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             }
             catch (Exception exception)
             {
-                _logger.Error("[{TypeName}] Error processing hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHooksSearcher), filePath, exception.Message);
+                _logger.Error("[{TypeName}] Error processing hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotFileBasedHooksSearcher), filePath, exception.Message);
             }
 
             return hooks;
         }
 
-        private IHook? CreateHookModel(JsonElement hookEntry, string eventTriggerName, string filePath)
+        private IFileBasedHook? CreateHookModel(JsonElement hookEntry, string eventTriggerName, string filePath)
         {
             var hookModel = new HookModel
             {
@@ -126,7 +126,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                     }
                     catch (Exception exception)
                     {
-                        _logger.Error("[{TypeName}] Error deserializing hook data in hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHooksSearcher), filePath, exception.Message);
+                        _logger.Error("[{TypeName}] Error deserializing hook data in hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotFileBasedHooksSearcher), filePath, exception.Message);
                     }
                 }
 
