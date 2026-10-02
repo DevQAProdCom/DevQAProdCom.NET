@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
+﻿using System.IO;
+using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
 using DevQAProdCom.NET.Global.Utils;
 using GitHub.Copilot;
 
@@ -14,7 +15,8 @@ namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Hooks
             {
                 var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
                 var content = $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)} {timestamp}";
-                IoUtils.WriteAllText($"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt", content);
+                var outputDirectory = input.WorkingDirectory ?? Directory.GetCurrentDirectory();
+                IoUtils.WriteAllText(Path.Combine(outputDirectory, $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt"), content);
                 return await Task.FromResult<SessionStartHookOutput?>(null);
             };
         }
