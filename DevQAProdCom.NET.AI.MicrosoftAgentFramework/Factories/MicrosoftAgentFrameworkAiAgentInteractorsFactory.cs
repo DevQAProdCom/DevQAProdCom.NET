@@ -11,41 +11,31 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
 {
     public class MicrosoftAgentFrameworkAiAgentInteractorsFactory(IServiceProvider serviceProvider) : IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
-        public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor()
-        {
-            var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
-            var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();
-            var logger = serviceProvider.GetRequiredService<ILogger>();
-            var hookSearcher = new GitHubCopilotFileBasedHooksSearcher(logger);
-            var hooksDefaultLocationsProvider = new GitHubCopilotFileBasedHooksDefaultLocationsProvider(useExtendedSearch: true);
-
-            return new GitHubCopilotAiAgentInteractor(
-                gitHubCopilotClientService,
-                microsoftAiAgentInteractor,
-                logger,
-                hookSearcher,
-                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider);
-        }
-
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
-            IFileBasedHooksSearcher hookSearcher,
-            ILocationsProvider? hooksDefaultLocationsProvider = null)
+            IFileBasedHooksSearcher? hookSearcher = null,
+            ILocationsProvider? hooksDefaultLocationsProvider = null,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null)
         {
+            var logger = serviceProvider.GetRequiredService<ILogger>();
+
             var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
             var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();
-            var logger = serviceProvider.GetRequiredService<ILogger>();
+            hookSearcher ??= new GitHubCopilotFileBasedHooksSearcher(logger);
 
             return new GitHubCopilotAiAgentInteractor(
                 gitHubCopilotClientService,
                 microsoftAiAgentInteractor,
                 logger,
                 hookSearcher,
-                hooksDefaultLocationsProvider);
+                hooksDefaultLocationsProvider,
+                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection);
         }
 
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
             IFileBasedHooksCollection allHooksCollection,
-            IFileBasedHooksCollection sessionHooksCollection)
+            IFileBasedHooksCollection sessionHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection)
         {
             var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
             var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();
@@ -56,7 +46,9 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 microsoftAiAgentInteractor,
                 logger,
                 allHooksCollection,
-                sessionHooksCollection);
+                sessionHooksCollection,
+                allSdkBasedSessionHooksCollection,
+                sessionSdkBasedSessionHooksCollection);
         }
     }
 }

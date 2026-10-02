@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using DevQAProdCom.NET.AI.GitHubCopilot.Constants;
+using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.GitHubCopilot.Mappers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections;
@@ -65,6 +66,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IFileBasedHooksCollection _allFileBasedHooksCollection;
         private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
 
+        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _allSdkBasedSessionHooksCollection;
+        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _sessionSdkBasedSessionHooksCollection;
+        private SessionHooksBuilder _sessionHooksBuilder;
+
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
 
@@ -87,22 +92,33 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder(ILogger logger,
             IFileBasedHooksSearcher hooksSearcher,
             ILocationsProvider? defaultLocationsProvider = null,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
             _allFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
             _sessionFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
+
+            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
+            _sessionSdkBasedSessionHooksCollection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
         }
 
         public SessionConfigBuilder(ILogger logger,
             IFileBasedHooksCollection allFileBasedHooksCollection,
             IFileBasedHooksCollection sessionFileBasedHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
-            ArgumentNullException.ThrowIfNull(_allFileBasedHooksCollection);
-            ArgumentNullException.ThrowIfNull(_sessionFileBasedHooksCollection);
+            ArgumentNullException.ThrowIfNull(allFileBasedHooksCollection);
+            ArgumentNullException.ThrowIfNull(sessionFileBasedHooksCollection);
+            ArgumentNullException.ThrowIfNull(allSdkBasedSessionHooksCollection);
+            ArgumentNullException.ThrowIfNull(sessionSdkBasedSessionHooksCollection);
 
             _allFileBasedHooksCollection = allFileBasedHooksCollection;
             _sessionFileBasedHooksCollection = sessionFileBasedHooksCollection;
+
+            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection;
+            _sessionSdkBasedSessionHooksCollection = sessionSdkBasedSessionHooksCollection;
         }
 
         //private string? _baseDirectory = null;
@@ -435,7 +451,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #endregion Skills
 
-
         #region MCP Servers
 
         public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
@@ -456,7 +471,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #endregion MCP Servers
 
-
         #region Hooks
 
         public SessionConfigBuilder WithEnableFileHooks(bool enableFileHooks)
@@ -466,13 +480,51 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithSessionHooks(SessionHooksBuilder sessionHooksBuilder)
+        public SessionConfigBuilder WithHooks(string hookIdentifier)
         {
-            ArgumentNullException.ThrowIfNull(sessionHooksBuilder);
-            _sessionConfig.Hooks = sessionHooksBuilder.Build();
+            
+        }
+
+        public SessionConfigBuilder WithHooks(params string[]? hooksIdentifiers)
+        {
+
+        }
+ 
+        public SessionConfigBuilder WithSdkBasedHook(string identifier)
+        {
+            ArgumentNullException.ThrowIfNull(identifier);
+            var hook = _allSdkBasedSessionHooksCollection.GetByIdentifier(identifier);
+            _sessionSdkBasedSessionHooksCollection.Add(hook);
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSdkBasedHooks(params string[]? hooksIdentifiers)
+        {
+            if (hooksIdentifiers?.Count() > 0)
+                foreach (var hookIdentifier in hooksIdentifiers)
+                {
+                    WithSdkBasedHook(hookIdentifier);
+                }
+
+            return this;
+        }
+
+
+        public SessionConfigBuilder WithSdkBasedHooks(SessionHooks sessionHooks)
+        {
+            ArgumentNullException.ThrowIfNull(sessionHooks);
+            _sessionConfig.Hooks = sessionHooks;
             _logger.Info("{TypeName} Setting '{PropertyName}' parameter.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.Hooks));
             return this;
         }
+
+        public SessionConfigBuilder WithSdkBasedHooks(Func<SessionHooksBuilder, SessionHooksBuilder> updateSessionHooks)
+        {
+            _sessionHooksBuilder ??= new SessionHooksBuilder(_logger);
+            _sessionHooksBuilder = updateSessionHooks.Invoke(_sessionHooksBuilder);
+        }
+
 
         public SessionConfigBuilder WithFileBasedHook(string hookIdentifier)
         {

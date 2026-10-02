@@ -1,6 +1,7 @@
-﻿using GitHub.Copilot;
-using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.Constans;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
@@ -75,6 +76,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(updateSessionHooks);
             updateSessionHooks.Invoke(_sessionHooks);
             LogSetting(nameof(_sessionHooks), "updated via custom configuration");
+            return this;
+        }
+
+        public SessionHooksBuilder WithSessionHook(IGitHubCopilotSdkBasedSessionHook hook)
+        {
+            ArgumentNullException.ThrowIfNull(hook);
+            hook.ApplyTo(_sessionHooks);
+            LogSetting(nameof(_sessionHooks), $"added hook '{hook.GetType().Name}'");
             return this;
         }
 

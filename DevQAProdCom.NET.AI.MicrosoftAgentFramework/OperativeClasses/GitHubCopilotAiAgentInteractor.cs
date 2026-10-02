@@ -26,15 +26,18 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             Converters = { new JsonStringEnumConverter() }
         };
 
-
         public GitHubCopilotAiAgentInteractor(
             IGitHubCopilotClientService gitHubCopilotClientService,
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
             IFileBasedHooksSearcher hookSearcher,
-            ILocationsProvider? hooksDefaultLocationsProvider = null) : base(microsoftAiAgentInteractor, logger)
+            ILocationsProvider? hooksDefaultLocationsProvider = null,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger, hookSearcher, hooksDefaultLocationsProvider);
+            _sessionConfigBuilder = new SessionConfigBuilder(logger, 
+                hookSearcher, hooksDefaultLocationsProvider, 
+                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection);
+
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }
 
@@ -43,10 +46,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
             IFileBasedHooksCollection allHooksCollection,
-            IFileBasedHooksCollection sessionHooksCollection
+            IFileBasedHooksCollection sessionHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
+            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection
             ) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger, allHooksCollection, sessionHooksCollection);
+            _sessionConfigBuilder = new SessionConfigBuilder(logger, 
+                allHooksCollection, sessionHooksCollection, 
+                allSdkBasedSessionHooksCollection, sessionSdkBasedSessionHooksCollection);
+
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }
 
