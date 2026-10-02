@@ -482,17 +482,40 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithHooks(string hookIdentifier)
         {
-            
+            ArgumentNullException.ThrowIfNull(hookIdentifier);
+            _logger.Info("{TypeName} Resolving hook with identifier '{HookIdentifier}'.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
+
+            var fileBasedHookExists = _allFileBasedHooksCollection.TryGetHookDataByIdentifier(hookIdentifier, out var fileBasedHook);
+
+            if (fileBasedHookExists)
+                WithFileBasedHook(hookIdentifier);
+
+            var sdkBasedHookExists = _allSdkBasedSessionHooksCollection.TryGetByIdentifierOrDefault(hookIdentifier, out var sdkBasedSessionHook);
+            if (sdkBasedHookExists)
+                WithSdkBasedHook(hookIdentifier);
+
+
+            if (fileBasedHookExists || sdkBasedHookExists)
+                return this;
+
+            throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Hook with identifier '{hookIdentifier}' was not found in neither {nameof(_allFileBasedHooksCollection).ToNameOf()} nor {nameof(_allSdkBasedSessionHooksCollection).ToNameOf()}.");
         }
 
         public SessionConfigBuilder WithHooks(params string[]? hooksIdentifiers)
         {
+            if (hooksIdentifiers?.Count() > 0)
+                foreach (var hookIdentifier in hooksIdentifiers)
+                {
+                    WithHooks(hookIdentifier);
+                }
 
+            return this;
         }
- 
+
         public SessionConfigBuilder WithSdkBasedHook(string identifier)
         {
             ArgumentNullException.ThrowIfNull(identifier);
+            _logger.Info("{TypeName} Adding SDK based hook with identifier '{HookIdentifier}' from '{CollectionName}' collection.", $"[{nameof(SessionConfigBuilder)}]", identifier, nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
             var hook = _allSdkBasedSessionHooksCollection.GetByIdentifier(identifier);
             _sessionSdkBasedSessionHooksCollection.Add(hook);
 
@@ -510,7 +533,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-
         public SessionConfigBuilder WithSdkBasedHooks(SessionHooks sessionHooks)
         {
             ArgumentNullException.ThrowIfNull(sessionHooks);
@@ -521,8 +543,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithSdkBasedHooks(Func<SessionHooksBuilder, SessionHooksBuilder> updateSessionHooks)
         {
+            ArgumentNullException.ThrowIfNull(updateSessionHooks);
+            _logger.Info("{TypeName} Configuring SDK based hooks via '{BuilderType}'.", $"[{nameof(SessionConfigBuilder)}]", nameof(SessionHooksBuilder));
+
             _sessionHooksBuilder ??= new SessionHooksBuilder(_logger);
+
+            foreach (var hook in _sessionSdkBasedSessionHooksCollection)
+            {
+                _sessionHooksBuilder.WithSessionHook(hook);
+            }
+
             _sessionHooksBuilder = updateSessionHooks.Invoke(_sessionHooksBuilder);
+            _sessionConfig.Hooks = _sessionHooksBuilder.Build();
+            LogSetting(nameof(_sessionConfig.Hooks), $"configured via {nameof(SessionHooksBuilder)}");
+
+            return this;
         }
 
 
