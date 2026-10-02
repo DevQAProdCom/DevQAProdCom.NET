@@ -463,7 +463,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
         {
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter for server '{ServerName}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.McpServers), name);
+            LogComplexObjectSetting(nameof(_sessionConfig.McpServers), name);
             _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
             _sessionConfig.McpServers[name] = config;
             return this;
@@ -483,17 +483,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithHooks(string hookIdentifier)
         {
             ArgumentNullException.ThrowIfNull(hookIdentifier);
-            _logger.Info("{TypeName} Resolving hook with identifier '{HookIdentifier}'.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
 
             var fileBasedHookExists = _allFileBasedHooksCollection.TryGetHookDataByIdentifier(hookIdentifier, out var fileBasedHook);
-
             if (fileBasedHookExists)
                 WithFileBasedHook(hookIdentifier);
 
             var sdkBasedHookExists = _allSdkBasedSessionHooksCollection.TryGetByIdentifierOrDefault(hookIdentifier, out var sdkBasedSessionHook);
             if (sdkBasedHookExists)
                 WithSdkBasedHook(hookIdentifier);
-
 
             if (fileBasedHookExists || sdkBasedHookExists)
                 return this;
@@ -511,55 +508,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             return this;
         }
-
-        public SessionConfigBuilder WithSdkBasedHook(string identifier)
-        {
-            ArgumentNullException.ThrowIfNull(identifier);
-            _logger.Info("{TypeName} Adding SDK based hook with identifier '{HookIdentifier}' from '{CollectionName}' collection.", $"[{nameof(SessionConfigBuilder)}]", identifier, nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
-            var hook = _allSdkBasedSessionHooksCollection.GetByIdentifier(identifier);
-            _sessionSdkBasedSessionHooksCollection.Add(hook);
-
-            return this;
-        }
-
-        public SessionConfigBuilder WithSdkBasedHooks(params string[]? hooksIdentifiers)
-        {
-            if (hooksIdentifiers?.Count() > 0)
-                foreach (var hookIdentifier in hooksIdentifiers)
-                {
-                    WithSdkBasedHook(hookIdentifier);
-                }
-
-            return this;
-        }
-
-        public SessionConfigBuilder WithSdkBasedHooks(SessionHooks sessionHooks)
-        {
-            ArgumentNullException.ThrowIfNull(sessionHooks);
-            _sessionConfig.Hooks = sessionHooks;
-            _logger.Info("{TypeName} Setting '{PropertyName}' parameter.", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.Hooks));
-            return this;
-        }
-
-        public SessionConfigBuilder WithSdkBasedHooks(Func<SessionHooksBuilder, SessionHooksBuilder> updateSessionHooks)
-        {
-            ArgumentNullException.ThrowIfNull(updateSessionHooks);
-            _logger.Info("{TypeName} Configuring SDK based hooks via '{BuilderType}'.", $"[{nameof(SessionConfigBuilder)}]", nameof(SessionHooksBuilder));
-
-            _sessionHooksBuilder ??= new SessionHooksBuilder(_logger);
-
-            foreach (var hook in _sessionSdkBasedSessionHooksCollection)
-            {
-                _sessionHooksBuilder.WithSessionHook(hook);
-            }
-
-            _sessionHooksBuilder = updateSessionHooks.Invoke(_sessionHooksBuilder);
-            _sessionConfig.Hooks = _sessionHooksBuilder.Build();
-            LogSetting(nameof(_sessionConfig.Hooks), $"configured via {nameof(SessionHooksBuilder)}");
-
-            return this;
-        }
-
 
         public SessionConfigBuilder WithFileBasedHook(string hookIdentifier)
         {
@@ -611,7 +559,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithHooksFromFile(string filePath)
+        public SessionConfigBuilder WithFileBasedHooksFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
             var hooks = _allFileBasedHooksCollection.AddHooksDataFromFile(filePath);
@@ -619,37 +567,76 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithHooksFromFiles(params string[]? filePaths)
+        public SessionConfigBuilder WithFileBasedHooksFromFiles(params string[]? filePaths)
         {
             if (filePaths?.Count() > 0)
                 foreach (var filePath in filePaths)
                 {
-                    WithHooksFromFile(filePath);
+                    WithFileBasedHooksFromFile(filePath);
                 }
 
             return this;
         }
 
-        public SessionConfigBuilder WithHooksFromDirectory(string directoryPath)
+        public SessionConfigBuilder WithFileBasedHooksFromDirectory(string directoryPath)
         {
             var hooks = _allFileBasedHooksCollection.AddHooksDataFromDirectory(directoryPath);
             _sessionFileBasedHooksCollection.AddHookData(hooks.ToArray());
             return this;
         }
 
-        public SessionConfigBuilder WithHooksFromDirectories(params string[]? directoriesPaths)
+        public SessionConfigBuilder WithFileBasedHooksFromDirectories(params string[]? directoriesPaths)
         {
             if (directoriesPaths?.Count() > 0)
                 foreach (var directoryPath in directoriesPaths)
                 {
-                    WithHooksFromDirectory(directoryPath);
+                    WithFileBasedHooksFromDirectory(directoryPath);
                 }
 
             return this;
         }
 
-        #endregion Hooks
+        public SessionConfigBuilder WithSdkBasedHook(string identifier)
+        {
+            ArgumentNullException.ThrowIfNull(identifier);
+            _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Adding SDK based hook with identifier '{HookIdentifier}' from '{CollectionName}' collection.", $"{SharedLoggingConstants.Area.Config}", nameof(SessionConfigBuilder), identifier, nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
+            var hook = _allSdkBasedSessionHooksCollection.GetByIdentifier(identifier);
+            _sessionSdkBasedSessionHooksCollection.Add(hook);
 
+            return this;
+        }
+
+        public SessionConfigBuilder WithSdkBasedHooks(params string[]? hooksIdentifiers)
+        {
+            if (hooksIdentifiers?.Count() > 0)
+                foreach (var hookIdentifier in hooksIdentifiers)
+                {
+                    WithSdkBasedHook(hookIdentifier);
+                }
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithSdkBasedHooks(SessionHooks sessionHooks)
+        {
+            ArgumentNullException.ThrowIfNull(sessionHooks);
+            _sessionConfig.Hooks = sessionHooks;
+            LogComplexObjectSetting(nameof(_sessionConfig.Hooks));
+            return this;
+        }
+
+        public SessionConfigBuilder WithSdkBasedHooks(Func<SessionHooksBuilder, SessionHooksBuilder> updateSessionHooks)
+        {
+            ArgumentNullException.ThrowIfNull(updateSessionHooks);
+            _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Configuring SDK based hooks via '{BuilderType}'.", $"{SharedLoggingConstants.Area.Config}", nameof(SessionConfigBuilder), nameof(SessionHooksBuilder));
+
+            _sessionHooksBuilder ??= new SessionHooksBuilder(_logger);
+            _sessionHooksBuilder = updateSessionHooks.Invoke(_sessionHooksBuilder);
+
+            return this;
+        }
+
+        #endregion Hooks
 
         public SessionConfigBuilder WithWorkingDirectory(string workingDirectory)
         {
@@ -899,7 +886,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             ConfigurePermissions(directoryForInteractionConfigurationData);
             ConfigureOnPermissionRequest();
-            ConfigureHooks(directoryForInteractionConfigurationData);
+            ConfigureFileBasedHooks(directoryForInteractionConfigurationData);
+            ConfigureSdkBasedHooks();
+
 
             ConfigureDataInGitHubDirectory(directoryForInteractionConfigurationData);
             _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", agent, model);
@@ -1057,7 +1046,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
         }
 
-        private void ConfigureHooks(string directoryForInteractionConfigurationData)
+        private void ConfigureFileBasedHooks(string directoryForInteractionConfigurationData)
         {
             var sessionHooks = SessionAgentsCollection
                 .Where(x => x.ConfigurationData?.CustomMetadata?.Hooks?.Count > 0)
@@ -1067,6 +1056,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             WithFileBasedHooks(sessionHooks);
             SaveHooks(directoryForInteractionConfigurationData);
+        }
+
+        private void ConfigureSdkBasedHooks()
+        {
+            // If the session configuration does not already have hooks set, build them from the builder if available
+            if (_sessionConfig.Hooks == null)
+            {
+                if (_sessionHooksBuilder != null)
+                {
+                    _sessionConfig.Hooks = _sessionHooksBuilder.Build();
+                }
+            }
+
+            _sessionConfig.Hooks ??= new();
+
+            foreach (var sdkBasedHook in _sessionSdkBasedSessionHooksCollection)
+            {
+                sdkBasedHook.ApplyTo(_sessionConfig.Hooks);
+            }
         }
 
         public void ConfigurePermissions(string directoryForInteractionConfigurationData)
@@ -1542,6 +1550,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void LogSetting(string propertyName, object value)
         {
             _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Setting 🔧'{PropertyName}' parameter to '{Value}'.", $"{SharedLoggingConstants.Area.Config}", $"{nameof(SessionConfigBuilder)}", propertyName, value ?? "null");
+        }
+
+        private void LogComplexObjectSetting(string propertyName)
+        {
+            _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Setting 🔧'{PropertyName}' parameter.", $"{SharedLoggingConstants.Area.Config}", $"{nameof(SessionConfigBuilder)}", propertyName);
+        }
+
+        private void LogComplexObjectSetting(string propertyName, string context)
+        {
+            _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Setting 🔧'{PropertyName}' parameter for '{Context}'.", $"{SharedLoggingConstants.Area.Config}", $"{nameof(SessionConfigBuilder)}", propertyName, context);
         }
 
         private void LogCollectionSetting(string propertyName, IEnumerable<string> values)
