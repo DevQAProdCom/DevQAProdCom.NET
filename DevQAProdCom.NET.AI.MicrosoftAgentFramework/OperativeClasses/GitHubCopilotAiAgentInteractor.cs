@@ -4,6 +4,8 @@ using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
@@ -14,7 +16,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
     public class GitHubCopilotAiAgentInteractor : MicrosoftAiAgentInteractorT<GitHubCopilotAiAgentInteractor>
     {
         private readonly SessionConfigBuilder _sessionConfigBuilder;
-        private SessionConfig _sessionConfig;
+        private SessionConfig? _sessionConfig;
         private IGitHubCopilotClientService _gitHubCopilotClientService;
 
         private JsonSerializerOptions _jsonSerializationOptions => new()
@@ -24,9 +26,27 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             Converters = { new JsonStringEnumConverter() }
         };
 
-        public GitHubCopilotAiAgentInteractor(IGitHubCopilotClientService gitHubCopilotClientService, IMicrosoftAiAgentInteractor microsoftAiAgentInteractor, ILogger logger) : base(microsoftAiAgentInteractor, logger)
+
+        public GitHubCopilotAiAgentInteractor(
+            IGitHubCopilotClientService gitHubCopilotClientService,
+            IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
+            ILogger logger,
+            IHooksSearcher hookSearcher,
+            ILocationsProvider? hooksDefaultLocationsProvider = null) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger);
+            _sessionConfigBuilder = new SessionConfigBuilder(logger, hookSearcher, hooksDefaultLocationsProvider);
+            _gitHubCopilotClientService = gitHubCopilotClientService;
+        }
+
+        public GitHubCopilotAiAgentInteractor(
+            IGitHubCopilotClientService gitHubCopilotClientService,
+            IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
+            ILogger logger,
+            IHooksCollection allHooksCollection,
+            IHooksCollection sessionHooksCollection
+            ) : base(microsoftAiAgentInteractor, logger)
+        {
+            _sessionConfigBuilder = new SessionConfigBuilder(logger, allHooksCollection, sessionHooksCollection);
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }
 

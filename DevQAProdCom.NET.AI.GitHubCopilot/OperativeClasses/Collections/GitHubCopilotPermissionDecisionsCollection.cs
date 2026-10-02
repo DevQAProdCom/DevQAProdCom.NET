@@ -2,7 +2,7 @@
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 {
     public class GitHubCopilotPermissionDecisionsCollection
     {

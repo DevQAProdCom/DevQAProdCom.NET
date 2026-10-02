@@ -3,65 +3,34 @@ using System.Text.Json.Nodes;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.AI.Shared.Models;
+using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
-using CopilotIoUtils = DevQAProdCom.NET.AI.GitHubCopilot.Utils.IoUtils;
-using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
 {
-    public class GitHubCopilotHookSearcher : IHookSearcher
+    public class GitHubCopilotHooksSearcher : IHooksSearcher
     {
-        public List<string>? Locations { get; set; }
-
         private readonly ILogger _logger;
 
-        public GitHubCopilotHookSearcher(List<string> locations, ILogger logger)
+        public GitHubCopilotHooksSearcher(ILogger logger)
         {
-            Locations = locations ?? new List<string>();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public virtual List<IHook> SearchInDefaultLocations(bool useExtendedSearch = true)
-        {
-            var hooks = new List<IHook>();
-
-            if (Locations == null || Locations.Count == 0)
-            {
-                var currentDirectory = Directory.GetCurrentDirectory();
-                var defaultLocations = CopilotIoUtils.GetCopilotHooks(currentDirectory, useExtendedSearch);
-
-                if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
-                    && !string.IsNullOrEmpty(solutionDirectory)
-                    && solutionDirectory != currentDirectory)
-                {
-                    defaultLocations.AddRange(CopilotIoUtils.GetCopilotHooks(solutionDirectory, useExtendedSearch));
-                }
-
-                Locations = new List<string>(defaultLocations.Distinct(StringComparer.OrdinalIgnoreCase));
-            }
-
-            foreach (var location in Locations)
-            {
-                hooks.AddRange(Search(location, useExtendedSearch));
-            }
-
-            return hooks;
         }
 
         public virtual List<IHook> Search(string path, bool useExtendedSearch = true)
         {
             var hooks = new List<IHook>();
 
-            if (GlobalIoUtils.FileExists(path))
+            if (IoUtils.FileExists(path))
             {
                 var hooksFromFile = SearchInFile(path);
                 hooks.AddRange(hooksFromFile);
                 return hooks;
             }
 
-            if (GlobalIoUtils.DirectoryExists(path))
+            if (IoUtils.DirectoryExists(path))
             {
-                var files = GlobalIoUtils.GetJsonFilesInDirectory(path);
+                var files = IoUtils.GetJsonFilesInDirectory(path);
 
                 foreach (var file in files)
                 {
@@ -116,7 +85,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
             }
             catch (Exception exception)
             {
-                _logger.Error("[{TypeName}] Error processing hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHookSearcher), filePath, exception.Message);
+                _logger.Error("[{TypeName}] Error processing hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHooksSearcher), filePath, exception.Message);
             }
 
             return hooks;
@@ -157,7 +126,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses
                     }
                     catch (Exception exception)
                     {
-                        _logger.Error("[{TypeName}] Error deserializing hook data in hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHookSearcher), filePath, exception.Message);
+                        _logger.Error("[{TypeName}] Error deserializing hook data in hooks file '{FilePath}': {ErrorMessage}", nameof(GitHubCopilotHooksSearcher), filePath, exception.Message);
                     }
                 }
 

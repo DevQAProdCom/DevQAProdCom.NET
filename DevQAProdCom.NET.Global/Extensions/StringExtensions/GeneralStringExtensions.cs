@@ -124,5 +124,21 @@ namespace DevQAProdCom.NET.Global.Extensions.StringExtensions
 
             return @string;
         }
+
+        public static string ToNameOf(this string @string)
+        {
+            if (@string is null)
+                throw new ArgumentNullException(nameof(@string));
+
+            var stringWithAllowedSymbols = @string.Replace(" ", string.Empty).Replace("-", string.Empty).Replace("_", string.Empty);
+
+            if (stringWithAllowedSymbols.Length == 0)
+                throw new ArgumentException("String cannot be empty or consist only of separator symbols.", nameof(@string));
+
+            if (stringWithAllowedSymbols.Length == 1)
+                return char.ToUpperInvariant(stringWithAllowedSymbols[0]).ToString();
+
+            return char.ToUpperInvariant(stringWithAllowedSymbols[0]) + stringWithAllowedSymbols.Substring(1);
+        }
     }
 }

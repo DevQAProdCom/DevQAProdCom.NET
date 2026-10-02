@@ -42,7 +42,13 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         public virtual IMcpServer Add(IMcpServer mcpServer)
         {
+            var existingMcpServerWithIdentifier = McpServers.SingleOrDefault(x => x.Identifier == mcpServer.Identifier);
+
+            if (existingMcpServerWithIdentifier != null)
+                throw new Exception($"MCP Server with identifier '{mcpServer.Identifier}' already exists in the collection.");
+
             McpServers.Add(mcpServer);
+
             return mcpServer;
         }
 

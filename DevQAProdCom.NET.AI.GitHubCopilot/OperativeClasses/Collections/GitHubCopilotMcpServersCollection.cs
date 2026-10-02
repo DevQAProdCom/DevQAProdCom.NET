@@ -2,7 +2,7 @@
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 {
     public class GitHubCopilotMcpServersCollection : McpServersCollection
     {

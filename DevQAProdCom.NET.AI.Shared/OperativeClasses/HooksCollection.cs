@@ -1,41 +1,39 @@
 ﻿using System.Collections;
-using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses;
+using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
+namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public class GitHubCopilotHooksCollection : IHooksCollection, IEnumerable<IHook>
+    public class HooksCollection : IHooksCollection, IEnumerable<IHook>
     {
         public string CollectionIdentifier { get; }
 
         private readonly List<IHook> _hooks = new();
         private readonly ILogger _logger;
-        private readonly IHookSearcher _hookSearcher;
+        private readonly IHooksSearcher _hookSearcher;
 
-        public GitHubCopilotHooksCollection(ILogger logger, string? collectionIdentifier = null, bool initializeFromDefaultLocations = false)
+        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher)
         {
-            CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _hookSearcher = new GitHubCopilotHookSearcher(new List<string>(), _logger);
-
-            if (initializeFromDefaultLocations)
-            {
-                InitializeCollectionFromDefaultLocations();
-            }
-        }
-
-        public GitHubCopilotHooksCollection(ILogger logger, IHookSearcher hookSearcher, string? collectionIdentifier = null, bool initializeFromDefaultLocations = false)
-        {
-            CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
+            CollectionIdentifier = Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hookSearcher = hookSearcher ?? throw new ArgumentNullException(nameof(hookSearcher));
+        }
 
-            if (initializeFromDefaultLocations)
-            {
-                InitializeCollectionFromDefaultLocations();
-            }
+        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, string collectionIdentifier) : this(logger, hookSearcher)
+        {
+            CollectionIdentifier = collectionIdentifier;
+        }
+
+        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider) : this(logger, hookSearcher)
+        {
+            InitializeCollectionFromDefaultLocations(defaultLocationsProvider);
+        }
+
+        public HooksCollection(ILogger logger, IHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider, string collectionIdentifier) : this(logger, hookSearcher, defaultLocationsProvider)
+        {
+            CollectionIdentifier = collectionIdentifier;
         }
 
         public IHook AddHookData(IHook hook)
@@ -237,10 +235,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Collections
             return true;
         }
 
-        private void InitializeCollectionFromDefaultLocations()
+        private void InitializeCollectionFromDefaultLocations(ILocationsProvider? defaultLocationsProvider = null)
         {
-            var hooks = _hookSearcher.SearchInDefaultLocations();
-            AddHookData(hooks.ToArray());
+            if (defaultLocationsProvider != null)
+            {
+                foreach (var location in defaultLocationsProvider)
+                {
+                    var hooks = _hookSearcher.Search(location);
+                    AddHookData(hooks.ToArray());
+                }
+            }
         }
 
         public IEnumerator<IHook> GetEnumerator()

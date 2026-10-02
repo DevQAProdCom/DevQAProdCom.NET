@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
-using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.DependencyInjection;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
@@ -17,7 +16,6 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.DependencyInjection
 
         public static IServiceCollection AddGitHubCopilotAiAgentInteractor(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddTransient<IGitHubCopilotClientService, GitHubCopilotClientService>();
             serviceCollection.AddTransient<GitHubCopilotAiAgentInteractor>();
             return serviceCollection;
         }
@@ -32,7 +30,11 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.DependencyInjection
         public static IServiceCollection AddMicrosoftAgentFrameworkDependencies(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddMicrosoftAiAgentInteractor();
+
+            serviceCollection.AddGitHubCopilotClientService();
+            serviceCollection.AddGitHubCopilotHooksSearcher();
             serviceCollection.AddGitHubCopilotAiAgentInteractor();
+
             serviceCollection.AddMicrosoftAgentFrameworkAiAgentInteractorsFactory();
 
             return serviceCollection;
