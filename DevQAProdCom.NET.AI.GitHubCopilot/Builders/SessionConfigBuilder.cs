@@ -90,7 +90,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
             _allFileHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileHooksCollection).ToNameOf());
-            _sessionFileHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_sessionFileHooksCollection).ToNameOf());
+            _sessionFileHooksCollection = new HooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileHooksCollection).ToNameOf());
         }
 
         public SessionConfigBuilder(ILogger logger,
