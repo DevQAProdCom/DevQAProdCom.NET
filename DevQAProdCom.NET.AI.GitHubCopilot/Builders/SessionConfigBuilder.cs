@@ -62,8 +62,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IMcpServersCollection? _sessionMcpServersCollection;
         private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(SessionMcpServersCollection));
 
-        private IFileBasedHooksCollection _allFileHooksCollection;
-        private IFileBasedHooksCollection _sessionFileHooksCollection;
+        private IFileBasedHooksCollection _allFileBasedHooksCollection;
+        private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -89,20 +89,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ILocationsProvider? defaultLocationsProvider = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
-            _allFileHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileHooksCollection).ToNameOf());
-            _sessionFileHooksCollection = new HooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileHooksCollection).ToNameOf());
+            _allFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
+            _sessionFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
         }
 
         public SessionConfigBuilder(ILogger logger,
-            IFileBasedHooksCollection allHooksCollection,
-            IFileBasedHooksCollection sessionHooksCollection,
+            IFileBasedHooksCollection allFileBasedHooksCollection,
+            IFileBasedHooksCollection sessionFileBasedHooksCollection,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
-            ArgumentNullException.ThrowIfNull(_allFileHooksCollection);
-            ArgumentNullException.ThrowIfNull(_sessionFileHooksCollection);
+            ArgumentNullException.ThrowIfNull(_allFileBasedHooksCollection);
+            ArgumentNullException.ThrowIfNull(_sessionFileBasedHooksCollection);
 
-            _allFileHooksCollection = allHooksCollection;
-            _sessionFileHooksCollection = sessionHooksCollection;
+            _allFileBasedHooksCollection = allFileBasedHooksCollection;
+            _sessionFileBasedHooksCollection = sessionFileBasedHooksCollection;
         }
 
         //private string? _baseDirectory = null;
@@ -477,8 +477,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithFileBasedHook(string hookIdentifier)
         {
             _logger.Info("{TypeName} Loading hook with identifier '{HookIdentifier}' from all hooks collection.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
-            var hookData = _allFileHooksCollection.GetHookDataByIdentifier(hookIdentifier);
-            _sessionFileHooksCollection.AddHookData(hookData);
+            var hookData = _allFileBasedHooksCollection.GetHookDataByIdentifier(hookIdentifier);
+            _sessionFileBasedHooksCollection.AddHookData(hookData);
             return this;
         }
 
@@ -503,8 +503,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 ContentValue = hookInJsonFormat
             };
 
-            _allFileHooksCollection.AddHookData(hookData);
-            _sessionFileHooksCollection.AddHookData(hookData);
+            _allFileBasedHooksCollection.AddHookData(hookData);
+            _sessionFileBasedHooksCollection.AddHookData(hookData);
             return this;
         }
 
@@ -518,8 +518,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 ContentValue = hook?.ToJson()
             };
 
-            _allFileHooksCollection.AddHookData(hookData);
-            _sessionFileHooksCollection.AddHookData(hookData);
+            _allFileBasedHooksCollection.AddHookData(hookData);
+            _sessionFileBasedHooksCollection.AddHookData(hookData);
 
             return this;
         }
@@ -527,8 +527,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithHooksFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var hooks = _allFileHooksCollection.AddHooksDataFromFile(filePath);
-            _sessionFileHooksCollection.AddHookData(hooks.ToArray());
+            var hooks = _allFileBasedHooksCollection.AddHooksDataFromFile(filePath);
+            _sessionFileBasedHooksCollection.AddHookData(hooks.ToArray());
             return this;
         }
 
@@ -545,8 +545,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithHooksFromDirectory(string directoryPath)
         {
-            var hooks = _allFileHooksCollection.AddHooksDataFromDirectory(directoryPath);
-            _sessionFileHooksCollection.AddHookData(hooks.ToArray());
+            var hooks = _allFileBasedHooksCollection.AddHooksDataFromDirectory(directoryPath);
+            _sessionFileBasedHooksCollection.AddHookData(hooks.ToArray());
             return this;
         }
 
@@ -1266,13 +1266,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void SaveHooks(string directoryForInteractionConfigurationData)
         {
-            if (_sessionFileHooksCollection.Any())
+            if (_sessionFileBasedHooksCollection.Any())
             {
                 IoUtils.CheckDirectoryMustExist(directoryForInteractionConfigurationData);
 
                 var hooksDirectory = Const.Directories.GetGitHubHooksDirectory(directoryForInteractionConfigurationData);
-                var hooksWithFilePath = _sessionFileHooksCollection.Where(h => !string.IsNullOrEmpty(h.FilePath)).ToList();
-                var hooksWithoutFilePath = _sessionFileHooksCollection.Where(h => string.IsNullOrEmpty(h.FilePath)).ToList();
+                var hooksWithFilePath = _sessionFileBasedHooksCollection.Where(h => !string.IsNullOrEmpty(h.FilePath)).ToList();
+                var hooksWithoutFilePath = _sessionFileBasedHooksCollection.Where(h => string.IsNullOrEmpty(h.FilePath)).ToList();
                 var writtenFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 foreach (var group in hooksWithFilePath.GroupBy(h => IoUtils.NormalizeFilePath(h.FilePath!)))
@@ -1420,7 +1420,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 }
             }
 
-            if (_sessionFileHooksCollection.Any() && _sessionConfig.EnableFileHooks != true)
+            if (_sessionFileBasedHooksCollection.Any() && _sessionConfig.EnableFileHooks != true)
             {
                 _logger.Info("[{TypeName}] EnableFileHooks was not set via {WithEnableFileHooksMethod}, but file-based hooks were added to the session. EnableFileHooks will be set to true automatically.", nameof(SessionConfigBuilder), nameof(WithEnableFileHooks));
                 _sessionConfig.EnableFileHooks = true;
