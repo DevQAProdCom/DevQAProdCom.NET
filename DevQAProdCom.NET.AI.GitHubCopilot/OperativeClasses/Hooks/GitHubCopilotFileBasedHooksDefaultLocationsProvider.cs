@@ -6,22 +6,22 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
 {
     public class GitHubCopilotFileBasedHooksDefaultLocationsProvider : BaseLocationsProvider
     {
-        public GitHubCopilotFileBasedHooksDefaultLocationsProvider(bool useExtendedSearch = true)
+        public GitHubCopilotFileBasedHooksDefaultLocationsProvider(string? rootDirectory = null, bool useExtendedSearch = true)
         {
-            var defaultLocations = GetDefaultLocations(useExtendedSearch);
+            var defaultLocations = GetDefaultLocations(rootDirectory, useExtendedSearch);
             Locations.AddRange(defaultLocations);
         }
 
-        public List<string> GetDefaultLocations(bool useExtendedSearch = true)
+        public List<string> GetDefaultLocations(string? rootDirectory = null, bool useExtendedSearch = true)
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
-            var defaultLocations = CopilotIoUtils.GetCopilotHooks(currentDirectory, useExtendedSearch);
+            var currentDirectory = rootDirectory ?? Directory.GetCurrentDirectory();
+            var defaultLocations = CopilotIoUtils.GetFilesWithCopilotHooks(currentDirectory, useExtendedSearch);
 
             if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
                 && !string.IsNullOrEmpty(solutionDirectory)
                 && solutionDirectory != currentDirectory)
             {
-                defaultLocations.AddRange(CopilotIoUtils.GetCopilotHooks(solutionDirectory, useExtendedSearch));
+                defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotHooks(solutionDirectory, useExtendedSearch));
             }
 
             return defaultLocations.Distinct(StringComparer.OrdinalIgnoreCase).ToList();

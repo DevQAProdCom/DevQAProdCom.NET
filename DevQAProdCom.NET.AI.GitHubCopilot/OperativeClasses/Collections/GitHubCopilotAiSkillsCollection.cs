@@ -17,7 +17,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 
         protected override List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false)
         {
-            return IoUtils.GetCopilotSkills(directory, useExtendedSearch);
+            return IoUtils.GetFilesWithCopilotSkills(directory, useExtendedSearch);
         }
     }
 }

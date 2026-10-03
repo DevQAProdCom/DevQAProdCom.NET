@@ -14,7 +14,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
             : base(baseFolder, logger, initializeFromDefaultLocations: initializeFromDefaultLocations, collectionIdentifier: collectionIdentifier, useExtendedSearch: useExtendedSearch) { }
         protected override List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false)
         {
-            return IoUtils.GetCopilotInstructions(directory, useExtendedSearch);
+            return IoUtils.GetFilesWithCopilotInstructions(directory, useExtendedSearch);
         }
     }
 }

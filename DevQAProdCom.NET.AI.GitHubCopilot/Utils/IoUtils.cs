@@ -5,7 +5,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 {
     public interface IoUtils
     {
-        public static List<string> GetCopilotAgents(string rootDirectory, bool useExtendedSearch = false)
+        public static List<string> GetFilesWithCopilotAgents(string rootDirectory, bool useExtendedSearch = false)
         {
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var agentFiles = new List<string>();
@@ -24,7 +24,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             return agentFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
-        public static List<string> GetCopilotInstructions(string rootDirectory, bool useExtendedSearch = false)
+        public static List<string> GetFilesWithCopilotInstructions(string rootDirectory, bool useExtendedSearch = false)
         {
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var instructionFiles = new List<string>();
@@ -43,7 +43,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             return instructionFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
-        public static List<string> GetCopilotSkills(string rootDirectory, bool useExtendedSearch = false)
+        public static List<string> GetFilesWithCopilotSkills(string rootDirectory, bool useExtendedSearch = false)
         {
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var skillFiles = new List<string>();
@@ -65,28 +65,35 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             return skillFiles;
         }
 
-        public static List<string> GetCopilotMcpServers(string rootDirectory, bool useExtendedSearch = false)
+        public static List<string> GetFilesWithCopilotMcpServers(string rootDirectory, bool useExtendedSearch = false)
         {
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var mcpServersFiles = new List<string>();
 
+            //From direct file .github/mcp.json
+            var gitHubDirectory = Const.Directories.GetGitHubDirectory(rootDirectory);
+            var baseMcpJsonFilePath = Path.Combine(gitHubDirectory, FilesConstants.MCP_JSON);
 
-            var gitHubMcpServersDirectory = Const.Directories.GetGitHubMcpServersDirectory(rootDirectory);
-
-            if (Directory.Exists(gitHubMcpServersDirectory))
+            if (GlobalIoUtils.FileExists(baseMcpJsonFilePath))
             {
-                mcpServersFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(gitHubMcpServersDirectory).Select(x => x.FullName));
+                mcpServersFiles.Add(baseMcpJsonFilePath);
             }
 
+            //From .github/mcp-servers/{*}mcp.json
+            var mcpServersDirectory = Const.Directories.GetGitHubMcpServersDirectory(rootDirectory);
+            var mcpServersDirectoryFiles = GlobalIoUtils.GetFilesInDirectory(mcpServersDirectory, $"*{FilesConstants.MCP_JSON}").Select(x => x.FullName);
+            mcpServersFiles.AddRange(mcpServersDirectoryFiles);
+
+            //From any files that end with mcp.json in the root directory and all subdirectories
             if (useExtendedSearch)
             {
-                mcpServersFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, $"*{FilesConstants.HOOKS_JSON}", SearchOption.AllDirectories).Select(x => x.FullName));
+                mcpServersFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, $"*{FilesConstants.MCP_JSON}", SearchOption.AllDirectories).Select(x => x.FullName));
             }
 
             return mcpServersFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
-        public static List<string> GetCopilotHooks(string rootDirectory, bool useExtendedSearch = false)
+        public static List<string> GetFilesWithCopilotHooks(string rootDirectory, bool useExtendedSearch = false)
         {
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var hooksFiles = new List<string>();

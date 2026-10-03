@@ -15,20 +15,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
         public List<string> GetDefaultLocations(bool useExtendedSearch = true)
         {
             var currentDirectory = Directory.GetCurrentDirectory();
-            var defaultLocations = CopilotIoUtils.GetCopilotHooks(currentDirectory, useExtendedSearch);
+            var defaultLocations = CopilotIoUtils.GetFilesWithCopilotMcpServers(currentDirectory, useExtendedSearch);
 
             if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
                 && !string.IsNullOrEmpty(solutionDirectory)
                 && solutionDirectory != currentDirectory)
             {
-                defaultLocations.AddRange(CopilotIoUtils.GetCopilotHooks(solutionDirectory, useExtendedSearch));
+                defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotMcpServers(solutionDirectory, useExtendedSearch));
             }
 
             return defaultLocations.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
-
-
-
-
     }
 }
