@@ -57,12 +57,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
         private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(SessionSkillsCollection));
 
-        private IMcpServersCollection? _allMcpServersCollection;
-        private IMcpServersCollection AllMcpServersCollection => _allMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllMcpServersCollection));
-
-        private IMcpServersCollection? _sessionMcpServersCollection;
-        private IMcpServersCollection SessionMcpServersCollection => _sessionMcpServersCollection ??= new GitHubCopilotMcpServersCollection(_logger, collectionIdentifier: nameof(SessionMcpServersCollection));
-
         private IFileBasedHooksCollection _allFileBasedHooksCollection;
         private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
 
@@ -453,21 +447,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #region MCP Servers
 
-        public SessionConfigBuilder WithMcpServer(string mcpServerIdentifier)
-        {
-            var mcpServer = AllMcpServersCollection.GetByIdentifier(mcpServerIdentifier);
-            SessionMcpServersCollection.Add(mcpServer);
 
-            return this;
-        }
-
-        public SessionConfigBuilder WithMcpServer(string name, McpServerConfig config)
-        {
-            LogComplexObjectSetting(nameof(_sessionConfig.McpServers), name);
-            _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
-            _sessionConfig.McpServers[name] = config;
-            return this;
-        }
 
         #endregion MCP Servers
 
@@ -1031,17 +1011,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public void ConfigureMcpServers()
         {
-            _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
-
-            foreach (var mcpServer in SessionMcpServersCollection)
-            {
-                if (mcpServer.TryGet<McpServerConfig>(out var mcpServerConfig))
-                {
-                    _sessionConfig.McpServers.Add(mcpServer.Identifier, mcpServerConfig);
-                }
-                else
-                    _logger.Warning("[{TypeName}] MCP Server '{ServerIdentifier}' does not have a valid configuration type {McpServerConfigTypeName}.", nameof(SessionConfigBuilder), mcpServer.Identifier, typeof(McpServerConfig).FullName);
-            }
+            
         }
 
         private void ConfigureHooks(string directoryForInteractionConfigurationData)
