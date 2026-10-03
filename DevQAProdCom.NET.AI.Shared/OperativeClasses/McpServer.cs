@@ -5,8 +5,8 @@ using DevQAProdCom.NET.Global.Utils;
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public abstract class McpServer<T> : IMcpServer
-        where T : class, new()
+    public abstract class McpServer<TMcpServer> : IMcpServer
+        where TMcpServer : class, new()
     {
         public abstract string? Class { get; }
         public string? FilePath { get; set; }
@@ -15,13 +15,13 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
         public abstract string Identifier { get; set; }
         public List<string>? Tools { get; set; }
 
-        protected T? McpServerConfiguration { get; set; }
+        protected TMcpServer? McpServerConfiguration { get; set; }
 
         public McpServer() { }
 
         public virtual void WithConfigurationFromJson(string configuration)
         {
-            McpServerConfiguration = configuration.FromJson<T>();
+            McpServerConfiguration = configuration.FromJson<TMcpServer>();
             JsonUtils.PopulateConfigurationProperties(this, configuration);
         }
 
@@ -47,11 +47,11 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return McpServerConfiguration.ToJson(); //TODO Check if this is goind to work with null
         }
 
-        public virtual bool TryGet<TMcpServer>(out TMcpServer? mcpServer) where TMcpServer : class
+        public virtual bool TryGet<T>(out T? mcpServer) where T : class
         {
-            if (typeof(TMcpServer) == typeof(T) || typeof(TMcpServer).IsAssignableFrom(typeof(T)))
+            if (typeof(T) == typeof(TMcpServer) || typeof(T).IsAssignableFrom(typeof(TMcpServer)))
             {
-                mcpServer = BuildMcpServerConfiguration() as TMcpServer;
+                mcpServer = BuildMcpServerConfiguration() as T;
                 if (mcpServer != null)
                 {
                     return true;
@@ -62,7 +62,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return false;
         }
 
-        protected virtual T? BuildMcpServerConfiguration()
+        protected virtual TMcpServer? BuildMcpServerConfiguration()
         {
             return McpServerConfiguration;
         }

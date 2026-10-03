@@ -95,8 +95,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
-            _allFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
-            _sessionFileBasedHooksCollection = new HooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
+            _allFileBasedHooksCollection = new FileBasedHooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
+            _sessionFileBasedHooksCollection = new FileBasedHooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
 
             _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
             _sessionSdkBasedSessionHooksCollection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());

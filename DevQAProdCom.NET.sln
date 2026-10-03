@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.10.12224.181 stable
+VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevQAProdCom.NET.Global", "DevQAProdCom.NET.Global\DevQAProdCom.NET.Global.csproj", "{4DC29949-0C10-4FBF-B6A9-4EB478A86B75}"
 EndProject
@@ -107,11 +107,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BCC3-2229-49E7-B94C-1FB185A45AE8}"
 	ProjectSection(SolutionItems) = preProject
 		.github\agents\answer-questions.agent.md = .github\agents\answer-questions.agent.md
-		.github\agents\check-custom-instructions-field-answer-questions.agent.md = .github\agents\check-custom-instructions-field-answer-questions.agent.md
-		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
+		.github\agents\check-custom-hooks-field-with-file-and-sdk-based-hooks-agent.md = .github\agents\check-custom-hooks-field-with-file-and-sdk-based-hooks-agent.md
 		.github\agents\check-custom-hooks-field-with-file-based-hook-agent.md = .github\agents\check-custom-hooks-field-with-file-based-hook-agent.md
 		.github\agents\check-custom-hooks-field-with-sdk-based-hook-agent.md = .github\agents\check-custom-hooks-field-with-sdk-based-hook-agent.md
-		.github\agents\check-custom-hooks-field-with-file-and-sdk-based-hooks-agent.md = .github\agents\check-custom-hooks-field-with-file-and-sdk-based-hooks-agent.md
+		.github\agents\check-custom-instructions-field-answer-questions.agent.md = .github\agents\check-custom-instructions-field-answer-questions.agent.md
+		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
 		.github\agents\orchestrator-read-write-agent.agent.md = .github\agents\orchestrator-read-write-agent.agent.md
 		.github\agents\read-agent.agent.md = .github\agents\read-agent.agent.md
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
@@ -133,6 +133,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hooks", "hooks", "{E3F05CF7-76E4-4D78-9740-B937E65745A1}"
 	ProjectSection(SolutionItems) = preProject
 		.github\hooks\on-session-start-hook-1.json = .github\hooks\on-session-start-hook-1.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{13A525C1-CF7D-4617-85EB-A16F02DB7522}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AI", "AI", "{777D38EC-BA63-451E-96E6-FE635D43FB2B}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\AI\McpServers.md = Documentation\AI\McpServers.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mcp-servers", "mcp-servers", "{BDEB98DC-2035-4021-BFC3-4D04724AA94E}"
+	ProjectSection(SolutionItems) = preProject
+		.github\mcp-servers\modelcontextprotocol-filesystem.mcp.json = .github\mcp-servers\modelcontextprotocol-filesystem.mcp.json
 	EndProjectSection
 EndProject
 Global
@@ -383,6 +395,8 @@ Global
 		{FA3783CD-B460-4057-945D-8A18A2BCE63A} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
 		{AEBA9038-D7F9-42F1-A11B-A6EE16725527} = {FA3783CD-B460-4057-945D-8A18A2BCE63A}
 		{E3F05CF7-76E4-4D78-9740-B937E65745A1} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
+		{777D38EC-BA63-451E-96E6-FE635D43FB2B} = {13A525C1-CF7D-4617-85EB-A16F02DB7522}
+		{BDEB98DC-2035-4021-BFC3-4D04724AA94E} = {6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {072B6B76-6C41-4BA2-8622-3960BE210481}

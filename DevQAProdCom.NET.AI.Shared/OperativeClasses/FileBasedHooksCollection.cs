@@ -6,7 +6,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public class HooksCollection : IFileBasedHooksCollection, IEnumerable<IFileBasedHook>
+    public class FileBasedHooksCollection : IFileBasedHooksCollection, IEnumerable<IFileBasedHook>
     {
         public string CollectionIdentifier { get; }
 
@@ -14,24 +14,24 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
         private readonly ILogger _logger;
         private readonly IFileBasedHooksSearcher _hookSearcher;
 
-        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher)
+        public FileBasedHooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher)
         {
             CollectionIdentifier = Guid.NewGuid().ToString();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _hookSearcher = hookSearcher ?? throw new ArgumentNullException(nameof(hookSearcher));
         }
 
-        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, string collectionIdentifier) : this(logger, hookSearcher)
+        public FileBasedHooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, string collectionIdentifier) : this(logger, hookSearcher)
         {
             CollectionIdentifier = collectionIdentifier;
         }
 
-        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider) : this(logger, hookSearcher)
+        public FileBasedHooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider) : this(logger, hookSearcher)
         {
             InitializeCollectionFromDefaultLocations(defaultLocationsProvider);
         }
 
-        public HooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider, string collectionIdentifier) : this(logger, hookSearcher, defaultLocationsProvider)
+        public FileBasedHooksCollection(ILogger logger, IFileBasedHooksSearcher hookSearcher, ILocationsProvider? defaultLocationsProvider, string collectionIdentifier) : this(logger, hookSearcher, defaultLocationsProvider)
         {
             CollectionIdentifier = collectionIdentifier;
         }

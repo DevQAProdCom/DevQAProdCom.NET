@@ -1,5 +1,6 @@
 {
   "filesystem": {
+    "type": "local",
     "command": "npx",
     "args": [
       "-y",

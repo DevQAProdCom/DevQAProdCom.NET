@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 {
-    internal class FileName
+    public class GitHubCopilotFileBasedMcpServersSearcher
     {
     }
 }
