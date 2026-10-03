@@ -24,28 +24,7 @@ namespace Tests.DevQAProdCom.NET.AI
         private const string FileBasedHookIdentifier = "on-session-start-hook-1";
         private const string FileBasedHookOutputFileName = "on-session-start-hook-1.txt";
 
-        private static string GetHookContentRegex(string prefix) => $"^{Regex.Escape(prefix)} ({TimestampRegexPattern})$";
-
-        private static DateTime ParseTimestamp(string timestamp) =>
-            DateTime.ParseExact(timestamp, TimestampFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-
-        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> CreateSdkBasedSessionHooksCollection()
-        {
-            var collection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(Log);
-            collection.Add(new GitHubCopilotSdkBasedOnSessionStartHook1());
-            return collection;
-        }
-
-        private static ILocationsProvider CreateFileBasedHooksDefaultLocationsProvider() =>
-            new GitHubCopilotFileBasedHooksDefaultLocationsProvider(useExtendedSearch: false);
-
-        private static async Task InvokeAgentWithoutExceptionAsync(GitHubCopilotAiAgentInteractor agent)
-        {
-            var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
-            await act.Should().NotThrowAsync();
-        }
-
-        private static async Task AssertHookOutputFileAsync(string filePath, string expectedPrefix, DateTime testStartTime)
+        private async Task AssertHookOutputFileAsync(string filePath, string expectedPrefix, DateTime testStartTime)
         {
             IoUtils.CheckFileMustExist(filePath);
 
@@ -124,6 +103,27 @@ namespace Tests.DevQAProdCom.NET.AI
             await AssertHookOutputFileAsync(expectedSdkBasedHookFilePath, nameof(GitHubCopilotSdkBasedOnSessionStartHook1), testStartTime);
 
             IoUtils.DeleteDirectory(workingDirectory);
+        }
+
+        private string GetHookContentRegex(string prefix) => $"^{Regex.Escape(prefix)} ({TimestampRegexPattern})$";
+
+        private DateTime ParseTimestamp(string timestamp) =>
+            DateTime.ParseExact(timestamp, TimestampFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
+
+        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> CreateSdkBasedSessionHooksCollection()
+        {
+            var collection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(Log);
+            collection.Add(new GitHubCopilotSdkBasedOnSessionStartHook1());
+            return collection;
+        }
+
+        private ILocationsProvider CreateFileBasedHooksDefaultLocationsProvider() =>
+            new GitHubCopilotFileBasedHooksDefaultLocationsProvider(useExtendedSearch: false);
+
+        private async Task InvokeAgentWithoutExceptionAsync(GitHubCopilotAiAgentInteractor agent)
+        {
+            var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+            await act.Should().NotThrowAsync();
         }
     }
 }
