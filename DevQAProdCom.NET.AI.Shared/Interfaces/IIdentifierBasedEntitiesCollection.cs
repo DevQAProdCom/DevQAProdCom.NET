@@ -6,7 +6,8 @@ namespace DevQAProdCom.NET.AI.Shared.Interfaces
     {
         public string CollectionIdentifier { get; }
         public T GetByIdentifier(string identifier);
-        public bool TryGetByIdentifierOrDefault(string identifier, out T? entity);
+        public bool TryGetByIdentifier(string identifier, out T? entity);
         public T Add(T entity);
+        public List<T> Add(params T[] entities);
     }
 }

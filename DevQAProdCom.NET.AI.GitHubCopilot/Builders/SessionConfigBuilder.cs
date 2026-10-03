@@ -175,7 +175,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         {
             WithAgent(agentIdentifier);
-            var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
+            var entityData = AllAgentsCollection.GetByIdentifier(agentIdentifier);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
 
@@ -204,7 +204,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllAgentsCollection.AddEntityDataFromFile(filePath);
+            var entityData = AllAgentsCollection.AddFromFile(filePath);
             WithPrimaryAgent(entityData.ConfigurationData.Name);
 
             return this;
@@ -213,8 +213,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithAgent(string agentIdentifier)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
-            SessionAgentsCollection.AddEntityData(entityData);
+            var entityData = AllAgentsCollection.GetByIdentifier(agentIdentifier);
+            SessionAgentsCollection.Add(entityData);
             //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
             //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
             //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
@@ -237,8 +237,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithAgentFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllAgentsCollection.AddEntityDataFromFile(filePath);
-            SessionAgentsCollection.AddEntityData(entityData);
+            var entityData = AllAgentsCollection.AddFromFile(filePath);
+            SessionAgentsCollection.Add(entityData);
             var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
             WithCustomAgentConfig(customAgentConfig);
             return this;
@@ -257,8 +257,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgentsFromDirectory(string directoryPath)
         {
-            var entities = AllAgentsCollection.AddEntitiesDataFromDirectory(directoryPath);
-            var sessionEntities = SessionAgentsCollection.AddEntitiesDataFromDirectory(directoryPath);
+            var entities = AllAgentsCollection.AddFromDirectory(directoryPath);
+            var sessionEntities = SessionAgentsCollection.AddFromDirectory(directoryPath);
 
             foreach (var entityData in sessionEntities)
             {
@@ -293,8 +293,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithInstruction(string instructionIdentifier)
         {
             _logger.Info("{TypeName} Loading instruction with identifier '{InstructionIdentifier}' from all instructions collection.", $"[{nameof(SessionConfigBuilder)}]", instructionIdentifier);
-            var entityData = AllInstructionsCollection.GetEntityDataByIdentifier(instructionIdentifier);
-            SessionInstructionsCollection.AddEntityData(entityData);
+            var entityData = AllInstructionsCollection.GetByIdentifier(instructionIdentifier);
+            SessionInstructionsCollection.Add(entityData);
 
             return this;
         }
@@ -320,8 +320,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 Prompt = prompt
             };
 
-            AllInstructionsCollection.AddEntityData(entityData);
-            SessionInstructionsCollection.AddEntityData(entityData);
+            AllInstructionsCollection.Add(entityData);
+            SessionInstructionsCollection.Add(entityData);
 
             return this;
         }
@@ -329,8 +329,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithInstructionFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllInstructionsCollection.AddEntityDataFromFile(filePath);
-            SessionInstructionsCollection.AddEntityData(entityData);
+            var entityData = AllInstructionsCollection.AddFromFile(filePath);
+            SessionInstructionsCollection.Add(entityData);
             return this;
         }
 
@@ -347,8 +347,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstructionsFromDirectory(string directoryPath)
         {
-            var entities = AllInstructionsCollection.AddEntitiesDataFromDirectory(directoryPath);
-            SessionInstructionsCollection.AddEntitiesData(entities.ToArray());
+            var entities = AllInstructionsCollection.AddFromDirectory(directoryPath);
+            SessionInstructionsCollection.Add(entities.ToArray());
             return this;
         }
 
@@ -381,8 +381,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithSkill(string skillIdentifier)
         {
             _logger.Info("{TypeName} Loading skill with identifier '{SkillIdentifier}' from all skills collection.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
-            var entityData = AllSkillsCollection.GetEntityDataByIdentifier(skillIdentifier);
-            SessionSkillsCollection.AddEntityData(entityData);
+            var entityData = AllSkillsCollection.GetByIdentifier(skillIdentifier);
+            SessionSkillsCollection.Add(entityData);
 
             return this;
         }
@@ -408,8 +408,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 Prompt = prompt
             };
 
-            AllSkillsCollection.AddEntityData(entityData);
-            SessionSkillsCollection.AddEntityData(entityData);
+            AllSkillsCollection.Add(entityData);
+            SessionSkillsCollection.Add(entityData);
 
             return this;
         }
@@ -417,8 +417,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithSkillFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllSkillsCollection.AddEntityDataFromFile(filePath);
-            SessionSkillsCollection.AddEntityData(entityData);
+            var entityData = AllSkillsCollection.AddFromFile(filePath);
+            SessionSkillsCollection.Add(entityData);
             return this;
         }
 
@@ -434,8 +434,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithSkillsFromDirectory(string directoryPath)
         {
-            var entities = AllSkillsCollection.AddEntitiesDataFromDirectory(directoryPath);
-            SessionSkillsCollection.AddEntitiesData(entities.ToArray());
+            var entities = AllSkillsCollection.AddFromDirectory(directoryPath);
+            SessionSkillsCollection.Add(entities.ToArray());
             return this;
         }
 
@@ -484,11 +484,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             ArgumentNullException.ThrowIfNull(hookIdentifier);
 
-            var fileBasedHookExists = _allFileBasedHooksCollection.TryGetHookDataByIdentifier(hookIdentifier, out var fileBasedHook);
+            var fileBasedHookExists = _allFileBasedHooksCollection.TryGetByIdentifier(hookIdentifier, out var fileBasedHook);
             if (fileBasedHookExists)
                 WithFileBasedHook(hookIdentifier);
 
-            var sdkBasedHookExists = _allSdkBasedSessionHooksCollection.TryGetByIdentifierOrDefault(hookIdentifier, out var sdkBasedSessionHook);
+            var sdkBasedHookExists = _allSdkBasedSessionHooksCollection.TryGetByIdentifier(hookIdentifier, out var sdkBasedSessionHook);
             if (sdkBasedHookExists)
                 WithSdkBasedHook(hookIdentifier);
 
@@ -512,8 +512,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithFileBasedHook(string hookIdentifier)
         {
             _logger.Info("{TypeName} Loading hook with identifier '{HookIdentifier}' from all hooks collection.", $"[{nameof(SessionConfigBuilder)}]", hookIdentifier);
-            var hookData = _allFileBasedHooksCollection.GetHookDataByIdentifier(hookIdentifier);
-            _sessionFileBasedHooksCollection.AddHookData(hookData);
+            var hookData = _allFileBasedHooksCollection.GetByIdentifier(hookIdentifier);
+            _sessionFileBasedHooksCollection.Add(hookData);
             return this;
         }
 
@@ -538,8 +538,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 ContentValue = hookInJsonFormat
             };
 
-            _allFileBasedHooksCollection.AddHookData(hookData);
-            _sessionFileBasedHooksCollection.AddHookData(hookData);
+            _allFileBasedHooksCollection.Add(hookData);
+            _sessionFileBasedHooksCollection.Add(hookData);
             return this;
         }
 
@@ -553,8 +553,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 ContentValue = hook?.ToJson()
             };
 
-            _allFileBasedHooksCollection.AddHookData(hookData);
-            _sessionFileBasedHooksCollection.AddHookData(hookData);
+            _allFileBasedHooksCollection.Add(hookData);
+            _sessionFileBasedHooksCollection.Add(hookData);
 
             return this;
         }
@@ -562,8 +562,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithFileBasedHooksFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var hooks = _allFileBasedHooksCollection.AddHooksDataFromFile(filePath);
-            _sessionFileBasedHooksCollection.AddHookData(hooks.ToArray());
+            var hooks = _allFileBasedHooksCollection.AddFromFile(filePath);
+            _sessionFileBasedHooksCollection.Add(hooks.ToArray());
             return this;
         }
 
@@ -580,8 +580,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithFileBasedHooksFromDirectory(string directoryPath)
         {
-            var hooks = _allFileBasedHooksCollection.AddHooksDataFromDirectory(directoryPath);
-            _sessionFileBasedHooksCollection.AddHookData(hooks.ToArray());
+            var hooks = _allFileBasedHooksCollection.AddFromDirectory(directoryPath);
+            _sessionFileBasedHooksCollection.Add(hooks.ToArray());
             return this;
         }
 
@@ -898,7 +898,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if (!string.IsNullOrEmpty(_sessionConfig.Agent))
             {
-                var primaryAgentEntityData = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
+                var primaryAgentEntityData = SessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
                 WithModel(primaryAgentEntityData.ConfigurationData.Model!);
             }
 
@@ -1017,7 +1017,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                 //Add through the SessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
                 //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
-                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetEntityDataByIdentifier(_sessionConfig.Agent);
+                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
                 if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
                     primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomMetadata!.Skills = new List<string>();
 

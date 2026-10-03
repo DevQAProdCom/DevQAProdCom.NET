@@ -8,5 +8,12 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
         public FileBasedMcpServersCollection(ILogger logger, string? collectionIdentifier = null) : base(logger, collectionIdentifier)
         {
         }
+
+
+
+        public List<T> AddFromFile(string filePath);
+        public List<T> AddFromFiles(params string[] filesPaths);
+        public List<T> AddFromDirectory(string directoryPath);
+        public List<T> AddFromDirectories(params string[] directoriesPaths);
     }
 }

@@ -21,7 +21,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         public virtual T GetByIdentifier(string identifier)
         {
-            if (TryGetByIdentifierOrDefault(identifier, out var entity))
+            if (TryGetByIdentifier(identifier, out var entity))
             {
                 return entity!;
             }
@@ -29,7 +29,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new KeyNotFoundException($"Entity with identifier '{identifier}' is not found in the collection.");
         }
 
-        public virtual bool TryGetByIdentifierOrDefault(string identifier, out T? entity)
+        public virtual bool TryGetByIdentifier(string identifier, out T? entity)
         {
             entity = Entities.SingleOrDefault(x => x.Identifier == identifier);
             return entity != null;
@@ -46,6 +46,16 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
             Entities.Add(entity);
             return entity;
+        }
+
+        public virtual List<T> Add(params T[] entities)
+        {
+            foreach (var entity in entities)
+            {
+                Add(entity);
+            }
+
+            return entities.ToList();
         }
 
         public IEnumerator<T> GetEnumerator()
