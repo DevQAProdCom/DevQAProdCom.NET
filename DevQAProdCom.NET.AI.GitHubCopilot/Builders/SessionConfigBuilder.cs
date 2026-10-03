@@ -1136,13 +1136,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiAgents(string rootDirectory)
         {
             var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
-            SaveAiEntities(SessionAgentsCollection, agentsDirectory, FilesConstants.AGENT_MD, "Agent");
+            SaveAiEntities(SessionAgentsCollection, agentsDirectory, Const.Files.Extensions.AGENT_MD, "Agent");
         }
 
         private void SaveAiInstructions(string rootDirectory)
         {
             var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
-            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, FilesConstants.INSTRUCTIONS_MD, "Instruction");
+            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, Const.Files.Extensions.INSTRUCTIONS_MD, "Instruction");
         }
 
         //private void SetupOnPermissionRequest()
@@ -1172,7 +1172,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
                     if (Directory.Exists(destinationDirectoryPath))
                         throw new InvalidOperationException($"Destination directory '{destinationDirectoryPath}' already exists. Cannot copy skill '{skill.ConfigurationData.Name}' directory. " +
-                            $"Check if multiple skills have directories with the same name where their '{FilesConstants.SKILL_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
+                            $"Check if multiple skills have directories with the same name where their '{Const.Files.Extensions.SKILL_MD}' files reside, as skills are copied as full directories with all files related to particular skills.");
 
                     IoUtils.DirectoryCopy(skillDirectory.FullName, destinationDirectoryPath);
                 }
@@ -1183,7 +1183,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                         throw new ArgumentException("Skill configuration name is either null or empty, but must have a valid name to save the skill file.");
                     }
 
-                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, FilesConstants.SKILL_MD);
+                    var destinationPath = Path.Combine(skillsDirectory, skill.ConfigurationData.Name, Const.Files.Extensions.SKILL_MD);
                     IoUtils.WriteAllText(destinationPath, skill.ToMdFileContent());
                 }
             }
