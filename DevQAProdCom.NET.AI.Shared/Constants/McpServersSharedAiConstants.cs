@@ -1,6 +1,6 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Constants
 {
-    public static class SharedAiConstants
+    public static partial class SharedAiConstants
     {
         public static class McpServers
         {

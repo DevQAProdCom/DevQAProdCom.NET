@@ -15,7 +15,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         public IdentifierBasedEntitiesCollection(ILogger logger, string? collectionIdentifier = null)
         {
-            Logger = logger;
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
         }
 
