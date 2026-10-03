@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
-using DevQAProdCom.NET.Global.Utils;
+using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using CopilotIoUtils = DevQAProdCom.NET.AI.GitHubCopilot.Utils.IoUtils;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
@@ -21,12 +21,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
         {
             var mcpServers = new List<IFileBasedMcpServer>();
 
+            //If path is a file, search in that file
             if (GlobalIoUtils.FileExists(path))
             {
                 mcpServers.AddRange(SearchInFile(path));
                 return mcpServers;
             }
 
+            //If path is a directory, search in all files in that directory
             if (GlobalIoUtils.DirectoryExists(path))
             {
                 var files = CopilotIoUtils.GetFilesWithCopilotMcpServers(path, useExtendedSearch);
@@ -70,6 +72,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
                 }
 
                 JsonElement serversElement;
+
                 if (root.TryGetProperty("mcpServers", out var mcpServersElement) && mcpServersElement.ValueKind == JsonValueKind.Object)
                 {
                     serversElement = mcpServersElement;
@@ -90,12 +93,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
                     var contentValue = serverProperty.Value.GetRawText();
 
                     string? description = null;
-                    if (serverProperty.Value.TryGetProperty("description", out var descriptionElement) && descriptionElement.ValueKind == JsonValueKind.String)
+                    if (serverProperty.Value.TryGetProperty(SharedAiConstants.JsonElementNames.CustomMetadata, out var customMetadataElement) && customMetadataElement.ValueKind == JsonValueKind.Object &&
+                        customMetadataElement.TryGetProperty(SharedAiConstants.JsonElementNames.Description, out var descriptionElement) && descriptionElement.ValueKind == JsonValueKind.String)
                     {
                         description = descriptionElement.GetString();
                     }
 
-                    mcpServers.Add(new FileBasedMcpServer
+                    mcpServers.Add(new FileBasedMcpServerModel
                     {
                         Identifier = identifier,
                         Description = description,
@@ -110,14 +114,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
             }
 
             return mcpServers;
-        }
-
-        private class FileBasedMcpServer : IFileBasedMcpServer
-        {
-            public string? Identifier { get; set; }
-            public string? Description { get; set; }
-            public string? FilePath { get; set; }
-            public string? ContentValue { get; set; }
         }
     }
 }

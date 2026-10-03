@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
-    public class SdkEntitiesCollection<T> : ISdkEntitiesCollection<T> where T : IHaveStringIdentifier
+    public class IdentifierBasedEntitiesCollection<T> : IIdentifierBasedEntitiesCollection<T> where T : IHaveStringIdentifier
     {
         public string CollectionIdentifier { get; }
 
@@ -13,7 +13,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         protected ILogger Logger;
 
-        public SdkEntitiesCollection(ILogger logger, string? collectionIdentifier = null)
+        public IdentifierBasedEntitiesCollection(ILogger logger, string? collectionIdentifier = null)
         {
             Logger = logger;
             CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
@@ -37,6 +37,13 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         public virtual T Add(T entity)
         {
+            var existingEntity = Entities.SingleOrDefault(x => x.Identifier == entity.Identifier);
+
+            if (existingEntity != null)
+            {
+                throw new InvalidOperationException($"Entity with identifier '{entity.Identifier}' already exists in the collection.");
+            }
+
             Entities.Add(entity);
             return entity;
         }

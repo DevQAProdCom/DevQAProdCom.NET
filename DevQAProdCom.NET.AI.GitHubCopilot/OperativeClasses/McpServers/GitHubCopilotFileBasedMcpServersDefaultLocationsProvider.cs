@@ -6,20 +6,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 {
     public class GitHubCopilotFileBasedMcpServersDefaultLocationsProvider : BaseLocationsProvider
     {
-        public GitHubCopilotFileBasedMcpServersDefaultLocationsProvider(bool useExtendedSearch = true)
+        public GitHubCopilotFileBasedMcpServersDefaultLocationsProvider(string? rootDirectory = null, bool useExtendedSearch = true)
         {
-            var defaultLocations = GetDefaultLocations(useExtendedSearch);
+            var defaultLocations = GetDefaultLocations(rootDirectory, useExtendedSearch);
             Locations.AddRange(defaultLocations);
         }
 
-        public List<string> GetDefaultLocations(bool useExtendedSearch = true)
+        public List<string> GetDefaultLocations(string? rootDirectory = null, bool useExtendedSearch = true)
         {
-            var currentDirectory = Directory.GetCurrentDirectory();
+            var currentDirectory = rootDirectory ?? Directory.GetCurrentDirectory();
             var defaultLocations = CopilotIoUtils.GetFilesWithCopilotMcpServers(currentDirectory, useExtendedSearch);
 
-            if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
-                && !string.IsNullOrEmpty(solutionDirectory)
-                && solutionDirectory != currentDirectory)
+            if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && !string.IsNullOrEmpty(solutionDirectory) && solutionDirectory != currentDirectory)
             {
                 defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotMcpServers(solutionDirectory, useExtendedSearch));
             }

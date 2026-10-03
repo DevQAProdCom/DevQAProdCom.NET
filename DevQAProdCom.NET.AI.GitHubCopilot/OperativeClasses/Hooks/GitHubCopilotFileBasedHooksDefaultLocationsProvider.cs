@@ -17,9 +17,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
             var currentDirectory = rootDirectory ?? Directory.GetCurrentDirectory();
             var defaultLocations = CopilotIoUtils.GetFilesWithCopilotHooks(currentDirectory, useExtendedSearch);
 
-            if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory)
-                && !string.IsNullOrEmpty(solutionDirectory)
-                && solutionDirectory != currentDirectory)
+            if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && !string.IsNullOrEmpty(solutionDirectory) && solutionDirectory != currentDirectory)
             {
                 defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotHooks(solutionDirectory, useExtendedSearch));
             }

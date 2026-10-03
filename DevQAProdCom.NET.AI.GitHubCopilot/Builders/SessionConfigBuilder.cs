@@ -66,8 +66,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IFileBasedHooksCollection _allFileBasedHooksCollection;
         private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
 
-        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _allSdkBasedSessionHooksCollection;
-        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _sessionSdkBasedSessionHooksCollection;
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _allSdkBasedSessionHooksCollection;
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> _sessionSdkBasedSessionHooksCollection;
         private SessionHooksBuilder _sessionHooksBuilder;
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
@@ -92,21 +92,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder(ILogger logger,
             IFileBasedHooksSearcher hooksSearcher,
             ILocationsProvider? defaultLocationsProvider = null,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
             _allFileBasedHooksCollection = new FileBasedHooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
             _sessionFileBasedHooksCollection = new FileBasedHooksCollection(_logger, hooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
 
-            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
-            _sessionSdkBasedSessionHooksCollection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
+            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
+            _sessionSdkBasedSessionHooksCollection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
         }
 
         public SessionConfigBuilder(ILogger logger,
             IFileBasedHooksCollection allFileBasedHooksCollection,
             IFileBasedHooksCollection sessionFileBasedHooksCollection,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode)
         {
             ArgumentNullException.ThrowIfNull(allFileBasedHooksCollection);

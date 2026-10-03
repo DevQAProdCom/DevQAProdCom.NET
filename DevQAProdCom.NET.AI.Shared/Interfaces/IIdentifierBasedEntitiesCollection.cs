@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
-    public interface ISdkEntitiesCollection<T> : IEnumerable<T> where T : IHaveStringIdentifier
+    public interface IIdentifierBasedEntitiesCollection<T> : IEnumerable<T> where T : IHaveStringIdentifier
     {
         public string CollectionIdentifier { get; }
         public T GetByIdentifier(string identifier);

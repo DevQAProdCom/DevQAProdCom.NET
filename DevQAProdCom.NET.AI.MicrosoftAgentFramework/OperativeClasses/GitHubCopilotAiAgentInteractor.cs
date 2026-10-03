@@ -32,7 +32,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             ILogger logger,
             IFileBasedHooksSearcher hookSearcher,
             ILocationsProvider? hooksDefaultLocationsProvider = null,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(logger, 
                 hookSearcher, hooksDefaultLocationsProvider, 
@@ -47,8 +47,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             ILogger logger,
             IFileBasedHooksCollection allHooksCollection,
             IFileBasedHooksCollection sessionHooksCollection,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
-            ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection
             ) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(logger, 

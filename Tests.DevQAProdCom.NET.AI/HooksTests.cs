@@ -110,9 +110,9 @@ namespace Tests.DevQAProdCom.NET.AI
         private DateTime ParseTimestamp(string timestamp) =>
             DateTime.ParseExact(timestamp, TimestampFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
 
-        private ISdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> CreateSdkBasedSessionHooksCollection()
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> CreateSdkBasedSessionHooksCollection()
         {
-            var collection = new SdkEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(Log);
+            var collection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(Log);
             collection.Add(new GitHubCopilotSdkBasedOnSessionStartHook1());
             return collection;
         }
