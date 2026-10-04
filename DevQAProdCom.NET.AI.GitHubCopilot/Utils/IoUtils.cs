@@ -83,8 +83,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 
             //From .github/mcp-servers/{*}mcp.json
             var mcpServersDirectory = Const.Directories.GetGitHubMcpServersDirectory(rootDirectory);
-            var mcpServersDirectoryFiles = GlobalIoUtils.GetFilesInDirectory(mcpServersDirectory, searchPattern: $"*{FileExtension.Json.GetDescriptionAttributeValue()}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName);
-            mcpServersFiles.AddRange(mcpServersDirectoryFiles);
+            if(GlobalIoUtils.DirectoryExists(mcpServersDirectory))
+            {
+                var mcpServersDirectoryFiles = GlobalIoUtils.GetFilesInDirectory(mcpServersDirectory, searchPattern: $"*{Const.Files.Extensions.MCP_JSON}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName);
+                mcpServersFiles.AddRange(mcpServersDirectoryFiles);
+            }
 
             //From any files that end with mcp.json in the root directory and all subdirectories
             if (useExtendedSearch)

@@ -1,17 +1,17 @@
 ---
-name: playwright-sdk-based-mcp-server-agent
+name: check-custom-mcp-servers-field-sdk-based-agent
 description: Receives a JSON input model containing the target file path, uses the SDK-based Playwright MCP server to search YouTube for "Best of The Voice", and writes the resulting page URL to that file.
 tools:
   - view
   - create
-  - playwright/*
+  - playwright-sdk-based-mcp-server/*
 custom-metadata:
   permissions:
     - "approve-read-view-all"
     - "approve-write-create-all"
     - "approve-playwright-mcp-tools-all"
   mcpServers:
-    - playwright
+    - playwright-sdk-based-mcp-server
 model: claude-haiku-4.5
 ---
 

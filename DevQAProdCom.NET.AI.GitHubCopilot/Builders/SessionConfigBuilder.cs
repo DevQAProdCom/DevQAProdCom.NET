@@ -20,8 +20,6 @@ using DevQAProdCom.NET.Logging.Shared.Constans;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
-using Microsoft.Agents.AI;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
@@ -1176,16 +1174,20 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     _logger.Info("{TypeName} MCP server '{McpServerIdentifier}' is already added to the session from file-based collection.", $"[{nameof(SessionConfigBuilder)}]", agentMcpServer);
                     continue;
                 }
-                else
+                else if (_allFileBasedMcpServersCollection.Any(x => x.Identifier == agentMcpServer))
+                {
                     WithFileBasedMcpServer(agentMcpServer);
+                }
 
                 if (_sessionSdkBasedMcpServersCollection.Any(x => x.Identifier == agentMcpServer))
                 {
                     _logger.Info("{TypeName} MCP server '{McpServerIdentifier}' is already added to the session from SDK-based collection.", $"[{nameof(SessionConfigBuilder)}]", agentMcpServer);
                     continue;
                 }
-                else
+                else if (_allSdkBasedMcpServersCollection.Any(x => x.Identifier == agentMcpServer))
+                {
                     WithSdkBasedMcpServer(agentMcpServer);
+                }
             }
 
             //Check no 2 MCP servers have the same identifier, one from file-based and one from SDK-based. If so, throw an exception.

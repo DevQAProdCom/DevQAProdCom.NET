@@ -1,5 +1,5 @@
 {
-  "playwright-mcp-server-in-mcp-servers-directory-with-general-top-level-object": {
+  "playwright-mcp-server-in-mcp-servers-directory": {
     "type": "stdio",
     "command": "npx",
     "args": [

@@ -4,14 +4,14 @@ description: Receives a JSON input model containing the target file path, uses t
 tools:
   - view
   - create
-  - playwright-mcp-server-in-mcp-servers-directory-with-general-top-level-object/*
+  - playwright-mcp-server-in-mcp-servers-directory/*
 custom-metadata:
   permissions:
     - "approve-read-view-all"
     - "approve-write-create-all"
     - "approve-playwright-mcp-tools-all"
   mcpServers:
-    - playwright-mcp-server-in-mcp-servers-directory-withgeneral-top-level-object
+    - playwright-mcp-server-in-mcp-servers-directory
 model: claude-haiku-4.5
 ---
 

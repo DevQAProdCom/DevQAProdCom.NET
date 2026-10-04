@@ -19,7 +19,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 
             if (GlobalIoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && !string.IsNullOrEmpty(solutionDirectory) && solutionDirectory != currentDirectory)
             {
-                defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotMcpServers(solutionDirectory, useExtendedSearch));
+                // Search in the solution directory for MCP server files, but do not use extended search to avoid duplicates related to some preinstalled CLI MCP servers that are already inside several projects in the solution.
+                defaultLocations.AddRange(CopilotIoUtils.GetFilesWithCopilotMcpServers(solutionDirectory, useExtendedSearch: false));
             }
 
             return defaultLocations.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
