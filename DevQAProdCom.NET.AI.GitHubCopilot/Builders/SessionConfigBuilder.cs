@@ -20,6 +20,8 @@ using DevQAProdCom.NET.Logging.Shared.Constans;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using GitHub.Copilot.Rpc;
+using Microsoft.Agents.AI;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 {
@@ -72,10 +74,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> _allSdkBasedMcpServersCollection;
         private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> _sessionSdkBasedMcpServersCollection;
 
-        private GitHubCopilotMappers? _gitHubCopilotMappers;
-        private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
-
-        private IGitHubCopilotMcpServersMappers _gitHubCopilotMcpServersMappers;
+        private IGitHubCopilotMappers _gitHubCopilotMappers;
 
         private readonly ILogger _logger;
 
@@ -90,7 +89,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder(
             ILogger logger,
 
-            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
 
@@ -107,7 +106,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _gitHubCopilotMcpServersMappers = gitHubCopilotMcpServersMappers ?? new GitHubCopilotMcpServersMappers(_logger);
+            _gitHubCopilotMappers = gitHubCopilotMappers ?? new GitHubCopilotMappers(_logger);
 
             WithClientMode(CopilotClientMode.Empty);
 
@@ -1043,7 +1042,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             foreach (var entityData in SessionAgentsCollection)
             {
-                var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
+                var customAgentConfig = _gitHubCopilotMappers.ToCustomAgentConfig(entityData, fileBasedMcpServersCollection: _allFileBasedMcpServersCollection, sdkBasedMcpServersCollection: _allSdkBasedMcpServersCollection);
                 WithCustomAgentConfig(customAgentConfig); //TODO Make sure that all CustomAgentConfig entries are logged, for use case, when those where added manuall, not through SessionAgentsCollection, so that they are not logged in the WithAgent method.
             }
 
@@ -1203,13 +1202,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             foreach (var fileBasedMcpServer in _sessionFileBasedMcpServersCollection)
             {
-                var config = _gitHubCopilotMcpServersMappers.ToMcpServerConfig(fileBasedMcpServer);
+                var config = _gitHubCopilotMappers.ToMcpServerConfig(fileBasedMcpServer);
                 _sessionConfig.McpServers[fileBasedMcpServer.Identifier!] = config;
             }
 
             foreach (var sdkBasedMcpServer in _sessionSdkBasedMcpServersCollection)
             {
-                sdkBasedMcpServer.ApplyTo(_sessionConfig.McpServers);
+                sdkBasedMcpServer.AddTo(_sessionConfig.McpServers);
             }
 
             SaveMcpServers(directoryForInteractionConfigurationData);
@@ -1286,7 +1285,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             foreach (var sdkBasedHook in _sessionSdkBasedSessionHooksCollection)
             {
-                sdkBasedHook.ApplyTo(_sessionConfig.Hooks);
+                sdkBasedHook.AddTo(_sessionConfig.Hooks);
             }
         }
 

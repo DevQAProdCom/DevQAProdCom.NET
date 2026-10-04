@@ -82,7 +82,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionHooksBuilder WithSessionHook(IGitHubCopilotSdkBasedSessionHook hook)
         {
             ArgumentNullException.ThrowIfNull(hook);
-            hook.ApplyTo(_sessionHooks);
+            hook.AddTo(_sessionHooks);
             LogSetting(nameof(_sessionHooks), $"added hook '{hook.GetType().Name}'");
             return this;
         }

@@ -4,15 +4,13 @@ using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
+using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
 {
-    public class GitHubCopilotMappers
+    public class GitHubCopilotMappers(ILogger logger): IGitHubCopilotMappers
     {
-
-
-
         public McpServerConfig ToMcpServerConfig(IFileBasedMcpServer fileBasedMcpServer)
         {
             ArgumentNullException.ThrowIfNull(fileBasedMcpServer);
@@ -55,7 +53,58 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             }
         }
 
-        private static McpServerConfig CreateMcpServerConfig(string type, IFileBasedMcpServer fileBasedMcpServer)
+        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent,
+            IFileBasedMcpServersCollection fileBasedMcpServersCollection,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> sdkBasedMcpServersCollection)
+        {
+            var config = new CustomAgentConfig();
+
+            config.Name = aiAgent.ConfigurationData.Name;
+            config.DisplayName = aiAgent.ConfigurationData.Name; //TODO Add Custom YAML Attribute for DisplayName
+            config.Description = aiAgent.ConfigurationData.Description;
+            config.Prompt = aiAgent.Prompt;
+            config.Tools = aiAgent.ConfigurationData.Tools;
+            config.Skills = aiAgent.ConfigurationData.CustomMetadata?.Skills;
+            config.Model = aiAgent.ConfigurationData.Model;
+
+            if (aiAgent.ConfigurationData?.CustomMetadata?.McpServers?.Count() > 0)
+            {
+                foreach (var mcpServer in aiAgent.ConfigurationData.CustomMetadata.McpServers)
+                {
+                    var isSdkBasedMcpServerWithIdentifierExists = sdkBasedMcpServersCollection.TryGetByIdentifier(mcpServer, out var sdkBasedMcpServer);
+                    var isFileBasedMcpServerWithIdentifierExists = fileBasedMcpServersCollection.TryGetByIdentifier(mcpServer, out var fileBasedMcpServer);
+
+                    if (!isSdkBasedMcpServerWithIdentifierExists && !isFileBasedMcpServerWithIdentifierExists)
+                    {
+                        throw new InvalidOperationException($"MCP server '{mcpServer}' specified in agent '{aiAgent.ConfigurationData.Name}' not found in either SDK-based or file-based collections.");
+                    }
+
+                    if (isSdkBasedMcpServerWithIdentifierExists && isFileBasedMcpServerWithIdentifierExists)
+                    {
+                        throw new InvalidOperationException($"MCP server '{mcpServer}' specified in agent '{aiAgent.ConfigurationData.Name}' found in both SDK-based and file-based collections. MCP server collection should not contain duplicated identifiers.");
+                    }
+
+                    config.McpServers ??= new Dictionary<string, McpServerConfig>();
+
+                    if (isSdkBasedMcpServerWithIdentifierExists)
+                    {
+                        sdkBasedMcpServer.AddTo(config.McpServers);
+                    }
+
+                    if (isFileBasedMcpServerWithIdentifierExists)
+                    {
+                        var mcpServerConfig = ToMcpServerConfig(fileBasedMcpServer);
+                        config.McpServers.Add(fileBasedMcpServer.Identifier, mcpServerConfig);
+                    }
+                }
+            }
+
+            config.Infer = true;
+
+            return config;
+        }
+
+        private McpServerConfig CreateMcpServerConfig(string type, IFileBasedMcpServer fileBasedMcpServer)
         {
             if (string.IsNullOrEmpty(fileBasedMcpServer.ContentValue))
             {
@@ -72,41 +121,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
                 "http" or "sse" => fileBasedMcpServer.ContentValue.FromJson<McpHttpServerConfig>()!,
                 _ => throw new NotSupportedException($"MCP server type '{type}' is not supported for file-based MCP server '{fileBasedMcpServer.Identifier}'. Supported types are: stdio, local, http, sse.")
             };
-        }
-
-
-        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTYamlConfigurationType<GitHubCopilotAiAgentYamlConfigurationModel> aiAgent,
-            IFileBasedMcpServersCollection allFileBasedMcpServersCollection, 
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> allSdkBasedMcpServersCollection)
-        {
-            var config = new CustomAgentConfig();
-
-            config.Name = aiAgent.ConfigurationData.Name;
-            config.DisplayName = aiAgent.ConfigurationData.Name; //TODO Add Custom YAML Attribute for DisplayName
-            config.Description = aiAgent.ConfigurationData.Description;
-            config.Prompt = aiAgent.Prompt;
-            config.Tools = aiAgent.ConfigurationData.Tools;
-            config.Skills = aiAgent.ConfigurationData.CustomMetadata?.Skills;
-            config.Model = aiAgent.ConfigurationData.Model;
-
-
-            foreach (var mcpServerIdentifier in aiAgent.ConfigurationData.McpServers)
-            {
-                if (allSdkBasedMcpServersCollection.TryGetByIdentifier(mcpServerIdentifier, out var sdkBasedMcpServer))
-                {
-                    config.McpServers.Add(sdkBasedMcpServer);
-                }
-                else if (allFileBasedMcpServersCollection.TryGetByIdentifier(mcpServerIdentifier, out var fileBasedMcpServer))
-                {
-                    config.McpServers.Add(fileBasedMcpServer);
-                }
-            }
-
-            config.McpServers = ;
-
-            config.Infer = true;
-
-            return config;
         }
     }
 }

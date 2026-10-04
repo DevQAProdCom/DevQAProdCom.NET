@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
     {
         public abstract Func<SessionStartHookInput, HookInvocation, Task<SessionStartHookOutput?>>? GetOnSessionStartHook();
 
-        public override void ApplyTo(SessionHooks sessionHooks)
+        public override void AddTo(SessionHooks sessionHooks)
         {
             sessionHooks.OnSessionStart = GetOnSessionStartHook();
         }

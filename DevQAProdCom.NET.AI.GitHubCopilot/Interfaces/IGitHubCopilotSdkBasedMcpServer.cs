@@ -5,7 +5,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
     public interface IGitHubCopilotSdkBasedMcpServer : IHaveStringIdentifier, IHaveDescription
     {
-        public void ApplyTo(IDictionary<string, McpServerConfig>? mcpServerConfigs);
+        public void AddTo(IDictionary<string, McpServerConfig>? mcpServerConfigs);
         public string ToJson();
     }
 }

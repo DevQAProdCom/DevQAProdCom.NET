@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
     {
         public abstract Func<PostToolUseHookInput, HookInvocation, Task<PostToolUseHookOutput?>>? GetOnPostToolUseHook();
 
-        public override void ApplyTo(SessionHooks sessionHooks)
+        public override void AddTo(SessionHooks sessionHooks)
         {
             sessionHooks.OnPostToolUse = GetOnPostToolUseHook();
         }

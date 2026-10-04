@@ -12,7 +12,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 
         protected T? McpServerConfiguration { get; set; }
 
-        public virtual void ApplyTo(IDictionary<string, McpServerConfig>? mcpServerConfigs)
+        public virtual void AddTo(IDictionary<string, McpServerConfig>? mcpServerConfigs)
         {
             ArgumentNullException.ThrowIfNull(mcpServerConfigs);
             ArgumentNullException.ThrowIfNullOrEmpty(Identifier);

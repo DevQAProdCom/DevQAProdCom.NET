@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
     {
         public abstract Func<UserPromptSubmittedHookInput, HookInvocation, Task<UserPromptSubmittedHookOutput?>>? GetOnUserPromptSubmittedHook();
 
-        public override void ApplyTo(SessionHooks sessionHooks)
+        public override void AddTo(SessionHooks sessionHooks)
         {
             sessionHooks.OnUserPromptSubmitted = GetOnUserPromptSubmittedHook();
         }

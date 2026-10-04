@@ -34,7 +34,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
-            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
 
             IFileBasedHooksSearcher? hooksSearcher = null,
             ILocationsProvider? hooksDefaultLocationsProvider = null,
@@ -54,7 +54,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
                 mcpServersSearcher: mcpServersSearcher,
                 mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider,
-                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
+                gitHubCopilotMappers: gitHubCopilotMappers,
 
                 hooksSearcher: hooksSearcher,
                 hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,

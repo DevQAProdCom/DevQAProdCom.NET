@@ -6,7 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
     {
         public abstract Func<PreMcpToolCallHookInput, HookInvocation, Task<PreMcpToolCallHookOutput?>>? GetOnPreMcpToolCallHook();
 
-        public override void ApplyTo(SessionHooks sessionHooks)
+        public override void AddTo(SessionHooks sessionHooks)
         {
             sessionHooks.OnPreMcpToolCall = GetOnPreMcpToolCallHook();
         }
