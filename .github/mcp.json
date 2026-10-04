@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright-mcp-server-in-mcp-json-file-with-mcp-servers-top-level-object": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "tools": [
+        "*"
+      ]
+    }
+  }
+}

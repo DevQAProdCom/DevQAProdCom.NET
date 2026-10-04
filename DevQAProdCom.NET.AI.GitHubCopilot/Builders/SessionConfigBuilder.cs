@@ -471,7 +471,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             if (fileBasedMcpServerExists || sdkBasedMcpServerExists)
                 return this;
 
-            throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] MCP server with identifier '{mcpServerIdentifier}' was not found in neither {nameof(_allFileBasedMcpServersCollection).ToNameOf()} nor {nameof(_allSdkBasedMcpServersCollection).ToNameOf()}.");
+            throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] MCP server with identifier '{mcpServerIdentifier}' was not found in neither '{nameof(_allFileBasedMcpServersCollection).ToNameOf()}' nor '{nameof(_allSdkBasedMcpServersCollection).ToNameOf()}'.");
         }
 
         public SessionConfigBuilder WithMcpServers(params string[]? mcpServersIdentifiers)

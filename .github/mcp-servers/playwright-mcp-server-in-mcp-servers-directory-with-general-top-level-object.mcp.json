@@ -1,0 +1,12 @@
+{
+  "playwright-mcp-server-in-mcp-servers-directory-with-general-top-level-object": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "@playwright/mcp@latest"
+    ],
+    "tools": [
+      "*"
+    ]
+  }
+}
