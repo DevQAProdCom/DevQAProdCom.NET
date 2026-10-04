@@ -538,6 +538,34 @@ namespace DevQAProdCom.NET.Global.Utils
             return extension.StartsWith(".") ? extension : $".{extension}";
         }
 
+        public static string GetUniqueFilePathOrDefault(string directory, string fileNameWithoutExtension, string extension)
+        {
+            if (string.IsNullOrEmpty(directory))
+                throw new ArgumentException("Directory cannot be null or empty.", nameof(directory));
+
+            if (string.IsNullOrEmpty(fileNameWithoutExtension))
+                throw new ArgumentException("File name without extension cannot be null or empty.", nameof(fileNameWithoutExtension));
+
+            var normalizedExtension = NormalizeExtension(extension);
+            var safeFileNameWithoutExtension = WithoutInvalidFileNameChars(fileNameWithoutExtension);
+
+            var filePath = Path.Combine(directory, safeFileNameWithoutExtension + normalizedExtension);
+
+            if (!FileExists(filePath))
+                return filePath;
+
+            var index = 1;
+            while (true)
+            {
+                var indexedFilePath = Path.Combine(directory, $"{safeFileNameWithoutExtension}_{index}{normalizedExtension}");
+
+                if (!FileExists(indexedFilePath))
+                    return indexedFilePath;
+
+                index++;
+            }
+        }
+
         private static void ValidateMaxAmountOfCharsInFileName(int? maxAmountOfCharsInFileName, string? extension)
         {
             if (maxAmountOfCharsInFileName == null)

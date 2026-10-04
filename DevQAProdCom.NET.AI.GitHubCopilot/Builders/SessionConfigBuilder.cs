@@ -246,8 +246,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IoUtils.CheckFileMustExist(filePath);
             var entityData = AllAgentsCollection.AddFromFile(filePath);
             SessionAgentsCollection.Add(entityData);
-            var customAgentConfig = GitHubCopilotMappers.ToCustomAgentConfig(entityData);
-            WithCustomAgentConfig(customAgentConfig);
             return this;
         }
 
@@ -266,12 +264,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             var entities = AllAgentsCollection.AddFromDirectory(directoryPath);
             var sessionEntities = SessionAgentsCollection.AddFromDirectory(directoryPath);
-
-            foreach (var entityData in sessionEntities)
-            {
-                WithCustomAgentConfig(GitHubCopilotMappers.ToCustomAgentConfig(entityData));
-            }
-
             return this;
         }
 
@@ -1233,52 +1225,37 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             var mcpServersDirectory = Const.Directories.GetGitHubMcpServersDirectory(directoryForInteractionConfigurationData);
             IoUtils.CleanDirectory(mcpServersDirectory);
 
-            var fileBasedItems = _sessionFileBasedMcpServersCollection.Select(mcpServer =>
+            var fileBasedGroups = _sessionFileBasedMcpServersCollection.GroupBy(mcpServer => mcpServer.FilePath);
+
+            foreach (var group in fileBasedGroups)
             {
-                var identifier = mcpServer.Identifier ?? throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] File-based MCP server identifier is not set.");
-                var contentValue = mcpServer.ContentValue ?? throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Content of file-based MCP server '{identifier}' is empty.");
+                var serversByIdentifier = new JsonObject();
 
-                return new
+                foreach (var mcpServer in group)
                 {
-                    Identifier = identifier,
-                    ContentValue = contentValue,
-                    FileNameWithoutExtension = identifier,
-                    Extension = ".json"
-                };
-            });
+                    var identifier = mcpServer.Identifier ?? throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] File-based MCP server identifier is not set.");
+                    if (string.IsNullOrEmpty(mcpServer.ContentValue))
+                        throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] Content of file-based MCP server '{identifier}' is empty.");
 
-            var sdkBasedItems = _sessionSdkBasedMcpServersCollection.Select(mcpServer =>
-            {
-                var identifier = mcpServer.Identifier ?? throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] SDK-based MCP server identifier is not set.");
-
-                return new
-                {
-                    Identifier = identifier,
-                    ContentValue = mcpServer.ToJson(),
-                    FileNameWithoutExtension = identifier,
-                    Extension = ".json"
-                };
-            });
-
-            var allItems = fileBasedItems.Concat(sdkBasedItems).ToList();
-            var groups = allItems.GroupBy(info => IoUtils.WithoutInvalidFileNameChars(info.FileNameWithoutExtension) + IoUtils.NormalizeExtension(info.Extension));
-
-            foreach (var group in groups)
-            {
-                var items = group.ToList();
-
-                if (items.Count > 1)
-                {
-                    _logger.Warning("{TypeName} Several MCP server entries would have the same eventual name '{EventualName}' inside directory '{Directory}'. Additional numerical index will be applied to file name of each entry to avoid naming duplication.", $"[{nameof(SessionConfigBuilder)}]", group.Key, mcpServersDirectory);
+                    serversByIdentifier[identifier] = JsonNode.Parse(mcpServer.ContentValue);
                 }
 
-                for (var i = 0; i < items.Count; i++)
-                {
-                    var index = items.Count > 1 ? i + 1 : 0;
-                    var item = items[i];
-                    var destinationFilePath = GetUniqueFilePathOrDefault(mcpServersDirectory, item.FileNameWithoutExtension, item.Extension, index);
-                    IoUtils.WriteAllText(destinationFilePath, item.ContentValue);
-                }
+                //For use case when was added via WithFileBasedMcpServer(string identifier, string mcpServerInJsonFormat) or WithFileBasedMcpServer<T>(string identifier, T mcpServer) methods, the FilePath property is null or empty, so the file name will be "file-based-mcp-servers.json".
+                var fileNameWithoutExtension = string.IsNullOrEmpty(group.Key)
+                    ? "file-based-mcp-servers"
+                    : Path.GetFileNameWithoutExtension(group.Key);
+
+                var destinationFilePath = IoUtils.GetUniqueFilePathOrDefault(mcpServersDirectory, fileNameWithoutExtension, ".json");
+                IoUtils.WriteAllText(destinationFilePath, serversByIdentifier.ToJsonString());
+            }
+
+            foreach (var sdkBasedMcpServer in _sessionSdkBasedMcpServersCollection)
+            {
+                var identifier = sdkBasedMcpServer.Identifier ?? throw new InvalidOperationException($"[{nameof(SessionConfigBuilder)}] SDK-based MCP server identifier is not set.");
+                var content = sdkBasedMcpServer.ToJson();
+
+                var destinationFilePath = IoUtils.GetUniqueFilePathOrDefault(mcpServersDirectory, identifier, ".json");
+                IoUtils.WriteAllText(destinationFilePath, content);
             }
         }
 
@@ -1476,11 +1453,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                         "Initial file paths: {InitialFilePaths}.", $"[{nameof(SessionConfigBuilder)}]", entityTypeName, group.Key, directory, string.Join(", ", initialFilePaths));
                 }
 
-                for (var i = 0; i < items.Count; i++)
+                foreach (var item in items)
                 {
-                    var index = items.Count > 1 ? i + 1 : 0;
-                    var item = items[i];
-                    var destinationFilePath = GetUniqueFilePathOrDefault(directory, item.FileNameWithoutExtension, item.Extension, index);
+                    var destinationFilePath = IoUtils.GetUniqueFilePathOrDefault(directory, item.FileNameWithoutExtension, item.Extension);
                     var entityFilePath = item.Entity.FilePath;
 
                     if (!string.IsNullOrEmpty(entityFilePath))
@@ -1493,21 +1468,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                     }
                 }
             }
-        }
-
-        private string GetUniqueFilePathOrDefault(string directory, string fileNameWithoutExtension, string extension, int index)
-        {
-            var normalizedExtension = IoUtils.NormalizeExtension(extension);
-            var safeFileNameWithoutExtension = IoUtils.WithoutInvalidFileNameChars(fileNameWithoutExtension);
-            var fileName = index > 0 ? $"{safeFileNameWithoutExtension}_{index}" : safeFileNameWithoutExtension;
-            var filePath = Path.Combine(directory, fileName + normalizedExtension);
-
-            if (IoUtils.FileExists(filePath))
-            {
-                throw new InvalidOperationException($"Destination file '{filePath}' already exists. The provided index '{index}' cannot be used because the target path is already occupied.");
-            }
-
-            return filePath;
         }
 
         private void CheckWorkingDirectoryMustExistOrCreate()

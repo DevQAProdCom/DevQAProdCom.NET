@@ -3,8 +3,9 @@ using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
-    public interface IGitHubCopilotMcpServersMappers
+    public interface IGitHubCopilotMappers
     {
         McpServerConfig ToMcpServerConfig(IFileBasedMcpServer fileBasedMcpServer);
+
     }
 }
