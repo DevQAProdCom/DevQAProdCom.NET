@@ -6,6 +6,7 @@ using DevQAProdCom.NET.Global.Utils;
 using FluentAssertions;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Permissions;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
@@ -27,13 +28,17 @@ namespace Tests.DevQAProdCom.NET.AI
             {
                 FilePath = filePath
             };
+            var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(CheckCustomMcpServersFieldMcpJsonFileWithMcpServersTopLevelObjectAgent)
                 .WithWorkingDirectory(workingDirectory)
-                .WithPromptInJsonFormat(requestModel))
+                .WithPromptInJsonFormat(requestModel)
+                .WithSessionConfig(builder => builder.SetPermission(
+                    PlaywrightMcpTestPermissionDecisions.PlaywrightMcpServerInMcpJsonFileIdentifier,
+                    permissionDecisions.GetApprovePlaywrightMcpServerInMcpJsonFileAllPermission().Value)))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
@@ -53,13 +58,17 @@ namespace Tests.DevQAProdCom.NET.AI
             {
                 FilePath = filePath
             };
+            var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(CheckCustomMcpServersFieldMcpServersDirectoryWithGeneralTopLevelObjectAgent)
                 .WithWorkingDirectory(workingDirectory)
-                .WithPromptInJsonFormat(requestModel))
+                .WithPromptInJsonFormat(requestModel)
+                .WithSessionConfig(builder => builder.SetPermission(
+                    PlaywrightMcpTestPermissionDecisions.PlaywrightMcpServerInMcpServersDirectoryIdentifier,
+                    permissionDecisions.GetApprovePlaywrightMcpServerInMcpServersDirectoryAllPermission().Value)))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
@@ -79,13 +88,17 @@ namespace Tests.DevQAProdCom.NET.AI
             {
                 FilePath = filePath
             };
+            var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedMcpServersCollection: CreateSdkBasedMcpServersCollection())
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(CheckCustomMcpServersFieldSdkBasedAgent)
                 .WithWorkingDirectory(workingDirectory)
-                .WithPromptInJsonFormat(requestModel))
+                .WithPromptInJsonFormat(requestModel)
+                .WithSessionConfig(builder => builder.SetPermission(
+                    PlaywrightMcpTestPermissionDecisions.PlaywrightSdkBasedMcpServerIdentifier,
+                    permissionDecisions.GetApprovePlaywrightSdkBasedMcpServerAllPermission().Value)))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }

@@ -103,6 +103,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.DevQAProdCom.NET.AI", "Tests.DevQAProdCom.NET.AI\Tests.DevQAProdCom.NET.AI.csproj", "{DEC783B2-0AF0-43CE-8C38-29C67DFDDDF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6B4E3D8C-ECD9-4F5D-AAFB-01C2AAADF915}"
+	ProjectSection(SolutionItems) = preProject
+		.github\mcp.json = .github\mcp.json
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BCC3-2229-49E7-B94C-1FB185A45AE8}"
 	ProjectSection(SolutionItems) = preProject
@@ -111,8 +114,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BC
 		.github\agents\check-custom-hooks-field-with-file-based-hook-agent.md = .github\agents\check-custom-hooks-field-with-file-based-hook-agent.md
 		.github\agents\check-custom-hooks-field-with-sdk-based-hook-agent.md = .github\agents\check-custom-hooks-field-with-sdk-based-hook-agent.md
 		.github\agents\check-custom-instructions-field-answer-questions.agent.md = .github\agents\check-custom-instructions-field-answer-questions.agent.md
+		.github\agents\check-custom-mcp-servers-field-mcp-json-file-with-mcp-servers-top-level-object.agent.md = .github\agents\check-custom-mcp-servers-field-mcp-json-file-with-mcp-servers-top-level-object.agent.md
+		.github\agents\check-custom-mcp-servers-field-mcp-servers-directory-with-general-top-level-object.agent.md = .github\agents\check-custom-mcp-servers-field-mcp-servers-directory-with-general-top-level-object.agent.md
+		.github\agents\check-custom-mcp-servers-field-sdk-based.agent.md = .github\agents\check-custom-mcp-servers-field-sdk-based.agent.md
 		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
 		.github\agents\orchestrator-read-write-agent.agent.md = .github\agents\orchestrator-read-write-agent.agent.md
+		.github\agents\playwright-mcp-agent.agent.md = .github\agents\playwright-mcp-agent.agent.md
 		.github\agents\read-agent.agent.md = .github\agents\read-agent.agent.md
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
 		.github\agents\write-agent.agent.md = .github\agents\write-agent.agent.md
@@ -145,6 +152,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mcp-servers", "mcp-servers", "{BDEB98DC-2035-4021-BFC3-4D04724AA94E}"
 	ProjectSection(SolutionItems) = preProject
 		.github\mcp-servers\modelcontextprotocol-filesystem.mcp.json = .github\mcp-servers\modelcontextprotocol-filesystem.mcp.json
+		.github\mcp-servers\playwright-mcp-server-in-mcp-servers-directory.mcp.json = .github\mcp-servers\playwright-mcp-server-in-mcp-servers-directory.mcp.json
 	EndProjectSection
 EndProject
 Global
