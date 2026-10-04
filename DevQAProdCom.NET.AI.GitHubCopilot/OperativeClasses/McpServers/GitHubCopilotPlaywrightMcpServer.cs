@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 {
-    public class GitHubCopilotPlaywrightMcpServer : GitHubCopilotStdioMcpServer
+    public class GitHubCopilotPlaywrightMcpServer : LOCAL_GitHubCopilotStdioMcpServer_20260410_1028
     {
         public override string? Class { get; } = typeof(GitHubCopilotPlaywrightMcpServer).FullName;
 

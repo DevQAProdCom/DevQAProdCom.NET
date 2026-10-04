@@ -68,8 +68,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private IFileBasedMcpServersCollection _allFileBasedMcpServersCollection;
         private IFileBasedMcpServersCollection _sessionFileBasedMcpServersCollection;
 
-        private IMcpServersCollection _allSdkBasedMcpServersCollection;
-        private IMcpServersCollection _sessionSdkBasedMcpServersCollection;
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> _allSdkBasedMcpServersCollection;
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> _sessionSdkBasedMcpServersCollection;
 
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
@@ -101,7 +101,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty,
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
-            IMcpServersCollection? allSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IMcpServer>? allSdkBasedMcpServersCollection = null,
             IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null) : this(logger, copilotClientMode, gitHubCopilotMcpServersMappers)
         {
             _allFileBasedHooksCollection = new FileBasedHooksCollection(_logger, hooksSearcher, defaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
@@ -126,8 +126,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty,
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
-            IMcpServersCollection? allSdkBasedMcpServersCollection = null,
-            IMcpServersCollection? sessionSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IMcpServer>? allSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IMcpServer>? sessionSdkBasedMcpServersCollection = null,
             IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null) : this(logger, copilotClientMode, gitHubCopilotMcpServersMappers)
         {
             ArgumentNullException.ThrowIfNull(allFileBasedHooksCollection);
@@ -489,7 +489,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             if (fileBasedMcpServerExists)
                 WithFileBasedMcpServer(mcpServerIdentifier);
 
-            var sdkBasedMcpServerExists = _allSdkBasedMcpServersCollection.TryGetByIdentifierOrDefault(mcpServerIdentifier, out var sdkBasedMcpServer);
+            var sdkBasedMcpServerExists = _allSdkBasedMcpServersCollection.TryGetByIdentifier(mcpServerIdentifier, out var sdkBasedMcpServer);
             if (sdkBasedMcpServerExists)
                 WithSdkBasedMcpServer(mcpServerIdentifier);
 

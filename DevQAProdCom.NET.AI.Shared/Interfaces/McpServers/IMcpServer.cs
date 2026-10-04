@@ -1,6 +1,8 @@
-﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.McpServers
+﻿using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
+
+namespace DevQAProdCom.NET.AI.Shared.Interfaces.McpServers
 {
-    public interface IMcpServer
+    public interface IMcpServer : IHaveStringIdentifier
     {
         public string? Class { get; }
         public string? FilePath { get; set; }
@@ -11,7 +13,6 @@
 
         public void WithConfigurationFromJson(string configuration);
         public void WithConfigurationFromYaml(string configuration);
-        //public void AssignToOrDefault<TMcpServer>(List<TMcpServer> list) where TMcpServer : class;
         public string ToJson();
         public bool TryGet<TMcpServer>(out TMcpServer? mcpServer) where TMcpServer : class;
     }

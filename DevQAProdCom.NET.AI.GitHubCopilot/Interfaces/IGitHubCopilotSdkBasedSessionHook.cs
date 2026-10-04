@@ -5,6 +5,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
     public interface IGitHubCopilotSdkBasedSessionHook : IHaveStringIdentifier, IHaveDescription
     {
-        public abstract void ApplyTo(SessionHooks sessionHooks);
+        public void ApplyTo(SessionHooks sessionHooks);
     }
 }

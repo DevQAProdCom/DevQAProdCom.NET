@@ -1,10 +1,8 @@
-﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.McpServers
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+
+namespace DevQAProdCom.NET.AI.Shared.Interfaces.McpServers
 {
-    public interface IMcpServersCollection : IEnumerable<IMcpServer>
+    public interface IMcpServersCollection : IIdentifierBasedEntitiesCollection<IMcpServer>
     {
-        public string CollectionIdentifier { get; }
-        public IMcpServer GetByIdentifier(string identifier);
-        public bool TryGetByIdentifierOrDefault(string identifier, out IMcpServer? mcpServer);
-        public IMcpServer Add(IMcpServer mcpServer);
     }
 }
