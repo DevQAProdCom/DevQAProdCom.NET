@@ -18,5 +18,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 
         [YamlMember(Alias = "hooks")]
         public List<string>? Hooks { get; set; }
+
+        [YamlMember(Alias = "mcpServers")]
+        public List<string>? McpServers { get; set; }
     }
 }

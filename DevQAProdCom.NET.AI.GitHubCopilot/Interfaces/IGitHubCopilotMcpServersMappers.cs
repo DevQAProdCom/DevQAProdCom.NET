@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
+using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
-    internal interface IGitHubCopilotMcpServersMappers
+    public interface IGitHubCopilotMcpServersMappers
     {
+        McpServerConfig ToMcpServerConfig(IFileBasedMcpServer fileBasedMcpServer);
     }
 }
