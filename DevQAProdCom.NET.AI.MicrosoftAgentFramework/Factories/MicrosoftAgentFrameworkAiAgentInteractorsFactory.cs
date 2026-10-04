@@ -26,8 +26,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 gitHubCopilotClientService,
                 microsoftAiAgentInteractor,
                 logger,
-                hookSearcher,
-                hooksDefaultLocationsProvider,
+                hooksSearcher: hookSearcher,
+                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,
                 allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection);
         }
 
@@ -45,10 +45,10 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 gitHubCopilotClientService,
                 microsoftAiAgentInteractor,
                 logger,
-                allHooksCollection,
-                sessionHooksCollection,
-                allSdkBasedSessionHooksCollection,
-                sessionSdkBasedSessionHooksCollection);
+                allHooksCollection: allHooksCollection,
+                sessionHooksCollection: sessionHooksCollection,
+                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
+                sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection);
         }
     }
 }

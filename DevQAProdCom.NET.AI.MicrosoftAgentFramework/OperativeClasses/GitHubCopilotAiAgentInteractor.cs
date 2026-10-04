@@ -37,46 +37,32 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
 
             IFileBasedHooksSearcher? hooksSearcher = null,
-            ILocationsProvider? hooksDefaultLocationsProvider = null
-            
-            
-            ) : base(microsoftAiAgentInteractor, logger)
-        {
-            _sessionConfigBuilder = new SessionConfigBuilder(
-                logger,
-
-                mcpServersSearcher: mcpServersSearcher, 
-                mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider, 
-                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
-
-                hooksSearcher: hooksSearcher,
-                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider);
-
-            _gitHubCopilotClientService = gitHubCopilotClientService;
-        }
-
-        public GitHubCopilotAiAgentInteractor(
-            IGitHubCopilotClientService gitHubCopilotClientService,
-            IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
-            ILogger logger,
+            ILocationsProvider? hooksDefaultLocationsProvider = null,
 
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
 
             IFileBasedHooksCollection? allHooksCollection = null,
             IFileBasedHooksCollection? sessionHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger,
+            _sessionConfigBuilder = new SessionConfigBuilder(
+                logger,
+
+                mcpServersSearcher: mcpServersSearcher,
+                mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider,
+                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
+
+                hooksSearcher: hooksSearcher,
+                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,
+
                 allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
                 sessionFileBasedMcpServersCollection: sessionFileBasedMcpServersCollection,
                 allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
-                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
 
                 allFileBasedHooksCollection: allHooksCollection,
                 sessionFileBasedHooksCollection: sessionHooksCollection,

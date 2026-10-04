@@ -88,69 +88,41 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private bool _gitHubInitialDirectoryExistedAtStart;
         private bool _isGitHubDirectoryInitialReserveCopyCreated;
 
-        public SessionConfigBuilder(ILogger logger, CopilotClientMode copilotClientMode = CopilotClientMode.Empty, IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _gitHubCopilotMcpServersMappers = gitHubCopilotMcpServersMappers;
-            WithClientMode(copilotClientMode);
-        }
+        public SessionConfigBuilder(
+            ILogger logger,
 
-        /// <summary>
-        /// Constructor with default classes
-        /// </summary>
-        public SessionConfigBuilder(ILogger logger,
-            IFileBasedHooksSearcher? hooksSearcher = null,
-            ILocationsProvider? hooksDefaultLocationsProvider = null,
-
+            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
-            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
-
-            CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode, gitHubCopilotMcpServersMappers)
-        {
-            //McpServers
-            var fileBasedMcpServersSearcher = mcpServersSearcher ?? new GitHubCopilotFileBasedMcpServersSearcher(_logger);
-            _allFileBasedMcpServersCollection = new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, mcpServersDefaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedMcpServersCollection).ToNameOf());
-            _sessionFileBasedMcpServersCollection = new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, collectionIdentifier: nameof(_sessionFileBasedMcpServersCollection).ToNameOf());
-
-            _allSdkBasedMcpServersCollection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_allSdkBasedMcpServersCollection).ToNameOf());
-            _sessionSdkBasedMcpServersCollection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_sessionSdkBasedMcpServersCollection).ToNameOf());
-
-            //Hooks
-            var fileBasedHooksSearcher = hooksSearcher ?? new GitHubCopilotFileBasedHooksSearcher(_logger);
-            _allFileBasedHooksCollection = new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, hooksDefaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
-            _sessionFileBasedHooksCollection = new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
-
-            _allSdkBasedSessionHooksCollection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
-            _sessionSdkBasedSessionHooksCollection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
-        }
-
-        public SessionConfigBuilder(ILogger logger,
 
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
 
+            IFileBasedHooksSearcher? hooksSearcher = null,
+            ILocationsProvider? hooksDefaultLocationsProvider = null,
             IFileBasedHooksCollection? allFileBasedHooksCollection = null,
             IFileBasedHooksCollection? sessionFileBasedHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null,
-
-            CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : this(logger, copilotClientMode, gitHubCopilotMcpServersMappers)
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null)
         {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _gitHubCopilotMcpServersMappers = gitHubCopilotMcpServersMappers ?? new GitHubCopilotMcpServersMappers(_logger);
+
+            WithClientMode(CopilotClientMode.Empty);
+
             //McpServers
-            var fileBasedMcpServersSearcher = new GitHubCopilotFileBasedMcpServersSearcher(_logger);
-            _allFileBasedMcpServersCollection = allFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, collectionIdentifier: nameof(_allFileBasedMcpServersCollection).ToNameOf());
+            var fileBasedMcpServersSearcher = mcpServersSearcher ?? new GitHubCopilotFileBasedMcpServersSearcher(_logger);
+            _allFileBasedMcpServersCollection = allFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, mcpServersDefaultLocationsProvider, nameof(_allFileBasedMcpServersCollection).ToNameOf());
             _sessionFileBasedMcpServersCollection = sessionFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, collectionIdentifier: nameof(_sessionFileBasedMcpServersCollection).ToNameOf());
 
             _allSdkBasedMcpServersCollection = allSdkBasedMcpServersCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_allSdkBasedMcpServersCollection).ToNameOf());
             _sessionSdkBasedMcpServersCollection = sessionSdkBasedMcpServersCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_sessionSdkBasedMcpServersCollection).ToNameOf());
 
             //Hooks
-            var fileBasedHooksSearcher = new GitHubCopilotFileBasedHooksSearcher(_logger);
-            _allFileBasedHooksCollection = allFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
+            var fileBasedHooksSearcher = hooksSearcher ?? new GitHubCopilotFileBasedHooksSearcher(_logger);
+            _allFileBasedHooksCollection = allFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, hooksDefaultLocationsProvider, nameof(_allFileBasedHooksCollection).ToNameOf());
             _sessionFileBasedHooksCollection = sessionFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
 
             _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
