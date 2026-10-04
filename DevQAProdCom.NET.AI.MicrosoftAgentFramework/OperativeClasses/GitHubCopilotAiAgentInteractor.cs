@@ -6,6 +6,7 @@ using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
+using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
@@ -30,13 +31,26 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IGitHubCopilotClientService gitHubCopilotClientService,
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
-            IFileBasedHooksSearcher hookSearcher,
-            ILocationsProvider? hooksDefaultLocationsProvider = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
+
+            IFileBasedMcpServersSearcher? mcpServersSearcher = null,
+            ILocationsProvider? mcpServersDefaultLocationsProvider = null,
+            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
+
+            IFileBasedHooksSearcher? hooksSearcher = null,
+            ILocationsProvider? hooksDefaultLocationsProvider = null
+            
+            
+            ) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger, 
-                hookSearcher, hooksDefaultLocationsProvider, 
-                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection);
+            _sessionConfigBuilder = new SessionConfigBuilder(
+                logger,
+
+                mcpServersSearcher: mcpServersSearcher, 
+                mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider, 
+                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
+
+                hooksSearcher: hooksSearcher,
+                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider);
 
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }
@@ -45,15 +59,29 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IGitHubCopilotClientService gitHubCopilotClientService,
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
-            IFileBasedHooksCollection allHooksCollection,
-            IFileBasedHooksCollection sessionHooksCollection,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> allSdkBasedSessionHooksCollection,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook> sessionSdkBasedSessionHooksCollection
-            ) : base(microsoftAiAgentInteractor, logger)
+
+            IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
+            IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
+            IGitHubCopilotMcpServersMappers? gitHubCopilotMcpServersMappers = null,
+
+            IFileBasedHooksCollection? allHooksCollection = null,
+            IFileBasedHooksCollection? sessionHooksCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
         {
-            _sessionConfigBuilder = new SessionConfigBuilder(logger, 
-                allHooksCollection, sessionHooksCollection, 
-                allSdkBasedSessionHooksCollection, sessionSdkBasedSessionHooksCollection);
+            _sessionConfigBuilder = new SessionConfigBuilder(logger,
+                allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
+                sessionFileBasedMcpServersCollection: sessionFileBasedMcpServersCollection,
+                allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
+                sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
+                gitHubCopilotMcpServersMappers: gitHubCopilotMcpServersMappers,
+
+                allFileBasedHooksCollection: allHooksCollection,
+                sessionFileBasedHooksCollection: sessionHooksCollection,
+                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
+                sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection);
 
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }

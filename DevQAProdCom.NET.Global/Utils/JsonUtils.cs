@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using DevQAProdCom.NET.Global.Attributes;
+﻿using System.Text.Json;
 
 namespace DevQAProdCom.NET.Global.Utils
 {
@@ -38,39 +35,39 @@ namespace DevQAProdCom.NET.Global.Utils
             }
         }
 
-        public static void PopulateConfigurationProperties(object target, string sourceJsonModel)
-        {
-            if (string.IsNullOrWhiteSpace(sourceJsonModel))
-            {
-                return;
-            }
+        //public static void PopulateConfigurationProperties(object target, string sourceJsonModel)
+        //{
+        //    if (string.IsNullOrWhiteSpace(sourceJsonModel))
+        //    {
+        //        return;
+        //    }
 
-            if (target == null)
-            {
-                throw new ArgumentNullException("Unable to populate configuration properties on a null target object.", nameof(target));
-            }
+        //    if (target == null)
+        //    {
+        //        throw new ArgumentNullException("Unable to populate configuration properties on a null target object.", nameof(target));
+        //    }
 
-            using var document = JsonDocument.Parse(sourceJsonModel);
+        //    using var document = JsonDocument.Parse(sourceJsonModel);
 
-            var properties = target.GetType()
-                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.GetCustomAttribute<ConfigurationPropertyAttribute>() != null)
-                .Where(p => p.GetCustomAttribute<ConfigurationPropertyIgnoreAttribute>() == null)
-                .Where(p => p.CanWrite);
+        //    var properties = target.GetType()
+        //        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        //        .Where(p => p.GetCustomAttribute<ConfigurationPropertyAttribute>() != null)
+        //        .Where(p => p.GetCustomAttribute<LOCAL_ConfigurationPropertyIgnoreAttribute>() == null)
+        //        .Where(p => p.CanWrite);
 
-            foreach (var property in properties)
-            {
-                var jsonName = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? property.Name;
+        //    foreach (var property in properties)
+        //    {
+        //        var jsonName = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? property.Name;
 
-                if (!TryGetPropertyOrdinalIgnoreCase(document.RootElement, jsonName, out var element))
-                {
-                    continue;
-                }
+        //        if (!TryGetPropertyOrdinalIgnoreCase(document.RootElement, jsonName, out var element))
+        //        {
+        //            continue;
+        //        }
 
-                var value = JsonSerializer.Deserialize(element, property.PropertyType);
-                property.SetValue(target, value);
-            }
-        }
+        //        var value = JsonSerializer.Deserialize(element, property.PropertyType);
+        //        property.SetValue(target, value);
+        //    }
+        //}
 
         public static bool TryGetPropertyOrdinalIgnoreCase(JsonElement element, string propertyName, out JsonElement value)
         {

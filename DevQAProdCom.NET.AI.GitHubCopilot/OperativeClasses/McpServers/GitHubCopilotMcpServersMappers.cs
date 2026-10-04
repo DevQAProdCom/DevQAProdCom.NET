@@ -40,6 +40,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
             {
                 return CreateMcpServerConfig(type, fileBasedMcpServer);
             }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Failed to map file-based MCP server '{fileBasedMcpServer.Identifier}' of type '{type}' to configuration.", ex);

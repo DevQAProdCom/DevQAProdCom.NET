@@ -17,6 +17,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             config.Tools = aiAgent.ConfigurationData.Tools;
             config.Skills = aiAgent.ConfigurationData.CustomMetadata?.Skills;
             config.Model = aiAgent.ConfigurationData.Model;
+
+            config.McpServers = aiAgent.ConfigurationData.McpServers;
+
             config.Infer = true;
 
             return config;
