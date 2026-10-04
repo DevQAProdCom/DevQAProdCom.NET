@@ -10,16 +10,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
 
         public virtual string? Description { get; set; }
 
-        protected T McpServerConfiguration { get; set; } = new T();
+        protected T? McpServerConfiguration { get; set; }
 
-        public virtual void ApplyTo(List<McpServerConfig> mcpServerConfigs)
+        public virtual void ApplyTo(IDictionary<string, McpServerConfig>? mcpServerConfigs)
         {
             ArgumentNullException.ThrowIfNull(mcpServerConfigs);
-            mcpServerConfigs.Add(McpServerConfiguration);
+            ArgumentNullException.ThrowIfNullOrEmpty(Identifier);
+            ArgumentNullException.ThrowIfNull(McpServerConfiguration);
+            mcpServerConfigs.Add(Identifier, McpServerConfiguration);
         }
 
         public virtual string ToJson()
         {
+            ArgumentNullException.ThrowIfNull(McpServerConfiguration);
             return McpServerConfiguration.ToJson();
         }
     }

@@ -75,8 +75,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private GitHubCopilotMappers? _gitHubCopilotMappers;
         private GitHubCopilotMappers GitHubCopilotMappers => _gitHubCopilotMappers ??= new();
 
-        private IGitHubCopilotMcpServersMappers? _gitHubCopilotMcpServersMappers;
-        private IGitHubCopilotMcpServersMappers GitHubCopilotMcpServersMappers => _gitHubCopilotMcpServersMappers ??= new GitHubCopilotMcpServersMappers();
+        private IGitHubCopilotMcpServersMappers _gitHubCopilotMcpServersMappers;
 
         private readonly ILogger _logger;
 
@@ -1210,20 +1209,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             _sessionConfig.McpServers ??= new Dictionary<string, McpServerConfig>();
 
-            foreach (var sdkBasedMcpServer in _sessionSdkBasedMcpServersCollection)
-            {
-                var configs = new List<McpServerConfig>();
-                sdkBasedMcpServer.ApplyTo(configs);
-                if (configs.Count > 0 && configs[0] != null)
-                {
-                    _sessionConfig.McpServers[sdkBasedMcpServer.Identifier!] = configs[0];
-                }
-            }
-
             foreach (var fileBasedMcpServer in _sessionFileBasedMcpServersCollection)
             {
-                var config = GitHubCopilotMcpServersMappers.ToMcpServerConfig(fileBasedMcpServer);
+                var config = _gitHubCopilotMcpServersMappers.ToMcpServerConfig(fileBasedMcpServer);
                 _sessionConfig.McpServers[fileBasedMcpServer.Identifier!] = config;
+            }
+
+            foreach (var sdkBasedMcpServer in _sessionSdkBasedMcpServersCollection)
+            {
+                sdkBasedMcpServer.ApplyTo(_sessionConfig.McpServers);
             }
 
             SaveMcpServers(directoryForInteractionConfigurationData);
