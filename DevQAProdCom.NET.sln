@@ -120,6 +120,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{8353BC
 		.github\agents\check-custom-skills-field-answer-questions.agent.md = .github\agents\check-custom-skills-field-answer-questions.agent.md
 		.github\agents\orchestrator-read-write-agent.agent.md = .github\agents\orchestrator-read-write-agent.agent.md
 		.github\agents\playwright-mcp-agent.agent.md = .github\agents\playwright-mcp-agent.agent.md
+		.github\agents\read-agent-with-2-configurations.md = .github\agents\read-agent-with-2-configurations.md
 		.github\agents\read-agent.agent.md = .github\agents\read-agent.agent.md
 		.github\agents\read-write.agent.md = .github\agents\read-write.agent.md
 		.github\agents\write-agent.agent.md = .github\agents\write-agent.agent.md

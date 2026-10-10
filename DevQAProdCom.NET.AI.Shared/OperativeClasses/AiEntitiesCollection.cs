@@ -8,7 +8,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
-        where TAiEntityYamlConfiguration : IAiEntityConfiguration, new()
+        where TAiEntityYamlConfiguration : IAiEntityIdentifiers, new()
     {
         public string CollectionIdentifier { get; }
         public string? BaseDirectory { get; set; }

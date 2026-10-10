@@ -7,7 +7,7 @@ namespace DevQAProdCom.NET.AI.Shared.Utils
     {
         public static TEntity SplitEntityDataAndYamlMetaData<TEntity, TYamlConfig>(string filePath)
             where TEntity : IAiEntityWithTConfigurationType<TYamlConfig>, new()
-            where TYamlConfig : IAiEntityConfiguration, new()
+            where TYamlConfig : IAiEntityIdentifiers, new()
         {
             string? fileContent = null;
 

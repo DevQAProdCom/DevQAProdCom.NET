@@ -1410,7 +1410,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             string directory,
             string defaultExtension,
             string entityTypeName)
-            where TConfiguration : IAiEntityConfiguration, new()
+            where TConfiguration : IAiEntityIdentifiers, new()
         {
             IoUtils.CleanDirectory(directory);
 

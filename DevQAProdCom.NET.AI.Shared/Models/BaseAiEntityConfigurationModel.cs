@@ -1,8 +1,9 @@
-﻿using YamlDotNet.Serialization;
+﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class BaseAiEntityConfigurationModel
+    public class BaseAiEntityConfigurationModel : IAiEntityIdentifiers
     {
         [YamlMember(Alias = "name")]
         public string Name { get; set; }

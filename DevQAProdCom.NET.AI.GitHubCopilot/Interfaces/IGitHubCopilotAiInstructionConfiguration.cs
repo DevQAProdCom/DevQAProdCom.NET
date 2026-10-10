@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
-    public interface IGitHubCopilotAiInstructionConfiguration : IAiEntityConfiguration
+    public interface IGitHubCopilotAiInstructionConfiguration : IAiEntityIdentifiers
     {
         public List<string>? ApplyTo { get; set; }
     }
