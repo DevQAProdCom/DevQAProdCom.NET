@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class BaseAiEntityYamlConfigurationModel
+    public class BaseAiEntityConfigurationModel
     {
         [YamlMember(Alias = "name")]
         public string Name { get; set; }

@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
-    public interface IGitHubCopilotAiAgentYamlConfiguration : IBaseAiAgentYamlConfiguration
+    public interface IGitHubCopilotAiAgentConfiguration : IBaseAiAgentConfiguration
     {
         [YamlMember(Alias = "custom-metadata")]
         public GitHubCopilotAiAgentCustomMetadataConfigurationModel? CustomMetadata { get; set; }

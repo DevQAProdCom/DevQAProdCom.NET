@@ -2,7 +2,7 @@
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class BaseAiAgentYamlConfigurationModel: BaseAiEntityYamlConfigurationModel
+    public class BaseAiAgentConfigurationModel: BaseAiEntityConfigurationModel
     {
         [YamlMember(Alias = "tools")]
         public IList<string>? Tools { get; set; }

@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 {
-    public class GitHubCopilotAiSkillsCollection : AiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>
+    public class GitHubCopilotAiSkillsCollection : AiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>
     {
 
         public GitHubCopilotAiSkillsCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)

@@ -36,28 +36,28 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private bool _useAgentsExtendedSearch = false;
 
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _allAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel>? _allAgentsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
 
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel>? _sessionAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentYamlConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(SessionAgentsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel>? _sessionAgentsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(SessionAgentsCollection));
 
 
         private bool _useInstructionsExtendedSearch = false;
 
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _allInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>? _allInstructionsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllInstructionsCollection), useExtendedSearch: _useInstructionsExtendedSearch);
 
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel>? _sessionInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionYamlConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(SessionInstructionsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>? _sessionInstructionsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new GitHubCopilotAiInstructionsCollection(_logger, collectionIdentifier: nameof(SessionInstructionsCollection));
 
         private bool _useSkillsExtendedSearch = false;
 
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _allSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>? _allSkillsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllSkillsCollection), useExtendedSearch: _useSkillsExtendedSearch);
 
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel>? _sessionSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillYamlConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(SessionSkillsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>? _sessionSkillsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new GitHubCopilotAiSkillsCollection(_logger, collectionIdentifier: nameof(SessionSkillsCollection));
 
         private IFileBasedHooksCollection _allFileBasedHooksCollection;
         private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
@@ -310,9 +310,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("{TypeName} Adding instruction '{InstructionIdentifier}' with custom prompt.", $"[{nameof(SessionConfigBuilder)}]", instructionIdentifier);
 
-            var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiInstructionYamlConfigurationModel>
+            var entityData = new AiEntityWithConfigurationTypeModel<GitHubCopilotAiInstructionConfigurationModel>
             {
-                ConfigurationData = new GitHubCopilotAiInstructionYamlConfigurationModel { Name = instructionIdentifier },
+                ConfigurationData = new GitHubCopilotAiInstructionConfigurationModel { Name = instructionIdentifier },
                 Prompt = prompt
             };
 
@@ -398,9 +398,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("{TypeName} Adding skill '{SkillIdentifier}' with custom prompt.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
 
-            var entityData = new AiEntityWithTYamlConfigurationTypeModel<GitHubCopilotAiSkillYamlConfigurationModel>
+            var entityData = new AiEntityWithConfigurationTypeModel<GitHubCopilotAiSkillConfigurationModel>
             {
-                ConfigurationData = new GitHubCopilotAiSkillYamlConfigurationModel { Name = skillIdentifier },
+                ConfigurationData = new GitHubCopilotAiSkillConfigurationModel { Name = skillIdentifier },
                 Prompt = prompt
             };
 
@@ -1406,11 +1406,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         }
 
         private void SaveAiEntities<TConfiguration>(
-            IEnumerable<IAiEntityWithTYamlConfigurationType<TConfiguration>> entities,
+            IEnumerable<IAiEntityWithTConfigurationType<TConfiguration>> entities,
             string directory,
             string defaultExtension,
             string entityTypeName)
-            where TConfiguration : IAiEntityYamlConfiguration, new()
+            where TConfiguration : IAiEntityConfiguration, new()
         {
             IoUtils.CleanDirectory(directory);
 

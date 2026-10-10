@@ -8,12 +8,12 @@ using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
     public class AiEntitiesCollection<TAiEntityYamlConfiguration> : IAiEntitiesCollection<TAiEntityYamlConfiguration>
-        where TAiEntityYamlConfiguration : IAiEntityYamlConfiguration, new()
+        where TAiEntityYamlConfiguration : IAiEntityConfiguration, new()
     {
         public string CollectionIdentifier { get; }
         public string? BaseDirectory { get; set; }
 
-        protected List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
+        protected List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> Entities = new();
         protected ILogger Log;
 
         protected readonly bool UseExtendedSearch = false;
@@ -37,7 +37,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             BaseDirectory = baseFolder;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> Add(IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> entity)
+        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
@@ -63,7 +63,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
                 return entity;
             }
 
-            IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityWithDifferentNameAndSameFilePath = null;
+            IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>? entityWithDifferentNameAndSameFilePath = null;
             if (!string.IsNullOrEmpty(addedEntityFilePath))
             {
                 entityWithDifferentNameAndSameFilePath = Entities.SingleOrDefault(existingEntityInCollection =>
@@ -74,7 +74,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             var existingEntitiesWithTheSameName = Entities.Where(existingEntityInCollection =>
                 existingEntityInCollection.ConfigurationData.Name.ToLower() == addedEntityName).ToList();
 
-            var allSameNameEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>(existingEntitiesWithTheSameName);
+            var allSameNameEntities = new List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>>(existingEntitiesWithTheSameName);
             allSameNameEntities.Add(entity);
 
             if (allSameNameEntities.Any(e => !string.IsNullOrEmpty(e.FilePath)) && allSameNameEntities.Any(e => string.IsNullOrEmpty(e.FilePath)))
@@ -110,14 +110,14 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         private static string? NormalizeFilePath(string? filePath) => string.IsNullOrWhiteSpace(filePath) ? null : IoUtils.NormalizeFilePath(filePath);
 
-        public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> Add(params IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>[] entities)
+        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> Add(params IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>[] entities)
         {
             if (entities == null || entities.Length == 0)
             {
                 throw new ArgumentException("At least one entity must be provided.", nameof(entities));
             }
 
-            var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
+            var addedEntities = new List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>>();
 
             foreach (var entity in entities)
             {
@@ -127,20 +127,20 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> AddFromFile(string filePath)
+        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> AddFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
 
             Log.Info("{CollectionIdentifier} Adding entity data from file: {filePath}", $"[{CollectionIdentifier}]", filePath);
-            var entityData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTYamlConfigurationTypeModel<TAiEntityYamlConfiguration>, TAiEntityYamlConfiguration>(filePath);
+            var entityData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithConfigurationTypeModel<TAiEntityYamlConfiguration>, TAiEntityYamlConfiguration>(filePath);
             entityData.FilePath = filePath;
 
             return Add(entityData);
         }
 
-        public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddFromFiles(params string[] filesPaths)
+        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromFiles(params string[] filesPaths)
         {
-            var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
+            var addedEntities = new List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>>();
 
             foreach (var filePath in filesPaths)
             {
@@ -150,11 +150,11 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectory(string directoryPath)
+        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectory(string directoryPath)
         {
             IoUtils.CheckDirectoryMustExist(directoryPath);
             var mdFiles = IoUtils.GetMarkdownFiles(directoryPath);
-            var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
+            var addedEntities = new List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>>();
 
             foreach (var mdFile in mdFiles)
             {
@@ -164,9 +164,9 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectories(params string[] directoriesPaths)
+        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectories(params string[] directoriesPaths)
         {
-            var addedEntities = new List<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>>();
+            var addedEntities = new List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>>();
 
             foreach (var directoryPath in directoriesPaths)
             {
@@ -176,7 +176,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetByIdentifier(string entityIdentifier)
+        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> GetByIdentifier(string entityIdentifier)
         {
             if (TryGetByIdentifier(entityIdentifier, out var entityData))
             {
@@ -186,7 +186,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] Entity with identifier/name '{entityIdentifier}' is not found in the collection.");
         }
 
-        public bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityData)
+        public bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>? entityData)
         {
             var matchingEntities = Entities.Where(x => x.ConfigurationData.Name == entityIdentifier).ToList();
 
@@ -211,7 +211,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return false;
         }
 
-        public IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration> GetByFilePath(string filePath)
+        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> GetByFilePath(string filePath)
         {
             if (TryGetByFilePath(filePath, out var entityData))
             {
@@ -221,7 +221,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] Entity with file path '{filePath}' is not found in the collection.");
         }
 
-        public bool TryGetByFilePath(string filePath, out IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>? entityData)
+        public bool TryGetByFilePath(string filePath, out IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>? entityData)
         {
             var normalizedFilePath = IoUtils.NormalizeFilePath(filePath);
             entityData = Entities.FirstOrDefault(x => IoUtils.NormalizeFilePath(x.FilePath) == normalizedFilePath);
@@ -285,7 +285,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
         protected virtual List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false) => new List<string>();
 
-        public IEnumerator<IAiEntityWithTYamlConfigurationType<TAiEntityYamlConfiguration>> GetEnumerator()
+        public IEnumerator<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> GetEnumerator()
         {
             return Entities.GetEnumerator();
         }

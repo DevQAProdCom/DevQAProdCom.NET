@@ -3,9 +3,9 @@ using DevQAProdCom.NET.Global.Extensions;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class AiEntityWithTYamlConfigurationTypeModel<TYamlConfigurationType> : AiEntityModel, IAiEntityWithTYamlConfigurationType<TYamlConfigurationType>
+    public class AiEntityWithConfigurationTypeModel<TConfigurationType> : AiEntityModel, IAiEntityWithTConfigurationType<TConfigurationType>
     {
-        public TYamlConfigurationType ConfigurationData { get; set; }
+        public TConfigurationType ConfigurationData { get; set; }
 
         public override string ToMdFileContent()
         {

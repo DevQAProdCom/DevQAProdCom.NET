@@ -4,7 +4,7 @@ using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 {
-    public class GitHubCopilotAiSkillYamlConfigurationModel : BaseAiEntityYamlConfigurationModel, IGitHubCopilotAiSkillYamlConfiguration
+    public class GitHubCopilotAiSkillConfigurationModel : BaseAiEntityConfigurationModel, IGitHubCopilotAiSkillConfiguration
     {
         [YamlMember(Alias = "allowed-tools")]
         public IList<string>? AllowedTools { get; set; }
