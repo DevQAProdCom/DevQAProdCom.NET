@@ -5,5 +5,7 @@
         public List<IAiAgentConfigurationWithoutAiEntityIdentifiers>? Configurations { get; set; }
 
         public IAiAgentConfigurationWithoutAiEntityIdentifiers GetConfiguration(string? identifier = null);
+
+        public bool TryGetConfiguration(string? identifier, out IAiAgentConfigurationWithoutAiEntityIdentifiers? configuration);
     }
 }

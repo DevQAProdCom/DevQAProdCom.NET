@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
+﻿using System.Text.Json.Serialization;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.Models;
 using YamlDotNet.Serialization;
 
@@ -6,7 +7,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 {
     public class GitHubCopilotAiAgentConfigurationModelWithCustomMedata : AiAgentConfigurationWithCustomMetadataModel
     {
+        [JsonPropertyName("custom-metadata")]
         [YamlMember(Alias = "custom-metadata")]
-        public new IAiAgentConfigurationCustomMetadata? CustomMetadata { get; set; } = new GitHubCopilotAiAgentConfigurationCustomMetadataModel();
+        public override IAiAgentConfigurationCustomMetadata? CustomMetadata { get; set; } = new GitHubCopilotAiAgentConfigurationCustomMetadataModel();
     }
 }
