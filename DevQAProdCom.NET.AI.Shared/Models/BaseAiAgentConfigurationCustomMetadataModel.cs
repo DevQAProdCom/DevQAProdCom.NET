@@ -11,6 +11,16 @@ namespace DevQAProdCom.NET.AI.Shared.Models
         [YamlMember(Alias = "configurations")]
         public List<IAiAgentConfigurationWithoutAiEntityIdentifiers>? Configurations { get; set; } = new List<IAiAgentConfigurationWithoutAiEntityIdentifiers>();
 
+        public IAiAgentConfigurationWithoutAiEntityIdentifiers GetConfiguration(string? identifier = null)
+        {
+            if (TryGetConfiguration(identifier, out var configuration))
+            {
+                return configuration!;
+            }
+
+            throw new InvalidOperationException($"No configuration available for identifier {identifier ?? "null"}.");
+        }
+
         public bool TryGetConfiguration(string? identifier, out IAiAgentConfigurationWithoutAiEntityIdentifiers? configuration)
         {
             configuration = null;
@@ -38,16 +48,6 @@ namespace DevQAProdCom.NET.AI.Shared.Models
 
             configuration = configurations.First();
             return true;
-        }
-
-        public IAiAgentConfigurationWithoutAiEntityIdentifiers GetConfiguration(string? identifier = null)
-        {
-            if (TryGetConfiguration(identifier, out var configuration))
-            {
-                return configuration!;
-            }
-
-            throw new InvalidOperationException($"No configuration available for identifier {identifier ?? "null"}.");
         }
     }
 }
