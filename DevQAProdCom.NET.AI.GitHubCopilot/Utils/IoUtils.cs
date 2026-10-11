@@ -18,10 +18,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
                 agentFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(gitHubAgentsDirectory, searchOption: SearchOption.AllDirectories).Select(x => x.FullName));
             }
 
-            if (useExtendedSearch)
-            {
-                agentFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, searchPattern: $"*{Const.Files.Extensions.AGENT_MD}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName));
-            }
+            SearchOption searchOption = useExtendedSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            agentFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, searchPattern: $"*{Const.Files.Extensions.AGENT_MD}", searchOption: searchOption).Select(x => x.FullName));
 
             return agentFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
@@ -37,10 +35,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
                 instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(instructionsDirectory, searchOption: SearchOption.AllDirectories).Select(x => x.FullName));
             }
 
-            if (useExtendedSearch)
-            {
-                instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, searchPattern: $"*{Const.Files.Extensions.INSTRUCTIONS_MD}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName));
-            }
+            SearchOption searchOption = useExtendedSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            instructionFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, searchPattern: $"*{Const.Files.Extensions.INSTRUCTIONS_MD}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName));
 
             return instructionFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
@@ -50,13 +46,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
             GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
             var skillFiles = new List<string>();
 
-            List<string> GetSkills(string directory) => GlobalIoUtils.GetFilesInDirectory(directory, $"*{Const.Files.Extensions.SKILL_MD}", SearchOption.AllDirectories).Select(x => x.FullName).ToList();
-
-            if (useExtendedSearch)
-            {
-                skillFiles.AddRange(GetSkills(rootDirectory));
-                return skillFiles;
-            }
+            SearchOption searchOption = useExtendedSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            List<string> GetSkills(string directory) => GlobalIoUtils.GetFilesInDirectory(directory, $"*{Const.Files.Extensions.SKILL_MD}", searchOption).Select(x => x.FullName).ToList();
 
             var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
             if (Directory.Exists(skillsDirectory))
@@ -64,7 +55,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
                 skillFiles.AddRange(GetSkills(skillsDirectory));
             }
 
-            return skillFiles;
+            skillFiles.AddRange(GetSkills(rootDirectory));
+
+            return skillFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
 
         public static List<string> GetFilesWithCopilotMcpServers(string rootDirectory, bool useExtendedSearch = false)
@@ -83,7 +76,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 
             //From .github/mcp-servers/{*}mcp.json
             var mcpServersDirectory = Const.Directories.GetGitHubMcpServersDirectory(rootDirectory);
-            if(GlobalIoUtils.DirectoryExists(mcpServersDirectory))
+            if (GlobalIoUtils.DirectoryExists(mcpServersDirectory))
             {
                 var mcpServersDirectoryFiles = GlobalIoUtils.GetFilesInDirectory(mcpServersDirectory, searchPattern: $"*{Const.Files.Extensions.MCP_JSON}", searchOption: SearchOption.AllDirectories).Select(x => x.FullName);
                 mcpServersFiles.AddRange(mcpServersDirectoryFiles);
