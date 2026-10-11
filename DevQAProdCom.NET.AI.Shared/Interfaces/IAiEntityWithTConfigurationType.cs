@@ -1,7 +1,7 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
-    public interface IAiEntityWithTConfigurationType<TYamlConfigurationType> : IAiEntity
+    public interface IAiEntityWithTConfigurationType<TConfigurationType> : IAiEntity
     {
-        public TYamlConfigurationType ConfigurationData { get; set; }
+        public TConfigurationType ConfigurationData { get; set; }
     }
 }

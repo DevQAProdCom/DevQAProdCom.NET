@@ -1,11 +1,8 @@
-﻿using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
-using YamlDotNet.Serialization;
+﻿using DevQAProdCom.NET.AI.Shared.Models;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 {
-    public class GitHubCopilotAiAgentConfigurationCustomMetadataModel: IAiAgentConfigurationCustomMetadataModel
+    public class GitHubCopilotAiAgentConfigurationCustomMetadataModel : BaseAiAgentConfigurationCustomMetadataModel
     {
-        [YamlMember(Alias = "configurations")]
-        public List<IAiAgentConfigurationWithoutAiEntityIdentifiers>? Configurations { get; set; }
     }
 }

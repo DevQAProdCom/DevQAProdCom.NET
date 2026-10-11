@@ -7,7 +7,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
 {
     public interface IGitHubCopilotMappers
     {
-        CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<GitHubCopilotAiAgentConfigurationModel> aiAgent,
+        CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<GitHubCopilotAiAgentConfigurationModelWithCustomMedata> aiAgent,
            IFileBasedMcpServersCollection fileBasedMcpServersCollection,
            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> sdkBasedMcpServersCollection);
 

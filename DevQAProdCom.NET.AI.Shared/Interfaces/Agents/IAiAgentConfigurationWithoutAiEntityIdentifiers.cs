@@ -1,7 +1,7 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.Agents
 {
-    public interface IAiAgentConfigurationWithoutAiEntityIdentifiers : IAiAgentConfigurationStandardDataWithoutAiEntityIdentifiers, IAiAgentConfigurationCustomConfigurationData
+    public interface IAiAgentConfigurationWithoutAiEntityIdentifiers : IAiAgentConfigurationStandardDataPropertiesWithoutAiEntityIdentifiers, IAiAgentConfigurationCustomDataProperties
     {
-        public string Identifier { get; set; }
+        public string? ConfigurationIdentifier { get; set; }
     }
 }

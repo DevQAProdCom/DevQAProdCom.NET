@@ -1,23 +1,23 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
-    public interface IAiEntitiesCollection<TAiEntityYamlConfiguration> : 
-        IEnumerable<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> where TAiEntityYamlConfiguration : IAiEntityIdentifiers, new()
+    public interface IAiEntitiesCollection<TAiEntityConfiguration> : 
+        IEnumerable<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> where TAiEntityConfiguration : IAiEntityIdentifiers, new()
 
     {
         public string CollectionIdentifier { get; }
 
-        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> entity);
-        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> Add(params IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>[] entities);
+        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityConfiguration> entity);
+        public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> Add(params IAiEntityWithTConfigurationType<TAiEntityConfiguration>[] entities);
 
-        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> AddFromFile(string filePath);
-        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromFiles(params string[] filesPaths);
-        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectory(string directoryPath);
-        public List<IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>> AddFromDirectories(params string[] directoriesPaths);
+        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> AddFromFile(string filePath);
+        public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromFiles(params string[] filesPaths);
+        public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromDirectory(string directoryPath);
+        public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromDirectories(params string[] directoriesPaths);
 
-        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> GetByIdentifier(string entityIdentifier);
-        public bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>? entity);
+        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByIdentifier(string entityIdentifier);
+        public bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entity);
 
-        public IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration> GetByFilePath(string filePath);
-        public bool TryGetByFilePath(string filePath, out IAiEntityWithTConfigurationType<TAiEntityYamlConfiguration>? entity);
+        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByFilePath(string filePath);
+        public bool TryGetByFilePath(string filePath, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entity);
     }
 }

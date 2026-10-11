@@ -36,11 +36,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private bool _useAgentsExtendedSearch = false;
 
-        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel>? _allAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModelWithCustomMedata>? _allAgentsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModelWithCustomMedata> AllAgentsCollection => _allAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, initializeFromDefaultLocations: true, collectionIdentifier: nameof(AllAgentsCollection), useExtendedSearch: _useAgentsExtendedSearch);
 
-        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel>? _sessionAgentsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModel> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(SessionAgentsCollection));
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModelWithCustomMedata>? _sessionAgentsCollection;
+        private IAiEntitiesCollection<GitHubCopilotAiAgentConfigurationModelWithCustomMedata> SessionAgentsCollection => _sessionAgentsCollection ??= new GitHubCopilotAiAgentsCollection(_logger, collectionIdentifier: nameof(SessionAgentsCollection));
 
 
         private bool _useInstructionsExtendedSearch = false;

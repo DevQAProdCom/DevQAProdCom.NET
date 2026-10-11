@@ -1,6 +1,6 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.Agents
 {
-    public interface IAiAgentConfigurationCustomConfigurationData
+    public interface IAiAgentConfigurationCustomDataProperties
     {
         public List<string>? Permissions { get; set; }
         public List<string>? Instructions { get; set; }

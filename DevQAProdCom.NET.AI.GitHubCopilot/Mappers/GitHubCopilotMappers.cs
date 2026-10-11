@@ -53,7 +53,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             }
         }
 
-        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<GitHubCopilotAiAgentConfigurationModel> aiAgent,
+        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<GitHubCopilotAiAgentConfigurationModelWithCustomMedata> aiAgent,
             IFileBasedMcpServersCollection fileBasedMcpServersCollection,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> sdkBasedMcpServersCollection)
         {
