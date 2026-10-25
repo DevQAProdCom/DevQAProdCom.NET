@@ -41,13 +41,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>> _agentsSearcher;
         private readonly ILocationsProvider _agentsDefaultLocationsProvider;
         private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _allAgentsCollection;
-        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> AllAgentsCollection => _allAgentsCollection ??= new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(_logger, _agentsSearcher, mapper: new GitHubCopilotAiAgentsConfigurationsMappers(), _agentsDefaultLocationsProvider, null, collectionIdentifier: nameof(AllAgentsCollection));
 
-        //Add agents inside SessionAgentsCollection are supposed to contain only single configuration.
+        //Add agents inside _sessionAgentsCollection are supposed to contain only single configuration.
         //If agent md file contains multiple configurations, the configuration to be used must be specified when adding the agent to the session collection or the default configuration will be used.
         //The default configuration is the one with no configuration identifier or with configuration identifier set to "default".
         private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _sessionAgentsCollection;
-        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> SessionAgentsCollection => _sessionAgentsCollection ??= new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(_logger, _agentsSearcher, mapper: new GitHubCopilotAiAgentsConfigurationsMappers(), collectionIdentifier: nameof(SessionAgentsCollection));
+
+        private IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _mapper = null;
 
         private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>> _instructionsSearcher;
         private readonly ILocationsProvider _instructionsDefaultLocationsProvider;
@@ -95,6 +95,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
             ILocationsProvider? agentsDefaultLocationsProvider = null,
+            IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? mapper = null,
+
+            ISearchEntitiesInLocations<IAiAgentConfiguration>? configurationsSearcher = null,
+            ILocationsProvider? defaultConfigurationsLocationsProvider = null,
+
 
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
             ILocationsProvider? instructionsDefaultLocationsProvider = null,
@@ -105,18 +110,22 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
 
+            IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
+            IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
+
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
+
             IFileBasedHooksSearcher? hooksSearcher = null,
             ILocationsProvider? hooksDefaultLocationsProvider = null,
 
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
-            IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
-            IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
             IFileBasedHooksCollection? allFileBasedHooksCollection = null,
             IFileBasedHooksCollection? sessionFileBasedHooksCollection = null,
+
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null)
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null,
+
+            IGitHubCopilotMappers? gitHubCopilotMappers = null)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _gitHubCopilotMappers = gitHubCopilotMappers ?? new GitHubCopilotMappers(_logger);
@@ -181,7 +190,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         //public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
         //{
         //    WithAgent(agentIdentifier);
-        //    var entityData = AllAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
+        //    var entityData = _allAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
         //    _sessionConfig.Agent = entityData.ConfigurationData.Name;
         //    LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
         //    WithModel(entityData.ConfigurationData.Model!);
@@ -208,8 +217,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier, string? configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entityData = AllAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
-            SessionAgentsCollection.Add(entityData);
+            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
+            _sessionAgentsCollection.Add(entityData);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
 
@@ -231,7 +240,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath, string? configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllAgentsCollection.AddFromFile(filePath);
+            var entityData = _allAgentsCollection.AddFromFile(filePath);
             WithPrimaryAgent(entityData.ConfigurationData.Name, configuration);
 
             return this;
@@ -240,8 +249,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithAgent(string agentIdentifier, string? configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entityData = AllAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
-            SessionAgentsCollection.Add(entityData);
+            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
+            _sessionAgentsCollection.Add(entityData);
             //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
             //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
             //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
@@ -264,8 +273,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithAgentFromFile(string filePath, string? configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllAgentsCollection.AddFromFile(filePath);
-            SessionAgentsCollection.Add(entityData);
+            var entityData = _allAgentsCollection.AddFromFile(filePath);
+            _sessionAgentsCollection.Add(entityData);
             return this;
         }
 
@@ -282,8 +291,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgentsFromDirectory(string directoryPath)
         {
-            var entities = AllAgentsCollection.AddFromDirectory(directoryPath);
-            var sessionEntities = SessionAgentsCollection.AddFromDirectory(directoryPath);
+            var entities = _allAgentsCollection.AddFromDirectory(directoryPath);
+            var sessionEntities = _sessionAgentsCollection.AddFromDirectory(directoryPath);
             return this;
         }
 
@@ -1040,7 +1049,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             if (!string.IsNullOrEmpty(_sessionConfig.Agent))
             {
-                var primaryAgentEntityData = SessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
+                var primaryAgentEntityData = _sessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
                 WithModel(primaryAgentEntityData.ConfigurationData.Model!);
             }
 
@@ -1051,13 +1060,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureAgents(string directoryForInteractionConfigurationData)
         {
             //Aggregate data on subagents for all agents added to the session. This is required because some agents may require subagents that are not available in other agents, so the session must have all subagents available to be able to run all agents in the session.
-            var sessionSubagents = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Subagents?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Subagents!).Distinct().ToArray();
+            var sessionSubagents = _sessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Subagents?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Subagents!).Distinct().ToArray();
             WithAgents(sessionSubagents);
 
-            foreach (var entityData in SessionAgentsCollection)
+            foreach (var entityData in _sessionAgentsCollection)
             {
                 var customAgentConfig = _gitHubCopilotMappers.ToCustomAgentConfig(entityData, fileBasedMcpServersCollection: _allFileBasedMcpServersCollection, sdkBasedMcpServersCollection: _allSdkBasedMcpServersCollection);
-                WithCustomAgentConfig(customAgentConfig); //TODO Make sure that all CustomAgentConfig entries are logged, for use case, when those where added manuall, not through SessionAgentsCollection, so that they are not logged in the WithAgent method.
+                WithCustomAgentConfig(customAgentConfig); //TODO Make sure that all CustomAgentConfig entries are logged, for use case, when those where added manuall, not through _sessionAgentsCollection, so that they are not logged in the WithAgent method.
             }
 
             SaveAiAgents(directoryForInteractionConfigurationData);
@@ -1071,7 +1080,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureTools(CopilotClientMode? copilotClientMode = null)
         {
             //Session is setup with all tools available from all agents in the session. This is required because some agents may require tools that are not available in other agents, so the session must have all tools available to be able to run all agents in the session.
-            var tools = SessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
+            var tools = _sessionAgentsCollection.Where(agent => agent.ConfigurationData?.Tools?.Count() > 0)
                 .SelectMany(agent => agent.ConfigurationData.Tools!)
                 .Distinct()
                 .ToList();
@@ -1086,7 +1095,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
 
             //If call of subagents is required then session must have the "agent" tool available. This is required for the session to be able to call subagents.
-            if (SessionAgentsCollection.Count() > 1 && !_sessionConfig.AvailableTools.Contains(Const.Tools.AGENT))
+            if (_sessionAgentsCollection.Count() > 1 && !_sessionConfig.AvailableTools.Contains(Const.Tools.AGENT))
             {
                 _logger.Info("{TypeName} Adding '{Tool}' to '{PropertyName}' because multiple agents are configured in the session, but it was not already available.", $"[{nameof(SessionConfigBuilder)}]", Const.Tools.AGENT, nameof(_sessionConfig.AvailableTools));
                 WithAvailableTools(Const.Tools.AGENT);
@@ -1096,7 +1105,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureInstructions(string directoryForInteractionConfigurationData)
         {
             // Aggregate data on instructions from all agents in the session
-            var sessionInstructions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Instructions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Instructions!).Distinct().ToArray();
+            var sessionInstructions = _sessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Instructions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Instructions!).Distinct().ToArray();
             WithInstructions(sessionInstructions);
             SaveAiInstructions(directoryForInteractionConfigurationData);
 
@@ -1124,7 +1133,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void ConfigureSkills(string directoryForInteractionConfigurationData)
         {
             // Aggregate data on skills from all agents in the session
-            var sessionSkills = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills!).Distinct().ToArray();
+            var sessionSkills = _sessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills!).Distinct().ToArray();
 
             //TODO Check that no duplication happens between skills added through WithSkills and skills added through WithSkillDirectories. If duplication happens, then throw an exception.
             WithSkills(sessionSkills);
@@ -1159,16 +1168,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 if (primaryAgentFromSessionConfig != null)
                     primaryAgentFromSessionConfig.Skills = new List<string>();
 
-                //Add through the SessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
-                //Plus for consistency, the same skills are added to the SessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
-                var primaryAgentFroSessionAgentsCollection = SessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
-                if (primaryAgentFroSessionAgentsCollection != null && primaryAgentFroSessionAgentsCollection.ConfigurationData != null)
-                    primaryAgentFroSessionAgentsCollection.ConfigurationData.CustomMetadata!.Configurations!.Single().Skills = new List<string>();
+                //Add through the _sessionAgentsCollection entity mapped to the CustomAgentConfig of the SessionConfig.
+                //Plus for consistency, the same skills are added to the _sessionAgentsCollection entity, so that it is consistent with the CustomAgentConfig of the SessionConfig.
+                var primaryAgentFro_sessionAgentsCollection = _sessionAgentsCollection.GetByIdentifier(_sessionConfig.Agent);
+                if (primaryAgentFro_sessionAgentsCollection != null && primaryAgentFro_sessionAgentsCollection.ConfigurationData != null)
+                    primaryAgentFro_sessionAgentsCollection.ConfigurationData.CustomMetadata!.Configurations!.Single().Skills = new List<string>();
 
                 foreach (var directory in _sessionConfig.SkillDirectories.Select(x => new DirectoryInfo(x)))
                 {
                     primaryAgentFromSessionConfig?.Skills?.Add(directory.Name);
-                    primaryAgentFroSessionAgentsCollection?.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills?.Add(directory.Name);
+                    primaryAgentFro_sessionAgentsCollection?.ConfigurationData?.CustomMetadata?.Configurations?.Single().Skills?.Add(directory.Name);
                 }
             }
         }
@@ -1177,7 +1186,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             //Fill the session MCP servers collection with all MCP servers from all agents in the session.
             //This is required because some agents may require MCP servers that are not available in other agents, so the session must have all MCP servers available to be able to run all agents in the session.
-            var agentsMcpServers = SessionAgentsCollection
+            var agentsMcpServers = _sessionAgentsCollection
                 .Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().McpServers?.Count > 0)
                 .SelectMany(x => x.ConfigurationData!.CustomMetadata!.Configurations!.Single().McpServers!)
                 .Distinct()
@@ -1278,7 +1287,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void ConfigureHooks(string directoryForInteractionConfigurationData)
         {
-            var sessionHooks = SessionAgentsCollection
+            var sessionHooks = _sessionAgentsCollection
                 .Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Hooks?.Count > 0)
                 .SelectMany(x => x.ConfigurationData!.CustomMetadata!.Configurations!.Single().Hooks!)
                 .Distinct()
@@ -1310,7 +1319,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public void ConfigurePermissions(string directoryForInteractionConfigurationData)
         {
             // Aggregate data on skills from all agents in the session
-            var sessionPermissions = SessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions!).Distinct().ToArray();
+            var sessionPermissions = _sessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions!).Distinct().ToArray();
             WithPermissions(sessionPermissions);
             //TODO Save Permissions Configuration to directoryForInteractionConfigurationData if needed, similar to how agents, instructions, and skills are saved.
         }
@@ -1368,7 +1377,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiAgents(string rootDirectory)
         {
             var agentsDirectory = Const.Directories.GetGitHubAgentsDirectory(rootDirectory);
-            SaveAiEntities(SessionAgentsCollection, agentsDirectory, Const.Files.Extensions.AGENT_MD, "Agent");
+            SaveAiEntities(_sessionAgentsCollection, agentsDirectory, Const.Files.Extensions.AGENT_MD, "Agent");
         }
 
         private void SaveAiInstructions(string rootDirectory)
