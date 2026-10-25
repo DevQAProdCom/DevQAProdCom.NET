@@ -14,7 +14,7 @@
                 internal const string CHECK_CUSTOM_INSTRUCTIONS_FIELD_ANSWER_QUESTIONS_AGENT = "check-custom-instructions-field-answer-questions-agent";
                 internal const string CHECK_CUSTOM_SKILLS_FIELD_ANSWER_QUESTIONS_AGENT = "check-custom-skills-field-answer-questions-agent";
                 internal const string PLAYWRIGHT_MCP_AGENT = "playwright-mcp-agent";
-                internal const string READ_AGENT_WITH_2_CONFIGURATIONS = "read-agent-with-2-configurations";
+                internal const string READ_WRITE_AGENT_WITH_2_CONFIGURATIONS = "read-write-agent-with-2-configurations";
             }
 
             internal static class Prompts
