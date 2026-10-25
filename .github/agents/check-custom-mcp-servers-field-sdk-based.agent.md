@@ -5,14 +5,15 @@ tools:
   - view
   - create
   - playwright-sdk-based-mcp-server/*
-custom-metadata:
-  permissions:
-    - "approve-read-view-all"
-    - "approve-write-create-all"
-    - "approve-playwright-mcp-tools-all"
-  mcpServers:
-    - playwright-sdk-based-mcp-server
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-read-view-all
+        - approve-write-create-all
+        - approve-playwright-mcp-tools-all
+      mcpServers:
+        - playwright-sdk-based-mcp-server
 ---
 
 # General Description

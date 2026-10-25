@@ -4,13 +4,14 @@ description: Checks file-based hooks. The custom-metadata.hooks field lists a fi
 tools:
   - view
   - create
-custom-metadata:
-  permissions:
-    - approve-read-view-all
-    - approve-write-create-all
-  hooks:
-    - on-session-start-hook-1
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-read-view-all
+        - approve-write-create-all
+      hooks:
+        - on-session-start-hook-1
 ---
 
 Health Check. Hello.

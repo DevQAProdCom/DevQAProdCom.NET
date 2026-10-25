@@ -3,10 +3,11 @@ name: read-agent
 description: Reads a file using only the view tool and returns its raw content.
 tools:
   - view
-custom-metadata:
-  permissions:
-    - "approve-read-view-all"
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-read-view-all
 ---
 
 # General Description

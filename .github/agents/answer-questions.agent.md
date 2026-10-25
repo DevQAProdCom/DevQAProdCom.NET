@@ -3,10 +3,11 @@ name: answer-questions-agent
 description: Receives a JSON payload containing questions and an output file path, then writes a JSON file with a questionsAndAnswers array using only the create tool.
 tools:
   - create
-custom-metadata:
-  permissions:
-    - "approve-write-create-all"
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-write-create-all
 ---
 
 # General Description

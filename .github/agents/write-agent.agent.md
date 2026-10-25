@@ -4,11 +4,12 @@ description: Creates a JSON file at the specified path with a data array using o
 tools:
   - create
   - edit
-custom-metadata:
-  permissions:
-    - "approve-write-create-all"
-    - "approve-write-edit-all"
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-write-create-all
+        - approve-write-edit-all
 ---
 
 # General Description

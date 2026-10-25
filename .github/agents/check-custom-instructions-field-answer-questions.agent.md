@@ -4,13 +4,14 @@ description: Checks SDK setup related to 'instructions' applied to the current s
 tools:
   - view
   - create
-custom-metadata:
-  permissions:
-    - "approve-read-view-all"
-    - "approve-write-create-all"
-  instructions:
-    - "answer-questions-set-1-instructions"
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-read-view-all
+        - approve-write-create-all
+      instructions:
+        - answer-questions-set-1-instructions
 ---
 
 # General Description

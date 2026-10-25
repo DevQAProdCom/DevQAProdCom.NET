@@ -5,14 +5,15 @@ tools:
   - view
   - create
   - playwright-mcp-server-in-mcp-servers-directory/*
-custom-metadata:
-  permissions:
-    - "approve-read-view-all"
-    - "approve-write-create-all"
-    - "approve-playwright-mcp-tools-all"
-  mcpServers:
-    - playwright-mcp-server-in-mcp-servers-directory
 model: claude-haiku-4.5
+custom-metadata:
+  configurations:
+    - permissions:
+        - approve-read-view-all
+        - approve-write-create-all
+        - approve-playwright-mcp-tools-all
+      mcpServers:
+        - playwright-mcp-server-in-mcp-servers-directory
 ---
 
 # General Description
