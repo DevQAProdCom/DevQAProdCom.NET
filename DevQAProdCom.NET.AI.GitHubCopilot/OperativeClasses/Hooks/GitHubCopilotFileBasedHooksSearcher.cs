@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.IO;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
@@ -30,7 +31,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks
 
             if (IoUtils.DirectoryExists(path))
             {
-                var files = IoUtils.GetJsonFilesInDirectory(path);
+                var searchOption = useExtendedSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+                var files = IoUtils.GetJsonFilesInDirectory(path, searchOption);
 
                 foreach (var file in files)
                 {

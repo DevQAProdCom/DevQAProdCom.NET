@@ -1,43 +1,29 @@
 ﻿using System.Collections;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
-using DevQAProdCom.NET.AI.Shared.Models;
-using DevQAProdCom.NET.AI.Shared.Utils;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
 namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 {
     public class AiEntitiesCollection<TAiEntityConfiguration> : IAiEntitiesCollection<TAiEntityConfiguration>
-        where TAiEntityConfiguration : IAiEntityIdentifiers, new()
+        where TAiEntityConfiguration : IAiEntityIdentifiers
     {
         public string CollectionIdentifier { get; }
-        public string? BaseDirectory { get; set; }
 
-        protected List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> Entities = new();
-        protected ILogger Log;
+        protected readonly List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> Entities = new();
+        protected readonly ILogger _logger;
+        private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> _entitiesSearcher;
 
-        protected readonly bool UseExtendedSearch = false;
-
-        public AiEntitiesCollection(ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false)
+        public AiEntitiesCollection(ILogger logger, ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> searcher, ILocationsProvider? defaultLocationsProvider = null, string? collectionIdentifier = null)
         {
-            collectionIdentifier ??= Guid.NewGuid().ToString();
-            CollectionIdentifier = collectionIdentifier;
+            CollectionIdentifier = collectionIdentifier ?? Guid.NewGuid().ToString();
             ArgumentNullException.ThrowIfNull(logger);
-            Log = logger;
-            UseExtendedSearch = useExtendedSearch;
-
-            if (initializeFromDefaultLocations)
-            {
-                InitializeCollectionFromDefaultLocations();
-            }
+            _logger = logger;
+            _entitiesSearcher = searcher ?? throw new ArgumentNullException(nameof(searcher));
+            InitializeCollectionFromDefaultLocations(defaultLocationsProvider);
         }
 
-        public AiEntitiesCollection(string baseFolder, ILogger logger, bool initializeFromDefaultLocations = false, string? collectionIdentifier = null, bool useExtendedSearch = false) : this(logger, initializeFromDefaultLocations, collectionIdentifier, useExtendedSearch)
-        {
-            BaseDirectory = baseFolder;
-        }
-
-        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityConfiguration> entity)
+        public virtual IAiEntityWithTConfigurationType<TAiEntityConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityConfiguration> entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
@@ -59,7 +45,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             {
                 Entities.Remove(existingEntityWithTheSameNameAndSameFilePath);
                 Entities.Add(entity);
-                Log.Debug("[{CollectionIdentifier}] Entity with name '{entityName}' and file path '{filePath}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityName, addedEntityFilePath ?? "null");
+                _logger.Debug("[{CollectionIdentifier}] Entity with name '{entityName}' and file path '{filePath}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityName, addedEntityFilePath ?? "null");
                 return entity;
             }
 
@@ -91,13 +77,13 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             if (entityWithDifferentNameAndSameFilePath != null)
             {
                 Entities.Remove(entityWithDifferentNameAndSameFilePath);
-                Log.Debug("[{CollectionIdentifier}] Entity with the same file path '{filePath}', but different name '{oldEntityName}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityFilePath ?? "null", entityWithDifferentNameAndSameFilePath.ConfigurationData.Name);
+                _logger.Debug("[{CollectionIdentifier}] Entity with the same file path '{filePath}', but different name '{oldEntityName}' already exists in the collection. It has been replaced with the new one.", $"{CollectionIdentifier}", addedEntityFilePath ?? "null", entityWithDifferentNameAndSameFilePath.ConfigurationData.Name);
             }
 
             if (existingEntitiesWithTheSameNameAndDifferentSetFilePaths.Count > 0)
             {
                 Entities.Add(entity);
-                Log.Warning(
+                _logger.Warning(
                     "{CollectionIdentifier} Entity with name '{entityName}' is already present in the collection under different file path(s): {existingFilePaths}. " +
                     "Adding another entity with the same name from file path '{addedEntityFilePath}'.",
                     $"[{CollectionIdentifier}]", addedEntityName, string.Join(", ", existingEntitiesWithTheSameNameAndDifferentSetFilePaths.Select(x => x.FilePath)), addedEntityFilePath ?? "null");
@@ -127,15 +113,25 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> AddFromFile(string filePath)
+        public virtual IAiEntityWithTConfigurationType<TAiEntityConfiguration> AddFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
 
-            Log.Info("{CollectionIdentifier} Adding entity data from file: {filePath}", $"[{CollectionIdentifier}]", filePath);
-            var entityData = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithConfigurationTypeModel<TAiEntityConfiguration>, TAiEntityConfiguration>(filePath);
-            entityData.FilePath = filePath;
+            _logger.Info("{CollectionIdentifier} Adding entity data from file: {filePath}", $"[{CollectionIdentifier}]", filePath);
 
-            return Add(entityData);
+            var entities = _entitiesSearcher.Search(filePath);
+
+            if (entities.Count == 0)
+            {
+                throw new InvalidOperationException($"[{CollectionIdentifier}] No entities found in file '{filePath}'.");
+            }
+
+            if (entities.Count > 1)
+            {
+                throw new InvalidOperationException($"[{CollectionIdentifier}] Multiple entities found in file '{filePath}'. Only one entity per file is expected when adding from file.");
+            }
+
+            return Add(entities[0]);
         }
 
         public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromFiles(params string[] filesPaths)
@@ -153,15 +149,9 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
         public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromDirectory(string directoryPath)
         {
             IoUtils.CheckDirectoryMustExist(directoryPath);
-            var mdFiles = IoUtils.GetMarkdownFiles(directoryPath);
-            var addedEntities = new List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>>();
 
-            foreach (var mdFile in mdFiles)
-            {
-                addedEntities.Add(AddFromFile(mdFile));
-            }
-
-            return addedEntities;
+            var entities = _entitiesSearcher.Search(directoryPath);
+            return Add(entities.ToArray());
         }
 
         public List<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> AddFromDirectories(params string[] directoriesPaths)
@@ -176,7 +166,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedEntities;
         }
 
-        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByIdentifier(string entityIdentifier)
+        public virtual IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByIdentifier(string entityIdentifier)
         {
             if (TryGetByIdentifier(entityIdentifier, out var entityData))
             {
@@ -186,7 +176,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] Entity with identifier/name '{entityIdentifier}' is not found in the collection.");
         }
 
-        public bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entityData)
+        public virtual bool TryGetByIdentifier(string entityIdentifier, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entityData)
         {
             var matchingEntities = Entities.Where(x => x.ConfigurationData.Name == entityIdentifier).ToList();
 
@@ -211,7 +201,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return false;
         }
 
-        public IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByFilePath(string filePath)
+        public virtual IAiEntityWithTConfigurationType<TAiEntityConfiguration> GetByFilePath(string filePath)
         {
             if (TryGetByFilePath(filePath, out var entityData))
             {
@@ -221,69 +211,24 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             throw new InvalidOperationException($"[{CollectionIdentifier}] Entity with file path '{filePath}' is not found in the collection.");
         }
 
-        public bool TryGetByFilePath(string filePath, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entityData)
+        public virtual bool TryGetByFilePath(string filePath, out IAiEntityWithTConfigurationType<TAiEntityConfiguration>? entityData)
         {
             var normalizedFilePath = IoUtils.NormalizeFilePath(filePath);
             entityData = Entities.FirstOrDefault(x => IoUtils.NormalizeFilePath(x.FilePath) == normalizedFilePath);
             return entityData != null;
         }
 
-        private void InitializeCollectionFromDefaultLocations()
+        private void InitializeCollectionFromDefaultLocations(ILocationsProvider? defaultLocationsProvider = null)
         {
-            var baseEntitiesLocations = GetEntitiesLocations();
-            var mdFiles = IoUtils.GetMarkdownFiles(baseEntitiesLocations);
-
-            foreach (var mdFile in mdFiles)
+            if (defaultLocationsProvider != null)
             {
-                AddFromFile(mdFile);
-            }
-        }
-
-        protected List<string> GetEntitiesLocations()
-        {
-            var entitiesLocations = new List<string>();
-
-            Log.Info("{CollectionIdentifier} Starting to gather entity locations.", $"[{CollectionIdentifier}]");
-
-            if (!string.IsNullOrEmpty(BaseDirectory))
-            {
-                Log.Info("{CollectionIdentifier} Using specified BaseDirectory: {baseDirectory}", $"[{CollectionIdentifier}]", BaseDirectory);
-                var entities = FindEntitiesInDirectory(BaseDirectory, UseExtendedSearch);
-                entitiesLocations.AddRange(entities);
-                Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in BaseDirectory.", $"[{CollectionIdentifier}]", entities.Count);
-            }
-            else
-            {
-                Log.Info("{CollectionIdentifier} BaseDirectory not specified, searching in current directory and solution folder.", $"[{CollectionIdentifier}]");
-                var currentDirectory = Directory.GetCurrentDirectory();
-                Log.Info("{CollectionIdentifier} Current directory: {currentDirectory}", $"[{CollectionIdentifier}]", currentDirectory);
-                var entities = FindEntitiesInDirectory(currentDirectory, UseExtendedSearch);
-                entitiesLocations.AddRange(entities);
-                Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in current directory.", $"[{CollectionIdentifier}]", entities.Count);
-
-                if (IoUtils.TryGetNearestSolutionDirectoryAsCurrentOrParent(out var solutionDirectory, currentDirectory) && solutionDirectory != currentDirectory)
+                foreach (var location in defaultLocationsProvider)
                 {
-                    Log.Info("{CollectionIdentifier} Solution folder: {solutionDirectory}", $"[{CollectionIdentifier}]", solutionDirectory!);
-                    entities = FindEntitiesInDirectory(solutionDirectory, UseExtendedSearch);
-                    entitiesLocations.AddRange(entities);
-                    Log.Info("{CollectionIdentifier} Found {entitiesCount} entities in solution folder.", $"[{CollectionIdentifier}]", entities.Count);
+                    var entities = _entitiesSearcher.Search(location);
+                    Add(entities.ToArray());
                 }
             }
-
-            Log.Info("{CollectionIdentifier} Total entity locations found: {entitiesLocationsCount}", $"[{CollectionIdentifier}]", entitiesLocations.Count);
-            if (entitiesLocations.Any())
-            {
-                Log.Info("{CollectionIdentifier} Entity locations: {entityLocations}", $"[{CollectionIdentifier}]", string.Join(", ", entitiesLocations));
-            }
-            else
-            {
-                Log.Warning("{CollectionIdentifier} No entity locations were found.", $"[{CollectionIdentifier}]");
-            }
-
-            return entitiesLocations;
         }
-
-        protected virtual List<string> FindEntitiesInDirectory(string directory, bool useExtendedSearch = false) => new List<string>();
 
         public IEnumerator<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> GetEnumerator()
         {

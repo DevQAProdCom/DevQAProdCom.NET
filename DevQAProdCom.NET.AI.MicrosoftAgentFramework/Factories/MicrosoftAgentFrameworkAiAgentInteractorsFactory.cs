@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
@@ -14,6 +15,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
     public class MicrosoftAgentFrameworkAiAgentInteractorsFactory(IServiceProvider serviceProvider) : IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
+            ILocationsProvider? agentsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
+            ILocationsProvider? instructionsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>? skillsSearcher = null,
+            ILocationsProvider? skillsDefaultLocationsProvider = null,
+
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
@@ -35,12 +45,22 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 microsoftAiAgentInteractor,
                 logger,
 
+                agentsSearcher: agentsSearcher,
+                agentsDefaultLocationsProvider: agentsDefaultLocationsProvider,
+
+                instructionsSearcher: instructionsSearcher,
+                instructionsDefaultLocationsProvider: instructionsDefaultLocationsProvider,
+
+                skillsSearcher: skillsSearcher,
+                skillsDefaultLocationsProvider: skillsDefaultLocationsProvider,
+
                 mcpServersSearcher: mcpServersSearcher,
                 mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider,
-                allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
 
                 hooksSearcher: hookSearcher,
                 hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,
+
+                allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection);
         }
     }

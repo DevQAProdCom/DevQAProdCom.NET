@@ -54,7 +54,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Skills
         {
             try
             {
-                var skill = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithConfigurationTypeModel<GitHubCopilotAiSkillConfigurationModel>, GitHubCopilotAiSkillConfigurationModel>(filePath);
+                var skill = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTConfigurationTypeModel<GitHubCopilotAiSkillConfigurationModel>, GitHubCopilotAiSkillConfigurationModel>(filePath);
                 skill.FilePath = filePath;
                 return skill;
             }

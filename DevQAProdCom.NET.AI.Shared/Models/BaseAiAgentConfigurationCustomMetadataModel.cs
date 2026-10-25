@@ -49,5 +49,24 @@ namespace DevQAProdCom.NET.AI.Shared.Models
             configuration = configurations.First();
             return true;
         }
+
+        public IAiAgentConfigurationWithoutAiEntityIdentifiers? GetDefaultConfiguration()
+        {
+            var configuration = Configurations?.FirstOrDefault(x => string.IsNullOrEmpty(x.ConfigurationIdentifier));
+
+            if (configuration != null)
+            {
+                return configuration;
+            }
+
+            configuration = Configurations?.FirstOrDefault(x => x.ConfigurationIdentifier == SharedAiConstants.Configurations.DEFAULT);
+
+            if (configuration != null)
+            {
+                return configuration;
+            }
+
+            return null;
+        }
     }
 }

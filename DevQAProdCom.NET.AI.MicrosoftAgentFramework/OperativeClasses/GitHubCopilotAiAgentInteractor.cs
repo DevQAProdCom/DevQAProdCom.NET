@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
@@ -32,18 +33,26 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
 
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
+            ILocationsProvider? agentsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
+            ILocationsProvider? instructionsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>? skillsSearcher = null,
+            ILocationsProvider? skillsDefaultLocationsProvider = null,
+
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
 
             IFileBasedHooksSearcher? hooksSearcher = null,
             ILocationsProvider? hooksDefaultLocationsProvider = null,
 
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-
             IFileBasedHooksCollection? allHooksCollection = null,
             IFileBasedHooksCollection? sessionHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
@@ -52,18 +61,26 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             _sessionConfigBuilder = new SessionConfigBuilder(
                 logger,
 
+                agentsSearcher: agentsSearcher,
+                agentsDefaultLocationsProvider: agentsDefaultLocationsProvider,
+
+                instructionsSearcher: instructionsSearcher,
+                instructionsDefaultLocationsProvider: instructionsDefaultLocationsProvider,
+
+                skillsSearcher: skillsSearcher,
+                skillsDefaultLocationsProvider: skillsDefaultLocationsProvider,
+
                 mcpServersSearcher: mcpServersSearcher,
                 mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider,
-                gitHubCopilotMappers: gitHubCopilotMappers,
 
                 hooksSearcher: hooksSearcher,
                 hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,
 
+                gitHubCopilotMappers: gitHubCopilotMappers,
                 allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
                 sessionFileBasedMcpServersCollection: sessionFileBasedMcpServersCollection,
                 allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
-
                 allFileBasedHooksCollection: allHooksCollection,
                 sessionFileBasedHooksCollection: sessionHooksCollection,
                 allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,

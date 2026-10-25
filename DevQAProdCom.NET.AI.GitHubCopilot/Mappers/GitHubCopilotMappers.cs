@@ -53,7 +53,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             }
         }
 
-        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<GitHubCopilotAiAgentConfigurationModelWithCustomMedata> aiAgent,
+        public CustomAgentConfig ToCustomAgentConfig(IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> aiAgent,
             IFileBasedMcpServersCollection fileBasedMcpServersCollection,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> sdkBasedMcpServersCollection)
         {
@@ -64,12 +64,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             config.Description = aiAgent.ConfigurationData.Description;
             config.Prompt = aiAgent.Prompt;
             config.Tools = aiAgent.ConfigurationData.Tools;
-            config.Skills = aiAgent.ConfigurationData.CustomMetadata?.Skills;
+            config.Skills = aiAgent.ConfigurationData.CustomMetadata?.Configurations?.Single().Skills;
             config.Model = aiAgent.ConfigurationData.Model;
 
-            if (aiAgent.ConfigurationData?.CustomMetadata?.McpServers?.Count() > 0)
+            if (aiAgent.ConfigurationData?.CustomMetadata?.Configurations?.Single().McpServers?.Count() > 0)
             {
-                foreach (var mcpServer in aiAgent.ConfigurationData.CustomMetadata.McpServers)
+                foreach (var mcpServer in aiAgent.ConfigurationData.CustomMetadata.Configurations.Single().McpServers!)
                 {
                     var isSdkBasedMcpServerWithIdentifierExists = sdkBasedMcpServersCollection.TryGetByIdentifier(mcpServer, out var sdkBasedMcpServer);
                     var isFileBasedMcpServerWithIdentifierExists = fileBasedMcpServersCollection.TryGetByIdentifier(mcpServer, out var fileBasedMcpServer);

@@ -47,20 +47,20 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return mcpServers;
         }
 
-        public List<IFileBasedMcpServer> AddFromDirectory(string directoryPath)
+        public List<IFileBasedMcpServer> AddFromDirectory(string directoryPath, bool useExtendedSearch = false)
         {
             IoUtils.CheckDirectoryMustExist(directoryPath);
-            var mcpServers = _mcpServersSearcher.Search(directoryPath);
+            var mcpServers = _mcpServersSearcher.Search(directoryPath, useExtendedSearch);
             return Add(mcpServers.ToArray());
         }
 
-        public List<IFileBasedMcpServer> AddFromDirectories(params string[] directoriesPaths)
+        public List<IFileBasedMcpServer> AddFromDirectories(bool useExtendedSearch = false, params string[] directoriesPaths)
         {
             var mcpServers = new List<IFileBasedMcpServer>();
 
             foreach (var directoryPath in directoriesPaths)
             {
-                mcpServers.AddRange(AddFromDirectory(directoryPath));
+                mcpServers.AddRange(AddFromDirectory(directoryPath, useExtendedSearch));
             }
 
             return mcpServers;

@@ -112,20 +112,20 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return addedHooks;
         }
 
-        public List<IFileBasedHook> AddFromDirectory(string directoryPath)
+        public List<IFileBasedHook> AddFromDirectory(string directoryPath, bool useExtendedSearch = false)
         {
             IoUtils.CheckDirectoryMustExist(directoryPath);
-            var hooks = _hookSearcher.Search(directoryPath);
+            var hooks = _hookSearcher.Search(directoryPath, userExtendedSearch: useExtendedSearch);
             return Add(hooks.ToArray());
         }
 
-        public List<IFileBasedHook> AddFromDirectories(params string[] directoriesPaths)
+        public List<IFileBasedHook> AddFromDirectories(bool useExtendedSearch = false, params string[] directoriesPaths)
         {
             var addedHooks = new List<IFileBasedHook>();
 
             foreach (var directoryPath in directoriesPaths)
             {
-                addedHooks.AddRange(AddFromDirectory(directoryPath));
+                addedHooks.AddRange(AddFromDirectory(directoryPath, useExtendedSearch));
             }
 
             return addedHooks;

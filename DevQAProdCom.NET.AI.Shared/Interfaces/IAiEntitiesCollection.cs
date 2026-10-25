@@ -1,7 +1,7 @@
 ﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces
 {
     public interface IAiEntitiesCollection<TAiEntityConfiguration> : 
-        IEnumerable<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> where TAiEntityConfiguration : IAiEntityIdentifiers, new()
+        IEnumerable<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> where TAiEntityConfiguration : IAiEntityIdentifiers
 
     {
         public string CollectionIdentifier { get; }

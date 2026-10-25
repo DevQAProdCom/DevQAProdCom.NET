@@ -54,7 +54,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Instructions
         {
             try
             {
-                var instruction = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithConfigurationTypeModel<GitHubCopilotAiInstructionConfigurationModel>, GitHubCopilotAiInstructionConfigurationModel>(filePath);
+                var instruction = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTConfigurationTypeModel<GitHubCopilotAiInstructionConfigurationModel>, GitHubCopilotAiInstructionConfigurationModel>(filePath);
                 instruction.FilePath = filePath;
                 return instruction;
             }

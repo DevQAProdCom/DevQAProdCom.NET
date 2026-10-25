@@ -1,4 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
+using DevQAProdCom.NET.AI.Shared.Models;
 using YamlDotNet.Serialization;
 
 namespace DevQAProdCom.NET.AI.Shared.Utils
@@ -35,6 +37,9 @@ namespace DevQAProdCom.NET.AI.Shared.Utils
 
                     var deserializer = new DeserializerBuilder()
                         .IgnoreUnmatchedProperties()
+                        .WithTypeMapping<IAiAgentConfigurationCustomMetadata, BaseAiAgentConfigurationCustomMetadataModel>()
+                        .WithTypeMapping<IAiAgentConfigurationWithoutAiEntityIdentifiers, AiAgentConfigurationModel>()
+                        .WithTypeMapping<IAiAgentConfiguration, AiAgentConfigurationModel>()
                         .Build();
 
                     try
@@ -47,7 +52,7 @@ namespace DevQAProdCom.NET.AI.Shared.Utils
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception($"Error deserializing YAML header in file '{filePath}': {ex.Message}");
+                        throw new Exception($"Error deserializing YAML header in file '{filePath}': {ex}", ex);
                     }
                 }
             }

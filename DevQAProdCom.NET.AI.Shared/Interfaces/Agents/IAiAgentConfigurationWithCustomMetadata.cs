@@ -1,6 +1,4 @@
-﻿using YamlDotNet.Serialization;
-
-namespace DevQAProdCom.NET.AI.Shared.Interfaces.Agents
+﻿namespace DevQAProdCom.NET.AI.Shared.Interfaces.Agents
 {
     public interface IAiAgentConfigurationWithCustomMetadata : IAiEntityIdentifiers, IAiAgentConfigurationStandardDataPropertiesWithoutAiEntityIdentifiers
     {

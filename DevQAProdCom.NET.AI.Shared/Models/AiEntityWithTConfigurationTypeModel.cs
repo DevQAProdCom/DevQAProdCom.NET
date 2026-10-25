@@ -3,7 +3,7 @@ using DevQAProdCom.NET.Global.Extensions;
 
 namespace DevQAProdCom.NET.AI.Shared.Models
 {
-    public class AiEntityWithConfigurationTypeModel<TConfigurationType> : AiEntityModel, IAiEntityWithTConfigurationType<TConfigurationType>
+    public class AiEntityWithTConfigurationTypeModel<TConfigurationType> : AiEntityModel, IAiEntityWithTConfigurationType<TConfigurationType>
     {
         public TConfigurationType ConfigurationData { get; set; }
 

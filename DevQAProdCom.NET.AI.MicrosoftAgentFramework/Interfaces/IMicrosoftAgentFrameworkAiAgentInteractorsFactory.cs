@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
@@ -9,6 +10,15 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
     public interface IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
+            ILocationsProvider? agentsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
+            ILocationsProvider? instructionsDefaultLocationsProvider = null,
+
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>? skillsSearcher = null,
+            ILocationsProvider? skillsDefaultLocationsProvider = null,
+
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
