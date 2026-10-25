@@ -2,10 +2,11 @@
 using System.Text.Json.Serialization;
 using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
-using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.Global.Extensions;
@@ -33,71 +34,102 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IMicrosoftAiAgentInteractor microsoftAiAgentInteractor,
             ILogger logger,
 
+            // Agents
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
             ILocationsProvider? agentsDefaultLocationsProvider = null,
+            IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? agentsConfigurationsMappers = null,
+            ISearchEntitiesInLocations<IAiAgentConfiguration>? agentsConfigurationsSearcher = null,
+            ILocationsProvider? agentsDefaultConfigurationsLocationsProvider = null,
+            IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? allAgentsCollection = null,
+            IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? sessionAgentsCollection = null,
 
-            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
+            // Instructions
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>>? instructionsSearcher = null,
             ILocationsProvider? instructionsDefaultLocationsProvider = null,
+            IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? allInstructionsCollection = null,
+            IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? sessionInstructionsCollection = null,
 
-            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>? skillsSearcher = null,
+            // Skills
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>>? skillsSearcher = null,
             ILocationsProvider? skillsDefaultLocationsProvider = null,
+            IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? allSkillsCollection = null,
+            IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? sessionSkillsCollection = null,
 
-            IFileBasedMcpServersSearcher? mcpServersSearcher = null,
-            ILocationsProvider? mcpServersDefaultLocationsProvider = null,
+            // Hooks
+            IFileBasedHooksSearcher? fileBasedHooksSearcher = null,
+            ILocationsProvider? fileBasedHooksDefaultLocationsProvider = null,
+            IFileBasedHooksCollection? allFileBasedHooksCollection = null,
+            IFileBasedHooksCollection? sessionFileBasedHooksCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null,
 
-            IFileBasedHooksSearcher? hooksSearcher = null,
-            ILocationsProvider? hooksDefaultLocationsProvider = null,
-
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            // MCP Servers
+            IFileBasedMcpServersSearcher? fileBasedMcpServersSearcher = null,
+            ILocationsProvider? fileBasedMcpServersDefaultLocationsProvider = null,
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-            IFileBasedHooksCollection? allHooksCollection = null,
-            IFileBasedHooksCollection? sessionHooksCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null) : base(microsoftAiAgentInteractor, logger)
+
+            // GitHub Copilot Mappers
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(
                 logger,
 
+                //Agents
                 agentsSearcher: agentsSearcher,
                 agentsDefaultLocationsProvider: agentsDefaultLocationsProvider,
+                agentsConfigurationsMappers: agentsConfigurationsMappers,
+                agentsConfigurationsSearcher: agentsConfigurationsSearcher,
+                agentsDefaultConfigurationsLocationsProvider: agentsDefaultConfigurationsLocationsProvider,
+                allAgentsCollection: allAgentsCollection,
+                sessionAgentsCollection: sessionAgentsCollection,
 
+                //Instructions
                 instructionsSearcher: instructionsSearcher,
                 instructionsDefaultLocationsProvider: instructionsDefaultLocationsProvider,
+                allInstructionsCollection: allInstructionsCollection,
+                sessionInstructionsCollection: sessionInstructionsCollection,
 
+                //Skills
                 skillsSearcher: skillsSearcher,
                 skillsDefaultLocationsProvider: skillsDefaultLocationsProvider,
+                allSkillsCollection: allSkillsCollection,
+                sessionSkillsCollection: sessionSkillsCollection,
 
-                mcpServersSearcher: mcpServersSearcher,
-                mcpServersDefaultLocationsProvider: mcpServersDefaultLocationsProvider,
+                //Hooks
+                fileBasedHooksSearcher: fileBasedHooksSearcher,
+                fileBasedHooksDefaultLocationsProvider: fileBasedHooksDefaultLocationsProvider,
+                allFileBasedHooksCollection: allFileBasedHooksCollection,
+                sessionFileBasedHooksCollection: sessionFileBasedHooksCollection,
+                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
+                sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection,
 
-                hooksSearcher: hooksSearcher,
-                hooksDefaultLocationsProvider: hooksDefaultLocationsProvider,
-
-                gitHubCopilotMappers: gitHubCopilotMappers,
+                //MCP Servers
+                fileBasedMcpServersSearcher: fileBasedMcpServersSearcher,
+                fileBasedMcpServersDefaultLocationsProvider: fileBasedMcpServersDefaultLocationsProvider,
                 allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
                 sessionFileBasedMcpServersCollection: sessionFileBasedMcpServersCollection,
                 allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
-                allFileBasedHooksCollection: allHooksCollection,
-                sessionFileBasedHooksCollection: sessionHooksCollection,
-                allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
-                sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection);
+
+                gitHubCopilotMappers: gitHubCopilotMappers,
+                copilotClientMode: copilotClientMode);
 
             _gitHubCopilotClientService = gitHubCopilotClientService;
         }
 
-        public GitHubCopilotAiAgentInteractor WithPrimaryAgent(string agentIdentifier)
+        public GitHubCopilotAiAgentInteractor WithPrimaryAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
-            _sessionConfigBuilder.WithPrimaryAgent(agentIdentifier);
+            _sessionConfigBuilder.WithPrimaryAgent(agentIdentifier, configuration);
             return this;
         }
 
-        public GitHubCopilotAiAgentInteractor WithPrimaryAgentFromFile(string filePath)
+        public GitHubCopilotAiAgentInteractor WithPrimaryAgentFromFile(string filePath, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
-            _sessionConfigBuilder.WithPrimaryAgentFromFile(filePath);
+            _sessionConfigBuilder.WithPrimaryAgentFromFile(filePath, configuration);
             return this;
         }
 

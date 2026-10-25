@@ -31,7 +31,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
 
             if (string.IsNullOrEmpty(addedEntityName))
             {
-                throw new InvalidOperationException($"[{CollectionIdentifier}] Entity must have a valid name in its YAML configuration. The provided entity has an empty or null name.");
+                throw new InvalidOperationException($"[{CollectionIdentifier}] Entity must have a valid name in its YAML configuration. The provided entity with filePath '{entity.FilePath ?? "null"}' has an empty or null name.");
             }
 
             entity.FilePath = string.IsNullOrWhiteSpace(entity.FilePath) ? null : IoUtils.NormalizeFilePath(entity.FilePath);
@@ -218,7 +218,7 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return entityData != null;
         }
 
-        private void InitializeCollectionFromDefaultLocations(ILocationsProvider? defaultLocationsProvider = null)
+        protected void InitializeCollectionFromDefaultLocations(ILocationsProvider? defaultLocationsProvider = null)
         {
             if (defaultLocationsProvider != null)
             {

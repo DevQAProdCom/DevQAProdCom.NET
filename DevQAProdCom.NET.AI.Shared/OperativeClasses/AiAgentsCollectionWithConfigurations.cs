@@ -8,23 +8,24 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
     public class AiAgentsCollectionWithConfigurations<TAiEntityConfiguration> : AiEntitiesCollection<TAiEntityConfiguration>, IAiAgentsCollectionWithConfigurations<TAiEntityConfiguration>
         where TAiEntityConfiguration : IAiAgentConfigurationWithCustomMetadata
     {
-        private readonly ISearchEntitiesInLocations<IAiAgentConfiguration>? _configurationsSearcher;
+        private readonly ISearchEntitiesInLocations<IAiAgentConfiguration>? _agentsConfigurationsSearcher;
         private readonly IAiAgentsConfigurationsMappers<TAiEntityConfiguration> _mapper;
         private readonly List<IAiAgentConfiguration> _configurations = new();
 
         public AiAgentsCollectionWithConfigurations(
             ILogger logger,
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<TAiEntityConfiguration>> aiAgentsSearcher,
-            IAiAgentsConfigurationsMappers<TAiEntityConfiguration> mapper,
+            IAiAgentsConfigurationsMappers<TAiEntityConfiguration> agentsConfigurationsMappers,
             ILocationsProvider? aiAgentsDefaultLocationsProvider = null,
-            ISearchEntitiesInLocations<IAiAgentConfiguration>? configurationsSearcher = null,
-            ILocationsProvider? defaultConfigurationsLocationsProvider = null,
+            ISearchEntitiesInLocations<IAiAgentConfiguration>? agentsConfigurationsSearcher = null,
+            ILocationsProvider? agentsDefaultConfigurationsLocationsProvider = null,
             string? collectionIdentifier = null)
-            : base(logger, searcher: aiAgentsSearcher, defaultLocationsProvider: aiAgentsDefaultLocationsProvider, collectionIdentifier: collectionIdentifier)
+            : base(logger, searcher: aiAgentsSearcher, collectionIdentifier: collectionIdentifier)
         {
-            _configurationsSearcher = configurationsSearcher;
-            _mapper = mapper;
-            InitializeConfigurationsFromDefaultLocations(defaultConfigurationsLocationsProvider);
+            _agentsConfigurationsSearcher = agentsConfigurationsSearcher;
+            _mapper = agentsConfigurationsMappers;
+            InitializeCollectionFromDefaultLocations(aiAgentsDefaultLocationsProvider);
+            InitializeConfigurationsFromDefaultLocations(agentsDefaultConfigurationsLocationsProvider);
         }
 
         public override IAiEntityWithTConfigurationType<TAiEntityConfiguration> Add(IAiEntityWithTConfigurationType<TAiEntityConfiguration> entity)
@@ -96,19 +97,19 @@ namespace DevQAProdCom.NET.AI.Shared.OperativeClasses
             return entity != null;
         }
 
-        private void InitializeConfigurationsFromDefaultLocations(ILocationsProvider? defaultConfigurationsLocationsProvider)
+        private void InitializeConfigurationsFromDefaultLocations(ILocationsProvider? agentsDefaultConfigurationsLocationsProvider)
         {
-            if (defaultConfigurationsLocationsProvider == null)
+            if (agentsDefaultConfigurationsLocationsProvider == null)
             {
                 return;
             }
 
-            if (_configurationsSearcher == null)
+            if (_agentsConfigurationsSearcher == null)
                 throw new InvalidOperationException($"[{CollectionIdentifier}] Configurations searcher is not provided, but default configurations locations provider is specified.");
 
-            foreach (var location in defaultConfigurationsLocationsProvider)
+            foreach (var location in agentsDefaultConfigurationsLocationsProvider)
             {
-                var configurationEntities = _configurationsSearcher.Search(location);
+                var configurationEntities = _agentsConfigurationsSearcher.Search(location);
 
                 foreach (var configurationEntity in configurationEntities)
                 {

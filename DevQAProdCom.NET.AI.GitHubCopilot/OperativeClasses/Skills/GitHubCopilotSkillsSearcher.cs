@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Models;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
@@ -8,7 +9,7 @@ using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Skills
 {
-    public class GitHubCopilotSkillsSearcher : ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>
+    public class GitHubCopilotSkillsSearcher : ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>>
     {
         private readonly ILogger _logger;
 
@@ -17,9 +18,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Skills
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual List<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>> Search(string path, bool useExtendedSearch = true)
+        public virtual List<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>> Search(string path, bool useExtendedSearch = true)
         {
-            var skills = new List<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>();
+            var skills = new List<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>>();
 
             if (GlobalIoUtils.FileExists(path))
             {
@@ -50,13 +51,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Skills
             return skills;
         }
 
-        private IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>? SearchInFile(string filePath)
+        private IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>? SearchInFile(string filePath)
         {
             try
             {
                 var skill = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTConfigurationTypeModel<GitHubCopilotAiSkillConfigurationModel>, GitHubCopilotAiSkillConfigurationModel>(filePath);
-                skill.FilePath = filePath;
-                return skill;
+
+                return new AiEntityWithTConfigurationTypeModel<IGitHubCopilotAiSkillConfiguration>
+                {
+                    ConfigurationData = skill.ConfigurationData,
+                    Prompt = skill.Prompt,
+                    FilePath = filePath
+                };
             }
             catch (Exception exception)
             {

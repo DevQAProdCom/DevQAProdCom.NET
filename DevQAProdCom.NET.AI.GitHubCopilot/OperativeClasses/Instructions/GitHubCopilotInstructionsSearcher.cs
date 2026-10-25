@@ -1,4 +1,5 @@
-﻿using DevQAProdCom.NET.AI.GitHubCopilot.Models;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
+using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Models;
 using DevQAProdCom.NET.AI.Shared.Utils;
@@ -8,7 +9,7 @@ using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Instructions
 {
-    public class GitHubCopilotInstructionsSearcher : ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>
+    public class GitHubCopilotInstructionsSearcher : ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>>
     {
         private readonly ILogger _logger;
 
@@ -17,9 +18,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Instructions
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public virtual List<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>> Search(string path, bool useExtendedSearch = true)
+        public virtual List<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>> Search(string path, bool useExtendedSearch = true)
         {
-            var instructions = new List<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>();
+            var instructions = new List<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>>();
 
             if (GlobalIoUtils.FileExists(path))
             {
@@ -50,13 +51,18 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Instructions
             return instructions;
         }
 
-        private IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>? SearchInFile(string filePath)
+        private IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>? SearchInFile(string filePath)
         {
             try
             {
                 var instruction = YamlUtils.SplitEntityDataAndYamlMetaData<AiEntityWithTConfigurationTypeModel<GitHubCopilotAiInstructionConfigurationModel>, GitHubCopilotAiInstructionConfigurationModel>(filePath);
-                instruction.FilePath = filePath;
-                return instruction;
+
+                return new AiEntityWithTConfigurationTypeModel<IGitHubCopilotAiInstructionConfiguration>
+                {
+                    ConfigurationData = instruction.ConfigurationData,
+                    Prompt = instruction.Prompt,
+                    FilePath = filePath
+                };
             }
             catch (Exception exception)
             {

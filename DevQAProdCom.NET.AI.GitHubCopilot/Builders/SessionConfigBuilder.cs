@@ -38,32 +38,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private readonly Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>> _sessionPermissionDecisions = new();
 
-        private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>> _agentsSearcher;
-        private readonly ILocationsProvider _agentsDefaultLocationsProvider;
-        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _allAgentsCollection;
+        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> _allAgentsCollection;
+        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> _sessionAgentsCollection;
 
-        //Add agents inside _sessionAgentsCollection are supposed to contain only single configuration.
-        //If agent md file contains multiple configurations, the configuration to be used must be specified when adding the agent to the session collection or the default configuration will be used.
-        //The default configuration is the one with no configuration identifier or with configuration identifier set to "default".
-        private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _sessionAgentsCollection;
+        private IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration> _allInstructionsCollection;
+        private IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration> _sessionInstructionsCollection;
 
-        private IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? _mapper = null;
-
-        private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>> _instructionsSearcher;
-        private readonly ILocationsProvider _instructionsDefaultLocationsProvider;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>? _allInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel> AllInstructionsCollection => _allInstructionsCollection ??= new AiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>(_logger, _instructionsSearcher, _instructionsDefaultLocationsProvider, collectionIdentifier: nameof(AllInstructionsCollection));
-
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>? _sessionInstructionsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel> SessionInstructionsCollection => _sessionInstructionsCollection ??= new AiEntitiesCollection<GitHubCopilotAiInstructionConfigurationModel>(_logger, _instructionsSearcher, collectionIdentifier: nameof(SessionInstructionsCollection));
-
-        private readonly ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>> _skillsSearcher;
-        private readonly ILocationsProvider _skillsDefaultLocationsProvider;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>? _allSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel> AllSkillsCollection => _allSkillsCollection ??= new AiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>(_logger, _skillsSearcher, _skillsDefaultLocationsProvider, collectionIdentifier: nameof(AllSkillsCollection));
-
-        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>? _sessionSkillsCollection;
-        private IAiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel> SessionSkillsCollection => _sessionSkillsCollection ??= new AiEntitiesCollection<GitHubCopilotAiSkillConfigurationModel>(_logger, _skillsSearcher, collectionIdentifier: nameof(SessionSkillsCollection));
+        private IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration> _allSkillsCollection;
+        private IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration> _sessionSkillsCollection;
 
         private IFileBasedHooksCollection _allFileBasedHooksCollection;
         private IFileBasedHooksCollection _sessionFileBasedHooksCollection;
@@ -93,67 +75,119 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder(
             ILogger logger,
 
+            // Agents
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
             ILocationsProvider? agentsDefaultLocationsProvider = null,
-            IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? mapper = null,
+            IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? agentsConfigurationsMappers = null,
+            ISearchEntitiesInLocations<IAiAgentConfiguration>? agentsConfigurationsSearcher = null,
+            ILocationsProvider? agentsDefaultConfigurationsLocationsProvider = null,
+            IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? allAgentsCollection = null,
+            IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? sessionAgentsCollection = null,
 
-            ISearchEntitiesInLocations<IAiAgentConfiguration>? configurationsSearcher = null,
-            ILocationsProvider? defaultConfigurationsLocationsProvider = null,
-
-
-            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiInstructionConfigurationModel>>? instructionsSearcher = null,
+            // Instructions
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>>? instructionsSearcher = null,
             ILocationsProvider? instructionsDefaultLocationsProvider = null,
+            IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? allInstructionsCollection = null,
+            IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? sessionInstructionsCollection = null,
 
-            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<GitHubCopilotAiSkillConfigurationModel>>? skillsSearcher = null,
+            // Skills
+            ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>>? skillsSearcher = null,
             ILocationsProvider? skillsDefaultLocationsProvider = null,
+            IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? allSkillsCollection = null,
+            IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? sessionSkillsCollection = null,
 
-            IFileBasedMcpServersSearcher? mcpServersSearcher = null,
-            ILocationsProvider? mcpServersDefaultLocationsProvider = null,
-
-            IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
-            IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
-
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-
-            IFileBasedHooksSearcher? hooksSearcher = null,
-            ILocationsProvider? hooksDefaultLocationsProvider = null,
-
+            // Hooks
+            IFileBasedHooksSearcher? fileBasedHooksSearcher = null,
+            ILocationsProvider? fileBasedHooksDefaultLocationsProvider = null,
             IFileBasedHooksCollection? allFileBasedHooksCollection = null,
             IFileBasedHooksCollection? sessionFileBasedHooksCollection = null,
-
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null,
 
-            IGitHubCopilotMappers? gitHubCopilotMappers = null)
+            // MCP Servers
+            IFileBasedMcpServersSearcher? fileBasedMcpServersSearcher = null,
+            ILocationsProvider? fileBasedMcpServersDefaultLocationsProvider = null,
+            IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
+            IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
+
+            // Other
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _gitHubCopilotMappers = gitHubCopilotMappers ?? new GitHubCopilotMappers(_logger);
 
-            _agentsSearcher = agentsSearcher ?? new GitHubCopilotAgentsSearcher(_logger);
-            _agentsDefaultLocationsProvider = agentsDefaultLocationsProvider ?? new GitHubCopilotAgentsDefaultLocationsProvider();
+            // Agents
+            var resolvedAgentsSearcher = agentsSearcher ?? new GitHubCopilotAgentsSearcher(_logger);
+            var resolvedAgentsDefaultLocationsProvider = agentsDefaultLocationsProvider ?? new GitHubCopilotAgentsDefaultLocationsProvider();
+            var resolvedAgentsConfigurationsMappers = agentsConfigurationsMappers ?? new GitHubCopilotAiAgentsConfigurationsMappers();
 
-            _instructionsSearcher = instructionsSearcher ?? new GitHubCopilotInstructionsSearcher(_logger);
-            _instructionsDefaultLocationsProvider = instructionsDefaultLocationsProvider ?? new GitHubCopilotInstructionsDefaultLocationsProvider();
+            _allAgentsCollection = allAgentsCollection ?? new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(
+                _logger,
+                aiAgentsSearcher: resolvedAgentsSearcher,
+                agentsConfigurationsMappers: resolvedAgentsConfigurationsMappers,
+                aiAgentsDefaultLocationsProvider: resolvedAgentsDefaultLocationsProvider,
+                agentsConfigurationsSearcher: agentsConfigurationsSearcher,
+                agentsDefaultConfigurationsLocationsProvider: agentsDefaultConfigurationsLocationsProvider,
+                collectionIdentifier: nameof(_allAgentsCollection).ToNameOf());
 
-            _skillsSearcher = skillsSearcher ?? new GitHubCopilotSkillsSearcher(_logger);
-            _skillsDefaultLocationsProvider = skillsDefaultLocationsProvider ?? new GitHubCopilotSkillsDefaultLocationsProvider();
+            _sessionAgentsCollection = sessionAgentsCollection ?? new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(
+                _logger,
+                aiAgentsSearcher: resolvedAgentsSearcher,
+                agentsConfigurationsMappers: resolvedAgentsConfigurationsMappers,
+                collectionIdentifier: nameof(_sessionAgentsCollection).ToNameOf());
 
-            WithClientMode(CopilotClientMode.Empty);
+            // Instructions
+            var resolvedInstructionsSearcher = instructionsSearcher ?? new GitHubCopilotInstructionsSearcher(_logger);
+            var resolvedInstructionsDefaultLocationsProvider = instructionsDefaultLocationsProvider ?? new GitHubCopilotInstructionsDefaultLocationsProvider();
 
-            var fileBasedMcpServersSearcher = mcpServersSearcher ?? new GitHubCopilotFileBasedMcpServersSearcher(_logger);
-            _allFileBasedMcpServersCollection = allFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, mcpServersDefaultLocationsProvider, nameof(_allFileBasedMcpServersCollection).ToNameOf());
-            _sessionFileBasedMcpServersCollection = sessionFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, fileBasedMcpServersSearcher, collectionIdentifier: nameof(_sessionFileBasedMcpServersCollection).ToNameOf());
+            _allInstructionsCollection = allInstructionsCollection ?? new AiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>(
+                _logger,
+                searcher: resolvedInstructionsSearcher,
+                defaultLocationsProvider: resolvedInstructionsDefaultLocationsProvider,
+                collectionIdentifier: nameof(_allInstructionsCollection).ToNameOf());
+
+            _sessionInstructionsCollection = sessionInstructionsCollection ?? new AiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>(
+                _logger,
+                searcher: resolvedInstructionsSearcher,
+                collectionIdentifier: nameof(_sessionInstructionsCollection).ToNameOf());
+
+            var resolvedSkillsSearcher = skillsSearcher ?? new GitHubCopilotSkillsSearcher(_logger);
+            var resolvedSkillsDefaultLocationsProvider = skillsDefaultLocationsProvider ?? new GitHubCopilotSkillsDefaultLocationsProvider();
+
+            // Skills
+            _allSkillsCollection = allSkillsCollection ?? new AiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>(
+                _logger,
+                searcher: resolvedSkillsSearcher,
+                defaultLocationsProvider: resolvedSkillsDefaultLocationsProvider,
+                collectionIdentifier: nameof(_allSkillsCollection).ToNameOf());
+            _sessionSkillsCollection = sessionSkillsCollection ?? new AiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>(
+                _logger,
+                searcher: resolvedSkillsSearcher,
+                collectionIdentifier: nameof(_sessionSkillsCollection).ToNameOf());
+
+            // Hooks
+            var resolvedFileBasedHooksSearcher = fileBasedHooksSearcher ?? new GitHubCopilotFileBasedHooksSearcher(_logger);
+            var resolvedFileBasedHooksDefaultLocationsProvider = fileBasedHooksDefaultLocationsProvider ?? new GitHubCopilotFileBasedHooksDefaultLocationsProvider();
+            _allFileBasedHooksCollection = allFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, hookSearcher: resolvedFileBasedHooksSearcher, defaultLocationsProvider: resolvedFileBasedHooksDefaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedHooksCollection).ToNameOf());
+            _sessionFileBasedHooksCollection = sessionFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, hookSearcher: resolvedFileBasedHooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
+
+            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
+            _sessionSdkBasedSessionHooksCollection = sessionSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
+
+            // MCP Servers
+            var resolvedFileBasedMcpServersSearcher = fileBasedMcpServersSearcher ?? new GitHubCopilotFileBasedMcpServersSearcher(_logger);
+            var resolvedFileBasedMcpServersDefaultLocationsProvider = fileBasedMcpServersDefaultLocationsProvider ?? new GitHubCopilotFileBasedMcpServersDefaultLocationsProvider();
+            _allFileBasedMcpServersCollection = allFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, mcpServersSearcher: resolvedFileBasedMcpServersSearcher, defaultLocationsProvider: resolvedFileBasedMcpServersDefaultLocationsProvider, collectionIdentifier: nameof(_allFileBasedMcpServersCollection).ToNameOf());
+            _sessionFileBasedMcpServersCollection = sessionFileBasedMcpServersCollection ?? new FileBasedMcpServersCollection(_logger, mcpServersSearcher: resolvedFileBasedMcpServersSearcher, collectionIdentifier: nameof(_sessionFileBasedMcpServersCollection).ToNameOf());
 
             _allSdkBasedMcpServersCollection = allSdkBasedMcpServersCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_allSdkBasedMcpServersCollection).ToNameOf());
             _sessionSdkBasedMcpServersCollection = sessionSdkBasedMcpServersCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_sessionSdkBasedMcpServersCollection).ToNameOf());
 
-            var fileBasedHooksSearcher = hooksSearcher ?? new GitHubCopilotFileBasedHooksSearcher(_logger);
-            _allFileBasedHooksCollection = allFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, hooksDefaultLocationsProvider, nameof(_allFileBasedHooksCollection).ToNameOf());
-            _sessionFileBasedHooksCollection = sessionFileBasedHooksCollection ?? new FileBasedHooksCollection(_logger, fileBasedHooksSearcher, collectionIdentifier: nameof(_sessionFileBasedHooksCollection).ToNameOf());
-
-            _allSdkBasedSessionHooksCollection = allSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_allSdkBasedSessionHooksCollection).ToNameOf());
-            _sessionSdkBasedSessionHooksCollection = sessionSdkBasedSessionHooksCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>(_logger, collectionIdentifier: nameof(_sessionSdkBasedSessionHooksCollection).ToNameOf());
+            // Other
+            _gitHubCopilotMappers = gitHubCopilotMappers ?? new GitHubCopilotMappers(_logger);
+            WithClientMode(copilotClientMode);
         }
 
         //private string? _baseDirectory = null;
@@ -214,10 +248,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         //    return this;
         //}
 
-        public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier, string? configuration = SharedAiConstants.Configurations.DEFAULT)
+        public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
+            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration);
             _sessionAgentsCollection.Add(entityData);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
@@ -237,7 +271,31 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath, string? configuration = SharedAiConstants.Configurations.DEFAULT)
+        public SessionConfigBuilder WithPrimaryAgentByConfiguration(string configuration)
+        {
+            _logger.Info("{TypeName} Loading '{PropertyName}' from configuration identifier '{ConfigurationIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), configuration);
+            var entityData = _allAgentsCollection.GetByConfiguration(configuration);
+            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' from configuration identifier '{ConfigurationIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), entityData.ConfigurationData.Name, configuration);
+            _sessionAgentsCollection.Add(entityData);
+            _sessionConfig.Agent = entityData.ConfigurationData.Name;
+            LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
+
+            //if (entityData.ConfigurationData?.Tools?.ToArray()?.Count() > 0)
+            //{
+            //    WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray());
+            //}
+            //else
+            //{
+            //    var toolSet = new ToolSet().AddBuiltIn("*");
+            //    WithAvailableTools(toolSet.ToArray());
+
+            //    entityData.ConfigurationData.Tools = toolSet;
+            //}
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithPrimaryAgentFromFile(string filePath, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             IoUtils.CheckFileMustExist(filePath);
             var entityData = _allAgentsCollection.AddFromFile(filePath);
@@ -246,15 +304,25 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgent(string agentIdentifier, string? configuration = SharedAiConstants.Configurations.DEFAULT)
+        public SessionConfigBuilder WithAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
-            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration ?? SharedAiConstants.Configurations.DEFAULT);
+            var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration);
             _sessionAgentsCollection.Add(entityData);
             //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
             //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
             //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
             //WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
+
+            return this;
+        }
+
+        public SessionConfigBuilder WithAgentByConfiguration(string configuration = SharedAiConstants.Configurations.DEFAULT)
+        {
+            _logger.Info("{TypeName} Loading '{PropertyName}' from configuration identifier '{ConfigurationIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), configuration);
+            var entityData = _allAgentsCollection.GetByConfiguration(configuration);
+            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' from configuration identifier '{ConfigurationIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), entityData.ConfigurationData.Name, configuration);
+            _sessionAgentsCollection.Add(entityData);
 
             return this;
         }
@@ -270,7 +338,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgentFromFile(string filePath, string? configuration = SharedAiConstants.Configurations.DEFAULT)
+        public SessionConfigBuilder WithAgentFromFile(string filePath, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             IoUtils.CheckFileMustExist(filePath);
             var entityData = _allAgentsCollection.AddFromFile(filePath);
@@ -314,8 +382,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithInstruction(string instructionIdentifier)
         {
             _logger.Info("{TypeName} Loading instruction with identifier '{InstructionIdentifier}' from all instructions collection.", $"[{nameof(SessionConfigBuilder)}]", instructionIdentifier);
-            var entityData = AllInstructionsCollection.GetByIdentifier(instructionIdentifier);
-            SessionInstructionsCollection.Add(entityData);
+            var entityData = _allInstructionsCollection.GetByIdentifier(instructionIdentifier);
+            _sessionInstructionsCollection.Add(entityData);
 
             return this;
         }
@@ -335,14 +403,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("{TypeName} Adding instruction '{InstructionIdentifier}' with custom prompt.", $"[{nameof(SessionConfigBuilder)}]", instructionIdentifier);
 
-            var entityData = new AiEntityWithTConfigurationTypeModel<GitHubCopilotAiInstructionConfigurationModel>
+            var entityData = new AiEntityWithTConfigurationTypeModel<IGitHubCopilotAiInstructionConfiguration>
             {
                 ConfigurationData = new GitHubCopilotAiInstructionConfigurationModel { Name = instructionIdentifier },
                 Prompt = prompt
             };
 
-            AllInstructionsCollection.Add(entityData);
-            SessionInstructionsCollection.Add(entityData);
+            _allInstructionsCollection.Add(entityData);
+            _sessionInstructionsCollection.Add(entityData);
 
             return this;
         }
@@ -350,8 +418,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithInstructionFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllInstructionsCollection.AddFromFile(filePath);
-            SessionInstructionsCollection.Add(entityData);
+            var entityData = _allInstructionsCollection.AddFromFile(filePath);
+            _sessionInstructionsCollection.Add(entityData);
             return this;
         }
 
@@ -368,8 +436,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithInstructionsFromDirectory(string directoryPath)
         {
-            var entities = AllInstructionsCollection.AddFromDirectory(directoryPath);
-            SessionInstructionsCollection.Add(entities.ToArray());
+            var entities = _allInstructionsCollection.AddFromDirectory(directoryPath);
+            _sessionInstructionsCollection.Add(entities.ToArray());
             return this;
         }
 
@@ -402,8 +470,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithSkill(string skillIdentifier)
         {
             _logger.Info("{TypeName} Loading skill with identifier '{SkillIdentifier}' from all skills collection.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
-            var entityData = AllSkillsCollection.GetByIdentifier(skillIdentifier);
-            SessionSkillsCollection.Add(entityData);
+            var entityData = _allSkillsCollection.GetByIdentifier(skillIdentifier);
+            _sessionSkillsCollection.Add(entityData);
 
             return this;
         }
@@ -423,14 +491,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             _logger.Info("{TypeName} Adding skill '{SkillIdentifier}' with custom prompt.", $"[{nameof(SessionConfigBuilder)}]", skillIdentifier);
 
-            var entityData = new AiEntityWithTConfigurationTypeModel<GitHubCopilotAiSkillConfigurationModel>
+            var entityData = new AiEntityWithTConfigurationTypeModel<IGitHubCopilotAiSkillConfiguration>
             {
                 ConfigurationData = new GitHubCopilotAiSkillConfigurationModel { Name = skillIdentifier },
                 Prompt = prompt
             };
 
-            AllSkillsCollection.Add(entityData);
-            SessionSkillsCollection.Add(entityData);
+            _allSkillsCollection.Add(entityData);
+            _sessionSkillsCollection.Add(entityData);
 
             return this;
         }
@@ -438,8 +506,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         public SessionConfigBuilder WithSkillFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
-            var entityData = AllSkillsCollection.AddFromFile(filePath);
-            SessionSkillsCollection.Add(entityData);
+            var entityData = _allSkillsCollection.AddFromFile(filePath);
+            _sessionSkillsCollection.Add(entityData);
             return this;
         }
 
@@ -455,8 +523,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithSkillsFromDirectory(string directoryPath)
         {
-            var entities = AllSkillsCollection.AddFromDirectory(directoryPath);
-            SessionSkillsCollection.Add(entities.ToArray());
+            var entities = _allSkillsCollection.AddFromDirectory(directoryPath);
+            _sessionSkillsCollection.Add(entities.ToArray());
             return this;
         }
 
@@ -1383,7 +1451,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void SaveAiInstructions(string rootDirectory)
         {
             var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
-            SaveAiEntities(SessionInstructionsCollection, instructionsDirectory, Const.Files.Extensions.INSTRUCTIONS_MD, "Instruction");
+            SaveAiEntities(_sessionInstructionsCollection, instructionsDirectory, Const.Files.Extensions.INSTRUCTIONS_MD, "Instruction");
         }
 
         //private void SetupOnPermissionRequest()
@@ -1404,7 +1472,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         {
             var skillsDirectory = Const.Directories.GetGitHubSkillsDirectory(rootDirectory);
 
-            foreach (var skill in SessionSkillsCollection)
+            foreach (var skill in _sessionSkillsCollection)
             {
                 if (!string.IsNullOrEmpty(skill.FilePath))
                 {
