@@ -44,6 +44,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
 
             IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty);
     }
 }

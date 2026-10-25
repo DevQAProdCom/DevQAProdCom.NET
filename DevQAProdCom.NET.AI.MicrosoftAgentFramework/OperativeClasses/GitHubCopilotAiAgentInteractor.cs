@@ -73,6 +73,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
             // GitHub Copilot Mappers
             IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(
@@ -116,6 +118,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
 
                 gitHubCopilotMappers: gitHubCopilotMappers,
+                allPermissionDecisionsCollection: allPermissionDecisionsCollection,
+                sessionPermissionDecisionsCollection: sessionPermissionDecisionsCollection,
                 copilotClientMode: copilotClientMode);
 
             _gitHubCopilotClientService = gitHubCopilotClientService;

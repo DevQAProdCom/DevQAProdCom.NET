@@ -56,6 +56,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
             
             // Other
             IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             var logger = serviceProvider.GetRequiredService<ILogger>();
@@ -104,6 +106,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
 
                 gitHubCopilotMappers: gitHubCopilotMappers,
+                allPermissionDecisionsCollection: allPermissionDecisionsCollection,
+                sessionPermissionDecisionsCollection: sessionPermissionDecisionsCollection,
                 copilotClientMode: copilotClientMode);
         }
     }

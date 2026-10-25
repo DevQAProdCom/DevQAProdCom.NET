@@ -32,10 +32,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
     {
         private readonly SessionConfig _sessionConfig = new();
 
-        private GitHubCopilotPermissionDecisionsCollection? _allPermissionDecisionsCollection;
-        private GitHubCopilotPermissionDecisionsCollection AllPermissionDecisionsCollection => _allPermissionDecisionsCollection ??= new();
-
-        private readonly Dictionary<string, Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>>> _sessionPermissionDecisions = new();
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision> _allPermissionDecisionsCollection;
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision> _sessionPermissionDecisionsCollection;
 
         private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> _allAgentsCollection;
         private IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata> _sessionAgentsCollection;
@@ -113,6 +111,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
             // Other
             IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
+            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -185,6 +185,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionSdkBasedMcpServersCollection = sessionSdkBasedMcpServersCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(_logger, collectionIdentifier: nameof(_sessionSdkBasedMcpServersCollection).ToNameOf());
 
             // Other
+            _allPermissionDecisionsCollection = allPermissionDecisionsCollection ?? new GitHubCopilotDefaultPermissionDecisionsCollection(_logger, collectionIdentifier: nameof(_allPermissionDecisionsCollection).ToNameOf());
+            _sessionPermissionDecisionsCollection = sessionPermissionDecisionsCollection ?? new IdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>(_logger, collectionIdentifier: nameof(_sessionPermissionDecisionsCollection).ToNameOf());
+
             _gitHubCopilotMappers = gitHubCopilotMappers ?? new GitHubCopilotMappers(_logger);
             WithClientMode(copilotClientMode);
         }
@@ -1020,12 +1023,19 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(permissionFunc);
 
             _logger.Info("{TypeName} Setting permission decision for '{Identifier}'.", $"[{nameof(SessionConfigBuilder)}]", identifier);
-            _sessionPermissionDecisions[identifier] = async (request, invocation) =>
-            {
-                var decision = await permissionFunc(request, invocation);
 
-                return decision;
-            };
+            if (_sessionPermissionDecisionsCollection.TryGetByIdentifier(identifier, out var existingDecision) && existingDecision != null)
+            {
+                existingDecision.PermissionDecisionFunc = permissionFunc;
+            }
+            else
+            {
+                _sessionPermissionDecisionsCollection.Add(new GitHubCopilotPermissionDecisionModel
+                {
+                    Identifier = identifier,
+                    PermissionDecisionFunc = permissionFunc
+                });
+            }
 
             return this;
         }
@@ -1035,8 +1045,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             ArgumentNullException.ThrowIfNull(identifier);
 
             _logger.Info("{TypeName} Setting permission '{Identifier}' from collection.", $"[{nameof(SessionConfigBuilder)}]", identifier);
-            var permissionDecision = AllPermissionDecisionsCollection.GetByIdentifier(identifier);
-            _sessionPermissionDecisions[identifier] = permissionDecision;
+            var permissionDecision = _allPermissionDecisionsCollection.GetByIdentifier(identifier);
+            SetPermission(identifier, permissionDecision.PermissionDecisionFunc);
             return this;
         }
 
@@ -1401,27 +1411,23 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 if (!string.IsNullOrEmpty(_permissionRequestLogFile))
                     IoUtils.AppendAllText(_permissionRequestLogFile, message);
 
-                if (_sessionPermissionDecisions?.Count > 0)
+                if (_sessionPermissionDecisionsCollection?.Any() == true)
                 {
-                    foreach (var permissionDecision in _sessionPermissionDecisions)
+                    foreach (var permissionDecision in _sessionPermissionDecisionsCollection)
                     {
                         try
                         {
-                            if (permissionDecision.Value != null)
+                            var result = await permissionDecision.PermissionDecisionFunc(request, invocation);
+                            if (result != null)
                             {
-                                var result = await permissionDecision.Value(request, invocation);
-                                if (result != null)
-                                {
-                                    return result!;
-                                }
+                                return result!;
                             }
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error($"Error processing permission decision '{permissionDecision.Key}': {ex.Message}");
+                            _logger.Error($"Error processing permission decision '{permissionDecision.Identifier}': {ex.Message}");
                         }
                     }
-
                 }
 
                 return PermissionDecision.Reject("Review the available tools and use only those permitted to complete the task. If no suitable tools are found, list all available tools and indicate that the requested tool cannot be executed.");
