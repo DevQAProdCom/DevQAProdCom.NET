@@ -39,6 +39,12 @@
     <Folder Include="InfrastructureForTests\Permissions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="InfrastructureForTests\AiAgentsConfigurations\filesystem-mcp-json-file-configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Import Project="BuildTargets\RenameMainMethod.targets" Condition="'$(AsApp)' != 'true'" />
 
 </Project>

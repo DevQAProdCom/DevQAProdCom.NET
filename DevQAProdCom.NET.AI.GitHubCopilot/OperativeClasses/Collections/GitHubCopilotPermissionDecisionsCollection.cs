@@ -15,6 +15,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
             AddWriteCreatePermissionDecisions();
             AddWriteEditPermissionDecisions();
             AddPlaywrightMcpPermissionDecisions();
+            AddFilesystemMcpPermissionDecisions();
         }
 
         public Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>> GetByIdentifier(string identifier)
@@ -69,6 +70,14 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Collections
 
             //var denyPlaywrightMcpAll = playwrightMcpPermissionDecisions.GetDenyPlaywrightMcpAllPermission();
             //_decisions.Add(denyPlaywrightMcpAll.Key, denyPlaywrightMcpAll.Value);
+        }
+
+        private void AddFilesystemMcpPermissionDecisions()
+        {
+            var filesystemMcpPermissionDecisions = new FilesystemMcpPermissionDecisions();
+
+            var approveFilesystemMcpAll = filesystemMcpPermissionDecisions.GetApproveFilesystemMcpAllPermission();
+            _decisions.Add(approveFilesystemMcpAll.Key, approveFilesystemMcpAll.Value);
         }
     }
 }

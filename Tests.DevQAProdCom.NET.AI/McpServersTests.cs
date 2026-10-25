@@ -1,5 +1,6 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers;
+using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers.ExternalProviders;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Global.Utils;

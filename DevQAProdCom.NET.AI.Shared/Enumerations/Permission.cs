@@ -27,5 +27,8 @@ namespace DevQAProdCom.NET.AI.Shared.Enumerations
 
         [Description("deny-playwright-mcp-tools-all")]
         DenyPlaywrightMcpToolsAll,
+
+        [Description("approve-filesystem-mcp-tools-all")]
+        ApproveFilesystemMcpToolsAll,
     }
 }

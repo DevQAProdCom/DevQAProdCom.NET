@@ -2,7 +2,7 @@
 using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 
-namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers
+namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers.ExternalProviders
 {
     public class GitHubCopilotPlaywrightMcpServer : GitHubCopilotSdkBasedStdioMcpServer
     {

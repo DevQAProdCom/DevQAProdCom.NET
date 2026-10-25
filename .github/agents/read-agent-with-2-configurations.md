@@ -9,7 +9,7 @@ custom-metadata:
     - configurationIdentifier: default
       permissions:
         - approve-read-view-all
-    - configurationIdentifier: filesystem-mcp
+    - configurationIdentifier: filesystem-mcp-md-file-configuration
       tools:
         - filesystem/*
       permissions:

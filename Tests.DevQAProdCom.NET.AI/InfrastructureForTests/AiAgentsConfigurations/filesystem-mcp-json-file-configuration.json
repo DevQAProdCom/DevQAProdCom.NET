@@ -1,0 +1,13 @@
+{
+  "name": "read-agent-with-2-configurations",
+  "configurationIdentifier": "filesystem-mcp-json-file-configuration",
+  "tools": [
+    "filesystem/*"
+  ],
+  "permissions": [
+    "approve-filesystem-mcp-tools-all"
+  ],
+  "mcpServers": [
+    "filesystem-sdk-based-mcp-server"
+  ]
+}

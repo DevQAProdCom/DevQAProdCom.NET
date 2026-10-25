@@ -32,7 +32,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
     {
         private readonly SessionConfig _sessionConfig = new();
 
-
         private GitHubCopilotPermissionDecisionsCollection? _allPermissionDecisionsCollection;
         private GitHubCopilotPermissionDecisionsCollection AllPermissionDecisionsCollection => _allPermissionDecisionsCollection ??= new();
 
