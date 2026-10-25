@@ -40,8 +40,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
                     Description = aiAgent.ConfigurationData.Description,
 
                     //agent properties are treated as shared across all configurations, hovewer if the same property is specified in a configuration, it always overrides the agent set property
-                    Tools = configuration?.Tools ?? aiAgent.ConfigurationData.Tools,
-                    Model = configuration?.Model ?? aiAgent.ConfigurationData.Model,
+                    Tools = configuration?.Tools ?? aiAgent.ConfigurationData?.Tools,
+                    Model = configuration?.Model ?? aiAgent.ConfigurationData?.Model,
                     CustomMetadata = customMetadata
                 }
             };
@@ -76,8 +76,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
                     Name = configuration.Name,
                     Description = configuration.Description,
 
-                    Tools = configuration.Tools,
-                    Model = configuration.Model,
+                    Tools = configuration.Tools ?? aiAgent.ConfigurationData?.Tools,
+                    Model = configuration.Model ?? aiAgent.ConfigurationData?.Model,
                     CustomMetadata = customMetadata
                 }
             };
@@ -93,8 +93,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
                 Description = aiAgent.ConfigurationData.Description,
 
                 //agent properties are treated as shared across all configurations, hovewer if the same property is specified in a configuration, it always overrides the agent set property
-                Tools = configuration.Tools ?? aiAgent.ConfigurationData.Tools,
-                Model = configuration.Model ?? aiAgent.ConfigurationData.Model,
+                Tools = configuration.Tools ?? aiAgent.ConfigurationData?.Tools,
+                Model = configuration.Model ?? aiAgent.ConfigurationData?.Model,
 
                 Permissions = configuration.Permissions,
                 Instructions = configuration.Instructions,

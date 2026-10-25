@@ -43,7 +43,7 @@ namespace Tests.DevQAProdCom.NET.AI
             var permissionDecisions = new FilesystemMcpTestPermissionDecisions();
 
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
-                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(workingDirectory))
+                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(workingDirectory, outputFolderPath))
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, Const.Configurations.FilesystemMcpMdFileConfigurationIdentifier)
                 .WithWorkingDirectory(workingDirectory)
@@ -52,7 +52,7 @@ namespace Tests.DevQAProdCom.NET.AI
                     permissionDecisions.GetApproveFilesystemSdkBasedMcpServerAllPermission().Key,
                     permissionDecisions.GetApproveFilesystemSdkBasedMcpServerAllPermission().Value))
                 .WithResponseValidator(new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent))
-                .WithMaxAttempts(3))
+                .WithMaxAttempts(2))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
@@ -87,10 +87,10 @@ namespace Tests.DevQAProdCom.NET.AI
             IoUtils.DeleteDirectory(workingDirectory);
         }
 
-        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> CreateFilesystemSdkBasedMcpServersCollection(string workingDirectory)
+        private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> CreateFilesystemSdkBasedMcpServersCollection(params string[] allowedDirectories)
         {
             var collection = new IdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>(Log);
-            var server = new GitHubCopilotFilesystemMcpServer(Log, new[] { workingDirectory });
+            var server = new GitHubCopilotFilesystemMcpServer(Log, allowedDirectories);
             server.Identifier = FilesystemMcpTestPermissionDecisions.FilesystemSdkBasedMcpServerIdentifier;
             collection.Add(server);
             return collection;

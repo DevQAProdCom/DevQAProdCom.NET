@@ -2,7 +2,7 @@
   "name": "read-write-agent-with-2-configurations",
   "configurationIdentifier": "filesystem-mcp-json-file-configuration",
   "tools": [
-    "filesystem/*"
+    "filesystem-sdk-based-mcp-server/*"
   ],
   "permissions": [
     "approve-filesystem-mcp-tools-all"

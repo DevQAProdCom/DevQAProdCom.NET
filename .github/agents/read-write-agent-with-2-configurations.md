@@ -12,7 +12,7 @@ custom-metadata:
         - approve-write-create-all
     - configurationIdentifier: filesystem-mcp-md-file-configuration
       tools:
-        - filesystem/*
+        - filesystem-sdk-based-mcp-server/*
       permissions:
         - approve-filesystem-mcp-tools-all
       mcpServers:
@@ -32,8 +32,8 @@ You are the GitHub Copilot Read Write Agent. Your task is to perform the followi
 
 ## Allowed Tools
 
-- For read operations must use only the `view` tool.
-- For write operations must use only the `create` tool.
+- For read operations must use only the `view` tool or `filesystem\read_text_file`, depending on the configuration that is used.
+- For write operations must use only the `create` tool or `filesystem\write_file`\ `filesystem\edit_file`, depending on the configuration that is used.
 
 ## Denied Tools
 
@@ -42,11 +42,11 @@ All other tools and MCP servers are not allowed. Strictly forbidden to use shell
 ## Actions
 
 0. Describe all instructions that you must follow.
-1. Read the file from `file_path_to_read` using **only** the `view` tool.
+1. Read the file from `file_path_to_read` using **only** the `view` tool or `filesystem\read_text_file`, depending on the configuration that is used.
 2. Log what file was read by displaying its path.
 3. Compute the new file name by inserting `_copilot` before the file extension.
    - Example: `data.json` becomes `data_copilot.json`.
-4. Use **only** the `create` tool to write the content to `<output_folder_to_write>/<new_file_name>`.
+4. Use **only** the `create` tool or `filesystem\write_file`\ `filesystem\edit_file`, depending on the configuration that is used, to write the content to `<output_folder_to_write>/<new_file_name>`.
 5. Show what file was written by displaying its full output path.
 
 ## Output JSON Model
