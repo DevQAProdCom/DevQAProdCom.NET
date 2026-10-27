@@ -4,6 +4,7 @@ using DevQAProdCom.NET.Global.Extensions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Enumerations.Files;
 using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
+using GitHub.Copilot;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.DependencyInjection;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Factories;
@@ -13,6 +14,18 @@ namespace Tests.DevQAProdCom.NET.AI
 {
     internal class BaseTest
     {
+        [SetUp]
+        public void SetUp()
+        {
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("COPILOT_GITHUB_TOKEN")))
+            {
+                throw new InvalidOperationException(
+                    $"Either set the COPILOT_GITHUB_TOKEN environment variable, or comment this check and ensure you are logged in via the GitHub CLI interface. " +
+                    $"{nameof(CopilotClientOptions)} supports two authentication types: " +
+                    $"{nameof(CopilotClientOptions.GitHubToken)} (explicit token) and {nameof(CopilotClientOptions.UseLoggedInUser)} (logged-in user / gh CLI auth).");
+            }
+        }
+
         protected ILogger Log => DiContainer.Instance.Log;
         protected AiAgentsLibrary AiAgentsLibrary => DiContainer.Instance.AiAgentsLibrary;
         protected IMicrosoftAgentFrameworkAiAgentInteractorsFactory AiAgentsInteractorsFactory => DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory;

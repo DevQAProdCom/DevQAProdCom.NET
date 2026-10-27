@@ -1828,8 +1828,13 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         private void ConfigureDataInGitHubDirectory(string directoryForInteractionConfigurationData)
         {
-            SetUpGitHubDirectory();
-            ConfigureFileBasedHooksInGitHubDirectory(directoryForInteractionConfigurationData);
+            if (_sessionFileBasedHooksCollection.Any())
+            {
+                // If file-based hooks are used, the GitHub directory must be set up and the hooks must be configured in the GitHub directory.
+                // As of current SDK version, there is no way to configure file-based hooks without a GitHub directory, as the hooks are expected to be in the GitHub directory for the session to function correctly.
+                SetUpGitHubDirectory();
+                ConfigureFileBasedHooksInGitHubDirectory(directoryForInteractionConfigurationData);
+            }
         }
 
         public void Dispose()
