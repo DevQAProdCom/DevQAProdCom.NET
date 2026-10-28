@@ -7,13 +7,13 @@ namespace Tests.DevQAProdCom.NET.AI
     internal class AiAgentsTests : BaseTest
     {
         [Test]
-        public async Task Should_Read_Write_Agent_Execute()
+        public async Task Should_Read_Write_Agent_Be_Executed()
         {
             //SETUP
             CheckGitHubCopilotAuthenticationSetup();
 
             //GIVEN
-            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Read_Write_Agent_Execute));
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Read_Write_Agent_Be_Executed));
             var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) =
                 await PrepareReadWriteAgentTestFilesAsync(tempWorkingDirectory);
 

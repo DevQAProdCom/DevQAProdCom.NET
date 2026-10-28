@@ -1,14 +1,14 @@
 {
   "profiles": {
-    "Run Tests Suite": {
+    "Run Agent by using ClassName and MethodName": {
       "commandName": "Project",
-      "commandLineArgs": "McpServersTests Should_McpServer_Be_Used_Using_SDK_Configuration_By_Identifier",
-      "workingDirectory": "."
+      "commandLineArgs": "AiAgentsTests Should_Read_Write_Agent_Be_Executed",
+      "workingDirectory": "$(OutDir)"
     },
     "Run Agent by Name": {
       "commandName": "Project",
       "commandLineArgs": "agent check-custom-instructions-field-answer-questions-agent 'What is my favorite animal?'",
-      "workingDirectory": "."
+      "workingDirectory": "$(OutDir)"
     }
   }
 }

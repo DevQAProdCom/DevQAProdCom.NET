@@ -108,3 +108,43 @@ dotnet run --project Tests.DevQAProdCom.NET.AI -p:AsApp=true --no-build -- Tests
 
 - To run tests: use **Test Explorer** with the default `Debug` configuration.
 - To run as an app: set the active configuration to **`DebugAsApp`** and press `F5`.
+
+---
+
+## Launch Profiles — Working Directory
+
+All profiles in `Properties/launchSettings.json` must use `"workingDirectory": "$(OutDir)"`.
+
+Visual Studio resolves `$(OutDir)` to the actual build output folder for the active configuration at launch time. For the `DebugAsApp` configuration this resolves to:
+
+```
+Tests.DevQAProdCom.NET.AI\bin\DebugAsApp\net8.0\
+```
+
+### Why This Matters
+
+Do **not** use `"workingDirectory": "."` (solution root) or any other shared/root folder.
+
+MCP and other CLI-based tools that use **identifier-based collections** (e.g. `McpServerCollection`) discover servers by scanning the working directory and its subdirectories. 
+If the working directory is set to a broad location (such as the repo root), the scanner will find **duplicate MCP server registrations** that exist across multiple build output folders (`bin\Debug\net8.0`, `bin\DebugAsApp\net8.0`, etc.), causing conflicts or unexpected behaviour at runtime.
+
+Using `$(OutDir)` pins the working directory to exactly the folder that belongs to the current build, so only one copy of each server is visible.
+
+### Example `launchSettings.json`
+
+```json
+{
+  "profiles": {
+    "AiAgentsTests -> Should_Read_Write_Agent_Be_Executed": {
+      "commandName": "Project",
+      "commandLineArgs": "AiAgentsTests Should_Read_Write_Agent_Be_Executed",
+      "workingDirectory": "$(OutDir)"
+    },
+    "Run Agent by Name": {
+      "commandName": "Project",
+      "commandLineArgs": "agent check-custom-instructions-field-answer-questions-agent 'What is my favorite animal?'",
+      "workingDirectory": "$(OutDir)"
+    }
+  }
+}
+```
