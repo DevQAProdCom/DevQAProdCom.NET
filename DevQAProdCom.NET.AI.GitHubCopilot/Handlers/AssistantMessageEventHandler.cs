@@ -89,21 +89,21 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 
         private SubagentStartedEvent? GetRelatedSubagent(AssistantMessageEvent assistantMessageEvent)
         {
-            var toolCallIds = assistantMessageEvent.Data.ToolRequests?
-                .Where(t => !string.IsNullOrEmpty(t.ToolCallId))
-                .Select(t => t.ToolCallId!)
-                .ToHashSet(StringComparer.Ordinal) ?? new HashSet<string>();
-
-            var related = _subagentStartedEvents.Values
-                .Where(s => !string.IsNullOrEmpty(s.Data.ToolCallId) && toolCallIds.Contains(s.Data.ToolCallId))
-                .ToList();
-
-            if (related.Count > 1)
+            if (!string.IsNullOrEmpty(assistantMessageEvent.AgentId) &&
+                _subagentStartedEvents.TryGetValue(assistantMessageEvent.AgentId, out var byAgentId))
             {
-                throw new InvalidOperationException($"Expected at most one related subagent for assistant message, but found {related.Count}.");
+                return byAgentId;
             }
 
-            return related.FirstOrDefault();
+            var parentToolCallId = assistantMessageEvent.Data.ParentToolCallId;
+
+            if (!string.IsNullOrEmpty(parentToolCallId) &&
+                _subagentStartedEvents.TryGetValue(parentToolCallId, out var byToolCallId))
+            {
+                return byToolCallId;
+            }
+
+            return null;
         }
     }
 }
