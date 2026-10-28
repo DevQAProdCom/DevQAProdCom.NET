@@ -135,7 +135,7 @@ Using `$(OutDir)` pins the working directory to exactly the folder that belongs 
 ```json
 {
   "profiles": {
-    "AiAgentsTests -> Should_Read_Write_Agent_Be_Executed": {
+    "Run Agent by ClassName and MethodName": {
       "commandName": "Project",
       "commandLineArgs": "AiAgentsTests Should_Read_Write_Agent_Be_Executed",
       "workingDirectory": "$(OutDir)"
