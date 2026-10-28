@@ -1,5 +1,4 @@
-﻿using DevQAProdCom.NET.Global.Utils;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
@@ -12,6 +11,9 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier()
         {
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
             //GIVEN
             var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_SDK_Configuration_By_Identifier));
 
@@ -28,12 +30,15 @@ namespace Tests.DevQAProdCom.NET.AI
             actualResponse.Should().BeEquivalentTo(expectedResponse);
 
             //TEAR DOWN
-            IoUtils.DeleteDirectory(tempWorkingDirectory);
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_Skill_Be_Used_Using_Agent_Custom_Metadata_Skills_Field_By_Identifier()
         {
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
             //GIVEN
             var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Metadata_Skills_Field_By_Identifier));
 
@@ -48,7 +53,7 @@ namespace Tests.DevQAProdCom.NET.AI
             actualResponse.Should().BeEquivalentTo(expectedResponse);
 
             //TEAR DOWN
-            IoUtils.DeleteDirectory(tempWorkingDirectory);
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         private (string tempWorkingDirectory, AnswerQuestionsAgentRequestModel requestModel, AnswerQuestionsAgentReponseModel expectedResponse) PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(string testMethodName)

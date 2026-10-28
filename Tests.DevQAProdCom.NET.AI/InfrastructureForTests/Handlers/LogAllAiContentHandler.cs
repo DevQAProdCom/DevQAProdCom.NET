@@ -5,7 +5,7 @@ using DevQAProdCom.NET.Global.Utils;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using Microsoft.Extensions.AI;
 
-namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers
+namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Handlers
 {
     public class LogAllAiContentHandler(string filePath, ILogger logger) : IAiContentHandler
     {

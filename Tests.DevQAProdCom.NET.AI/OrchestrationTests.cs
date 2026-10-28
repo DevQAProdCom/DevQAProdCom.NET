@@ -1,43 +1,63 @@
-﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers;
-using DevQAProdCom.NET.Global.Extensions;
+﻿using DevQAProdCom.NET.Global.Extensions;
 using FluentAssertions;
 using NUnit.Framework;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Handlers;
 
 namespace Tests.DevQAProdCom.NET.AI
 {
-    //TODO ADD Ids to messages for orchestration of subagent ids
     internal class OrchestrationTests : BaseTest
     {
         [Test]
         public async Task Should_Check_Streaming_From_Subagents()
         {
-            //var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Check_Streaming_From_Subagents));
-            var mainTempDir = "C:\\Files\\temp\\1";
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN
+            var tempCommonWorkingDirectory = "C:\\Files\\temp\\1"; //PrepareTempTestWorkingDirectory(nameof(Should_Check_Streaming_From_Subagents));
             var dateTime = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
-            var workingDirectory = Path.Combine(mainTempDir, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"WorkingDirectory");
-            var baseDirectory = Path.Combine(mainTempDir, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"BaseDirectory");
-            var logFile = Path.Combine(mainTempDir, nameof(Should_Check_Streaming_From_Subagents), dateTime, "ai-content-log.json");
+            var workingDirectory = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"WorkingDirectory");
+            var baseDirectory = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"BaseDirectory");
+            var logFile = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, "ai-content-log.json");
             var logAllAiContentHandler = new LogAllAiContentHandler(logFile, Log);
+            var eventsCollectorHandler = new SubagentAssistantMessageEventsCollectorHandler(Log);
+            var eventsCollectorAiContentHandler = new GitHubCopilotSubagentAssistantMessageEventsAiContentHandler(eventsCollectorHandler, Log);
 
             GlobalIoUtils.CreateDirectory(workingDirectory);
             GlobalIoUtils.CreateDirectory(baseDirectory);
 
             var (requestModel, expectedData) = await PrepareOrchestratorReadWriteAgentTestFilesAsync(workingDirectory);
 
+            //WHEN
             await using (var agent = AiAgentsLibrary
                 .GetOrchestratorReadWriteAgentWithResponseValidator(workingDirectory, requestModel, expectedData)
-                .WithAiContentHandlers(logAllAiContentHandler)
+                .WithAiContentHandlers(logAllAiContentHandler, eventsCollectorAiContentHandler)
                 .WithSelectiveIsolation()
                 .WithCopilotClientBaseDirectory(baseDirectory)
                 .WithMaxAttempts(1)
                 .WithSessionConfig(config => config.WithIncludeSubAgentStreamingEvents(true).WithPermissionRequestLogFile(logFile)))
             {
-                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
-                await act.Should().NotThrowAsync();
+               await agent.InvokeAiAgentWithStreamingAsync();
             }
 
-            //IoUtils.DeleteDirectory(workingDirectory);
+            //THEN
+            var assistantMessageToolCallIds = eventsCollectorHandler.AssistantMessageEvents
+                .SelectMany(m => m.Data?.ToolRequests?.Select(t => t.ToolCallId) ?? Enumerable.Empty<string?>())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToHashSet(StringComparer.Ordinal);
+
+            var distinctSubagentIds = eventsCollectorHandler.SubagentStartedEvents
+                .Where(s => !string.IsNullOrEmpty(s.Data?.ToolCallId) && assistantMessageToolCallIds.Contains(s.Data.ToolCallId))
+                .Select(s => s.AgentId ?? s.Data?.ToolCallId)
+                .Where(id => !string.IsNullOrEmpty(id))
+                .Distinct()
+                .ToList();
+            
+            distinctSubagentIds.Should().HaveCountGreaterOrEqualTo(2, "no streaming from subagents is found");
+
+            //TEAR DOWN
+            //CleanUpTempWorkingDirectory(tempCommonWorkingDirectory);
         }
     }
 }

@@ -3,9 +3,9 @@ using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.McpServers.ExternalProviders;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
-using DevQAProdCom.NET.Global.Utils;
 using FluentAssertions;
 using NUnit.Framework;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Permissions;
 
@@ -13,9 +13,6 @@ namespace Tests.DevQAProdCom.NET.AI
 {
     internal class McpServersTests : BaseTest
     {
-        private const string CheckCustomMcpServersFieldMcpJsonFileWithMcpServersTopLevelObjectAgent = "check-custom-mcp-servers-field-mcp-json-file-with-mcp-servers-top-level-object-agent";
-        private const string CheckCustomMcpServersFieldMcpServersDirectoryWithGeneralTopLevelObjectAgent = "check-custom-mcp-servers-field-mcp-servers-directory-with-general-top-level-object-agent";
-        private const string CheckCustomMcpServersFieldSdkBasedAgent = "check-custom-mcp-servers-field-sdk-based-agent";
         private const string SdkBasedMcpServerIdentifier = "playwright-sdk-based-mcp-server";
         private const string ExpectedOutputFileName = "youtube_url.txt";
         private const string ExpectedYoutubeUrl = "https://www.youtube.com/results?search_query=Best+of+The+Voice";
@@ -23,19 +20,24 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_GitHubDirectory_McpJsonFile_With_McpServers_TopLevelObject()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_GitHubDirectory_McpJsonFile_With_McpServers_TopLevelObject));
-            var filePath = Path.Combine(workingDirectory, ExpectedOutputFileName);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_GitHubDirectory_McpJsonFile_With_McpServers_TopLevelObject));
+            var filePath = Path.Combine(tempWorkingDirectory, ExpectedOutputFileName);
             var requestModel = new PlaywrightMcpAgentRequestModel
             {
                 FilePath = filePath
             };
             var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(CheckCustomMcpServersFieldMcpJsonFileWithMcpServersTopLevelObjectAgent)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_MCP_JSON_FILE_WITH_MCP_SERVERS_TOP_LEVEL_OBJECT_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)
                 .WithSessionConfig(builder => builder.SetPermission(
                     PlaywrightMcpTestPermissionDecisions.PlaywrightMcpServerInMcpJsonFileIdentifier,
@@ -44,28 +46,35 @@ namespace Tests.DevQAProdCom.NET.AI
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
 
+            //THEN
             var actualFileContent = File.ReadAllText(filePath);
             actualFileContent.Should().Be(ExpectedYoutubeUrl);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_McpServersDirectory_JsonFile_With_General_TopLevelObject()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_McpServersDirectory_JsonFile_With_General_TopLevelObject));
-            var filePath = Path.Combine(workingDirectory, ExpectedOutputFileName);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier_From_McpServersDirectory_JsonFile_With_General_TopLevelObject));
+            var filePath = Path.Combine(tempWorkingDirectory, ExpectedOutputFileName);
             var requestModel = new PlaywrightMcpAgentRequestModel
             {
                 FilePath = filePath
             };
             var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(CheckCustomMcpServersFieldMcpServersDirectoryWithGeneralTopLevelObjectAgent)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_MCP_SERVERS_DIRECTORY_WITH_GENERAL_TOP_LEVEL_OBJECT_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)
                 .WithSessionConfig(builder => builder.SetPermission(
                     PlaywrightMcpTestPermissionDecisions.PlaywrightMcpServerInMcpServersDirectoryIdentifier,
@@ -77,25 +86,31 @@ namespace Tests.DevQAProdCom.NET.AI
             var actualFileContent = File.ReadAllText(filePath);
             actualFileContent.Should().Be(ExpectedYoutubeUrl);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_SdkBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_SdkBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier));
-            var filePath = Path.Combine(workingDirectory, ExpectedOutputFileName);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_SdkBasedMcpServer_Be_Used_Using_Agent_Custom_Metadata_McpServers_Field_By_Identifier));
+            var filePath = Path.Combine(tempWorkingDirectory, ExpectedOutputFileName);
             var requestModel = new PlaywrightMcpAgentRequestModel
             {
                 FilePath = filePath
             };
             var permissionDecisions = new PlaywrightMcpTestPermissionDecisions();
 
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedMcpServersCollection: CreateSdkBasedMcpServersCollection())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(CheckCustomMcpServersFieldSdkBasedAgent)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_SDK_BASED_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)
                 .WithSessionConfig(builder => builder.SetPermission(
                     PlaywrightMcpTestPermissionDecisions.PlaywrightSdkBasedMcpServerIdentifier,
@@ -104,10 +119,12 @@ namespace Tests.DevQAProdCom.NET.AI
                 await agent.InvokeAiAgentWithStreamingAsync();
             }
 
+            //THEN
             var actualFileContent = File.ReadAllText(filePath);
             actualFileContent.Should().Be(ExpectedYoutubeUrl);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> CreateSdkBasedMcpServersCollection()

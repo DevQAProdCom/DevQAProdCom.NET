@@ -8,6 +8,7 @@ using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using DevQAProdCom.NET.Global.Utils;
 using FluentAssertions;
 using NUnit.Framework;
+using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Hooks;
 
 namespace Tests.DevQAProdCom.NET.AI
@@ -17,92 +18,98 @@ namespace Tests.DevQAProdCom.NET.AI
         private const string TimestampFormat = "yyyy-MM-dd HH:mm:ss.ffffff";
         private const string TimestampRegexPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6}";
 
-        private const string FileBasedHookAgentName = "check-custom-hooks-field-with-file-based-hook-agent";
-        private const string SdkBasedHookAgentName = "check-custom-hooks-field-with-sdk-based-hook-agent";
-        private const string FileAndSdkBasedHooksAgentName = "check-custom-hooks-field-with-file-and-sdk-based-hooks-agent";
-
         private const string FileBasedHookIdentifier = "on-session-start-hook-1";
         private const string FileBasedHookOutputFileName = "on-session-start-hook-1.txt";
-
-        private async Task AssertHookOutputFileAsync(string filePath, string expectedPrefix, DateTime testStartTime)
-        {
-            IoUtils.CheckFileMustExist(filePath);
-
-            var content = (await File.ReadAllTextAsync(filePath)).Trim();
-            var match = Regex.Match(content, GetHookContentRegex(expectedPrefix));
-            match.Success.Should().BeTrue();
-
-            var parsedDateTime = ParseTimestamp(match.Groups[1].Value);
-            parsedDateTime.Should().BeAfter(testStartTime);
-        }
 
         [Test]
         public async Task Should_FileBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier()
         {
-            var testStartTime = DateTime.UtcNow;
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
-            var expectedFilePath = Path.Combine(workingDirectory, FileBasedHookOutputFileName);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
 
+            //GIVEN
+            var testStartTime = DateTime.UtcNow;
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
+            var expectedFilePath = Path.Combine(tempWorkingDirectory, FileBasedHookOutputFileName);
+
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     hooksDefaultLocationsProvider: CreateFileBasedHooksDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(FileBasedHookAgentName)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_FILE_BASED_HOOKS_FIELD_WITH_FILE_BASED_HOOK_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))
             {
                 await InvokeAgentWithoutExceptionAsync(agent);
             }
 
+            //THEN
             await AssertHookOutputFileAsync(expectedFilePath, FileBasedHookIdentifier, testStartTime);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_SdkBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier()
         {
-            var testStartTime = DateTime.UtcNow;
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_SdkBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
-            var expectedFilePath = Path.Combine(workingDirectory, $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt");
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
 
+            //GIVEN
+            var testStartTime = DateTime.UtcNow;
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_SdkBasedHook_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifier));
+            var expectedFilePath = Path.Combine(tempWorkingDirectory, $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt");
+
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedSessionHooksCollection: CreateSdkBasedSessionHooksCollection())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(SdkBasedHookAgentName)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_HOOKS_FIELD_WITH_SDK_BASED_HOOK_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))
             {
                 await InvokeAgentWithoutExceptionAsync(agent);
             }
 
+            //THEN
             await AssertHookOutputFileAsync(expectedFilePath, nameof(GitHubCopilotSdkBasedOnSessionStartHook1), testStartTime);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_FileBased_And_SdkBased_Hooks_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifiers()
         {
-            var testStartTime = DateTime.UtcNow;
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBased_And_SdkBased_Hooks_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifiers));
-            var expectedFileBasedHookFilePath = Path.Combine(workingDirectory, FileBasedHookOutputFileName);
-            var expectedSdkBasedHookFilePath = Path.Combine(workingDirectory, $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt");
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
 
+            //GIVEN
+            var testStartTime = DateTime.UtcNow;
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_FileBased_And_SdkBased_Hooks_Be_Used_Using_Agent_Custom_Metadata_Hooks_Field_By_Identifiers));
+            var expectedFileBasedHookFilePath = Path.Combine(tempWorkingDirectory, FileBasedHookOutputFileName);
+            var expectedSdkBasedHookFilePath = Path.Combine(tempWorkingDirectory, $"{nameof(GitHubCopilotSdkBasedOnSessionStartHook1)}.txt");
+
+
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     hooksDefaultLocationsProvider: CreateFileBasedHooksDefaultLocationsProvider(),
                     allSdkBasedSessionHooksCollection: CreateSdkBasedSessionHooksCollection())
                 .WithDefaultContentHandlers()
-                .WithPrimaryAgent(FileAndSdkBasedHooksAgentName)
-                .WithWorkingDirectory(workingDirectory)
+                .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_HOOKS_FIELD_WITH_FILE_AND_SDK_BASED_HOOKS_AGENT)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))
             {
                 await InvokeAgentWithoutExceptionAsync(agent);
             }
 
+            //THEN
             await AssertHookOutputFileAsync(expectedFileBasedHookFilePath, FileBasedHookIdentifier, testStartTime);
             await AssertHookOutputFileAsync(expectedSdkBasedHookFilePath, nameof(GitHubCopilotSdkBasedOnSessionStartHook1), testStartTime);
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         private string GetHookContentRegex(string prefix) => $"^{Regex.Escape(prefix)} ({TimestampRegexPattern})$";
@@ -124,6 +131,18 @@ namespace Tests.DevQAProdCom.NET.AI
         {
             var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
             await act.Should().NotThrowAsync();
+        }
+
+        private async Task AssertHookOutputFileAsync(string filePath, string expectedPrefix, DateTime testStartTime)
+        {
+            IoUtils.CheckFileMustExist(filePath);
+
+            var content = (await File.ReadAllTextAsync(filePath)).Trim();
+            var match = Regex.Match(content, GetHookContentRegex(expectedPrefix));
+            match.Success.Should().BeTrue();
+
+            var parsedDateTime = ParseTimestamp(match.Groups[1].Value);
+            parsedDateTime.Should().BeAfter(testStartTime);
         }
     }
 }

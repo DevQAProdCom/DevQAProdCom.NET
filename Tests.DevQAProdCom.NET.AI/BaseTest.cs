@@ -14,18 +14,6 @@ namespace Tests.DevQAProdCom.NET.AI
 {
     internal class BaseTest
     {
-        [SetUp]
-        public void SetUp()
-        {
-            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("COPILOT_GITHUB_TOKEN")))
-            {
-                throw new InvalidOperationException(
-                    $"Either set the COPILOT_GITHUB_TOKEN environment variable, or comment this check and ensure you are logged in via the GitHub CLI interface. " +
-                    $"{nameof(CopilotClientOptions)} supports two authentication types: " +
-                    $"{nameof(CopilotClientOptions.GitHubToken)} (explicit token) and {nameof(CopilotClientOptions.UseLoggedInUser)} (logged-in user / gh CLI auth).");
-            }
-        }
-
         protected ILogger Log => DiContainer.Instance.Log;
         protected AiAgentsLibrary AiAgentsLibrary => DiContainer.Instance.AiAgentsLibrary;
         protected IMicrosoftAgentFrameworkAiAgentInteractorsFactory AiAgentsInteractorsFactory => DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory;
@@ -112,6 +100,25 @@ namespace Tests.DevQAProdCom.NET.AI
             };
 
             return (requestModel, fileContents);
+        }
+
+        //[SetUp] - is not used as hook to support use case when test method is invoked through App, but not as NUnit Test. At that point NUnit hooks are not invoked automatically, but method should be invoked directly inside the test.
+        public void CheckGitHubCopilotAuthenticationSetup()
+        {
+
+            if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("COPILOT_GITHUB_TOKEN")))
+            {
+                throw new InvalidOperationException(
+                    $"Either set the COPILOT_GITHUB_TOKEN environment variable, or comment this check and ensure you are logged in via the GitHub CLI interface. " +
+                    $"{nameof(CopilotClientOptions)} supports two authentication types: " +
+                    $"{nameof(CopilotClientOptions.GitHubToken)} (explicit token) and {nameof(CopilotClientOptions.UseLoggedInUser)} (logged-in user / gh CLI auth).");
+            }
+        }
+
+        //[TearDown] - is not used as hook to support use case when test method is invoked through App, but not as NUnit Test. At that point NUnit hooks are not invoked automatically, but method should be invoked directly inside the test.
+        protected void CleanUpTempWorkingDirectory(string workingDirectory)
+        {
+            IoUtils.DeleteDirectory(workingDirectory);
         }
     }
 }

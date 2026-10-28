@@ -4,7 +4,7 @@ using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.OperativeClasses;
-using DevQAProdCom.NET.Global.Utils;
+using FluentAssertions;
 using NUnit.Framework;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Constants;
 using Tests.DevQAProdCom.NET.AI.InfrastructureForTests.LocationsProviders;
@@ -18,35 +18,49 @@ namespace Tests.DevQAProdCom.NET.AI
         [Test]
         public async Task Should_Default_AiAgentConfiguration_Be_Used_From_AiAgentMdFile()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Default_AiAgentConfiguration_Be_Used_From_AiAgentMdFile));
-            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(workingDirectory);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
 
+            //GIVEN            
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_Default_AiAgentConfiguration_Be_Used_From_AiAgentMdFile));
+            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(tempWorkingDirectory);
+
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor()
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, SharedAiConstants.Configurations.DEFAULT)
-                .WithWorkingDirectory(workingDirectory)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
                 .WithResponseValidator(new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent))
                 .WithMaxAttempts(3))
             {
-                await agent.InvokeAiAgentWithStreamingAsync();
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+
+                //THEN
+                await act.Should().NotThrowAsync();
             }
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_AiAgentConfiguration_Be_Used_From_AiAgentMdFile_By_Configuration_Identifier()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_AiAgentConfiguration_Be_Used_From_AiAgentMdFile_By_Configuration_Identifier));
-            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(workingDirectory);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN 
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_AiAgentConfiguration_Be_Used_From_AiAgentMdFile_By_Configuration_Identifier));
+            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(tempWorkingDirectory);
             var permissionDecisions = new FilesystemMcpTestPermissionDecisions();
 
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
-                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(workingDirectory, outputFolderPath))
+                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(tempWorkingDirectory, outputFolderPath))
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, Const.Configurations.FilesystemMcpMdFileConfigurationIdentifier)
-                .WithWorkingDirectory(workingDirectory)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
                 .WithSessionConfig(builder => builder.SetPermission(
                     permissionDecisions.GetApproveFilesystemSdkBasedMcpServerAllPermission().Key,
@@ -54,26 +68,36 @@ namespace Tests.DevQAProdCom.NET.AI
                 .WithResponseValidator(new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent))
                 .WithMaxAttempts(2))
             {
-                await agent.InvokeAiAgentWithStreamingAsync();
+
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+
+                //THEN
+                await act.Should().NotThrowAsync();
             }
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         [Test]
         public async Task Should_AiAgentConfiguration_Be_Used_From_JsonConfigurationFile_By_Configuration_Identifier()
         {
-            var workingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_AiAgentConfiguration_Be_Used_From_JsonConfigurationFile_By_Configuration_Identifier));
-            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(workingDirectory);
+            //SETUP
+            CheckGitHubCopilotAuthenticationSetup();
+
+            //GIVEN 
+            var tempWorkingDirectory = PrepareTempTestWorkingDirectory(nameof(Should_AiAgentConfiguration_Be_Used_From_JsonConfigurationFile_By_Configuration_Identifier));
+            var (inputFilePath, inputContent, outputFolderPath, expectedOutputFilePath) = await PrepareReadWriteAgentTestFilesAsync(tempWorkingDirectory);
             var permissionDecisions = new FilesystemMcpTestPermissionDecisions();
 
+            //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     agentsConfigurationsSearcher: CreateAgentConfigurationsSearcher(),
                     agentsDefaultConfigurationsLocationsProvider: CreateAgentConfigurationsLocationsProvider(),
-                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(workingDirectory))
+                    allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(tempWorkingDirectory))
                 .WithDefaultContentHandlers()
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, Const.Configurations.FilesystemMcpJsonFileConfigurationIdentifier)
-                .WithWorkingDirectory(workingDirectory)
+                .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
                 .WithSessionConfig(builder => builder.SetPermission(
                     permissionDecisions.GetApproveFilesystemSdkBasedMcpServerAllPermission().Key,
@@ -81,10 +105,14 @@ namespace Tests.DevQAProdCom.NET.AI
                 .WithResponseValidator(new ReadWriteAgentResponseValidator(inputFilePath, expectedOutputFilePath, inputContent))
                 .WithMaxAttempts(3))
             {
-                await agent.InvokeAiAgentWithStreamingAsync();
+                var act = async () => await agent.InvokeAiAgentWithStreamingAsync();
+
+                //THEN
+                await act.Should().NotThrowAsync();
             }
 
-            IoUtils.DeleteDirectory(workingDirectory);
+            //TEAR DOWN
+            CleanUpTempWorkingDirectory(tempWorkingDirectory);
         }
 
         private IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer> CreateFilesystemSdkBasedMcpServersCollection(params string[] allowedDirectories)
