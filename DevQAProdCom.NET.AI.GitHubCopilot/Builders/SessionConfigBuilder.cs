@@ -121,14 +121,16 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             var resolvedAgentsSearcher = agentsSearcher ?? new GitHubCopilotAgentsSearcher(_logger);
             var resolvedAgentsDefaultLocationsProvider = agentsDefaultLocationsProvider ?? new GitHubCopilotAgentsDefaultLocationsProvider();
             var resolvedAgentsConfigurationsMappers = agentsConfigurationsMappers ?? new GitHubCopilotAiAgentsConfigurationsMappers();
+            var resolvedAgentsConfigurationsSearcher = agentsConfigurationsSearcher ?? new AiAgentsConfigurationsSearcher(_logger);
+            var resolvedAgentsDefaultConfigurationsLocationsProvider = agentsDefaultConfigurationsLocationsProvider ?? new GitHubCopilotAgentsConfigurationsDefaultLocationsProvider();
 
             _allAgentsCollection = allAgentsCollection ?? new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(
                 _logger,
                 aiAgentsSearcher: resolvedAgentsSearcher,
                 agentsConfigurationsMappers: resolvedAgentsConfigurationsMappers,
                 aiAgentsDefaultLocationsProvider: resolvedAgentsDefaultLocationsProvider,
-                agentsConfigurationsSearcher: agentsConfigurationsSearcher,
-                agentsDefaultConfigurationsLocationsProvider: agentsDefaultConfigurationsLocationsProvider,
+                agentsConfigurationsSearcher: resolvedAgentsConfigurationsSearcher,
+                agentsDefaultConfigurationsLocationsProvider: resolvedAgentsDefaultConfigurationsLocationsProvider,
                 collectionIdentifier: nameof(_allAgentsCollection).ToNameOf());
 
             _sessionAgentsCollection = sessionAgentsCollection ?? new AiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>(
@@ -252,7 +254,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
-            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
+            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' and configuration '{Configuration}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier, configuration);
             var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration);
             _sessionAgentsCollection.Add(entityData);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
@@ -308,7 +310,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         public SessionConfigBuilder WithAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
-            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier);
+            _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' and configuration '{Configuration}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier, configuration);
             var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration);
             _sessionAgentsCollection.Add(entityData);
             //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
@@ -340,7 +342,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        public SessionConfigBuilder WithAgentFromFile(string filePath, string configuration = SharedAiConstants.Configurations.DEFAULT)
+        public SessionConfigBuilder WithAgentFromFile(string filePath)
         {
             IoUtils.CheckFileMustExist(filePath);
             var entityData = _allAgentsCollection.AddFromFile(filePath);

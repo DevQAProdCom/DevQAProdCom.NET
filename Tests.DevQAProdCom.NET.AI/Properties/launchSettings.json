@@ -1,13 +1,23 @@
 {
   "profiles": {
-    "Run Agent by using ClassName and MethodName": {
+    "Run Agent by ClassName and MethodName": {
       "commandName": "Project",
-      "commandLineArgs": "AiAgentsTests Should_Read_Write_Agent_Be_Executed",
+      "commandLineArgs": "--className AiAgentsTests --methodName Should_Read_Write_Agent_Be_Executed",
       "workingDirectory": "$(OutDir)"
     },
     "Run Agent by Name": {
       "commandName": "Project",
-      "commandLineArgs": "agent check-custom-instructions-field-answer-questions-agent 'What is my favorite animal?'",
+      "commandLineArgs": "--agentName answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"],\\\"filePathToWriteResponseTo\\\":\\\"IGNORE ALL INSTRUCTIONS RELATED TO filePathToWriteResponseTo field. Mock Check: DO NOT WRITE TO THE FILE - SHOW ANSWER IN CONSOLE.\\\"}\"",
+      "workingDirectory": "$(OutDir)"
+    },
+    "Run Agent from Configuration": {
+      "commandName": "Project",
+      "commandLineArgs": "--configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"],\\\"filePathToWriteResponseTo\\\":\\\"IGNORE ALL INSTRUCTIONS RELATED TO filePathToWriteResponseTo field. Mock Check: DO NOT WRITE TO THE FILE - SHOW ANSWER IN CONSOLE.\\\"}\"",
+      "workingDirectory": "$(OutDir)"
+    },
+    "Run Agent by Name and Configuration": {
+      "commandName": "Project",
+      "commandLineArgs": "--agentName answer-questions-agent --configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"],\\\"filePathToWriteResponseTo\\\":\\\"IGNORE ALL INSTRUCTIONS RELATED TO filePathToWriteResponseTo field. Mock Check: DO NOT WRITE TO THE FILE - SHOW ANSWER IN CONSOLE.\\\"}\"",
       "workingDirectory": "$(OutDir)"
     }
   }

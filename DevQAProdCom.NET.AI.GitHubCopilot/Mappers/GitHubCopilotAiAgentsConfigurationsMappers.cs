@@ -73,8 +73,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
                 Prompt = aiAgent.Prompt,
                 ConfigurationData = new GitHubCopilotAiAgentConfigurationModelWithCustomMedata
                 {
-                    Name = configuration.Name,
-                    Description = configuration.Description,
+                    Name = aiAgent.ConfigurationData.Name ?? configuration.Name,
+                    Description = aiAgent.ConfigurationData.Description ?? configuration.Description,
 
                     Tools = configuration.Tools ?? aiAgent.ConfigurationData?.Tools,
                     Model = configuration.Model ?? aiAgent.ConfigurationData?.Model,

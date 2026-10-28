@@ -1,0 +1,14 @@
+{
+  "name": "check-custom-instructions-field-answer-questions-agent",
+  "configurationIdentifier": "check-custom-instructions-field-answer-questions-agent",
+  "tools": [
+    "view"
+  ],
+  "permissions": [
+    "approve-read-view-all"
+  ],
+  "instructions": [
+    "answer-questions-set-1-instructions"
+  ],
+  "mcpServers": []
+}

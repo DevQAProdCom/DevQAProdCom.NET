@@ -110,5 +110,24 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Utils
 
             return hooksFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         }
+
+        public static List<string> GetFilesWithCopilotAgentConfigurations(string rootDirectory, bool useExtendedSearch = false)
+        {
+            GlobalIoUtils.CheckDirectoryMustExist(rootDirectory);
+            var configurationFiles = new List<string>();
+
+            var agentsConfigurationsDirectory = Const.Directories.GetGitHubAgentsConfigurationsDirectory(rootDirectory);
+            if (GlobalIoUtils.DirectoryExists(agentsConfigurationsDirectory))
+            {
+                configurationFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(agentsConfigurationsDirectory, $"*{FileExtension.Json.GetDescriptionAttributeValue()}", SearchOption.AllDirectories).Select(x => x.FullName));
+            }
+
+            if (useExtendedSearch)
+            {
+                configurationFiles.AddRange(GlobalIoUtils.GetFilesInDirectory(rootDirectory, "*.configuration.json", SearchOption.AllDirectories).Select(x => x.FullName));
+            }
+
+            return configurationFiles.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        }
     }
 }

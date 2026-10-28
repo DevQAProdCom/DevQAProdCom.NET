@@ -33,7 +33,7 @@ The user prompt contains a JSON object with the following properties:
 ```
 
 1. `questions` - An array of question strings to answer.
-2. `filePathToWriteResponseTo` - The absolute path where the answers JSON file must be created.
+2. `filePathToWriteResponseTo` - The absolute path where the answers JSON file must be created. Can be ignored in case the user prompt does not contain this property or user directly asks not to use it. In such case write answer to console.
 
 # Tools Usage
 

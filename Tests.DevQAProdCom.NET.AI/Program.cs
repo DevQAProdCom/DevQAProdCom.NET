@@ -14,40 +14,76 @@ namespace Tests.DevQAProdCom.NET.AI
 
             Console.WriteLine(args.Length > 0 ? $"Application Started with arguments: {string.Join(", ", args)}" : "Application Started with no arguments");
 
-            if (args.Length < 2)
+            var arguments = ParseArguments(args);
+
+            arguments.TryGetValue("className", out var className);
+            arguments.TryGetValue("methodName", out var methodName);
+
+            if (!string.IsNullOrEmpty(className) && !string.IsNullOrEmpty(methodName))
             {
-                Console.WriteLine("Usage: dotnet run -- <ClassName> <MethodName> [Parameters...]");
+                await ReflectionUtils.InvokeMethodWithArgsAsync(className, methodName, args: new List<string>(), logger: DiContainer.Instance.Log);
                 return;
             }
 
-            if (args[0].Contains("agent"))
+            arguments.TryGetValue("agentName", out var agentName);
+            arguments.TryGetValue("configurationIdentifier", out var configurationIdentifier);
+            arguments.TryGetValue("prompt", out var prompt);
+
+            if (!string.IsNullOrEmpty(agentName) || !string.IsNullOrEmpty(configurationIdentifier))
             {
-                //Add ifs for different AI Providers - add to DI
-                var agentName = args[1];
-                var prompt = args.Skip(2).ToList();
-
                 var workingDirectory = Path.Combine(Path.GetTempPath(), "AiAgentTests", DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds());
-               IoUtils.CreateDirectory(workingDirectory);
+                IoUtils.CreateDirectory(workingDirectory);
 
-                await using (var agent = DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
+                var agentBuilder = DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory
                     .GetGitHubCopilotAiAgentInteractor()
                     .WithDefaultContentHandlers()
                     .WithSelectiveIsolation()
-                    .WithWorkingDirectory(workingDirectory)
-                    .WithPrimaryAgent(agentName)
-                    .WithPrompt(string.Join(" ", prompt)))
+                    .WithWorkingDirectory(workingDirectory);
+
+                if (!string.IsNullOrEmpty(agentName) && !string.IsNullOrEmpty(configurationIdentifier))
+                {
+                    agentBuilder.WithPrimaryAgent(agentName, configurationIdentifier);
+                }
+                else if (!string.IsNullOrEmpty(agentName))
+                {
+                    agentBuilder.WithPrimaryAgent(agentName);
+                }
+                else
+                {
+                    agentBuilder.WithSessionConfig(builder => builder.WithPrimaryAgentByConfiguration(configurationIdentifier!));
+                }
+
+                if (!string.IsNullOrEmpty(prompt))
+                {
+                    agentBuilder.WithPrompt(prompt);
+                }
+
+                await using (var agent = agentBuilder)
                 {
                     await agent.InvokeAiAgentWithStreamingAsync();
                 }
-            }
-            else
-            {
-                string className = args[0];
-                string methodName = args[1];
 
-                List<string> methodArgs = args.Skip(2).ToList();
-                await ReflectionUtils.InvokeMethodWithArgsAsync(className, methodName, args: methodArgs, logger: DiContainer.Instance.Log);
+                return;
             }
+
+            Console.WriteLine("Usage: dotnet run -- --className <ClassName> --methodName <MethodName>");
+            Console.WriteLine("       dotnet run -- --agentName <AgentName> [--configurationIdentifier <ConfigurationIdentifier>] [--prompt <Prompt>]");
+            Console.WriteLine("       dotnet run -- --configurationIdentifier <ConfigurationIdentifier> [--prompt <Prompt>]");
+        }
+
+        private static Dictionary<string, string> ParseArguments(string[] args)
+        {
+            var arguments = new Dictionary<string, string>();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i].StartsWith("--") && i + 1 < args.Length)
+                {
+                    arguments[args[i].Substring(2)] = args[++i];
+                }
+            }
+
+            return arguments;
         }
     }
 }

@@ -6,6 +6,7 @@
         {
             public const string GITHUB = ".github";
             public const string AGENTS = "agents";
+            public const string AGENTS_CONFIGURATIONS = "agents-configurations";
             public const string INSTRUCTIONS = "instructions";
             public const string SKILLS = "skills";
             public const string MCP_SERVERS = "mcp-servers";
@@ -21,6 +22,11 @@
             public static string GetGitHubAgentsDirectory(string? rootDirectory = null)
             {
                 return Path.Combine(GetGitHubDirectory(rootDirectory), AGENTS);
+            }
+
+            public static string GetGitHubAgentsConfigurationsDirectory(string? rootDirectory = null)
+            {
+                return Path.Combine(GetGitHubDirectory(rootDirectory), AGENTS_CONFIGURATIONS);
             }
 
             public static string GetGitHubInstructionsDirectory(string? rootDirectory = null)
