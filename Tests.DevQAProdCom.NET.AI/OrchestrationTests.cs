@@ -9,17 +9,17 @@ namespace Tests.DevQAProdCom.NET.AI
     internal class OrchestrationTests : BaseTest
     {
         [Test]
-        public async Task Should_Check_Streaming_From_Subagents()
+        public async Task Should_Streaming_From_Subagents_Be_Applied()
         {
             //SETUP
             CheckGitHubCopilotAuthenticationSetup();
 
             //GIVEN
-            var tempCommonWorkingDirectory = "C:\\Files\\temp\\1"; //PrepareTempTestWorkingDirectory(nameof(Should_Check_Streaming_From_Subagents));
+            var tempOperationalDirectory = "C:\\Files\\temp\\1"; //PrepareTempTestWorkingDirectory(nameof(Should_Check_Streaming_From_Subagents));
             var dateTime = DateTime.UtcNow.ToFileNameSupportedFormatWithMicroseconds();
-            var workingDirectory = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"WorkingDirectory");
-            var baseDirectory = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, $"BaseDirectory");
-            var logFile = Path.Combine(tempCommonWorkingDirectory, nameof(Should_Check_Streaming_From_Subagents), dateTime, "ai-content-log.json");
+            var workingDirectory = Path.Combine(tempOperationalDirectory, nameof(Should_Streaming_From_Subagents_Be_Applied), dateTime, $"WorkingDirectory");
+            var baseDirectory = Path.Combine(tempOperationalDirectory, nameof(Should_Streaming_From_Subagents_Be_Applied), dateTime, $"BaseDirectory");
+            var logFile = Path.Combine(tempOperationalDirectory, nameof(Should_Streaming_From_Subagents_Be_Applied), dateTime, "ai-content-log.json");
             var logAllAiContentHandler = new LogAllAiContentHandler(logFile, Log);
             var eventsCollectorHandler = new SubagentAssistantMessageEventsCollectorHandler(Log);
             var eventsCollectorAiContentHandler = new GitHubCopilotSubagentAssistantMessageEventsAiContentHandler(eventsCollectorHandler, Log);
