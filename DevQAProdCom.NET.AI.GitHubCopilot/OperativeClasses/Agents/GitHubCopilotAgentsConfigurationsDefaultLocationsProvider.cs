@@ -1,4 +1,4 @@
-using DevQAProdCom.NET.AI.Shared.OperativeClasses;
+﻿using DevQAProdCom.NET.AI.Shared.OperativeClasses;
 using CopilotIoUtils = DevQAProdCom.NET.AI.GitHubCopilot.Utils.IoUtils;
 using GlobalIoUtils = DevQAProdCom.NET.Global.Utils.IoUtils;
 

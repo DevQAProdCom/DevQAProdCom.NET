@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
 using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;

@@ -18,7 +18,6 @@ namespace DevQAProdCom.NET.AI.Shared.Models
         [YamlMember(Alias = "tools")]
         public IList<string>? Tools { get; set; }
 
-
         [JsonPropertyName("model")]
         [YamlMember(Alias = "model")]
         public string? Model { get; set; }

@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
-using DevQAProdCom.NET.AI.GitHubCopilot.Models;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.Global.Extensions.StringExtensions;
@@ -9,7 +8,7 @@ using GitHub.Copilot;
 
 namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
 {
-    public class GitHubCopilotMappers(ILogger logger): IGitHubCopilotMappers
+    public class GitHubCopilotMappers(ILogger logger) : IGitHubCopilotMappers
     {
         public McpServerConfig ToMcpServerConfig(IFileBasedMcpServer fileBasedMcpServer)
         {

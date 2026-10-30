@@ -1,5 +1,4 @@
-﻿using System.IO;
-using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Hooks;
 using DevQAProdCom.NET.Global.Utils;
 using GitHub.Copilot;
 

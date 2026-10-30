@@ -1,4 +1,4 @@
-namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models
+﻿namespace Tests.DevQAProdCom.NET.AI.InfrastructureForTests.Models
 {
     public class PlaywrightMcpAgentRequestModel
     {

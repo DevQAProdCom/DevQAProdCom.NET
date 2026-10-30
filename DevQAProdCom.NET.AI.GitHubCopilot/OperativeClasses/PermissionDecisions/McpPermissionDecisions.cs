@@ -5,21 +5,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.PermissionDecisions
 {
     public class McpPermissionDecisions : BasePermissionDecisions
     {
-        //private readonly string _mcpName;
-        //private readonly string[] _allowedTools;
-
-        //public McpPermissionDecisions(string mcpName, params string[] allowedTools)
-        //{
-        //    if (string.IsNullOrWhiteSpace(mcpName))
-        //        throw new ArgumentException("MCP name must be specified.", nameof(mcpName));
-
-        //    if (allowedTools == null || allowedTools.Length == 0)
-        //        throw new ArgumentException("At least one allowed tool must be specified.", nameof(allowedTools));
-
-        //    _mcpName = mcpName;
-        //    _allowedTools = allowedTools;
-        //}
-
         protected Task<PermissionDecision?> McpPermissionCheck(PermissionRequest request, PermissionInvocation invocation, PermissionDecision decision, string mcpName, params string[] tools)
         {
             if (request.Kind != "mcp")

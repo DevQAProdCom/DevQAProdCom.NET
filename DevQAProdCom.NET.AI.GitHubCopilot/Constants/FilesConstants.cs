@@ -16,32 +16,32 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Constants
                 public static readonly string MCP_JSON = $"mcp{FileExtension.Json.GetDescriptionAttributeValue()}";
             }
 
-            //public static string GetGitHubAgentFileName(string agentName, string? directory = null)
-            //{
-            //    var fileName = $"{agentName}.{Extensions.AGENT_MD}";
+            public static string GetGitHubAgentFileName(string agentName, string? directory = null)
+            {
+                var fileName = $"{agentName}.{Extensions.AGENT_MD}";
 
-            //    return string.IsNullOrEmpty(directory)
-            //        ? fileName
-            //        : Path.Combine(directory, fileName);
-            //}
+                return string.IsNullOrEmpty(directory)
+                    ? fileName
+                    : Path.Combine(directory, fileName);
+            }
 
-            //public static string GetGitHubInstructionFileName(string instructionName, string? directory = null)
-            //{
-            //    var fileName = $"{instructionName}.{Extensions.INSTRUCTIONS_MD}";
+            public static string GetGitHubInstructionFileName(string instructionName, string? directory = null)
+            {
+                var fileName = $"{instructionName}.{Extensions.INSTRUCTIONS_MD}";
 
-            //    return string.IsNullOrEmpty(directory)
-            //        ? fileName
-            //        : Path.Combine(directory, fileName);
-            //}
+                return string.IsNullOrEmpty(directory)
+                    ? fileName
+                    : Path.Combine(directory, fileName);
+            }
 
-            //public static string GetGitHubSkillFilePath(string skillName, string? directory = null)
-            //{
-            //    var fileName = $"{Extensions.SKILL_MD}";
+            public static string GetGitHubSkillFilePath(string skillName, string? directory = null)
+            {
+                var fileName = $"{Extensions.SKILL_MD}";
 
-            //    return string.IsNullOrEmpty(directory)
-            //        ? fileName
-            //        : Path.Combine(directory, skillName, fileName);
-            //}
+                return string.IsNullOrEmpty(directory)
+                    ? fileName
+                    : Path.Combine(directory, skillName, fileName);
+            }
         }
     }
 }

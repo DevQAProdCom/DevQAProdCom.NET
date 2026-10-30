@@ -194,14 +194,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             WithClientMode(copilotClientMode);
         }
 
-        //private string? _baseDirectory = null;
-
-        //public SessionConfigBuilder WithBaseDirectory(string baseDirectory)
-        //{
-        //    _baseDirectory = baseDirectory;
-        //    return this;
-        //}
-
         private string _permissionRequestLogFile;
         public SessionConfigBuilder WithPermissionRequestLogFile(string filePath)
         {
@@ -225,33 +217,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
 
         #region Agents
 
-        //public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier)
-        //{
-        //    WithAgent(agentIdentifier);
-        //    var entityData = _allAgentsCollection.GetEntityDataByIdentifier(agentIdentifier);
-        //    _sessionConfig.Agent = entityData.ConfigurationData.Name;
-        //    LogSetting(nameof(_sessionConfig.Agent), _sessionConfig.Agent);
-        //    WithModel(entityData.ConfigurationData.Model!);
-
-        //    //if (entityData.ConfigurationData?.Tools?.ToArray()?.Count() > 0)
-        //    //{
-        //    //    WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray());
-        //    //}
-        //    //else
-        //    //{
-        //    //    var toolSet = new ToolSet().AddBuiltIn("*");
-        //    //    WithAvailableTools(toolSet.ToArray());
-
-        //    //    entityData.ConfigurationData.Tools = toolSet;
-        //    //}
-
-        //    WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
-        //    WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
-        //    WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
-
-        //    return this;
-        //}
-
         public SessionConfigBuilder WithPrimaryAgent(string agentIdentifier, string configuration = SharedAiConstants.Configurations.DEFAULT)
         {
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' and configuration '{Configuration}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier, configuration);
@@ -259,18 +224,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionAgentsCollection.Add(entityData);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
-
-            //if (entityData.ConfigurationData?.Tools?.ToArray()?.Count() > 0)
-            //{
-            //    WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray());
-            //}
-            //else
-            //{
-            //    var toolSet = new ToolSet().AddBuiltIn("*");
-            //    WithAvailableTools(toolSet.ToArray());
-
-            //    entityData.ConfigurationData.Tools = toolSet;
-            //}
 
             return this;
         }
@@ -283,18 +236,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _sessionAgentsCollection.Add(entityData);
             _sessionConfig.Agent = entityData.ConfigurationData.Name;
             LogSetting($"{nameof(_sessionConfig.Agent)} (Primary Agent)", _sessionConfig.Agent);
-
-            //if (entityData.ConfigurationData?.Tools?.ToArray()?.Count() > 0)
-            //{
-            //    WithAvailableTools(entityData.ConfigurationData?.Tools?.ToArray());
-            //}
-            //else
-            //{
-            //    var toolSet = new ToolSet().AddBuiltIn("*");
-            //    WithAvailableTools(toolSet.ToArray());
-
-            //    entityData.ConfigurationData.Tools = toolSet;
-            //}
 
             return this;
         }
@@ -313,10 +254,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             _logger.Info("{TypeName} Loading '{PropertyName}' from agent identifier '{AgentIdentifier}' and configuration '{Configuration}'", $"[{nameof(SessionConfigBuilder)}]", nameof(_sessionConfig.CustomAgents), agentIdentifier, configuration);
             var entityData = _allAgentsCollection.GetByIdentifierAndConfiguration(agentIdentifier, configuration);
             _sessionAgentsCollection.Add(entityData);
-            //WithPermissions(entityData.ConfigurationData?.CustomPermissions?.ToArray());
-            //WithInstructions(entityData.ConfigurationData?.CustomInstructions?.ToArray());
-            //WithSkills(entityData.ConfigurationData?.CustomSkills?.ToArray());
-            //WithAgents(entityData.ConfigurationData?.CustomSubagents?.ToArray());
 
             return this;
         }
@@ -1079,20 +1016,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             return this;
         }
 
-        //public SessionConfig Build()
-        //{
-        //    _logger.Info("{TypeName} Building Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-        //    //_sessionConfig.AvailableTools.Add("read-agent");
-        //    //_sessionConfig.AvailableTools.Add("write-agent");
-        //    LogCollectionSetting(nameof(_sessionConfig.AvailableTools), _sessionConfig.AvailableTools);
-        //    CreateFolderWithInteractionConfigurationData();
-        //    SetUpOnPermissionRequest();
-        //    SetUpInstructionDirectories();
-        //    SetUpSkillsDirectories();
-        //    _logger.Info("{TypeName} Built successfully Agent: {Agent}, (Model: {Model}).", $"[{nameof(SessionConfigBuilder)}]", _sessionConfig.Agent ?? "default", _sessionConfig.Model ?? "default");
-        //    return _sessionConfig;
-        //}
-
         public SessionConfig Build(CopilotClientMode? copilotClientMode = null)
         {
             var agent = _sessionConfig.Agent ?? "default";
@@ -1200,13 +1123,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             }
             else
                 throw new Exception();
-
-            //if (_sessionConfig.InstructionDirectories?.Count > 0)
-            //    foreach (var directory in _sessionConfig.InstructionDirectories)
-            //    {
-            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_sessionConfig.WorkingDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-            //        IoUtils.DirectoryCopy(Path.Combine(directory, ".github", Const.Directories.INSTRUCTIONS), Path.Combine(_baseDirectory, ".github", Const.Directories.INSTRUCTIONS), overwrite: true);
-            //    }
         }
 
         private void ConfigureSkills(string directoryForInteractionConfigurationData)
@@ -1400,7 +1316,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             // Aggregate data on skills from all agents in the session
             var sessionPermissions = _sessionAgentsCollection.Where(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions?.Count() > 0).SelectMany(x => x.ConfigurationData?.CustomMetadata?.Configurations?.Single().Permissions!).Distinct().ToArray();
             WithPermissions(sessionPermissions);
-            //TODO Save Permissions Configuration to directoryForInteractionConfigurationData if needed, similar to how agents, instructions, and skills are saved.
         }
 
         private void ConfigureOnPermissionRequest()
@@ -1460,20 +1375,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             var instructionsDirectory = Const.Directories.GetGitHubInstructionsDirectory(rootDirectory);
             SaveAiEntities(_sessionInstructionsCollection, instructionsDirectory, Const.Files.Extensions.INSTRUCTIONS_MD, "Instruction");
         }
-
-        //private void SetupOnPermissionRequest()
-        //{
-        //    _sessionConfig.OnPermissionRequest = async (request, invocation) =>
-        //    {
-        //        var message = $"Permission Request:\nType= {request.ToString()}\nBody = {request.ToJson()}";
-        //        _logger.Info(message);
-
-        //        if (!string.IsNullOrEmpty(_permissionRequestLogFile))
-        //            IoUtils.AppendAllText(_permissionRequestLogFile, message);
-
-        //        return PermissionDecision.ApproveOnce();
-        //    };
-        //}
 
         private void SaveAiSkills(string rootDirectory)
         {
@@ -1583,21 +1484,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
                 IoUtils.CreateDirectory(_sessionConfig.WorkingDirectory);
             }
         }
-
-        //private void CheckInteractiondirectoryForInteractionConfigurationDataMustExist()
-        //{
-        //    if (string.IsNullOrEmpty(_interactiondirectoryForInteractionConfigurationData))
-        //    {
-        //        var message = $"[{nameof(SessionConfigBuilder)}] Interaction configuration directory is not set.";
-        //        throw new InvalidOperationException(message);
-        //    }
-
-        //    if (!IoUtils.DirectoryExists(_interactiondirectoryForInteractionConfigurationData))
-        //    {
-        //        var message = $"[{nameof(SessionConfigBuilder)}] Interaction configuration directory '{_interactiondirectoryForInteractionConfigurationData}' does not exist.";
-        //        throw new DirectoryNotFoundException(message);
-        //    }
-        //}
 
         private void SetUpGitHubDirectory()
         {
@@ -1857,11 +1743,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         private void LogComplexObjectSetting(string propertyName)
         {
             _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Setting 🔧'{PropertyName}' parameter.", $"{SharedLoggingConstants.Area.Config}", $"{nameof(SessionConfigBuilder)}", propertyName);
-        }
-
-        private void LogComplexObjectSetting(string propertyName, string context)
-        {
-            _logger.Info("🛠️[{LogArea}] ⚙️[{TypeName}] Setting 🔧'{PropertyName}' parameter for '{Context}'.", $"{SharedLoggingConstants.Area.Config}", $"{nameof(SessionConfigBuilder)}", propertyName, context);
         }
 
         private void LogCollectionSetting(string propertyName, IEnumerable<string> values)
