@@ -11,6 +11,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
     public interface IMicrosoftAgentFrameworkAiAgentInteractorsFactory
     {
         public GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor(
+
+            // Agents
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>>? agentsSearcher = null,
             ILocationsProvider? agentsDefaultLocationsProvider = null,
             IAiAgentsConfigurationsMappers<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? mapper = null,
@@ -19,16 +21,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
             IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? allAgentsCollection = null,
             IAiAgentsCollectionWithConfigurations<IGitHubCopilotAiAgentConfigurationWithCustomMetadata>? sessionAgentsCollection = null,
 
+            // Instructions
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiInstructionConfiguration>>? instructionsSearcher = null,
             ILocationsProvider? instructionsDefaultLocationsProvider = null,
             IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? allInstructionsCollection = null,
             IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>? sessionInstructionsCollection = null,
 
+            // Skills
             ISearchEntitiesInLocations<IAiEntityWithTConfigurationType<IGitHubCopilotAiSkillConfiguration>>? skillsSearcher = null,
             ILocationsProvider? skillsDefaultLocationsProvider = null,
             IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? allSkillsCollection = null,
             IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>? sessionSkillsCollection = null,
 
+            // Hooks
             IFileBasedHooksSearcher? hooksSearcher = null,
             ILocationsProvider? hooksDefaultLocationsProvider = null,
             IFileBasedHooksCollection? allFileBasedHooksCollection = null,
@@ -36,6 +41,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? allSdkBasedSessionHooksCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedSessionHook>? sessionSdkBasedSessionHooksCollection = null,
 
+            // MCP Servers
             IFileBasedMcpServersSearcher? mcpServersSearcher = null,
             ILocationsProvider? mcpServersDefaultLocationsProvider = null,
             IFileBasedMcpServersCollection? allFileBasedMcpServersCollection = null,
@@ -43,9 +49,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
 
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            // Permissions
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
+
+            // Other
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty);
     }
 }

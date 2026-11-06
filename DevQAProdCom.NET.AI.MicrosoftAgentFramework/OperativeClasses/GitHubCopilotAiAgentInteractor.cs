@@ -71,16 +71,18 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
 
-            // GitHub Copilot Mappers
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
-            IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
+             // Permissions
+             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
+
+            // Other
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty) : base(microsoftAiAgentInteractor, logger)
         {
             _sessionConfigBuilder = new SessionConfigBuilder(
                 logger,
 
-                //Agents
+                // Agents
                 agentsSearcher: agentsSearcher,
                 agentsDefaultLocationsProvider: agentsDefaultLocationsProvider,
                 agentsConfigurationsMappers: agentsConfigurationsMappers,
@@ -89,19 +91,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 allAgentsCollection: allAgentsCollection,
                 sessionAgentsCollection: sessionAgentsCollection,
 
-                //Instructions
+                // Instructions
                 instructionsSearcher: instructionsSearcher,
                 instructionsDefaultLocationsProvider: instructionsDefaultLocationsProvider,
                 allInstructionsCollection: allInstructionsCollection,
                 sessionInstructionsCollection: sessionInstructionsCollection,
 
-                //Skills
+                // Skills
                 skillsSearcher: skillsSearcher,
                 skillsDefaultLocationsProvider: skillsDefaultLocationsProvider,
                 allSkillsCollection: allSkillsCollection,
                 sessionSkillsCollection: sessionSkillsCollection,
 
-                //Hooks
+                // Hooks
                 fileBasedHooksSearcher: fileBasedHooksSearcher,
                 fileBasedHooksDefaultLocationsProvider: fileBasedHooksDefaultLocationsProvider,
                 allFileBasedHooksCollection: allFileBasedHooksCollection,
@@ -109,7 +111,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
                 sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection,
 
-                //MCP Servers
+                // MCP Servers
                 fileBasedMcpServersSearcher: fileBasedMcpServersSearcher,
                 fileBasedMcpServersDefaultLocationsProvider: fileBasedMcpServersDefaultLocationsProvider,
                 allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
@@ -117,9 +119,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                 allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
 
-                gitHubCopilotMappers: gitHubCopilotMappers,
+                // Permissions
                 allPermissionDecisionsCollection: allPermissionDecisionsCollection,
                 sessionPermissionDecisionsCollection: sessionPermissionDecisionsCollection,
+
+                // Other
+                gitHubCopilotMappers: gitHubCopilotMappers,
                 copilotClientMode: copilotClientMode);
 
             _gitHubCopilotClientService = gitHubCopilotClientService;

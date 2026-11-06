@@ -109,10 +109,12 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
 
-            // Other
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+            // Permissions
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
+
+            // Other
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -195,7 +197,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Builders
         }
 
         private string _permissionRequestLogFile;
-        public SessionConfigBuilder WithPermissionRequestLogFile(string filePath)
+        public SessionConfigBuilder WithPermissionRequestsLogFile(string filePath)
         {
             _permissionRequestLogFile = filePath;
             return this;

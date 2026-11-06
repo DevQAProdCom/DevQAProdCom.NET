@@ -32,6 +32,11 @@ namespace DevQAProdCom.NET.AI.Shared.Models
         [YamlMember(Alias = "instructions")]
         public List<string>? Instructions { get; set; }
 
+        //TODO Add Support of Rules to be used as alternative naming for Instructions. Both should be supported.
+        //[JsonPropertyName("rules")]
+        //[YamlMember(Alias = "rules")]
+        //public List<string>? Rules { get; set; }
+
         [JsonPropertyName("skills")]
         [YamlMember(Alias = "skills")]
         public List<string>? Skills { get; set; }

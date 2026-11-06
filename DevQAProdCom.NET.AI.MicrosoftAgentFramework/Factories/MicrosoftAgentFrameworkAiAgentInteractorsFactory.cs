@@ -53,17 +53,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
             IFileBasedMcpServersCollection? sessionFileBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? allSdkBasedMcpServersCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotSdkBasedMcpServer>? sessionSdkBasedMcpServersCollection = null,
-            
-            // Other
-            IGitHubCopilotMappers? gitHubCopilotMappers = null,
+
+            // Permissions
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? allPermissionDecisionsCollection = null,
             IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>? sessionPermissionDecisionsCollection = null,
+
+            // Other
+            IGitHubCopilotMappers? gitHubCopilotMappers = null,
             CopilotClientMode copilotClientMode = CopilotClientMode.Empty)
         {
             var logger = serviceProvider.GetRequiredService<ILogger>();
 
-            var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
             var microsoftAiAgentInteractor = serviceProvider.GetRequiredService<IMicrosoftAiAgentInteractor>();
+            var gitHubCopilotClientService = serviceProvider.GetRequiredService<IGitHubCopilotClientService>();
 
             fileBasedHooksSearcher ??= new GitHubCopilotFileBasedHooksSearcher(logger);
             fileBasedMcpServersSearcher ??= new GitHubCopilotFileBasedMcpServersSearcher(logger);
@@ -73,6 +75,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 microsoftAiAgentInteractor,
                 logger,
 
+                // Agents 
                 agentsSearcher: agentsSearcher,
                 agentsDefaultLocationsProvider: agentsDefaultLocationsProvider,
                 agentsConfigurationsMappers: agentsConfigurationsMappers,
@@ -81,16 +84,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 allAgentsCollection: allAgentsCollection,
                 sessionAgentsCollection: sessionAgentsCollection,
 
+                // Instructions
                 instructionsSearcher: instructionsSearcher,
                 instructionsDefaultLocationsProvider: instructionsDefaultLocationsProvider,
                 allInstructionsCollection: allInstructionsCollection,
                 sessionInstructionsCollection: sessionInstructionsCollection,
 
+                // Skills
                 skillsSearcher: skillsSearcher,
                 skillsDefaultLocationsProvider: skillsDefaultLocationsProvider,
                 allSkillsCollection: allSkillsCollection,
                 sessionSkillsCollection: sessionSkillsCollection,
 
+                // Hooks
                 fileBasedHooksSearcher: fileBasedHooksSearcher,
                 fileBasedHooksDefaultLocationsProvider: fileBasedHooksDefaultLocationsProvider,
                 allFileBasedHooksCollection: allFileBasedHooksCollection,
@@ -98,6 +104,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 allSdkBasedSessionHooksCollection: allSdkBasedSessionHooksCollection,
                 sessionSdkBasedSessionHooksCollection: sessionSdkBasedSessionHooksCollection,
 
+                // MCP Servers
                 fileBasedMcpServersSearcher: fileBasedMcpServersSearcher,
                 fileBasedMcpServersDefaultLocationsProvider: fileBasedMcpServersDefaultLocationsProvider,
                 allFileBasedMcpServersCollection: allFileBasedMcpServersCollection,
@@ -105,9 +112,12 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Factories
                 allSdkBasedMcpServersCollection: allSdkBasedMcpServersCollection,
                 sessionSdkBasedMcpServersCollection: sessionSdkBasedMcpServersCollection,
 
-                gitHubCopilotMappers: gitHubCopilotMappers,
+                // Permissions
                 allPermissionDecisionsCollection: allPermissionDecisionsCollection,
                 sessionPermissionDecisionsCollection: sessionPermissionDecisionsCollection,
+
+                // Other
+                gitHubCopilotMappers: gitHubCopilotMappers,
                 copilotClientMode: copilotClientMode);
         }
     }

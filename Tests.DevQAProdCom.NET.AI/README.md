@@ -24,7 +24,14 @@ This project works as both an **NUnit Test Suite** and a **Console Application**
 Tests.DevQAProdCom.NET.AI/
 ├── BuildTargets/RenameMainMethod.targets   # Renames method during test builds
 ├── Program.cs                              # Entry point with standard method name
-├── AiTests.cs                              # Test classes
+├── AiAgentsTests.cs                        # End-to-end agent tests
+├── AiAgentsConfigurationsTests.cs          # Configuration override tests
+├── AiInstructionsTests.cs                  # Instructions / rules tests
+├── AiSkillsTests.cs                        # Skill tests
+├── McpServersTests.cs                      # MCP server tests
+├── HooksTests.cs                           # Hook tests
+├── OrchestrationTests.cs                   # Sub-agent / orchestration tests
+├── Properties/launchSettings.json          # Debug launch profiles
 └── Tests.DevQAProdCom.NET.AI.csproj        # Controls mode switching
 ```
 
@@ -62,7 +69,11 @@ Tests.DevQAProdCom.NET.AI/
 ```csharp
 static async Task Main(string[] args)
 {
-    // Uses reflection to invoke: <ClassName> <MethodName> [Parameters...]
+    // Supports four run styles:
+    //   1. --className <ClassName> --methodName <MethodName>
+    //   2. --agentName <AgentName> [--configurationIdentifier <Config>] [--prompt <Prompt>]
+    //   3. --configurationIdentifier <Config> [--prompt <Prompt>]
+    //   4. --agentName <AgentName> --configurationIdentifier <Config> [--prompt <Prompt>]
     await ReflectionUtils.InvokeMethodWithArgsAsync(className, methodName, args, logger);
 }
 ```
@@ -93,13 +104,33 @@ dotnet test
 Always rebuild when switching to app mode (ensures RenameMainMethod.targets runs or is skipped correctly).
 
 ```bash
+dotnet clean Tests.DevQAProdCom.NET.AI
 dotnet build Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --force
-dotnet run --project Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --no-build -- TestsSuite TestName
 ```
 
+#### Run options
+
+| # | Style | Arguments |
+|---|-------|-----------|
+| 1 | **Invoke test by class + method** | `--className <ClassName> --methodName <MethodName>` |
+| 2 | **Run agent by name** | `--agentName <AgentName> [--prompt "<prompt>"]` |
+| 3 | **Run agent by configuration** | `--configurationIdentifier <Config> [--prompt "<prompt>"]` |
+| 4 | **Run agent by name + configuration** | `--agentName <AgentName> --configurationIdentifier <Config> [--prompt "<prompt>"]` |
+
+Examples:
+
 ```bash
-dotnet build Tests.DevQAProdCom.NET.AI -p:AsApp=true --force
-dotnet run --project Tests.DevQAProdCom.NET.AI -p:AsApp=true --no-build -- TestsSuite TestName
+# 1. Test by reflection
+dotnet run --project Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --no-build -- --className AiAgentsTests --methodName Should_Read_Write_Agent_Be_Executed
+
+# 2. Agent by name
+dotnet run --project Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --no-build -- --agentName answer-questions-agent --prompt "What is my favorite animal?"
+
+# 3. Agent by configuration
+dotnet run --project Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --no-build -- --configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt "What is my favorite animal?"
+
+# 4. Agent by name + configuration
+dotnet run --project Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --no-build -- --agentName answer-questions-agent --configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt "What is my favorite animal?"
 ```
 
 ---
@@ -137,12 +168,22 @@ Using `$(OutDir)` pins the working directory to exactly the folder that belongs 
   "profiles": {
     "Run Agent by ClassName and MethodName": {
       "commandName": "Project",
-      "commandLineArgs": "AiAgentsTests Should_Read_Write_Agent_Be_Executed",
+      "commandLineArgs": "--className AiAgentsTests --methodName Should_Read_Write_Agent_Be_Executed",
       "workingDirectory": "$(OutDir)"
     },
     "Run Agent by Name": {
       "commandName": "Project",
-      "commandLineArgs": "agent check-custom-instructions-field-answer-questions-agent 'What is my favorite animal?'",
+      "commandLineArgs": "--agentName answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"]}\"",
+      "workingDirectory": "$(OutDir)"
+    },
+    "Run Agent from Configuration": {
+      "commandName": "Project",
+      "commandLineArgs": "--configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"]}\"",
+      "workingDirectory": "$(OutDir)"
+    },
+    "Run Agent by Name and Configuration": {
+      "commandName": "Project",
+      "commandLineArgs": "--agentName answer-questions-agent --configurationIdentifier check-custom-instructions-field-answer-questions-agent --prompt \"{\\\"questions\\\":[\\\"What is my favorite animal?\\\"]}\"",
       "workingDirectory": "$(OutDir)"
     }
   }

@@ -36,7 +36,7 @@ namespace Tests.DevQAProdCom.NET.AI
                 .WithSelectiveIsolation()
                 .WithCopilotClientBaseDirectory(baseDirectory)
                 .WithMaxAttempts(1)
-                .WithSessionConfig(config => config.WithIncludeSubAgentStreamingEvents(true).WithPermissionRequestLogFile(logFile)))
+                .WithSessionConfig(config => config.WithIncludeSubAgentStreamingEvents(true).WithPermissionRequestsLogFile(logFile)))
             {
                await agent.InvokeAiAgentWithStreamingAsync();
             }
