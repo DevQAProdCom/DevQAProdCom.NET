@@ -1,27 +1,27 @@
 # 🤖 Code Name: AIMS (Agentic Interactions Management System) — Multi-Purpose/Multi-Functional .NET
 
-Implementation/Functionality of Backend Part related to AI can be: 
-  - Used as Code Library for `Backend` <-> `AI` <-> `Frontend` Integrations.
-  - Used as Console App. 
-  - Used for `Frontend` foundation of `Agentic Interactions Management System` which is in development.
+The implementation/functionality of the backend part related to AI can be:
+  - Used as a code library for `Backend` <-> `AI` <-> `Frontend` integrations.
+  - Used as a console app.
+  - Used as a `Frontend` foundation for the `Agentic Interactions Management System`, which is in development.
 
 ---
 
 ## Table of Contents
 
-- [1. 🎯 GENERAL IDEA/ OVERALL AIMS](#1-general-idea-overall-aim)
+- [1. 🎯 GENERAL IDEA/ OVERALL AIMS](#1-general-idea-overall-aims)
   - [1.1 ⁉️ About](#11-about)
   - [1.2 🧭🔀 Three Supported Usage Approaches](#12-three-supported-usage-approaches)
-    - [🧩🖥️ 1.2.1 CLI (Fle-Based) vs SDK (Code-Based) Comparison](#121-cli-file-based-vs-sdk-code-based-comparison)
+    - [🧩🖥️ 1.2.1 CLI (File-Based) vs SDK (Code-Based) Comparison](#121-cli-file-based-vs-sdk-code-based-comparison)
     - [📄⚙️💻 1.2.2 High-Level Configuration Model](#122-high-level-configuration-model)
 
 - [2. ☁️ HIGH LEVEL: IMPLEMENTATION/CONFIGURATION CONCEPTS](#2-high-level-implementation-configuration-concepts)
   - [2.1 🏗️ CLI-SDK Unified Architecture](#21-cli-sdk-unified-architecture)
   - [2.2 🕹️ Usage Modes: `Empty` (Isolated) vs `CopilotCli`](#22-usage-modes-empty-isolated-vs-copilotcli)
-  - [2.3 Agents Configuration Options: YAML MD or JSON Formats](#23-agents-configuration-options-yaml-md-or-json-formats)
+  - [2.3 Agents Configuration Options: YAML or JSON Formats](#23-agents-configuration-options-yaml-or-json-formats)
   - [2.4 ⚙️🔀📄 Fully CLI/File-Based Approach](#24-fully-cli-file-based-approach)
   - [2.5 ⚙️🔀💻 Fully SDK/Code-Based Approach](#25-fully-sdk-code-based-approach)
-  - [2.6 ⚙️🔀📄💻 Hybrid File-Based + Code-Based Approach](#26-hybrid-file-based-and-code-based-approach)
+  - [2.6 ⚙️🔀📄💻 Hybrid File-Based + Code-Based Approach](#26-hybrid-file-based-code-based-approach)
   - [2.7 📐 Interfaces/Classes Layers](#27-interfaces-classes-layers)
     - [2.7.1 🚀🔗🔬 Diagram: High/Middle/Low Level Interfaces and Classes](#271-diagram-highmiddlelow-level-interfaces-and-classes)
     - [2.7.2 🚀 High-Level Interfaces](#272-high-level-interfaces)
@@ -34,17 +34,17 @@ Implementation/Functionality of Backend Part related to AI can be:
 - [3. 🔩 MIDDLE/LOW LEVEL: IMPLEMENTATION / CONFIGURATION CONCEPTS](#3-middle-low-level-implementation-configuration-concepts)
   - [3.1 ⚙️🧱 BASE CONFIGURATION](#31-base-configuration)
     - [3.1.1 Initial Setup & Usage Examples](#311-initial-setup--usage-examples)
-    - [3.1.2 Authentication](##312-authentication)
-    - [3.1.3 Copilot CLI Installation](##313-copilot-cli-installation)
+    - [3.1.2 Authentication](#312-authentication)
+    - [3.1.3 Copilot CLI Installation](#313-copilot-cli-installation)
     - [3.1.4 How to Run](#314-how-to-run)
       - [3.1.4.1 Run as NUnit Test (Class Method)](#3141-run-as-nunit-test-class-method)
       - [3.1.4.2 Run as Console App](#3142-run-as-console-app)
-  - [3.2 🛠️🔧 DETAILED CONFIGURATION](##32-detailed-configuration)
-    - [3.2.1 🛠️🕹️ Setup Mode: `CopilotCli` or `Empty`](##321-setup-mode-copilotcli-or-empty)
+  - [3.2 🛠️🔧 DETAILED CONFIGURATION](#32-detailed-configuration)
+    - [3.2.1 🛠️🕹️ Setup Mode: `CopilotCli` or `Empty`](#321-setup-mode-copilotcli-or-empty)
     - [3.2.2 🛠️🗂️ Setup Configuration Directories](#322-setup-configuration-directories)
-      - [3.2.2.1 Base Directory](#3221-base-directory)
-      - [3.2.2.2 Working Directory](#3222-working-directory)
-      - [3.2.2.3 Directory For Interaction Configuration Data](#3223-directory-for-interaction-configuration-data)
+      - [3.2.2.1 `Base Directory`](#3221-base-directory)
+      - [3.2.2.2 `Working Directory`](#3222-working-directory)
+      - [3.2.2.3 `Directory For Interaction Configuration Data`](#3223-directory-for-interaction-configuration-data)
       - [3.2.2.4 CLI File-Based Isolation using `Directory For Interaction Configuration Data`](#3224-cli-file-based-isolation-using-directory-for-interaction-configuration-data)
     - [3.2.3 🛠️🤖 Configure Agents](#323-configure-agents)
       - [3.2.3.1 File-Based and SDK-Based Agents Examples](#3231-file-based-and-sdk-based-agents-examples)
@@ -87,12 +87,20 @@ Implementation/Functionality of Backend Part related to AI can be:
         - [3.2.7.4.2 JSON File-Based](#32742-json-file-based)
         - [3.2.7.4.3 SDK-Based](#32743-sdk-based)
     - [3.2.8 🛠️🚦 Configure Permissions](#328-configure-permissions)
+      - [3.2.8.1 Decision Contract and Evaluation](#3281-decision-contract-and-evaluation)
+      - [3.2.8.2 Built-in Decisions](#3282-built-in-decisions)
+      - [3.2.8.3 Configuration Options](#3283-configuration-options)
+        - [3.2.8.3.1 YAML File-Based](#32831-yaml-file-based)
+        - [3.2.8.3.2 JSON File-Based](#32832-json-file-based)
+        - [3.2.8.3.3 SDK-Based](#32833-sdk-based)
+      - [3.2.8.4 Collections and Injection](#3284-collections-and-injection)
+      - [3.2.8.5 Build Flow and Ordering](#3285-build-flow-and-ordering)
     - [3.2.9 🛠️✅ Configure Agent Response Validators](#329-configure-agent-response-validators)
     - [3.2.10 🛠️🔍 Configure Logging and Monitoring](#3210-configure-logging-and-monitoring)
     - [3.2.11 ⚡ Invoke Agents](#3211-invoke-agents)
-        - [3.2.11.1 Test Explorer vs Console App](#32111-test-explorer-vs-console-app)
-        - [3.2.11.2 GitHub Copilot → MAF (Microsoft Agent Framework) `AIAgent`](#32112-gitHub-copilot-maf-microsoft-agent-framework-aiagent)
-        - [3.2.11.3 MAF (Microsoft Agent Framework) Invocation Flow](#32113-maf-microsoft-agent-framework-invocation-flow)
+      - [3.2.11.1 Test Explorer vs Console App](#32111-test-explorer-vs-console-app)
+      - [3.2.11.2 GitHub Copilot → MAF (Microsoft Agent Framework) `AIAgent`](#32112-github-copilot-maf-microsoft-agent-framework-aiagent)
+      - [3.2.11.3 MAF (Microsoft Agent Framework) Invocation Flow](#32113-maf-microsoft-agent-framework-invocation-flow)
 
 - [📎 LINKS](#-links)
 
@@ -100,7 +108,7 @@ Implementation/Functionality of Backend Part related to AI can be:
 
 ### 1.1 ⁉️ About
 
-This is an introductory **multi-purpose/multi-functional .NET Agentic Interactions Management System foundation** facade for making one codebase to cover almost every AI Agents usage pattern.
+This is an introductory **multi-purpose/multi-functional .NET Agentic Interactions Management System foundation** facade that makes one codebase cover almost every AI agent usage pattern.
 `Usage Areas`: use it for **DEV AI INTEGRATIONS** and **AQA AI INTEGRATIONS** of any kind.
 
 ```text
@@ -211,9 +219,9 @@ This is an introductory **multi-purpose/multi-functional .NET Agentic Interactio
 |---|----------|----------|
 | 1 | **Fully CLI-Based/File-Based** | Use `.github/agents`, `.github/instructions`, `.github/skills`, `.github/hooks`, `mcp.json` files and run in UI Applications or CLI, or with AIMS using `CopilotClientMode.CopilotCli`. |
 | 2 | **Fully SDK-Based/Code-Based** | Build everything in C# with `CopilotClientMode.Empty` for full security isolation and control or using `CopilotClientMode.CopilotCli` for CLI support mode. |
-| 3 | **Hybrid File-Based + Code-Based** | Describe agents in YAML/JSON inside `.agent.md` files, add SDK-only propertys when needed, then run by name and/or configuration. |
+| 3 | **Hybrid File-Based + Code-Based** | Describe agents in YAML/JSON inside `.agent.md` files, add SDK-only properties when needed, then run by name and/or configuration. |
 
-#### 🧩🖥️ 1.2.1 CLI (Fle-Based) vs SDK (Code-Based) Comparison
+#### 🧩🖥️ 1.2.1 CLI (File-Based) vs SDK (Code-Based) Comparison
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -221,7 +229,7 @@ This is an introductory **multi-purpose/multi-functional .NET Agentic Interactio
                          CLI                                       Hybrid                                      SDK
                     (File-Based)                           File-Based + Code-Based                        (Code-Based) 
                      Approach                                     Approach                                  Approach              
-                                                          Allows Combined Advantages                                                                                             
+                                                          Combines Both Advantages                                                                                             
 └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
                                                                     🎯
@@ -234,11 +242,11 @@ Quick, file-driven setup                                    ← Usage Purpose �
 Usually files in `.{provider-directory}/agents`,          ← Locations Management →      Any local/remote location; configured or SDK-integrated from libraries
 `{provider-directory}/rules`,`{provider-directory}/skills` etc.
                                                                     🪝
-File-Based `.{provider-directory}/hooks`                         ← Hooks →               File-Based + SDK/Code-Based
+File-Based `.{provider-directory}/hooks`                         ← Hooks →              File-Based + SDK/Code-Based
                                                                     🔌
-File-Based `mcp.json`                                         ← MCP Servers →            File-Based + SDK/Code-Based
+File-Based `mcp.json`                                         ← MCP Servers →           File-Based + SDK/Code-Based
                                                                     🗂️
-Limited                                                  ← Multi-Config per Agent →      Reusable multiple configurations per agent in YAML and JSON Formats
+Limited                                                  ← Multi-Config per Agent →     Reusable multiple configurations per agent in YAML and JSON formats
 
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
                                                               🔒 Security                                                                                                
@@ -247,7 +255,7 @@ Limited                                                  ← Multi-Config per Ag
 Shared CLI ambient context                                    ← Isolation →             Per-session isolated environment
                                                                    🚦
 CLI defaults                                                 ← Permissions →            Fine-grained, code-based permission decisions
-                                                                    🔐
+                                                                   🔐
 Hooks or environment variables                          ← Credentials Management →      Flexible runtime secret retrieval and management in code
 
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -264,7 +272,7 @@ Hook scripts                                             ← Response Validation
                                                                     📝
 CLI-level                                                      ← Logging →              Fine-grained per-request/response/event logging using any Logging Library
                                                                     🐞
-Either absent, or very difficult, especially hooks             ← Debugging →             Full-stack debugging across all operations
+Either absent or very difficult, especially for hooks          ← Debugging →             Full-stack debugging across all operations
 ```
 
 #### 📄⚙️💻 1.2.2 High-Level Configuration Model
@@ -290,7 +298,7 @@ As a substitutable configuration in JSON format; may or may not reference a prom
 
 ### 2.1 🏗️ CLI-SDK Unified Architecture
 
-For `GitHub Copilot` Provider, CLI/SDK unified architecture is described as below:
+For the `GitHub Copilot` Provider, the CLI/SDK unified architecture is described below:
 
  ```text
       Your Application
@@ -303,7 +311,7 @@ For `GitHub Copilot` Provider, CLI/SDK unified architecture is described as belo
 
 ### 2.2 🕹️ Usage Modes: `Empty` (Isolated) vs `CopilotCli`
 
-For `GitHub Copilot` Provider integration is supported 2 modes:
+For `GitHub Copilot` Provider integration, 2 modes are supported:
 
 ```csharp
 public enum CopilotClientMode
@@ -328,12 +336,12 @@ builtin:context_board, builtin:skill
 
 ---
 
-### 2.3 Agents Configuration Options: YAML MD or JSON Formats
+### 2.3 Agents Configuration Options: YAML or JSON Formats
 
-Support of different configurations can be useful for testing/executing the same agent prompt under various conditions, like behavior and results while using different models, 
-or different mcp-server tools, or different instructions/skills/hooks etc. 
+Support for different configurations can be useful for testing/executing the same agent prompt under various conditions, such as behavior and results with different models,
+different MCP server tools, or different instructions/skills/hooks.
 
-An agent **must** have a name and a prompt. But all other configuration properties can be kept in 2 format options:
+An agent **must** have a name and a prompt. But all other configuration properties can be kept in two format options:
 
 1. **`.agent.md` file** — YAML front-matter + Markdown body (required minimum: `name` + prompt).
 2. **`.configuration.json` file** — JSON configuration that references agent or extends an agent configuration.
@@ -383,11 +391,10 @@ Example Configuration in JSON format in distinct `.configuration.json` file:
 
 ### 2.4 ⚙️🔀📄 Fully CLI/File-Based Approach
 
-This is usual approach how CLI environments discover and apply agent configurations.
-Is supplied out-of-the-box. 
+This is the usual approach by which CLI environments discover and apply agent configurations.
+It is supplied out of the box.
 
-For `GitHub Copilot` Provider integration is supported in `AIMS` (Agentic Interactions Management System) while setting mode `CopilotClientMode.CopilotCli`
-and setting up working directory with `.github` directory.
+AIMS (Agentic Interactions Management System) supports `GitHub Copilot` Provider integration by setting mode `CopilotClientMode.CopilotCli` and using a working directory that contains a `.github` directory.
 
 ```markdown
 ---
@@ -414,8 +421,8 @@ You are {some_type_of} Agent...
 │   └── my-skill/
 │       └── SKILL.md
 ├── hooks/                                    # 🧩 provider CLI supported directory
-│   └──hook-identifier.hook.json
-├── mcp.json                                  # 🧩 provider CLI supported file or files with specific extension
+│   └── hook-identifier.hook.json
+├── mcp.json                                  # 🧩 provider CLI supported file or files with a specific extension
 └── global-instructions.md                    # 🧩 provider CLI supported file (for instance, `copilot-instructions.md`)
 ```
 
@@ -423,8 +430,8 @@ You are {some_type_of} Agent...
 
 Everything is configured in C# with `SessionConfigBuilder` and `CopilotClientOptionsBuilder`.
 This example uses GitHub Copilot, but other providers can be wired into the same MAF layer.
-For `GitHub Copilot` Provider integration is supported in `AIMS` (Agentic Interactions Management System) while setting mode `CopilotClientMode.Empty` which provides max level of Isolation/Security, but requires manual configuration. 
-Or using `CopilotClientMode.CopilotCli` and setting up working directory with `.github` directory inside it.
+AIMS (Agentic Interactions Management System) supports `GitHub Copilot` Provider integration by setting mode `CopilotClientMode.Empty`, which provides the maximum level of isolation/security but requires manual configuration.
+Alternatively, use `CopilotClientMode.CopilotCli` with a working directory that contains a `.github` directory.
 
 ```csharp
 await using var agent = factory
@@ -491,10 +498,10 @@ await agent.InvokeAiAgentWithStreamingAsync();
 
 ### 2.6 ⚙️🔀📄💻 Hybrid File-Based + Code-Based Approach
 
-Keep the agent prompt and provider configuration in `agent-identifier.agent.md` file , and add SDK-only propertys in `custom-metadata` and run it from code by name or configuration.
+Keep the agent prompt and provider configuration in the `agent-identifier.agent.md` file, add SDK-only properties in `custom-metadata`, and run it from code by name or configuration.
 
-For `GitHub Copilot` Provider integration is supported in `AIMS` (Agentic Interactions Management System) while setting mode `CopilotClientMode.Empty` which provides max level of Isolation/Security, but requires manual configuration. 
-Or using `CopilotClientMode.CopilotCli` and setting up working directory with `.github` directory inside it.
+AIMS (Agentic Interactions Management System) supports `GitHub Copilot` Provider integration by setting mode `CopilotClientMode.Empty`, which provides the maximum level of isolation/security but requires manual configuration.
+Alternatively, use `CopilotClientMode.CopilotCli` with a working directory that contains a `.github` directory.
 
 ```markdown
 ---
@@ -525,9 +532,9 @@ custom-metadata:                                                                
 You are {some_type_of} Agent...
 ```
 
-Or using `JSON` configuration from `agents-configurations` directory.
+Or use the `JSON` configuration from the `agents-configurations` directory.
 
-# 💻 SDK supported Configuration Option
+**💻 SDK supported Configuration Option**
 
 ```json
 {
@@ -561,7 +568,7 @@ Or using `JSON` configuration from `agents-configurations` directory.
 │   └── my-skill/
 │       └── SKILL.md
 ├── hooks/                                            # 🧩 provider CLI supported directory + 💻 SDK supported directory
-│   └──hook-identifier.hook.json
+│   └── hook-identifier.hook.json
 ├── mcp-servers/                                      # 💻 SDK supported directory
 │   └── mcp-server-identifier.mcp.json
 ├── mcp.json                                          # 🧩 provider CLI supported file or files with specific extension + 💻 SDK supported directory
@@ -573,7 +580,7 @@ Run it:
 ```csharp
 await using var agent = factory
     .GetGitHubCopilotAiAgentInteractor()
-    .WithPrimaryAgent("agent-identifier", "CONFIGURATION-IDENTIFIER-1")  
+    .WithPrimaryAgent("agent-identifier", "CONFIGURATION-IDENTIFIER-1")
   //.WithPrimaryAgent("agent-identifier", "CONFIGURATION-IDENTIFIER-2")
     .WithPrompt("Execute agent with parameters...");
 
@@ -583,7 +590,7 @@ await agent.InvokeAiAgentWithStreamingAsync();
 
 ### 2.7 📐 Interfaces/Classes Layers
 
-#### 2.7.1 🚀🔗🔬 Diagram: High/Middle/Low Level Interfaces and Classes 
+#### 2.7.1 🚀🔗🔬 Diagram: High/Middle/Low Level Interfaces and Classes
 
 ```text
 ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┬╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
@@ -679,7 +686,7 @@ Agent services provide a remote or managed agent runtime rather than only model 
 
 For inference clients where your application owns the agent definition and orchestration, see [Model providers](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/model-providers/?pivots=programming-language-csharp).
 
-| Agent Service | C# | Python | Go | What the Service Owns |
+| Agent Service | C# | Python | Go | What the service owns |
 | --- | :-: | :-: | :-: | --- |
 | [Microsoft Foundry](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/agent-services/foundry) | ✅ | ✅ | ✅ | Prompt or Hosted Agent definition, versions, hosted tools, conversations, and service-side execution |
 | [GitHub Copilot](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/agent-services/github-copilot) | ✅ | ✅ | ✅ | Coding-agent runtime, sessions, permissions, built-in shell/file/URL capabilities, and MCP connections |
@@ -691,9 +698,7 @@ For inference clients where your application owns the agent definition and orche
 
 Model providers supply the inference client used by an Agent Framework agent. Your application owns the agent definition, instructions, tools, middleware, and session policy while the provider supplies model inference and provider-hosted capabilities.
 
-For remote or managed runtimes that own an agent definition, permissions, or service-side execution, see [Agents Services](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/agent-services/). For custom framework agent implementations, use [Custom Agents](https://learn.microsoft.com/en-us/agent-framework/concepts/agents/custom-agents?pivots=programming-language-csharp).
-
-For inference clients where your application owns the agent definition and orchestration, see [Model providers](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/model-providers/?pivots=programming-language-csharp).
+For remote or managed runtimes that own an agent definition, permissions, or service-side execution, see [Agent Services](https://learn.microsoft.com/en-us/agent-framework/integrations/by-component/agent-services/). For custom framework agent implementations, use [Custom Agents](https://learn.microsoft.com/en-us/agent-framework/concepts/agents/custom-agents?pivots=programming-language-csharp).
 
 | Provider | Function Tools | Structured Outputs | Code Interpreter | File Search | MCP Tools | Background Responses |
 | --- | :-: | :-: | :-: | :-: | :-: | :-: |
@@ -728,9 +733,9 @@ Several .NET SDKs can connect to Microsoft Foundry, Azure OpenAI, OpenAI, or Ant
 
 ### 3.1 ⚙️🧱 BASE CONFIGURATION
 
-#### 3.1.1 Initial Setup Example & Usage Examples
+#### 3.1.1 Initial Setup & Usage Examples
 
-Initial Setup Example & Usage Examples can be checked in:
+Initial setup and usage examples can be found in:
 
 ```text
 {RepoRoot}/Tests.DevQAProdCom.NET.AI/
@@ -746,7 +751,7 @@ Initial Setup Example & Usage Examples can be checked in:
 
 #### 3.1.2 Authentication
 
-Supported auth methods by the GitHub Copilot SDK:
+Authentication methods supported by the GitHub Copilot SDK:
 
 | Method | How to set |
 |--------|-----------|
@@ -766,7 +771,7 @@ Set via `CopilotClientOptionsBuilder`:
 
 #### 3.1.3 Copilot CLI Installation
 
-In order to use AIMS (Agentic Interactions Management System) for Node.js, Python, and **.NET** SDKs the Copilot CLI is bundled as a dependency.
+In order to use AIMS (Agentic Interactions Management System) for Node.js, Python, and **.NET** SDKs, the Copilot CLI is bundled as a dependency.
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Agents.AI" />
@@ -803,7 +808,7 @@ dotnet test Tests.DevQAProdCom.NET.AI --filter "FullyQualifiedName~AiAgentsConfi
 From Visual Studio:
 
 1. Open **Test** → **Test Explorer**.
-2. Select the `Debug` or  `Release` solution configuration. ❗❗❗ Do not use `DebugAsApp` for test like run setup.
+2. Select the `Debug` or `Release` solution configuration. ❗❗❗ Do not use `DebugAsApp` for test-like runs.
 3. Find the required test in the list or via the search box.
 4. Right-click the test and choose **Run** (or **Debug**) to execute only that test.
 
@@ -870,7 +875,7 @@ The same options are available as launch profiles (`Properties/launchSettings.js
 }
 ```
 
-> ❗ `workingDirectory` must be `$(OutDir)` to avoid duplicate MCP server discovery across build output directorys.
+> ❗ `workingDirectory` must be `$(OutDir)` to avoid duplicate MCP server discovery across build output directories.
 
 
 ### 3.2 🛠️🔧 DETAILED CONFIGURATION
@@ -893,7 +898,7 @@ The same options are available as launch profiles (`Properties/launchSettings.js
 
 A session touches three directory scopes: the client `BaseDirectory`, the `WorkingDirectory` (client and session), and the custom `Directory For Interaction Configuration Data` snapshot directory. Each one is owned by a specific builder class. `GitHubCopilotAiAgentInteractor` is only a facade — its `With...` methods forward to `CopilotClientOptionsBuilder` or `SessionConfigBuilder`.
 
-#### 3.2.2.2 `Base Directory`
+##### 3.2.2.1 `Base Directory`
 
 - Copilot runtime data directory (`COPILOT_HOME`), set once per `CopilotClient` by `CopilotClientOptionsBuilder.WithBaseDirectory()`.
 - Default: `~/.copilot` if not set.
@@ -905,7 +910,7 @@ A session touches three directory scopes: the client `BaseDirectory`, the `Worki
 .WithBaseDirectory("<base-dir>")   // or empty for temp
 ```
 
-#### 3.2.2.3 `Working Directory`
+##### 3.2.2.2 `Working Directory`
 
 Two scopes:
 
@@ -922,13 +927,13 @@ Usually set both to the same directory:
 
 `SessionConfigBuilder.Build()` throws when the session `WorkingDirectory` is empty and creates the directory when it does not exist.
 
-#### 3.2.2.4 `Directory For Interaction Configuration Data`
+##### 3.2.2.3 `Directory For Interaction Configuration Data`
 
 This is the temporary configuration snapshot directory. It mirrors a `.github/` structure with only the agents, instructions, skills, hooks, and MCP servers relevant to the current interaction.
 
 It is set through `SessionConfigBuilder.WithDirectoryForInteractionConfigurationData(string directoryPath)`. When the facade path is used, the value is first produced by `MicrosoftAiAgentInteractorT<T>.SetupDirectoryForInteractionConfigurationData()` and then passed to the builder by `GitHubCopilotAiAgentInteractor.GetAiAgentAsync()`. The facade exposes the same setter through `MicrosoftAiAgentInteractorT<T>.WithDirectoryForInteractionConfigurationData()` when the default location must be overridden. Default location: `SharedAiIoUtils.GetTempAiInterationSessiondirectory()` → `<temp>/AiInterationSession<yyyy-MM-dd_hh-mm-ss.fffffff>`.
 
-`SessionConfigBuilder.SetupDirectoryForInteractionConfigurationData()` creates the directory and rejects a path equal to the session `WorkingDirectory` to avoid conflicts with possible `.github` folder that can already exist there.
+`SessionConfigBuilder.SetupDirectoryForInteractionConfigurationData()` creates the directory and rejects a path equal to the session `WorkingDirectory` to avoid conflicts with a `.github` folder that may already exist there.
 
 ```text
 <interaction-dir>/                            # WithDirectoryForInteractionConfigurationData()
@@ -992,17 +997,17 @@ This does not require the facade, `GitHubCopilotAiAgentInteractor`, `CopilotClie
 }
 ```
 
-`Build()` writes the curated snapshot to `interactionDirectory/.github/{agents,instructions,skills,hooks,mcp-servers}`. 
+`Build()` writes the curated snapshot to `interactionDirectory/.github/{agents,instructions,skills,hooks,mcp-servers}`.
 
-Keep in mind that according to current implementation:
+Keep in mind that, according to the current implementation:
 
 - `Build()` requires a session `WorkingDirectory` and may swap `.github` there when File-Based hooks are included. When the snapshot is built only for an external CLI run, point `WithWorkingDirectory()` at a mock/temp/real working directory, and use `WithDirectoryForInteractionConfigurationData()` for the directory that receives the curated `.github`.
 - `SessionConfigBuilder.Dispose()` deletes the interaction-configuration directory. Keep the builder alive for the whole CLI run and restore the shared `.github` before disposing.
 - Because the snapshot contains only the selected agents/instructions/skills/hooks/MCP servers, the shared directory is untouched on disk while the agent runs, and the original state is restored afterwards.
 
-### 3.2.3 🛠️🤖 Configure Agents
+#### 3.2.3 🛠️🤖 Configure Agents
 
-#### 3.2.3.1 File-Based and SDK-Based Agents Examples
+##### 3.2.3.1 File-Based and SDK-Based Agents Examples
 
 `<agent-identifier>.agent.md` file:
 
@@ -1024,9 +1029,9 @@ new CustomAgentConfig { Name = "custom-sdk-class-initialized" }
 ```
 
 
-> **Note:** `name` of agent serves as its identifier.
+> **Note:** The `name` of the agent serves as its identifier.
 
-#### 3.2.3.2 Collections, Searchers and Locations Providers
+##### 3.2.3.2 Collections, Searchers and Locations Providers
 
 Agents live in `IAiAgentsCollectionWithConfigurations<T>` (default implementation: `AiAgentsCollectionWithConfigurations<T>`).
 
@@ -1073,14 +1078,14 @@ new SessionConfigBuilder(
 
 > The session collection is deliberately created without a default locations provider and without a configurations searcher: it never auto-discovers files. Entries reach it only through the `WithPrimaryAgent*` / `WithAgent*` methods, which copy the resolved agent (with the selected configuration applied) from the all agents collection.
 
-#### 3.2.3.3 Session Configuration Builder
+##### 3.2.3.3 Session Configuration Builder
 
 **Primary agent vs additional agents:**
 
-- `WithPrimaryAgent*` methods set `SessionConfig.Agent` — the name of the custom agent to activate when the session starts. It must match `CustomAgentConfig.Name` of one of the agents in `SessionConfig.CustomAgents`. When `SessionConfig.Agent` is not set, the session runs with the default GitHub Copilot agent.
+- `WithPrimaryAgent*` methods set `SessionConfig.Agent` — the name of the custom agent to activate when the session starts. It must match the `CustomAgentConfig.Name` of one of the agents in `SessionConfig.CustomAgents`. When `SessionConfig.Agent` is not set, the session runs with the default GitHub Copilot agent.
 - `WithAgent*` methods (without the `Primary` prefix) only add agents to the session collection. They never set `SessionConfig.Agent`; they are mostly used to register the subagents that the primary agent can delegate to.
 
-#### 3.2.3.4 Configuration Options
+##### 3.2.3.4 Configuration Options
 
 **Configuration override rule:**
 
@@ -1088,9 +1093,9 @@ new SessionConfigBuilder(
 
 A configuration with an empty or `default` identifier is treated as the agent-specific default configuration and is not registered as a shared configuration; configurations with explicit identifiers are indexed by `ConfigurationIdentifier` and can be resolved with `GetByConfiguration` / `GetByIdentifierAndConfiguration` / `GetByFilePathAndConfiguration`.
 
-#### 3.2.3.4.1 YAML File-Based
+###### 3.2.3.4.1 YAML File-Based
 
-YAML. Base Agent properties in `agent.md`: 
+YAML: base agent properties in `agent.md`:
 
 ```yaml
 ---
@@ -1102,9 +1107,9 @@ Agent Prompt...
 
 ```
 
-#### 3.2.3.4.2 JSON File-Based
+###### 3.2.3.4.2 JSON File-Based
 
-JSON. Base Agent properties in `JSON Configuration`:
+JSON: base agent properties in the JSON configuration:
 
 ```json
 {
@@ -1113,13 +1118,13 @@ JSON. Base Agent properties in `JSON Configuration`:
 }
 ```
 
-#### 3.2.3.4.3 SDK-Based
+###### 3.2.3.4.3 SDK-Based
 
 SDK-Based Configuration Options:
 
 ```csharp
 // Primary agent — sets SessionConfig.Agent
-.WithPrimaryAgent("agent-identifier  ")                                           // by name, default configuration
+.WithPrimaryAgent("agent-identifier")                                            // by name, default configuration
 .WithPrimaryAgent("agent-identifier", "configuration-identifier")                 // by name + configuration
 .WithPrimaryAgentByConfiguration("check-custom-instructions-field")               // by configuration only
 .WithPrimaryAgentFromFile("<path>.agent.md")                                      // from file, default configuration
@@ -1141,9 +1146,9 @@ SDK-Based Configuration Options:
 
 ---
 
-### 3.2.4 🛠️📋 Configure Instructions / Rules
+#### 3.2.4 🛠️📋 Configure Instructions / Rules
 
-#### 3.2.4.1 File-Based and SDK-Based Instructions Examples
+##### 3.2.4.1 File-Based and SDK-Based Instructions Examples
 
 `<instructions-identifier>.instructions.md` file:
 
@@ -1159,9 +1164,9 @@ applyTo: ["**/*.cs"]                                                          # 
 Instruction Prompt...
 ```
 
-> **Note:** "Instructions" are the Copilot alternative naming for "Rules". `name` of agent serves as its identifier.
+> **Note:** "Instructions" is the Copilot alternative naming for "Rules". The `name` of the instruction serves as its identifier.
 
-#### 3.2.4.2 Collections, Searchers and Locations Providers
+##### 3.2.4.2 Collections, Searchers and Locations Providers
 
 Instructions live in `IAiEntitiesCollection<IGitHubCopilotAiInstructionConfiguration>` (default implementation: `AiEntitiesCollection<T>`).
 
@@ -1200,7 +1205,7 @@ new SessionConfigBuilder(
 
 > The session collection never auto-discovers files. Entries reach it through the `WithInstruction*` methods and during `Build()`, which copies every instruction referenced by the configured agents (`custom-metadata.configurations[].instructions`) from the all instructions collection.
 
-#### 3.2.4.3 Session Configuration Builder
+##### 3.2.4.3 Session Configuration Builder
 
 **`Build()` wiring:**
 
@@ -1212,11 +1217,11 @@ new SessionConfigBuilder(
 
 > `WithInstructionDirectories()` sets `SessionConfig.InstructionDirectories` directly. The current `ConfigureInstructions()` implementation expects this property to be unset and throws when it is already populated — prefer the `WithInstruction*` methods and let `Build()` point `InstructionDirectories` at the snapshot.
 
-#### 3.2.4.4 Configuration Options
+##### 3.2.4.4 Configuration Options
 
-#### 3.2.4.4.1 YAML File-Based
+###### 3.2.4.4.1 YAML File-Based
 
-YAML. Instructions can be referenced in in `agent.md`:  `custom-metadata.configurations[].instructions`:
+YAML: instructions can be referenced in `agent.md` through `custom-metadata.configurations[].instructions`:
 
 ```yaml
 custom-metadata:
@@ -1225,18 +1230,18 @@ custom-metadata:
       instructions: ["instruction-identifier-1", "instruction-identifier-2"]
 ```
 
-#### 3.2.4.4.2 JSON File-Based
+###### 3.2.4.4.2 JSON File-Based
 
-JSON. Instructions can be referenced in `JSON Configuration`
+JSON: instructions can be referenced in the JSON configuration:
 
 ```json
 {
   "configurationIdentifier": "configuration-identifier",
-  "instructions": [ "instruction-identifier-1", "instruction-identifier-2"  ]
+  "instructions": [ "instruction-identifier-1", "instruction-identifier-2" ]
 }
 ```
 
-#### 3.2.4.4.3 SDK-Based
+###### 3.2.4.4.3 SDK-Based
 
 SDK-Based Configuration Options:
 
@@ -1260,11 +1265,11 @@ SDK-Based Configuration Options:
 
 ---
 
-### 3.2.5 🛠️🎓 Configure Skills
+#### 3.2.5 🛠️🎓 Configure Skills
 
-#### 3.2.5.1 File-Based and SDK-Based Skills Examples
+##### 3.2.5.1 File-Based and SDK-Based Skills Examples
 
-`<skill-identifier>\SKILL.md` file:
+`<skill-identifier>/SKILL.md` file:
 
 ```markdown
 ---
@@ -1277,9 +1282,9 @@ allowed-tools: ["view", "create"]                                              #
 
 Skill Prompt...
 ```
-> **Note:** `name` of agent serves as its identifier.
+> **Note:** The `name` of the skill serves as its identifier.
 
-#### 3.2.5.2 Collections, Searchers and Locations Providers
+##### 3.2.5.2 Collections, Searchers and Locations Providers
 
 Skills live in `IAiEntitiesCollection<IGitHubCopilotAiSkillConfiguration>` (default implementation: `AiEntitiesCollection<T>`).
 
@@ -1318,7 +1323,7 @@ new SessionConfigBuilder(
 
 > The session collection never auto-discovers files. Entries reach it through the `WithSkill*` methods and during `Build()`, which copies every skill referenced by the configured agents (`custom-metadata.configurations[].skills`) from the all skills collection.
 
-#### 3.2.5.3 Session Configuration Builder
+##### 3.2.5.3 Session Configuration Builder
 
 **`Build()` wiring:**
 
@@ -1333,11 +1338,11 @@ new SessionConfigBuilder(
 >
 > `WithSkillDirectories()` sets `SessionConfig.SkillDirectories` directly; the existing value is kept and step 3 is skipped, but step 4 still applies its directory names to the primary agent's `CustomAgentConfig.Skills`.
 
-#### 3.2.5.4 Configuration Options
+##### 3.2.5.4 Configuration Options
 
-#### 3.2.5.4.1 YAML File-Based
+###### 3.2.5.4.1 YAML File-Based
 
-Skills can be referenced in in `agent.md`:  `custom-metadata.configurations[].skills`:
+Skills can be referenced in `agent.md` through `custom-metadata.configurations[].skills`:
 
 ```yaml
 custom-metadata:
@@ -1346,18 +1351,18 @@ custom-metadata:
       skills: ["skill-identifier-1", "skill-identifier-2"]
 ```
 
-#### 3.2.5.4.2 JSON File-Based
+###### 3.2.5.4.2 JSON File-Based
 
-Skills can be referenced in `JSON Configuration`
+Skills can be referenced in the JSON configuration:
 
 ```json
 {
   "configurationIdentifier": "configuration-identifier",
-  "skills": [ "skill-identifier-1", "skill-identifier-2"  ]
+  "skills": [ "skill-identifier-1", "skill-identifier-2" ]
 }
 ```
 
-#### 3.2.5.4.3 SDK-Based
+###### 3.2.5.4.3 SDK-Based
 
 SDK-Based Configuration Options:
 
@@ -1381,9 +1386,9 @@ SDK-Based Configuration Options:
 
 ---
 
-### 3.2.6 🛠️🪝 Configure Hooks
+#### 3.2.6 🛠️🪝 Configure Hooks
 
-#### 3.2.6.1 File-Based and SDK-Based Hooks Examples
+##### 3.2.6.1 File-Based and SDK-Based Hooks Examples
 
 Hooks come in two independent types, each with its own catalog and session collection.
 
@@ -1397,7 +1402,7 @@ Hooks come in two independent types, each with its own catalog and session colle
 
 File-Based `.json` hook:
 
-``` json
+```json
 {
   "hooks": {
     "sessionStart": [
@@ -1443,7 +1448,7 @@ SDK-Based `.cs` hook:
     }
 ```
 
-#### 3.2.6.2 Collections, Searchers and Locations Providers
+##### 3.2.6.2 Collections, Searchers and Locations Providers
 
 **Collections kept by `SessionConfigBuilder`:**
 
@@ -1487,7 +1492,7 @@ new SessionConfigBuilder(
 
 > The session File-Based collection never auto-discovers files: entries reach it through the `WithFileBasedHook*` methods and during `Build()` from the hook identifiers referenced by the session agents. The SDK catalogs are not discovered at all — `allSdkBasedSessionHooksCollection` must be populated by the caller (for example an `IdentifierBasedEntitiesCollection<T>` with hooks added), otherwise `WithSdkBasedHook("<identifier>")` cannot resolve anything.
 
-#### 3.2.6.3 Session Configuration Builder
+##### 3.2.6.3 Session Configuration Builder
 
 **`Build()` wiring:**
 
@@ -1497,15 +1502,15 @@ new SessionConfigBuilder(
 2. Calls `SaveHooks()`, which writes the session File-Based hooks into `<interaction-dir>/.github/hooks`:
    - hooks that come from a file keep their source file name, and duplicate destination file names throw;
    - hooks added programmatically with JSON string/no file path are written as `<identifier>.hooks.json`, and duplicate identifiers throw.
-   - sdk based hooks are not serializable and are not saved, but only logged that are added by identifier by method that adds them.
+   - SDK-Based hooks are not serializable and are not saved; the method that adds them by identifier only logs them.
 3. Builds `SessionConfig.Hooks` from `SessionHooksBuilder` when no `SessionHooks` was assigned directly, then applies every session SDK hook via `AddTo()`.
 4. `ConfigureDataInGitHubDirectory()`: when File-Based hooks exist, it sets up the working directory `.github` and copies the snapshot `.github/hooks` into it, automatically setting `EnableFileHooks = true` when it was not set.
 
-> If File-Based hooks are used, IS MANDATORY  the `.github` directory substitution mechanism from section [3.2.2.4](#3224-cli-file-based-isolation-using-directory-for-interaction-configuration-data).
+> If File-Based hooks are used, the `.github` directory substitution mechanism from section [3.2.2.4](#3224-cli-file-based-isolation-using-directory-for-interaction-configuration-data) is mandatory.
 
-#### 3.2.6.4 Configuration Options
+##### 3.2.6.4 Configuration Options
 
-#### 3.2.6.4.1 YAML File-Based
+###### 3.2.6.4.1 YAML File-Based
 
 Hooks can be referenced in agent `custom-metadata.configurations[].hooks` — the same identifier space resolves both types:
 
@@ -1516,18 +1521,18 @@ custom-metadata:
       hooks: ["hook-identifier", "sdk-hook-identifier"]
 ```
 
-#### 3.2.6.4.2 JSON File-Based
+###### 3.2.6.4.2 JSON File-Based
 
-Hooks can be referenced in `JSON Configuration`
+Hooks can be referenced in the JSON configuration:
 
 ```json
 {
   "configurationIdentifier": "configuration-identifier",
-  "hooks": [ "hook-identifier-1", "hook-identifier-2"  ]
+  "hooks": [ "hook-identifier-1", "hook-identifier-2" ]
 }
 ```
 
-#### 3.2.6.4.3 SDK-Based
+###### 3.2.6.4.3 SDK-Based
 
 SDK-Based Configuration Options:
 
@@ -1562,9 +1567,9 @@ SDK-Based Configuration Options:
 
 ---
 
-### 3.2.7 🛠️🔌 Configure MCP Servers
+#### 3.2.7 🛠️🔌 Configure MCP Servers
 
-#### 3.2.7.1 File-Based and SDK-Based MCP Servers Examples
+##### 3.2.7.1 File-Based and SDK-Based MCP Servers Examples
 
 MCP servers come in two independent types, each with its own catalog and session collection.
 
@@ -1575,7 +1580,7 @@ MCP servers come in two independent types, each with its own catalog and session
 | File-Based | `.github/mcp.json` or `.github/mcp-servers/*.mcp.json` | `playwright-mcp` |
 | SDK-Based | C# classes implementing `IGitHubCopilotSdkBasedMcpServer` | `GitHubCopilotPlaywrightMcpServer` |
 
-File-Based `.mcp.json` from `.github/mcp.json` or `.github/mcp-servers`:
+File-Based `.mcp.json` from `.github/mcp.json` or `.github/mcp-servers/`:
 
 ```json
 {
@@ -1606,7 +1611,7 @@ public class GitHubCopilotPlaywrightMcpServer : GitHubCopilotSdkBasedStdioMcpSer
 }
 ```
 
-#### 3.2.7.2 Collections, Searchers and Locations Providers
+##### 3.2.7.2 Collections, Searchers and Locations Providers
 
 **Collections kept by `SessionConfigBuilder`:**
 
@@ -1651,7 +1656,7 @@ new SessionConfigBuilder(
 > The session File-Based collection never auto-discovers files: entries reach it through the `WithFileBasedMcpServer*` methods and during `Build()` from the MCP server identifiers referenced by the session agents. The SDK catalogs are not discovered at all — `allSdkBasedMcpServersCollection` must be populated by the caller (for example an `IdentifierBasedEntitiesCollection<T>` with servers added), otherwise `WithSdkBasedMcpServer("<identifier>")` cannot resolve anything.
 
 
-#### 3.2.7.3 Session Configuration Builder
+##### 3.2.7.3 Session Configuration Builder
 
 **`Build()` wiring:**
 
@@ -1666,9 +1671,9 @@ new SessionConfigBuilder(
 
 > During `ConfigureAgents()`, each agent's `custom-metadata.configurations[].mcpServers` identifiers are also resolved into its `CustomAgentConfig.McpServers`; a missing identifier or an identifier found in both catalogs throws.
 
-#### 3.2.7.4 Configuration Options
+##### 3.2.7.4 Configuration Options
 
-#### 3.2.7.4.1 YAML File-Based
+###### 3.2.7.4.1 YAML File-Based
  
 MCP servers can be referenced in agent `custom-metadata.configurations[].mcpServers` — the same identifier space resolves both types:
 
@@ -1679,18 +1684,18 @@ custom-metadata:
       mcpServers: ["file-based-mcp-server-identifier", "sdk-based-mcp-server-identifier"]
 ```
 
-#### 3.2.7.4.2 JSON File-Based
+###### 3.2.7.4.2 JSON File-Based
  
-MCP servers can be referenced in `JSON Configuration`
+MCP servers can be referenced in the JSON configuration:
 
 ```json
 {
   "configurationIdentifier": "configuration-identifier",
-  "mcpServers": [ "file-based-mcp-server-identifier", "sdk-based-mcp-server-identifier"  ]
+  "mcpServers": [ "file-based-mcp-server-identifier", "sdk-based-mcp-server-identifier" ]
 }
 ```
 
-#### 3.2.7.4.3 SDK-Based 
+###### 3.2.7.4.3 SDK-Based
 
 ```csharp
 // File-Based: `.github/mcp.json` and `.github/mcp-servers/*.mcp.json` locations
@@ -1719,11 +1724,11 @@ MCP servers can be referenced in `JSON Configuration`
 ---
 
 
-### 3.2.8 🛠️🚦 Configure Permissions
+#### 3.2.8 🛠️🚦 Configure Permissions
 
 Example architecture for GitHub Copilot: permissions are `IGitHubCopilotPermissionDecision` functions. Agents/configuration files only declare identifiers; `SessionConfigBuilder` resolves them into session-wide decisions evaluated by `SessionConfig.OnPermissionRequest`.
 
-#### 3.2.8.1 Decision Contract and Evaluation
+##### 3.2.8.1 Decision Contract and Evaluation
 
 ```csharp
 public interface IGitHubCopilotPermissionDecision : IHaveStringIdentifier
@@ -1739,9 +1744,9 @@ public interface IGitHubCopilotPermissionDecision : IHaveStringIdentifier
 | Exception | Logged with the identifier; next decision runs |
 | All `null` / empty collection | `PermissionDecision.Reject("Review the available tools...")` |
 
-> Deny-by-default: no matching decision means rejection of permission request.
+> Deny-by-default: no matching decision means rejection of the permission request.
 
-#### 3.2.8.2 Built-in Decisions
+##### 3.2.8.2 Built-in Decisions
 
 Registered by `GitHubCopilotDefaultPermissionDecisionsCollection`; identifiers come from the `Permission` enum `[Description]` values.
 
@@ -1761,11 +1766,11 @@ Registered by `GitHubCopilotDefaultPermissionDecisionsCollection`; identifiers c
 - `GetDenyPlaywrightMcpAllPermission()` exists but is not registered; there is no built-in filesystem deny.
 - Read view checks only `Kind`, not the tool name.
 
-#### 3.2.8.3 Configuration Options
+##### 3.2.8.3 Configuration Options
 
 `permissions` is mapped into `IAiAgentConfigurationWithoutAiEntityIdentifiers.Permissions` by `GitHubCopilotAiAgentsConfigurationsMappers`.
 
-#### 3.2.8.3.1 YAML File-Based
+###### 3.2.8.3.1 YAML File-Based
 
 Permissions can be referenced in agent `custom-metadata.configurations[].permissions` — the same identifier space resolves built-in decisions and custom decisions injected through `allPermissionDecisionsCollection`:
 
@@ -1776,9 +1781,9 @@ custom-metadata:
       permissions: ["approve-read-view-all", "approve-write-create-all"]
 ```
 
-#### 3.2.8.3.2 JSON File-Based
+###### 3.2.8.3.2 JSON File-Based
 
-Permissions can be referenced in `JSON Configuration`:
+Permissions can be referenced in the JSON configuration:
 
 ```json
 {
@@ -1787,7 +1792,7 @@ Permissions can be referenced in `JSON Configuration`:
 }
 ```
 
-#### 3.2.8.3.3 SDK-Based
+###### 3.2.8.3.3 SDK-Based
 
 | Method | Behavior |
 |--------|----------|
@@ -1816,7 +1821,7 @@ Permissions can be referenced in `JSON Configuration`:
 
 > The selected configuration's `permissions` list is authoritative; a named configuration replaces the default agent permissions. `ToCustomAgentConfig()` does not put permissions on `CustomAgentConfig`; they remain session-wide. `mcpServers` and `permissions` are separate namespaces. `WithPermission` / `WithPermissions` throw `KeyNotFoundException` when an identifier is missing from the all-permissions catalog.
 
-#### 3.2.8.4 Collections and Injection
+##### 3.2.8.4 Collections and Injection
 
 | Collection | Field | Default |
 |------------|-------|---------|
@@ -1836,14 +1841,14 @@ Both parameters are forwarded through `IMicrosoftAgentFrameworkAiAgentInteractor
 - `IdentifierBasedEntitiesCollection.Add` rejects duplicates; `SetPermission` upserts.
 
 
-#### 3.2.8.5 Build Flow and Ordering
+##### 3.2.8.5 Build Flow and Ordering
 
 `Build()` runs `ConfigurePermissions()` after `ConfigureMcpServers()` and before `ConfigureOnPermissionRequest()`:
 
 1. `ConfigureAgents()` adds the primary agent, agents, and subagents to `_sessionAgentsCollection`.
 2. `ConfigurePermissions()` collects `Permissions` from all session agents, applies `Distinct()`, and calls `WithPermission()` for each to set session-wide permission handlers.
 3. `WithPermission()` resolves the function from `_allPermissionDecisionsCollection`; `SetPermission()` adds it to the session collection.
-4. `ConfigureOnPermissionRequest()` sets the callback, which evaluates the session collection in insertion order and Approved or Rejects permission request. If none permission handlers allows, then interaction in rejected by default.
+4. `ConfigureOnPermissionRequest()` sets the callback, which evaluates the session collection in insertion order and approves or rejects the permission request. If no permission handler allows it, the interaction is rejected by default.
 
 - `.WithSessionConfig(builder => ...)` runs immediately, so explicit `SetPermission` entries precede Build-added decisions.
 - If a custom `SetPermission` reuses an identifier declared in the agent configuration, Build overwrites its function with the built-in one. Use a unique identifier instead.
@@ -1854,7 +1859,7 @@ Both parameters are forwarded through `IMicrosoftAgentFrameworkAiAgentInteractor
 
 ---
 
-### 3.2.9 🛠️✅ Configure Agent Response Validators
+#### 3.2.9 🛠️✅ Configure Agent Response Validators
 
 Validators implement `IAiInteractionResultValidator` and run after each attempt.
 
@@ -1902,7 +1907,7 @@ Example failure messages:
 
 ---
 
-### 3.2.10 🛠️🔍 Configure Logging and Monitoring
+#### 3.2.10 🛠️🔍 Configure Logging and Monitoring
 
 Event handlers live in:
 
@@ -1961,9 +1966,9 @@ Permission requests are logged via `ConfigureOnPermissionRequest` in `SessionCon
 .WithPermissionRequestsLogFile("<path>/permissions.log")
 ```
 
-### 3.2.11 ⚡ Invoke Agents
+#### 3.2.11 ⚡ Invoke Agents
 
-#### 3.2.11.1 Test Explorer vs Console App
+##### 3.2.11.1 Test Explorer vs Console App
 
 | Goal | Configuration | Notes |
 |------|---------------|-------|
@@ -1977,14 +1982,14 @@ dotnet clean Tests.DevQAProdCom.NET.AI
 dotnet build Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --force
 ```
 
-#### 3.2.11.2 GitHub Copilot → MAF (Microsoft Agent Framework) `AIAgent`
+##### 3.2.11.2 GitHub Copilot → MAF (Microsoft Agent Framework) `AIAgent`
 
 `GitHubCopilotAiAgentInteractor.GetAiAgentAsync()`:
 
 ```text
-1. Setup/Provide/Use Default temp interaction configuration directories (working directory/base directory/directory for interaction configuration data)
+1. Set up/provide/use default temp interaction configuration directories (working directory/base directory/directory for interaction configuration data)
         ↓
-2. Start Provider-Specific CLient, for instance CopilotClient
+2. Start the provider-specific client, for instance CopilotClient
         ↓
 3. Build Session, for instance, SessionConfigBuilder.Build():
         - Resolve agents + configurations
@@ -1993,12 +1998,12 @@ dotnet build Tests.DevQAProdCom.NET.AI --configuration DebugAsApp --force
         - Save relevant files to temp .github/
         - Substitute `.github` directory if file-based hooks exist
         ↓
-4. Get initalized Session with referenced `Directory For Interaction Configuration Data` with only related to interaction agents, instructions etc.
+4. Get the initialized session that references `Directory For Interaction Configuration Data` and contains only the agents, instructions, etc. related to the interaction.
         ↓
-5. Transform Provider-Specific Session Config to Microsoft Agent Framework `AIAgent = copilotClient.AsAIAgent(sessionConfig, ownsClient: true)`
+5. Transform the provider-specific session config into a Microsoft Agent Framework `AIAgent`: `copilotClient.AsAIAgent(sessionConfig, ownsClient: true)`
 ```
 
-#### 3.2.11.3 MAF (Microsoft Agent Framework) Invocation Flow
+##### 3.2.11.3 MAF (Microsoft Agent Framework) Invocation Flow
 
 `MicrosoftAiAgentInteractor.InvokeAiAgentWithStreamingAsync()`:
 
