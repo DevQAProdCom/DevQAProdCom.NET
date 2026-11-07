@@ -1,5 +1,9 @@
-# 🤖 Code Name: AIMS (Agentic Interactions Management System) — Multi-Purpose/Multi-Functional .NET 
-# Implementation of Backend Part related to AI. Fucntionality can be used as Console App as well. Implementation of Frontend Part is in Development.
+# 🤖 Code Name: AIMS (Agentic Interactions Management System) — Multi-Purpose/Multi-Functional .NET
+
+Implementation/Functionality of Backend Part related to AI can be: 
+  - Used as Code Library for `Backend` <-> `AI` <-> `Frontend` Integrations.
+  - Used as Console App. 
+  - Used for `Frontend` foundation of `Agentic Interactions Management System` which is in development.
 
 ---
 
@@ -96,7 +100,7 @@
 
 ### 1.1 ⁉️ About
 
-This is an introductory **multi-purpose/multi-functional .NET AI Agent Interactions foundation** facade for making one codebase to cover almost every AI Agents usage pattern.
+This is an introductory **multi-purpose/multi-functional .NET Agentic Interactions Management System foundation** facade for making one codebase to cover almost every AI Agents usage pattern.
 `Usage Areas`: use it for **DEV AI INTEGRATIONS** and **AQA AI INTEGRATIONS** of any kind.
 
 ```text
@@ -1717,15 +1721,136 @@ MCP servers can be referenced in `JSON Configuration`
 
 ### 3.2.8 🛠️🚦 Configure Permissions
 
+Example architecture for GitHub Copilot: permissions are `IGitHubCopilotPermissionDecision` functions. Agents/configuration files only declare identifiers; `SessionConfigBuilder` resolves them into session-wide decisions evaluated by `SessionConfig.OnPermissionRequest`.
+
+#### 3.2.8.1 Decision Contract and Evaluation
+
+```csharp
+public interface IGitHubCopilotPermissionDecision : IHaveStringIdentifier
+{
+    Func<PermissionRequest, PermissionInvocation, Task<PermissionDecision?>> PermissionDecisionFunc { get; set; }
+}
+```
+
+| Result | Behavior |
+|--------|----------|
+| Non-null `PermissionDecision` | Request handled; iteration stops |
+| `null` | Decision does not apply; next decision runs |
+| Exception | Logged with the identifier; next decision runs |
+| All `null` / empty collection | `PermissionDecision.Reject("Review the available tools...")` |
+
+> Deny-by-default: no matching decision means rejection of permission request.
+
+#### 3.2.8.2 Built-in Decisions
+
+Registered by `GitHubCopilotDefaultPermissionDecisionsCollection`; identifiers come from the `Permission` enum `[Description]` values.
+
+| Identifier | Factory | Filter | Decision |
+|------------|---------|--------|----------|
+| `approve-read-view-all` | `ReadViewPermissionDecisions.GetApproveReadViewAllPermission()` | `Kind == "read"` | `ApproveOnce()` |
+| `deny-read-view-all` | `ReadViewPermissionDecisions.GetDenyReadViewAllPermission()` | `Kind == "read"` | `Reject(...)` |
+| `approve-write-create-all` | `WriteCreatePermissionDecisions.GetApproveWriteCreateAllPermission()` | `Kind == "write"` | `ApproveOnce()` |
+| `deny-write-create-all` | `WriteCreatePermissionDecisions.GetDenyWriteCreateAllPermission()` | `Kind == "write"` | `Reject(...)` |
+| `approve-write-edit-all` | `WriteEditPermissionDecisions.GetApproveWriteEditAllPermission()` | `Kind == "edit"` | `ApproveOnce()` |
+| `deny-write-edit-all` | `WriteEditPermissionDecisions.GetDenyWriteEditAllPermission()` | `Kind == "edit"` | `Reject(...)` |
+| `approve-playwright-mcp-tools-all` | `PlaywrightMcpPermissionDecisions.GetApprovePlaywrightMcpAllPermission()` | `Kind == "mcp"`, `ServerName == "playwright"`, any tool | `ApproveOnce()` |
+| `approve-filesystem-mcp-tools-all` | `FilesystemMcpPermissionDecisions.GetApproveFilesystemMcpAllPermission()` | `Kind == "mcp"`, `ServerName == "filesystem-sdk-based-mcp-server"`, any tool | `ApproveOnce()` |
+
+- `McpPermissionDecisions.McpPermissionCheck()` requires `Kind == "mcp"`, casts to `PermissionRequestMcp`, compares `ServerName` and `ToolName` case-insensitively; `"*"` matches any tool.
+- Playwright/filesystem built-ins match fixed server names; custom MCP identifiers need a custom decision.
+- `GetDenyPlaywrightMcpAllPermission()` exists but is not registered; there is no built-in filesystem deny.
+- Read view checks only `Kind`, not the tool name.
+
+#### 3.2.8.3 Configuration Options
+
+`permissions` is mapped into `IAiAgentConfigurationWithoutAiEntityIdentifiers.Permissions` by `GitHubCopilotAiAgentsConfigurationsMappers`.
+
+#### 3.2.8.3.1 YAML File-Based
+
+Permissions can be referenced in agent `custom-metadata.configurations[].permissions` — the same identifier space resolves built-in decisions and custom decisions injected through `allPermissionDecisionsCollection`:
+
+```yaml
+custom-metadata:
+  configurations:
+    - configurationIdentifier: configuration-identifier
+      permissions: ["approve-read-view-all", "approve-write-create-all"]
+```
+
+#### 3.2.8.3.2 JSON File-Based
+
+Permissions can be referenced in `JSON Configuration`:
+
+```json
+{
+  "configurationIdentifier": "filesystem-mcp-json-file-configuration",
+  "permissions": [ "approve-filesystem-mcp-tools-all" ]
+}
+```
+
+#### 3.2.8.3.3 SDK-Based
+
+| Method | Behavior |
+|--------|----------|
+| `SetPermission(identifier, func)` | Upserts into the session collection; an existing identifier keeps its position and gets a new function |
+| `WithPermission(identifier)` | Resolves from the all-decisions catalog; throws `KeyNotFoundException` if missing |
+| `WithPermissions(params string[]?)` | Repeated `WithPermission` |
+| `ConfigurePermissions(directory)` | Build-time: aggregates agent `Permissions`, applies `Distinct()`, calls `WithPermissions` |
+| `ConfigureOnPermissionRequest()` | Wires `SessionConfig.OnPermissionRequest`; logs, evaluates, returns the first non-null decision |
+| `WithPermissionRequestsLogFile(path)` | Appends every request to the file before evaluation |
 
 
+```csharp
+.WithPermission("approve-read-view-all")
+.WithPermissions("approve-write-create-all", "approve-filesystem-mcp-tools-all")
+.SetPermission("approve-custom-filesystem-tool", (request, invocation) =>
+{
+    if (request is PermissionRequestMcp mcpRequest &&
+        string.Equals(mcpRequest.ServerName, "filesystem-sdk-based-mcp-server", StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(mcpRequest.ToolName, "read_text_file", StringComparison.OrdinalIgnoreCase))
+        return Task.FromResult<PermissionDecision?>(PermissionDecision.ApproveOnce());
+
+    return Task.FromResult<PermissionDecision?>(null);
+})
+.WithPermissionRequestsLogFile("<path-to-permission-requests>.json")
+```
+
+> The selected configuration's `permissions` list is authoritative; a named configuration replaces the default agent permissions. `ToCustomAgentConfig()` does not put permissions on `CustomAgentConfig`; they remain session-wide. `mcpServers` and `permissions` are separate namespaces. `WithPermission` / `WithPermissions` throw `KeyNotFoundException` when an identifier is missing from the all-permissions catalog.
+
+#### 3.2.8.4 Collections and Injection
+
+| Collection | Field | Default |
+|------------|-------|---------|
+| All decisions | `_allPermissionDecisionsCollection` | `GitHubCopilotDefaultPermissionDecisionsCollection` |
+| Session decisions | `_sessionPermissionDecisionsCollection` | Empty `IdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>` |
+
+```csharp
+new SessionConfigBuilder(
+    logger,
+    allPermissionDecisionsCollection: <IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>>,
+    sessionPermissionDecisionsCollection: <IIdentifierBasedEntitiesCollection<IGitHubCopilotPermissionDecision>>);
+```
+
+Both parameters are forwarded through `IMicrosoftAgentFrameworkAiAgentInteractorsFactory.GetGitHubCopilotAiAgentInteractor(...)` → `MicrosoftAgentFrameworkAiAgentInteractorsFactory` → `GitHubCopilotAiAgentInteractor` → `SessionConfigBuilder`.
+
+- Injecting `allPermissionDecisionsCollection` replaces the defaults; extend them via `new GitHubCopilotDefaultPermissionDecisionsCollection(logger)` + `Add(...)`.
+- `IdentifierBasedEntitiesCollection.Add` rejects duplicates; `SetPermission` upserts.
 
 
+#### 3.2.8.5 Build Flow and Ordering
 
+`Build()` runs `ConfigurePermissions()` after `ConfigureMcpServers()` and before `ConfigureOnPermissionRequest()`:
 
+1. `ConfigureAgents()` adds the primary agent, agents, and subagents to `_sessionAgentsCollection`.
+2. `ConfigurePermissions()` collects `Permissions` from all session agents, applies `Distinct()`, and calls `WithPermission()` for each to set session-wide permission handlers.
+3. `WithPermission()` resolves the function from `_allPermissionDecisionsCollection`; `SetPermission()` adds it to the session collection.
+4. `ConfigureOnPermissionRequest()` sets the callback, which evaluates the session collection in insertion order and Approved or Rejects permission request. If none permission handlers allows, then interaction in rejected by default.
 
-
-
+- `.WithSessionConfig(builder => ...)` runs immediately, so explicit `SetPermission` entries precede Build-added decisions.
+- If a custom `SetPermission` reuses an identifier declared in the agent configuration, Build overwrites its function with the built-in one. Use a unique identifier instead.
+- Custom identifiers do not need to be declared in YAML/JSON.
+- `WithPermission()` searches only the all-decisions catalog; an agent-declared identifier missing there fails the Build with `KeyNotFoundException`.
+- First non-null decision wins; earlier session entries take precedence.
+- Session decisions are not written to the interaction directory and have no JSON snapshot.
 
 ---
 
