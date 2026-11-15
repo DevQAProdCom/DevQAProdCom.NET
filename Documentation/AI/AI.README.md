@@ -102,6 +102,12 @@ The implementation/functionality of the backend part related to AI can be:
       - [3.2.11.2 GitHub Copilot → MAF (Microsoft Agent Framework) `AIAgent`](#32112-github-copilot-maf-microsoft-agent-framework-aiagent)
       - [3.2.11.3 MAF (Microsoft Agent Framework) Invocation Flow](#32113-maf-microsoft-agent-framework-invocation-flow)
 
+- [4. 💲📊 TOKEN USAGE MANAGEMENT](#4-token-usage-management)
+  - [4.1 🚀 High-Level Flow: AI Events to Big Data Query Analytics](#41-high-level-flow-ai-events-to-big-data-query-analytics)
+  - [4.2 🛠️🔬 Middle/Low-Level Processing and Configuration](#42-middlelow-level-processing-and-configuration)
+  - [4.3 💲🤖 Per Agent/Subagent Token Consumption](#43-per-agentsubagent-token-consumption)
+  - [4.4 💲🧮 Per Session Token Consumption](#44-per-session-token-consumption)
+
 - [📎 LINKS](#-links)
 
 ## 1. 🎯 GENERAL IDEA/ OVERALL AIMS
@@ -1914,7 +1920,7 @@ Event handlers live in:
 - `{RepoRoot}/DevQAProdCom.NET.AI.GitHubCopilot/Handlers/`
 - `{RepoRoot}/DevQAProdCom.NET.AI.MicrosoftAgentFramework/Handlers/`
 
-Current handler: `AssistantMessageEventHandler`.
+Current handlers: `AssistantMessageEventHandler` for message/reasoning content and `AssistantUsageEventHandler` for token and AI-credit usage.
 
 MAF wraps it with `GitHubCopilotSessionEventAiContentHandler`, which adapts `AIContent` from `Microsoft.Extensions.AI` to the shared `IAiInteractionHandler` interface. This makes it provider-agnostic.
 
@@ -2028,6 +2034,285 @@ Default interaction timeout: **15 minutes**.
 
 ---
 
+## 4. 💲📊 TOKEN USAGE MANAGEMENT
+
+GitHub Copilot token and AI-credit usage is collected from streaming session events and emitted through the shared `ILogger` abstraction as **parameterized logs**. Each primary-agent, subagent, and whole-session usage message contains the same `SessionId`, so local diagnostics and downstream analytics can correlate every record with its originating session.
+
+The implementation provides:
+
+- Per-model-API-call usage for the primary agent and subagents.
+- Accumulated per-agent/per-subagent totals.
+- Accumulated whole-session totals.
+- GitHub-reported AI-credit usage when `totalNanoAiu` is available.
+- Human-readable messages prefixed with `💲📊`, backed by named structured logging properties.
+
+The implementation does **not** estimate charges from token prices and does not report a USD amount. AI credits are derived only from GitHub-reported nano-AI units:
+
+```text
+AiCredits = totalNanoAiu / 1,000,000,000
+```
+
+The `assistant.usage.data.cost` field is not used as AI credits because it is a premium-request billing multiplier.
+
+### 4.1 🚀 High-Level Flow: AI Events to Big Data Query Analytics
+
+The general design separates usage collection from transport and analytics. The names below are conceptual stages rather than a requirement to use particular concrete classes at every stage:
+
+```text
+┌──────────────────────────────────────┐
+│       AI message/session handlers    │
+│ Primary-agent and subagent activity  │
+└──────────────────┬───────────────────┘
+                   │ observe streamed events
+                   ▼
+┌──────────────────────────────────────┐
+│      Collect token consumption       │
+│ Session ID • agent identity • model  │
+│ Input/output/cache/reasoning tokens  │
+│ AI credits when reported by GitHub   │
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│          Aggregate usage             │
+│ Per API call → per agent → session   │
+└──────────────────┬───────────────────┘
+                   │ parameterized message template + properties
+                   ▼
+┌──────────────────────────────────────┐
+│              Send logs               │
+│ Shared logger → configured provider  │
+└──────────────────┬───────────────────┘
+                   │
+         ┌─────────┴──────────┐
+         ▼                    ▼
+┌──────────────────┐  ┌─────────────────────────────────┐
+│ Local diagnostics│  │ Log collector / queue / exporter │
+│ Console or files │  │ Optional batching and ETL        │
+└──────────────────┘  └────────────────┬────────────────┘
+                                       ▼
+                        ┌─────────────────────────────────┐
+                        │ BigQuery or another data store  │
+                        │ Structured usage records        │
+                        └────────────────┬────────────────┘
+                                         ▼
+                        ┌─────────────────────────────────┐
+                        │         Query Analytics         │
+                        │ Dashboards • reports • alerts   │
+                        └─────────────────────────────────┘
+```
+
+The built-in implementation ends at the shared logging boundary. BigQuery ingestion and Query Analytics are downstream integration options, not a built-in BigQuery exporter.
+
+**Whole-session view at a glance**
+
+| Record | `SessionId` | Agent/instance | Total tokens | Input | Output | AI credits |
+|---|---|---|---:|---:|---:|---:|
+| Primary-agent total | `copilot-session-123` | `primary/main` | 120 | 100 | 20 | 1 |
+| Subagent total | `copilot-session-123` | `reader/agent-1` | 60 | 50 | 10 | 0.5 |
+| Authoritative session total | `copilot-session-123` | Whole session | 180 | 150 | 30 | 1.5 |
+
+These are alternative aggregation views of the same consumption. Do not add agent totals to the session total: the session row already includes agent and subagent usage.
+
+After structured records reach an analytics system, the idea is to query usage by session, compare agent/subagent consumption, analyze models and cache usage, monitor AI credits over time, and detect unusual growth. No SQL is required to understand or enable this flow; the important contract is the structured record and its correlation dimensions.
+
+### 4.2 🛠️🔬 Middle/Low-Level Processing and Configuration
+
+`AssistantUsageEventHandler` emits `ILogger.Info(messageTemplate, parameters)` with named logging properties rather than interpolated values. Structured providers can retain both the rendered message and its properties. `SessionId` correlates primary-agent, subagent, fallback, and shutdown records; `AgentName` and `AgentId` identify the agent type and invocation. The exact templates, event behavior, and metrics are described below.
+
+The concrete implementation behind the conceptual flow is:
+
+```text
+GitHub Copilot session event
+        ↓
+Microsoft Agent Framework AgentResponseUpdate.Contents
+        ↓
+AIContent.RawRepresentation
+        ↓
+GitHubCopilotSessionEventAiContentHandler
+        ↓ JSON representation of the raw session event
+AssistantUsageEventHandler
+        ↓
+Per-call logs + accumulated per-agent/session logs
+        ↓
+ILogger.Info(messageTemplate, parameters)
+        ↓
+Configured logging provider/sink
+        ↓
+Optional collector/exporter → BigQuery or another analytics system
+```
+
+| Class/Interface | Responsibility | Location |
+|---|---|---|
+| `AssistantUsageEventHandler` | Main token-usage handler. Captures `SessionId`, resolves agent identity, processes usage/lifecycle events, accumulates metrics, calculates totals and AI credits, and writes parameterized log messages. | `DevQAProdCom.NET.AI.GitHubCopilot/Handlers/AssistantUsageEventHandler.cs` |
+| `GitHubCopilotAgentTokenConsumptionModel` | Mutable per-agent accumulation state: agent name, assistant-usage presence, token counters, optional subagent-reported total, and optional accumulated nano-AI units. | `DevQAProdCom.NET.AI.GitHubCopilot/Models/GitHubCopilotAgentTokenConsumptionModel.cs` |
+| `SessionEventHandler` | Base class that stores `ILogger`, recognizes the requested session-event discriminator, and deserializes matching JSON into GitHub Copilot SDK event types. | `DevQAProdCom.NET.AI.GitHubCopilot/Handlers/SessionEventHandler.cs` |
+| `GitHubCopilotAssistantUsageEventAiContentHandler` | Registers `AssistantUsageEventHandler` with the Microsoft Agent Framework content-handler adapter. It contains no usage-calculation logic itself. | `DevQAProdCom.NET.AI.MicrosoftAgentFramework/Handlers/GitHubCopilot/GitHubCopilotAssistantUsageEventAiContentHandler.cs` |
+| `GitHubCopilotSessionEventAiContentHandler` | Converts `AIContent.RawRepresentation` to JSON, forwards it to an `IAiInteractionHandler`, and forwards `Finally()` during finalization. | `DevQAProdCom.NET.AI.MicrosoftAgentFramework/Handlers/GitHubCopilot/GitHubCopilotSessionEventAiContentHandler.cs` |
+| `IAiContentHandler` | Microsoft Agent Framework-facing contract for processing streamed content and finalization. | `DevQAProdCom.NET.AI.MicrosoftAgentFramework/Interfaces/IAiContentHandler.cs` |
+| `IAiInteractionHandler` | Shared string-event processing contract implemented by `SessionEventHandler`. | `DevQAProdCom.NET.AI.Shared/Interfaces/Interactions/IAiInteractionHandler.cs` |
+| `GitHubCopilotAiAgentInteractor` | `AddDefaultContentHandlers()` registers both the assistant-message handler and `GitHubCopilotAssistantUsageEventAiContentHandler`. | `DevQAProdCom.NET.AI.MicrosoftAgentFramework/OperativeClasses/GitHubCopilotAiAgentInteractor.cs` |
+| `MicrosoftAiAgentInteractor` | Sends every streamed `AIContent` item to every registered content handler and calls `Finally()` after each streaming attempt. | `DevQAProdCom.NET.AI.MicrosoftAgentFramework/OperativeClasses/MicrosoftAiAgentInteractor.cs` |
+| `SessionEvent` enumeration | Maps C# enum members to wire discriminators such as `session.start`, `assistant.usage`, `subagent.completed`, and `session.shutdown`. | `DevQAProdCom.NET.AI.GitHubCopilot/Enumerations/SessionEvent.cs` |
+
+Enable the default handlers, including token usage, through:
+
+```csharp
+await using var agent = factory
+    .GetGitHubCopilotAiAgentInteractor()
+    .WithDefaultContentHandlers()
+    .WithPrompt("Execute agent...");
+```
+
+Alternatively, register only the usage handler explicitly:
+
+```csharp
+.WithAiContentHandlers(
+    new GitHubCopilotAssistantUsageEventAiContentHandler(logger))
+```
+
+#### Low-Level Parameterized Template Examples
+
+The immediate per-call template and argument order in `AssistantUsageEventHandler` are:
+
+```csharp
+private const string ApiCallTokenConsumptionTemplate =
+    "💲📊 [SessionId={SessionId}] [{AgentName}/{AgentId}] TOKEN CONSUMPTION (Model={Model}): " +
+    "💵 Total={TotalTokens}, 🪙 Input={InputTokens}, 🪙 Output={OutputTokens}, " +
+    "🪙 CacheRead={CacheReadTokens}, 🪙 CacheWrite={CacheWriteTokens}, " +
+    "🪙 Reasoning={ReasoningTokens}, 💰 AiCredits={AiCredits}";
+
+Logger.Info(
+    ApiCallTokenConsumptionTemplate,
+    _sessionId,
+    consumption.AgentName,
+    agentId,
+    usage.Model ?? "unknown",
+    inputTokens + outputTokens,
+    inputTokens,
+    outputTokens,
+    cacheReadTokens,
+    cacheWriteTokens,
+    reasoningTokens,
+    FormatAiCredits(totalNanoAiu));
+```
+
+The accumulated whole-session fallback uses the same approach, without `Model`, `AgentName`, or `AgentId`:
+
+```csharp
+Logger.Info(
+    SessionTotalTokenConsumptionTemplate,
+    _sessionId,
+    sessionTotalTokens,
+    allConsumption.Sum(c => c.InputTokens),
+    allConsumption.Sum(c => c.OutputTokens),
+    allConsumption.Sum(c => c.CacheReadTokens),
+    allConsumption.Sum(c => c.CacheWriteTokens),
+    allConsumption.Sum(c => c.ReasoningTokens),
+    FormatAiCredits(sessionTotalNanoAiu));
+```
+
+The corresponding session template is:
+
+```text
+💲📊 [SessionId={SessionId}] [session] TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 🪙 Input={InputTokens}, 🪙 Output={OutputTokens}, 🪙 CacheRead={CacheReadTokens}, 🪙 CacheWrite={CacheWriteTokens}, 🪙 Reasoning={ReasoningTokens}, 💰 AiCredits={AiCredits}
+```
+
+Agent fallback and shutdown templates use the same metric-property names. Their titles distinguish `TOKEN CONSUMPTION`, `TOTAL TOKEN CONSUMPTION`, and `SESSION TOTAL TOKEN CONSUMPTION`. The argument order must always match placeholder appearance in the template. Rendered examples in sections 4.3 and 4.4 show logical values; formatter-specific punctuation or quoting does not change the structured properties.
+
+#### Session Events and Logging Behavior
+
+| Trigger | Collection and logging behavior |
+|---|---|
+| `session.start` | Captures `Data.SessionId` for all subsequent usage records. It does not emit a token-consumption message or contribute tokens. |
+| `subagent.started` | Maps `AgentId` and `ToolCallId` to the configured subagent name/display name for later attribution. It does not emit usage or contribute tokens. |
+| `assistant.usage` | Immediately logs a parameterized per-API-call record with model, agent attribution, token counts, and optional `copilotUsage.totalNanoAiu`, then accumulates those values for agent/session summaries. |
+| `subagent.completed` / `subagent.failed` | When `TotalTokens` is available, immediately logs a total-only subagent record and retains the value for aggregation. This is a fallback when subagent `assistant.usage` events are not streamed and prevents double-counting that subagent's calculated total. Finalization can also emit the accumulated fallback view, so analytics must not sum every message indiscriminately. |
+| `Finally()` after a streaming attempt | Emits accumulated per-agent and whole-session fallback totals only when new usage arrived since the previous finalization. Repeated finalization without changes emits nothing. |
+| `session.shutdown` | Emits authoritative per-agent and whole-session model/token/credit totals. After shutdown, `Finally()` does not emit another fallback summary. |
+
+`session.usage_info` is intentionally not used for consumption totals because it describes current context-window occupancy rather than cumulative model usage.
+
+#### Collected Metrics and Dimensions
+
+| Logging property/internal name | Source and calculation | Availability |
+|---|---|---|
+| `SessionId` | `session.start.data.sessionId`; retained by the handler and passed to every usage template. If no session-start event was observed, the value is `unknown`. | Per-call, per-agent, whole-session fallback, and shutdown messages. |
+| `AgentName` | `primary` for the main agent; otherwise the subagent `AgentName`, then `AgentDisplayName`, then `unknown`. | Per-call, per-agent, and session-shutdown agent messages. |
+| `AgentId` | `main` for the primary agent; otherwise `AgentId`, `ParentToolCallId`, or the subagent `ToolCallId`. | Included with `AgentName` as `[{AgentName}/{AgentId}]`. |
+| `Model` | `assistant.usage.data.model`; `unknown` if absent. | Per-API-call messages only. Shutdown per-model entries are aggregated rather than logged separately. |
+| `TotalTokens` | Per call: `InputTokens + OutputTokens`. Per agent: subagent-reported `TotalTokens` when present, otherwise accumulated input plus output. Shutdown: sum of model-level input plus output. | All per-call and total messages. |
+| `InputTokens` | `assistant.usage.data.inputTokens`, accumulated per agent and summed for fallback session totals; shutdown uses `ShutdownModelMetricUsage.InputTokens`. | Full per-call and aggregate messages. |
+| `OutputTokens` | `assistant.usage.data.outputTokens`, with the same aggregation rules as `InputTokens`. | Full per-call and aggregate messages. |
+| `CacheReadTokens` | `assistant.usage.data.cacheReadTokens` or shutdown `CacheReadTokens`; accumulated but not added separately to `TotalTokens`. | Full per-call and aggregate messages. |
+| `CacheWriteTokens` | `assistant.usage.data.cacheWriteTokens` or shutdown `CacheWriteTokens`; accumulated but not added separately to `TotalTokens`. | Full per-call and aggregate messages. |
+| `ReasoningTokens` | `assistant.usage.data.reasoningTokens` or shutdown `ReasoningTokens`; accumulated but not added separately to `TotalTokens`. | Full per-call and aggregate messages. |
+| `TotalNanoAiu` | Internal accumulated/source value from `copilotUsage.totalNanoAiu`, agent shutdown metrics, or session shutdown metrics. | Stored when supplied; the log displays converted `AiCredits` rather than raw nano-AI units. A structured exporter can include the raw source value separately. |
+| `AiCredits` | `TotalNanoAiu / 1,000,000,000`, formatted with up to nine decimal places. An analytical exporter should map unavailable values to `NULL`, not zero. | Displayed as `unknown` when source data is unavailable. |
+| `HasAssistantUsage` | Internal Boolean indicating whether an agent has streamed `assistant.usage` data. It controls fallback formatting and is not a billing metric. | Internal accumulation state only. |
+
+Token properties are passed as `long` numeric values, and missing numeric token fields contribute zero during accumulation. AI-credit data is treated differently: missing credit data remains unknown instead of being interpreted as a zero charge. For a fallback whole-session summary, `AiCredits` is calculated only when every included agent has credit data; otherwise the session value is `unknown`.
+
+### 4.3 💲🤖 Per Agent/Subagent Token Consumption
+
+There are three per-agent reporting levels.
+
+**1. Immediate per-API-call messages**
+
+Every received `assistant.usage` event produces a message. The primary agent uses `primary/main`; a subagent uses its resolved name and instance identifier.
+
+```text
+💲📊 [SessionId=copilot-session-123] [primary/main] TOKEN CONSUMPTION (Model=gpt-5): 💵 Total=120, 🪙 Input=100, 🪙 Output=20, 🪙 CacheRead=30, 🪙 CacheWrite=10, 🪙 Reasoning=5, 💰 AiCredits=1
+💲📊 [SessionId=copilot-session-123] [reader/agent-1] TOKEN CONSUMPTION (Model=gpt-5): 💵 Total=60, 🪙 Input=50, 🪙 Output=10, 🪙 CacheRead=15, 🪙 CacheWrite=5, 🪙 Reasoning=2, 💰 AiCredits=0.5
+```
+
+**2. Accumulated fallback messages from `Finally()`**
+
+The handler retains counters across attempts and emits cumulative totals when new usage arrived since the previous finalization. Repeated finalization without new events does not repeat the summary.
+
+```text
+💲📊 [SessionId=copilot-session-123] [primary/main] TOTAL TOKEN CONSUMPTION: 💵 Total=120, 🪙 Input=100, 🪙 Output=20, 🪙 CacheRead=30, 🪙 CacheWrite=10, 🪙 Reasoning=5, 💰 AiCredits=1
+💲📊 [SessionId=copilot-session-123] [reader/agent-1] TOTAL TOKEN CONSUMPTION: 💵 Total=60, 🪙 Input=50, 🪙 Output=10, 🪙 CacheRead=15, 🪙 CacheWrite=5, 🪙 Reasoning=2, 💰 AiCredits=0.5
+```
+
+If only `subagent.completed` or `subagent.failed` supplies a total, the token breakdown is unavailable and the message contains only the total and any previously observed credits:
+
+```text
+💲📊 [SessionId=copilot-session-123] [reader/agent-1] TOTAL TOKEN CONSUMPTION: 💵 Total=75, 💰 AiCredits=unknown
+```
+
+**3. Authoritative per-agent messages from `session.shutdown`**
+
+```text
+💲📊 [SessionId=copilot-session-123] [primary/main] SESSION TOTAL TOKEN CONSUMPTION: 💵 Total=120, 🪙 Input=100, 🪙 Output=20, 🪙 CacheRead=30, 🪙 CacheWrite=10, 🪙 Reasoning=5, 💰 AiCredits=1
+💲📊 [SessionId=copilot-session-123] [reader/agent-1] SESSION TOTAL TOKEN CONSUMPTION: 💵 Total=60, 🪙 Input=50, 🪙 Output=10, 🪙 CacheRead=15, 🪙 CacheWrite=5, 🪙 Reasoning=2, 💰 AiCredits=0.5
+```
+
+For analytics, treat the agent instance ID as the invocation identifier and the agent name as a display dimension. Multiple invocations of the same subagent name should remain separate unless intentionally grouped by `agent_name` in a query.
+
+### 4.4 💲🧮 Per Session Token Consumption
+
+The fallback whole-session summary sums effective agent totals. A subagent-reported `TotalTokens` replaces that subagent's calculated `Input + Output` so the same subagent is not counted twice.
+
+```text
+💲📊 [SessionId=copilot-session-123] [session] TOTAL TOKEN CONSUMPTION: 💵 Total=180, 🪙 Input=150, 🪙 Output=30, 🪙 CacheRead=45, 🪙 CacheWrite=15, 🪙 Reasoning=7, 💰 AiCredits=1.5
+```
+
+When at least one agent has only a subagent-reported total, the fallback session message omits potentially incomplete token/credit breakdowns:
+
+```text
+💲📊 [SessionId=copilot-session-123] [session] TOTAL TOKEN CONSUMPTION: 💵 Total=195, 💰 AiCredits=unknown
+```
+
+When `session.shutdown` is processed, its model metrics produce the authoritative whole-session message. This message is identified by `[SessionShutdownEvent]`:
+
+```text
+💲📊 [SessionId=copilot-session-123] [SessionShutdownEvent] SESSION TOTAL TOKEN CONSUMPTION: 💵 Total=180, 🪙 Input=150, 🪙 Output=30, 🪙 CacheRead=45, 🪙 CacheWrite=15, 🪙 Reasoning=7, 💰 AiCredits=1.5
+```
+
+Once shutdown has been handled, `Finally()` does not emit a second fallback summary. If shutdown is not delivered through the streaming content pipeline, the `Finally()` summary remains the fallback source of cumulative observed usage.
+
+---
 
 ## 📎 LINKS
 

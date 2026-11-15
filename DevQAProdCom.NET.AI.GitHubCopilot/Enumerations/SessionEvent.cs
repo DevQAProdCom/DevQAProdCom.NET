@@ -7,7 +7,22 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Enumerations
         [Description("assistant.message")]
         AssistantMessage,
 
+        [Description("assistant.usage")]
+        AssistantUsage,
+
+        [Description("session.start")]
+        SessionStart,
+
+        [Description("session.shutdown")]
+        SessionShutdown,
+
         [Description("subagent.started")]
-        SubagentStarted
+        SubagentStarted,
+
+        [Description("subagent.completed")]
+        SubagentCompleted,
+
+        [Description("subagent.failed")]
+        SubagentFailed
     }
 }

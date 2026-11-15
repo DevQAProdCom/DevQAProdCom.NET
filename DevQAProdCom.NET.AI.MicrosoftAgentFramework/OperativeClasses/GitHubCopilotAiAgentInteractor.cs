@@ -261,7 +261,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         private void AddDefaultContentHandlers()
         {
             var handler = new GitHubCopilotAssistantMessageEventAiContentHandler(Logger);
-            WithAiContentHandlers(handler);
+            var usageHandler = new GitHubCopilotAssistantUsageEventAiContentHandler(Logger);
+            WithAiContentHandlers(handler, usageHandler);
         }
     }
 }
