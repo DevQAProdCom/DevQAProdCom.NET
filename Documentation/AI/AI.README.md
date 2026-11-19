@@ -4,7 +4,7 @@ The implementation/functionality of the backend part related to AI can be:
   - Used as a code library for FULL-STACK `BACKEND` <-> `AI` <-> `FRONTEND` integrations.
   - Used as a console app for local runs or CI/CD integrations.
   - Used as a foundation for integrations regarding `FRONTEND MODE` of the `Agentic Interactions Management System`, which is under architectural development.
-
+ -  Used for both DEV and AQA purposes
 ---
 
 ## Table of Contents
