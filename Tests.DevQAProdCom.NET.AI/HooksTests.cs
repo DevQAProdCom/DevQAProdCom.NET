@@ -36,6 +36,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     hooksDefaultLocationsProvider: CreateFileBasedHooksDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_FILE_BASED_HOOKS_FIELD_WITH_FILE_BASED_HOOK_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))
@@ -65,6 +66,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedSessionHooksCollection: CreateSdkBasedSessionHooksCollection())
                 .WithDefaultContentHandlers()
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_HOOKS_FIELD_WITH_SDK_BASED_HOOK_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))
@@ -97,6 +99,7 @@ namespace Tests.DevQAProdCom.NET.AI
                     hooksDefaultLocationsProvider: CreateFileBasedHooksDefaultLocationsProvider(),
                     allSdkBasedSessionHooksCollection: CreateSdkBasedSessionHooksCollection())
                 .WithDefaultContentHandlers()
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_HOOKS_FIELD_WITH_FILE_AND_SDK_BASED_HOOKS_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt("Invoke agent"))

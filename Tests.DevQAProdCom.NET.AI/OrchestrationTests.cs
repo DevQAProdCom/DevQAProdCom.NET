@@ -32,7 +32,7 @@ namespace Tests.DevQAProdCom.NET.AI
             //WHEN
             await using (var agent = AiAgentsLibrary
                 .GetOrchestratorReadWriteAgentWithResponseValidator(workingDirectory, requestModel, expectedData)
-                .WithAiContentHandlers(logAllAiContentHandler, eventsCollectorAiContentHandler)
+                .WithAiContentHandlers(logAllAiContentHandler, eventsCollectorAiContentHandler, CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithSelectiveIsolation()
                 .WithCopilotClientBaseDirectory(baseDirectory)
                 .WithMaxAttempts(1)

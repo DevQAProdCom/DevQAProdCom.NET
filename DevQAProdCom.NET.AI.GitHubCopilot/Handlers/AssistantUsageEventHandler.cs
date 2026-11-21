@@ -18,8 +18,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
         private const string AgentTotalTokensOnlyTemplate = "💲📊 [SessionId={SessionId}] [{AgentName}/{AgentId}] TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 💰 AiCredits={AiCredits}";
         private const string SessionTotalTokenConsumptionTemplate = "💲📊 [SessionId={SessionId}] [session] TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 🪙 Input={InputTokens}, 🪙 Output={OutputTokens}, 🪙 CacheRead={CacheReadTokens}, 🪙 CacheWrite={CacheWriteTokens}, 🪙 Reasoning={ReasoningTokens}, 💰 AiCredits={AiCredits}";
         private const string SessionTotalTokensOnlyTemplate = "💲📊 [SessionId={SessionId}] [session] TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 💰 AiCredits={AiCredits}";
-        private const string AgentSessionTotalTokenConsumptionTemplate = "💲📊 [SessionId={SessionId}] [{AgentName}/{AgentId}] SESSION TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 🪙 Input={InputTokens}, 🪙 Output={OutputTokens}, 🪙 CacheRead={CacheReadTokens}, 🪙 CacheWrite={CacheWriteTokens}, 🪙 Reasoning={ReasoningTokens}, 💰 AiCredits={AiCredits}";
-        private const string ShutdownSessionTotalTokenConsumptionTemplate = "💲📊 [SessionId={SessionId}] [SessionShutdownEvent] SESSION TOTAL TOKEN CONSUMPTION: 💵 Total={TotalTokens}, 🪙 Input={InputTokens}, 🪙 Output={OutputTokens}, 🪙 CacheRead={CacheReadTokens}, 🪙 CacheWrite={CacheWriteTokens}, 🪙 Reasoning={ReasoningTokens}, 💰 AiCredits={AiCredits}";
 
         private readonly Dictionary<string, string> _subagentNames = new(StringComparer.Ordinal);
         private readonly Dictionary<string, GitHubCopilotAgentTokenConsumptionModel> _agentTokenConsumption = new(StringComparer.Ordinal);
@@ -79,7 +77,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
             var sessionShutdownEvent = GetEvent<SessionShutdownEvent>(@event, SessionEvent.SessionShutdown.GetDescriptionAttributeValue());
 
             if (sessionShutdownEvent != null)
-                HandleSessionShutdown(sessionShutdownEvent);
+                _sessionShutdownHandled = true;
         }
 
         public override void Finally()
@@ -161,26 +159,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
             Logger.Info(AgentTotalTokensOnlyTemplate, _sessionId, consumption.AgentName, id, totalTokens.Value, FormatAiCredits(consumption.TotalNanoAiu));
         }
 
-        private void HandleSessionShutdown(SessionShutdownEvent sessionShutdownEvent)
-        {
-            _sessionShutdownHandled = true;
-            var shutdown = sessionShutdownEvent.Data;
-
-            if (shutdown.AgentMetrics != null)
-            {
-                foreach (var agent in shutdown.AgentMetrics)
-                {
-                    var totals = GetTokenConsumptionTotals(agent.Value.ModelMetrics.Values);
-                    var agentName = agent.Value.AgentName ?? agent.Value.AgentDisplayName ?? (agent.Key == MainAgentId ? "primary" : "unknown");
-
-                    Logger.Info(AgentSessionTotalTokenConsumptionTemplate, _sessionId, agentName, agent.Key, totals.InputTokens + totals.OutputTokens, totals.InputTokens, totals.OutputTokens, totals.CacheReadTokens, totals.CacheWriteTokens, totals.ReasoningTokens, FormatAiCredits(agent.Value.TotalNanoAiu));
-                }
-            }
-
-            var sessionTotals = GetTokenConsumptionTotals(shutdown.ModelMetrics.Values);
-            Logger.Info(ShutdownSessionTotalTokenConsumptionTemplate, _sessionId, sessionTotals.InputTokens + sessionTotals.OutputTokens, sessionTotals.InputTokens, sessionTotals.OutputTokens, sessionTotals.CacheReadTokens, sessionTotals.CacheWriteTokens, sessionTotals.ReasoningTokens, FormatAiCredits(shutdown.TotalNanoAiu));
-        }
-
         private GitHubCopilotAgentTokenConsumptionModel GetGitHubCopilotAgentTokenConsumptionModel(string agentId)
         {
             if (!_agentTokenConsumption.TryGetValue(agentId, out var consumption))
@@ -228,12 +206,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
         private static long GetTotalTokens(GitHubCopilotAgentTokenConsumptionModel consumption)
         {
             return consumption.TotalTokens ?? consumption.InputTokens + consumption.OutputTokens;
-        }
-
-        private static (long InputTokens, long OutputTokens, long CacheReadTokens, long CacheWriteTokens, long ReasoningTokens) GetTokenConsumptionTotals(IEnumerable<ShutdownModelMetric> modelMetrics)
-        {
-            var usage = modelMetrics.Select(m => m.Usage).ToList();
-            return (usage.Sum(u => u.InputTokens), usage.Sum(u => u.OutputTokens), usage.Sum(u => u.CacheReadTokens), usage.Sum(u => u.CacheWriteTokens), usage.Sum(u => u.ReasoningTokens ?? 0));
         }
 
         private static string FormatAiCredits(double? totalNanoAiu)

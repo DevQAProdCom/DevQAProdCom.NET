@@ -19,6 +19,7 @@ namespace Tests.DevQAProdCom.NET.AI
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithSessionConfig(config => config
                 .WithSkill(Const.AiSkills.Names.SKILL_ANSWER_QUESTIONS_SET_1)))
             {
@@ -43,7 +44,8 @@ namespace Tests.DevQAProdCom.NET.AI
             var (tempWorkingDirectory, requestModel, expectedResponse) = PrepareAnswerQuestionsAgentTestDataForSkillAnswerQuestionsSet1(nameof(Should_Skill_Be_Used_Using_Agent_Custom_Metadata_Skills_Field_By_Identifier));
 
             //WHEN
-            await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel))
+            await using (var agent = AiAgentsLibrary.GetCheckCustomSkillsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler()))
             {
                 await agent.InvokeAiAgentWithStreamingAsync();
             }

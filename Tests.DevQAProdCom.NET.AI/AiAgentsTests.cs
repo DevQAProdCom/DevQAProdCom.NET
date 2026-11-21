@@ -20,6 +20,7 @@ namespace Tests.DevQAProdCom.NET.AI
             //WHEN
             await using (var agent = AiAgentsLibrary
                 .GetReadWriteAgentWithResponseValidator(tempWorkingDirectory, inputFilePath, outputFolderPath, expectedOutputFilePath, inputContent)
+                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
                 .WithMaxAttempts(3))
             {
                 var act = async () => await agent.InvokeAiAgentWithStreamingAsync();

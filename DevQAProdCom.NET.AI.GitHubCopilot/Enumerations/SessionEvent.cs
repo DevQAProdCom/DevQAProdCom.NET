@@ -16,6 +16,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Enumerations
         [Description("session.shutdown")]
         SessionShutdown,
 
+        [Description("subagent.selected")]
+        SubagentSelected,
+
         [Description("subagent.started")]
         SubagentStarted,
 
