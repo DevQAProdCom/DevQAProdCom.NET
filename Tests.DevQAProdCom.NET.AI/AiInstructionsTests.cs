@@ -19,7 +19,7 @@ namespace Tests.DevQAProdCom.NET.AI
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetBaseAnswerQuestionAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithSessionConfig(config => config
                 .WithInstruction(Const.AiInstructions.Names.ANSWER_QUESTIONS_SET_1_INSTRUCTIONS)))
             {
@@ -45,7 +45,7 @@ namespace Tests.DevQAProdCom.NET.AI
 
             //WHEN
             await using (var agent = AiAgentsLibrary.GetCheckCustomInstructionsFieldAnswerQuestionsAgent(tempWorkingDirectory, requestModel.FilePathToWriteResponseTo, requestModel)
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithSessionConfig(config => config
                 .WithInstruction(Const.AiInstructions.Names.ANSWER_QUESTIONS_SET_1_INSTRUCTIONS)))
             {

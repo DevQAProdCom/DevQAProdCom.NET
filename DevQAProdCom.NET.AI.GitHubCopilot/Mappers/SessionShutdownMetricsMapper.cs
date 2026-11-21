@@ -63,9 +63,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Mappers
             return new AiModelTokenConsumptionMetricsModel
             {
                 ModelName = modelName,
-                TotalPremiumRequests = modelMetric.Requests.Count ?? 0,
-                TotalPremiumRequestsCost = totalPremiumRequestsCost,
-                TotalPremiumRequestsCostInUsd = (decimal)totalPremiumRequestsCost * _priceInUsdPerPremiumRequest,
+                RequestsCount = modelMetric.Requests.Count ?? 0,
+                RequestsCost = totalPremiumRequestsCost,
+                RequestsCostInUsd = (decimal)totalPremiumRequestsCost * _priceInUsdPerPremiumRequest,
                 TotalNanoAiu = totalNanoAiu,
                 TotalNanoAiuInUsd = ConvertNanoAiuToUsd(totalNanoAiu),
                 InputTokens = modelMetric.Usage.InputTokens ?? 0,

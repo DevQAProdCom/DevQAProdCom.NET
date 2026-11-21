@@ -20,6 +20,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         private AgentRunOptionsBuilder? _agentRunOptionsBuilder;
 
         private List<IAiContentHandler> _aiContentHandlers = new();
+        private IAiInteractionDataBank _interactionDataBank = new AiInteractionDataBank();
         private AgentSession? _session;
         private int _maxAttempts = 1;
         private readonly TimeSpan _defaultInteractionTimeout = TimeSpan.FromMinutes(15);
@@ -27,6 +28,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         private string _prompt = string.Empty;
         private Func<IAiInteractionDataBank, IValidate>? _responseValidationFunc = null;
         private ILogger _logger { get; }
+
+        public IAiInteractionDataBank InteractionDataBank => _interactionDataBank;
 
         public MicrosoftAiAgentInteractor(ILogger logger)
         {
@@ -124,7 +127,8 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             int maxAttempts = 1,
             CancellationToken cancellationToken = default)
         {
-            IAiInteractionDataBank interactionDataBank = new AiInteractionDataBank();
+            _interactionDataBank = new AiInteractionDataBank();
+            IAiInteractionDataBank interactionDataBank = _interactionDataBank;
             IValidate? responseValidationModel = null;
 
             using var cts = CreateLinkedCancellationTokenSourceOrDefault(cancellationToken);

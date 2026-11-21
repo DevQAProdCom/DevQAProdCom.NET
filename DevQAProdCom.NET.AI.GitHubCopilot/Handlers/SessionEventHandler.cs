@@ -6,6 +6,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 {
     public abstract class SessionEventHandler : IAiInteractionHandler
     {
+        public virtual bool IsDisposeTimeProcessing { get; protected set; }
         public abstract void HandleEvent(string @event, IAiInteractionDataBank interactionDataBank);
         public virtual void Finally() { }
 

@@ -12,5 +12,8 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 
         [JsonPropertyName("modelMetrics")]
         public Dictionary<string, GitHubCopilotSessionShutdownModelMetricModel> ModelMetrics { get; set; } = new();
+
+        [JsonPropertyName("totalNanoAiu")]
+        public double? TotalNanoAiu { get; set; }
     }
 }

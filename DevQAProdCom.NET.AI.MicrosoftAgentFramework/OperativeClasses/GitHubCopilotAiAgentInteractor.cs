@@ -1,15 +1,17 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
+using DevQAProdCom.NET.AI.GitHubCopilot.Handlers;
 using DevQAProdCom.NET.AI.GitHubCopilot.Interfaces;
-using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Constants;
 using DevQAProdCom.NET.AI.Shared.Interfaces;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Agents;
 using DevQAProdCom.NET.AI.Shared.Interfaces.Hooks;
+using DevQAProdCom.NET.AI.Shared.Interfaces.Interactions;
 using DevQAProdCom.NET.AI.Shared.Interfaces.McpServers;
 using DevQAProdCom.NET.Global.Extensions;
+using DevQAProdCom.NET.Global.ModelsAndInterfaces.Interfaces;
 using DevQAProdCom.NET.Logging.Shared.InterfacesAndEnumerations.Interfaces;
 using GitHub.Copilot;
 using Microsoft.Agents.AI;
@@ -21,6 +23,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
         private readonly SessionConfigBuilder _sessionConfigBuilder;
         private SessionConfig? _sessionConfig;
         private IGitHubCopilotClientService _gitHubCopilotClientService;
+        private readonly List<IAiInteractionHandler> _gitHubCopilotSessionEventHandlers = new();
 
         private JsonSerializerOptions _jsonSerializationOptions => new()
         {
@@ -188,7 +191,19 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
 
         public GitHubCopilotAiAgentInteractor WithDefaultContentHandlers()
         {
-            AddDefaultContentHandlers();
+            return WithGitHubCopilotSessionEventHandlers(
+                new AssistantMessageEventHandler(Logger),
+                new AssistantUsageEventHandler(Logger));
+        }
+
+        public GitHubCopilotAiAgentInteractor WithGitHubCopilotSessionEventHandlers(params SessionEventHandler[] handlers)
+        {
+            if (handlers?.Length > 0)
+            {
+                _gitHubCopilotSessionEventHandlers.AddRange(handlers);
+                _gitHubCopilotClientService.WithGitHubCopilotSessionEventHandlers(handlers);
+            }
+
             return this;
         }
 
@@ -226,6 +241,34 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             return this;
         }
 
+        public override async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(
+            IAiInteractionRequest request,
+            Func<IAiInteractionDataBank, IValidate>? responseValidationFunc = null,
+            int maxAttempts = 1,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await base.InvokeAiAgentWithStreamingAsync(request, responseValidationFunc, maxAttempts, cancellationToken);
+            }
+            finally
+            {
+                FinalizeGitHubCopilotSessionEventHandlers();
+            }
+        }
+
+        public override async Task<IAiInteractionDataBank> InvokeAiAgentWithStreamingAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await base.InvokeAiAgentWithStreamingAsync(cancellationToken);
+            }
+            finally
+            {
+                FinalizeGitHubCopilotSessionEventHandlers();
+            }
+        }
+
         public override async Task<AIAgent> GetAiAgentAsync(CancellationToken cancellationToken = default)
         {
             if (AiAgent == null)
@@ -239,13 +282,16 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
                     .WithDirectoryForInteractionConfigurationData(directoryForInteractionConfigurationData)
                     .Build();
 
-                var copilotClientOptions = _gitHubCopilotClientService.GetCopilotClientOptions();
+                _sessionConfig.OnEvent = OnEvent;
+
+               var copilotClientOptions = _gitHubCopilotClientService.GetCopilotClientOptions();
                 copilotClientOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(CopilotClientOptions)}.json"), _jsonSerializationOptions);
 
                 var agentRunOptions = MicrosoftAiAgentInteractor.GetAgentRunOptions();
                 agentRunOptions.ToJsonFile(Path.Combine(directoryForInteractionConfigurationData, $"{nameof(AgentRunOptions)}.json"), _jsonSerializationOptions);
 
                 AiAgent = copilotClient.AsAIAgent(_sessionConfig, ownsClient: true);
+
             }
 
             return AiAgent;
@@ -258,11 +304,27 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses
             _sessionConfigBuilder?.Dispose();
         }
 
-        private void AddDefaultContentHandlers()
+        private void OnEvent(SessionEvent sessionEvent)
         {
-            var handler = new GitHubCopilotAssistantMessageEventAiContentHandler(Logger);
-            var usageHandler = new GitHubCopilotAssistantUsageEventAiContentHandler(Logger);
-            WithAiContentHandlers(handler, usageHandler);
+            var rawEvent = sessionEvent.ToJson();
+
+            foreach (var handler in _gitHubCopilotSessionEventHandlers)
+            {
+                try
+                {
+                    handler.HandleEvent(rawEvent, MicrosoftAiAgentInteractor.InteractionDataBank);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error($"Error processing GitHub Copilot session event. {ex.Message}");
+                }
+            }
+        }
+
+        private void FinalizeGitHubCopilotSessionEventHandlers()
+        {
+            foreach (var handler in _gitHubCopilotSessionEventHandlers)
+                handler.Finally();
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Tests.DevQAProdCom.NET.AI
             //WHEN
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor()
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, SharedAiConstants.Configurations.DEFAULT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
@@ -60,7 +60,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(tempWorkingDirectory, outputFolderPath))
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, Const.Configurations.FilesystemMcpMdFileConfigurationIdentifier)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))
@@ -98,7 +98,7 @@ namespace Tests.DevQAProdCom.NET.AI
                     agentsDefaultConfigurationsLocationsProvider: CreateAgentConfigurationsLocationsProvider(),
                     allSdkBasedMcpServersCollection: CreateFilesystemSdkBasedMcpServersCollection(tempWorkingDirectory))
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.READ_WRITE_AGENT_WITH_2_CONFIGURATIONS, Const.Configurations.FilesystemMcpJsonFileConfigurationIdentifier)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPrompt(Const.AiAgents.Prompts.GetReadWriteAgentPrompt(inputFilePath, outputFolderPath))

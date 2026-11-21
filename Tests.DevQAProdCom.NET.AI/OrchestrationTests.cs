@@ -22,7 +22,6 @@ namespace Tests.DevQAProdCom.NET.AI
             var logFile = Path.Combine(tempOperationalDirectory, nameof(Should_Streaming_From_Subagents_Be_Applied), dateTime, "ai-content-log.json");
             var logAllAiContentHandler = new LogAllAiContentHandler(logFile, Log);
             var eventsCollectorHandler = new SubagentAssistantMessageEventsCollectorHandler(Log);
-            var eventsCollectorAiContentHandler = new GitHubCopilotSubagentAssistantMessageEventsAiContentHandler(eventsCollectorHandler, Log);
 
             GlobalIoUtils.CreateDirectory(workingDirectory);
             GlobalIoUtils.CreateDirectory(baseDirectory);
@@ -32,7 +31,8 @@ namespace Tests.DevQAProdCom.NET.AI
             //WHEN
             await using (var agent = AiAgentsLibrary
                 .GetOrchestratorReadWriteAgentWithResponseValidator(workingDirectory, requestModel, expectedData)
-                .WithAiContentHandlers(logAllAiContentHandler, eventsCollectorAiContentHandler, CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithAiContentHandlers(logAllAiContentHandler)
+                .WithGitHubCopilotSessionEventHandlers(eventsCollectorHandler, CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithSelectiveIsolation()
                 .WithCopilotClientBaseDirectory(baseDirectory)
                 .WithMaxAttempts(1)

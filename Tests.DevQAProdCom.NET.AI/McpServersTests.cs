@@ -36,7 +36,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_MCP_JSON_FILE_WITH_MCP_SERVERS_TOP_LEVEL_OBJECT_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)
@@ -74,7 +74,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     mcpServersDefaultLocationsProvider: CreateFileBasedMcpServersDefaultLocationsProvider())
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_MCP_SERVERS_DIRECTORY_WITH_GENERAL_TOP_LEVEL_OBJECT_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)
@@ -111,7 +111,7 @@ namespace Tests.DevQAProdCom.NET.AI
             await using (var agent = AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor(
                     allSdkBasedMcpServersCollection: CreateSdkBasedMcpServersCollection())
                 .WithDefaultContentHandlers()
-                .WithAiContentHandlers(CreateGitHubCopilotSessionShutdownEventAiContentHandler())
+                .WithGitHubCopilotSessionEventHandlers(CreateGitHubCopilotSessionShutdownEventHandler())
                 .WithPrimaryAgent(Const.AiAgents.Names.CHECK_CUSTOM_MCP_SERVERS_FIELD_SDK_BASED_AGENT)
                 .WithWorkingDirectory(tempWorkingDirectory)
                 .WithPromptInJsonFormat(requestModel)

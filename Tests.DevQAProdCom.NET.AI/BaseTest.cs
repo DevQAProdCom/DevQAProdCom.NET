@@ -1,4 +1,4 @@
-﻿using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Handlers.GitHubCopilot;
+﻿using DevQAProdCom.NET.AI.GitHubCopilot.Handlers;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces;
 using DevQAProdCom.NET.AI.MicrosoftAgentFramework.OperativeClasses;
 using DevQAProdCom.NET.Global.Extensions;
@@ -20,7 +20,7 @@ namespace Tests.DevQAProdCom.NET.AI
         protected IMicrosoftAgentFrameworkAiAgentInteractorsFactory AiAgentsInteractorsFactory => DiContainer.Instance.MicrosoftAiAgentsInteractorsFactory;
         protected GitHubCopilotAiAgentInteractor GetGitHubCopilotAiAgentInteractor() => AiAgentsInteractorsFactory.GetGitHubCopilotAiAgentInteractor();
 
-        protected GitHubCopilotSessionShutdownEventAiContentHandler CreateGitHubCopilotSessionShutdownEventAiContentHandler() =>
+        protected SessionShutdownEventHandler CreateGitHubCopilotSessionShutdownEventHandler() =>
             new(Log, priceInUsdPerPremiumRequest: 0.04m, priceInUsdPerAICredit: 0.01m);
 
         protected string PrepareTempTestWorkingDirectory(string? testName)

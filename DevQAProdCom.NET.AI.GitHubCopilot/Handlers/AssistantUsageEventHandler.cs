@@ -23,7 +23,6 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
         private readonly Dictionary<string, GitHubCopilotAgentTokenConsumptionModel> _agentTokenConsumption = new(StringComparer.Ordinal);
         private string _sessionId = UnknownSessionId;
         private bool _hasChangesSinceFinally;
-        private bool _sessionShutdownHandled;
 
         public AssistantUsageEventHandler(ILogger logger) : base(logger) { }
 
@@ -73,16 +72,11 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
                     subagentFailedEvent.Data.AgentDisplayName,
                     subagentFailedEvent.Data.TotalTokens);
             }
-
-            var sessionShutdownEvent = GetEvent<SessionShutdownEvent>(@event, SessionEvent.SessionShutdown.GetDescriptionAttributeValue());
-
-            if (sessionShutdownEvent != null)
-                _sessionShutdownHandled = true;
         }
 
         public override void Finally()
         {
-            if (_sessionShutdownHandled || !_hasChangesSinceFinally || _agentTokenConsumption.Count == 0)
+            if (!_hasChangesSinceFinally || _agentTokenConsumption.Count == 0)
                 return;
 
             foreach (var agent in _agentTokenConsumption)

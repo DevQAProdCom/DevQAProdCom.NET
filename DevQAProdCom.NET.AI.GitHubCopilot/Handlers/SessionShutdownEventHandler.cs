@@ -10,7 +10,9 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 {
     public class SessionShutdownEventHandler : SessionEventHandler
     {
+        public override bool IsDisposeTimeProcessing => true;
         private readonly SessionShutdownMetricsMapper _mapper;
+        private bool _sessionShutdownHandled;
         private string? _mainAgentName;
         private string? _mainAgentDisplayName;
 
@@ -31,9 +33,10 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 
             var sessionShutdownEvent = GetEvent<GitHubCopilotSessionShutdownSessionEventModel>(@event, SessionEvent.SessionShutdown.GetDescriptionAttributeValue());
 
-            if (sessionShutdownEvent == null)
+            if (sessionShutdownEvent == null || _sessionShutdownHandled)
                 return;
 
+            _sessionShutdownHandled = true;
             var metrics = _mapper.Map(sessionShutdownEvent, _mainAgentName, _mainAgentDisplayName);
             Logger.Info("💲📊 [SessionShutdownEvent]" + Environment.NewLine + "{SessionShutdownMetrics}", metrics.ToString());
         }

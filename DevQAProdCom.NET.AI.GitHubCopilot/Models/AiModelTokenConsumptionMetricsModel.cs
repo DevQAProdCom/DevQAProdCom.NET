@@ -1,11 +1,11 @@
-namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
+﻿namespace DevQAProdCom.NET.AI.GitHubCopilot.Models
 {
     public class AiModelTokenConsumptionMetricsModel
     {
         public string ModelName { get; set; } = string.Empty;
-        public double TotalPremiumRequests { get; set; }
-        public double TotalPremiumRequestsCost { get; set; }
-        public decimal TotalPremiumRequestsCostInUsd { get; set; }
+        public double RequestsCount { get; set; }
+        public double RequestsCost { get; set; }
+        public decimal RequestsCostInUsd { get; set; }
         public double TotalNanoAiu { get; set; }
         public decimal TotalNanoAiuInUsd { get; set; }
         public long InputTokens { get; set; }

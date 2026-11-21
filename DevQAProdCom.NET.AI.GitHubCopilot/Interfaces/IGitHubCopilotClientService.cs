@@ -1,4 +1,5 @@
 ﻿using DevQAProdCom.NET.AI.GitHubCopilot.Builders;
+using DevQAProdCom.NET.AI.GitHubCopilot.Handlers;
 using DevQAProdCom.NET.AI.GitHubCopilot.OperativeClasses.Services;
 using GitHub.Copilot;
 
@@ -7,6 +8,7 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Interfaces
     public interface IGitHubCopilotClientService : IAsyncDisposable
     {
         public GitHubCopilotClientService WithCopilotClientOptions(Func<CopilotClientOptionsBuilder, CopilotClientOptionsBuilder> updateCopilotClientOptionsFunc);
+        public GitHubCopilotClientService WithGitHubCopilotSessionEventHandlers(params SessionEventHandler[] handlers);
         public CopilotClient GetGitHubCopilotClient(CopilotClientOptions? copilotClientOptions = null);
         public CopilotClientOptions GetCopilotClientOptions();
     }

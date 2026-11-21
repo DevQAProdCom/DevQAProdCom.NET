@@ -8,6 +8,7 @@ namespace DevQAProdCom.NET.AI.MicrosoftAgentFramework.Interfaces
 {
     public interface IMicrosoftAiAgentInteractor : IAiAgentInteractor
     {
+        public IAiInteractionDataBank InteractionDataBank { get; }
         public IMicrosoftAiAgentInteractor WithAiAgent(AIAgent aiAgent);
         public IMicrosoftAiAgentInteractor WithAiContentHandlers(params IAiContentHandler[] handlers);
         public IMicrosoftAiAgentInteractor WithAgentRunOptions(AgentRunOptions? agentRunOptions);
