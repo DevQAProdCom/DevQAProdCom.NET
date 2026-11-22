@@ -23,12 +23,15 @@ namespace DevQAProdCom.NET.AI.GitHubCopilot.Handlers
 
         public override void HandleEvent(string @event, IAiInteractionDataBank interactionDataBank)
         {
-            var subagentSelectedEvent = GetEvent<SubagentSelectedEvent>(@event, SessionEvent.SubagentSelected.GetDescriptionAttributeValue());
-
-            if (subagentSelectedEvent != null)
+            if (string.IsNullOrEmpty(_mainAgentName))
             {
-                _mainAgentName = subagentSelectedEvent.Data.AgentName;
-                _mainAgentDisplayName = subagentSelectedEvent.Data.AgentDisplayName;
+                var subagentSelectedEvent = GetEvent<SubagentSelectedEvent>(@event, SessionEvent.SubagentSelected.GetDescriptionAttributeValue());
+
+                if (subagentSelectedEvent != null)
+                {
+                    _mainAgentName = subagentSelectedEvent.Data.AgentName;
+                    _mainAgentDisplayName = subagentSelectedEvent.Data.AgentDisplayName;
+                }
             }
 
             var sessionShutdownEvent = GetEvent<GitHubCopilotSessionShutdownSessionEventModel>(@event, SessionEvent.SessionShutdown.GetDescriptionAttributeValue());
